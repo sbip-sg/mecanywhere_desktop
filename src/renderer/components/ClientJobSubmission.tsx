@@ -1,85 +1,105 @@
 import {
   Typography,
-  Stack,
   Grid,
-  TextField,
   Button,
   Box,
-  Divider,
-} from "@mui/material";
-import { useState } from "react";
-import * as Yup from "yup";
-import { useFormik, Formik, FormikProvider } from "formik";
-import actions from "./states/actionCreators";
-import { store } from "./states/store";
-import { useSelector } from "react-redux";
+  FormControl,
+  FormLabel,
+  TextField,
+  Alert,
+} from '@mui/material';
+import { useEffect, useState } from 'react';
 
-const validationSchemaPublicKey = Yup.object().shape({
-  publicKey: Yup.string()
-    .min(7, "Public key must be at least 7 characters")
-    .required("Public key is required"),
-});
-
-const validationSchemaDID = Yup.object().shape({
-  DID: Yup.string()
-    .min(7, "DID must be at least 7 characters")
-    .required("DID is required"),
-});
+type JobResult = {
+  id: string;
+  content: string;
+};
 
 export default function ClientJobSubmission() {
-  const [filename, setFilename] = useState("");
+  const [jobContent, setJobContent] = useState('');
+  const [jobResults, setJobResults] = useState<JobResult[]>([]);
 
-  const handleFileUpload = (e) => {
-    if (!e.target.files) {
-      return;
-    }
-    const file = e.target.files[0];
-    const { name } = file;
-    setFilename(name);
+  useEffect(() => {
+    window.electron.onSubscribeJobResults((_event, id, result) => {
+      const newJobResult = {
+        id: `result ${id.toString()}`,
+        content: result,
+      };
+      setJobResults((prevJobResults) => [...prevJobResults, newJobResult]);
+    });
+  }, []);
+
+  const generateUuid = () => {
+    return (
+      Math.random().toString() +
+      Math.random().toString() +
+      Math.random().toString()
+    );
   };
- 
-  return (
-    <Grid container spacing={3} sx={{ margin: "0 0 2rem 0" }}>
-        <Grid item xs={3}/>
-      <Grid item xs={6}>
 
-       
+  const handleJobSubmit = async (e) => {
+    e.preventDefault();
+    const id = generateUuid();
+    const status = await window.electron.publishJob(id, jobContent);
+
+    setJobResults((prevJobResults) => [
+      ...prevJobResults,
+      {
+        id: `job ${id.toString()}`,
+        content: status,
+      },
+    ]);
+  };
+
+  const clear = () => {
+    setJobResults([]);
+  };
+
+  return (
+    <Grid container spacing={3} sx={{ margin: '0 0 2rem 0' }}>
+      <Grid item xs={3} />
+      <Grid item xs={6}>
         {/* <Divider sx={{margin:"1rem 0 1rem 0", borderBottomWidth: 1.5}}/> */}
         <Box
-            sx={{
-              display: "flex",
-              justifyContent: "left",
-              marginBottom: "0.5rem",
-            }}
-          >
-            <Typography fontSize="24px">Submit Jobs</Typography>
-          </Box>
-        <Grid
-          item
-          container
           sx={{
-            margin: "1rem 0 1rem 0",
-            display: "flex",
-            justifyContent: "center",
-            alignItems: "center",
+            display: 'flex',
+            justifyContent: 'left',
+            marginBottom: '0.5rem',
           }}
         >
-          <Grid item xs={6}>
-            <Button variant="contained" component="label" sx={{backgroundColor: "purple"}}>
-              Upload File
-              <input type="file" hidden onChange={handleFileUpload} />
+          <Typography fontSize="24px">Submit Jobs</Typography>
+        </Box>
+        <form onSubmit={handleJobSubmit}>
+          <FormControl>
+            <FormLabel>Job</FormLabel>
+            <TextField
+              onChange={(e) => setJobContent(e.target.value)}
+              multiline
+            />
+            <Button
+              fullWidth
+              variant="contained"
+              type="submit"
+              sx={{ backgroundColor: 'purple' }}
+            >
+              Submit Job
             </Button>
-          </Grid>
-          <Grid item xs={6}>
-            <Typography fontSize="14px" sx={{fontStyle: 'italic'}}>{filename}</Typography>
-          </Grid>
+          </FormControl>
+        </form>
+        <Grid>
+          <Typography>
+            Job Results
+            <Button onClick={clear}>Clear</Button>
+          </Typography>
+          {jobResults.map((result) => {
+            return (
+              <Alert
+                key={result.id}
+              >{`${result.id} : ${result.content}`}</Alert>
+            );
+          })}
         </Grid>
-          <Button fullWidth variant="contained" component="label" sx={{backgroundColor: "purple"}}>
-            Submit Task
-            <input type="file" hidden onChange={handleFileUpload} />
-          </Button>
       </Grid>
-      <Grid item xs={3} />
     </Grid>
   );
 }

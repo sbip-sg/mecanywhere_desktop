@@ -31,6 +31,11 @@ const electronHandler = {
     },
     // Other method you want to add like has(), reset(), etc.
   },
+  publishJob: (id: string, content: string) =>
+    ipcRenderer.invoke('publish-job', id, content),
+  onSubscribeJobResults: (callback: (...args: any[]) => void) => {
+    ipcRenderer.on('job-results-received', callback);
+  },
 };
 
 contextBridge.exposeInMainWorld('electron', electronHandler);
