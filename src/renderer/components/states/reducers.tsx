@@ -4,6 +4,7 @@ const userReducer = (
   state = {
     publicKey: '',
     DID: '',
+    authenticated: false,
   },
   action
 ) => {
@@ -17,6 +18,11 @@ const userReducer = (
       return {
         ...state,
         DID: action.payload,
+      };
+    case 'setUserAuthenticated':
+      return {
+        ...state,
+        authenticated: action.payload,
       };
     default:
       return state;

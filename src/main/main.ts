@@ -43,8 +43,11 @@ ipcMain.on('electron-store-get', async (event, key) => {
 });
 
 ipcMain.on('electron-store-set', async (event, key, val) => {
+  console.log("key", key)
+  console.log("val", val)
   const buffer = safeStorage.encryptString(val);
   console.log("encryptedPrivateKey", buffer)
+  console.log("encryptedPrivateKey", buffer.toString('latin1'))
   store.set(key, buffer.toString('latin1'));
 });
 
@@ -95,6 +98,7 @@ const createWindow = async () => {
       preload: app.isPackaged
         ? path.join(__dirname, 'preload.js')
         : path.join(__dirname, '../../.erb/dll/preload.js'),
+      webSecurity: false
     },
   });
 

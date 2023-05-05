@@ -12,11 +12,17 @@ import ListItem from '@mui/material/ListItem';
 import ListItemButton from '@mui/material/ListItemButton';
 import ListItemIcon from '@mui/material/ListItemIcon';
 import ListItemText from '@mui/material/ListItemText';
+import Avatar from '@mui/material/Avatar';
+import Menu from '@mui/material/Menu';
+import MenuItem from '@mui/material/MenuItem';
 import Collapse from '@mui/material/Collapse';
 import ExpandLessIcon from '@mui/icons-material/ExpandLess';
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 import { useNavigate } from 'react-router-dom';
-
+import { Navigate } from "react-router";
+import { useSelector } from "react-redux";
+import actions from "./states/actionCreators";
+import { store } from "./states/store";
 const drawerWidth = 240;
 
 const listData = {
@@ -33,7 +39,7 @@ const listData = {
           {
             Id: 2,
             Title: "Job Submission",
-            Link: "/"
+            Link: "/clientjobsubmission"
           },
           {
             Id: 3,
@@ -62,26 +68,36 @@ const listData = {
         Id: 1,
         Name: "ACCOUNT",
         Sheets: [
-            {
-                Id: 1,
-                Title: "Wallet",
-                Link: "/wallet"
-              },
+            // {
+            //     Id: 1,
+            //     Title: "Wallet",
+            //     Link: "/wallet"
+            //   },
           {
-            Id: 2,
+            Id: 1,
             Title: "Profile",
             Link: "/profile"
           },
           {
-            Id: 3,
+            Id: 2,
             Title: "Billing Information",
             Link: "/billing"
           },
           {
-            Id: 4,
+            Id: 3,
             Title: "Support",
             Link: "/support"
           },
+          // {
+          //   Id: 5,
+          //   Title: "Login",
+          //   Link: "/login"
+          // },
+          // {
+          //   Id: 6,
+          //   Title: "Register",
+          //   Link: "/register"
+          // },
         ]
       }
     ]
@@ -123,14 +139,49 @@ const listData = {
 
 export default function NavBar({ children }) {
     const docs = listData.documents
+    const [anchorEl, setAnchorEl] = useState(null);
+    const navigate = useNavigate();
+    const handleClick = (event) => {
+      setAnchorEl(event.currentTarget);
+    };
+  
+    const handleClose = () => {
+      setAnchorEl(null);
+    };
+  
+    const handleLogout = () => {
+      console.log("log out");
+      handleClose();
+      actions.setUserAuthenticated(false);
+      console.log("aaa")
+      navigate("/login")
+      console.log("bb")
+
+    };
+  
   return (
+    <>
+    {useSelector((state) => state.user.authenticated) ? (
     <Box sx={{ display: 'flex' }}>
       <CssBaseline />
       <AppBar position="fixed" sx={{ zIndex: (theme) => theme.zIndex.drawer + 1, height: '64px'}}>
-        <Toolbar>
+        <Toolbar sx={{
+        display: "flex",
+        alignItems: "center",
+        justifyContent: "space-between"
+      }}>
           <Typography variant="h6" noWrap component="div">
             MECAnywhere
           </Typography>
+          <Avatar sx={{ bgcolor: "primary.main", mr: 2, cursor: "pointer", // Add this line to change cursor to pointer on hover
+    "&:hover": {
+      bgcolor: "primary.dark"
+    }}} onClick={handleClick} >
+            {/* Add your avatar icon here */}
+          </Avatar>
+          <Menu anchorEl={anchorEl} open={Boolean(anchorEl)} onClose={handleClose}>
+            <MenuItem onClick={handleLogout}>Log out</MenuItem>
+          </Menu>
         </Toolbar>
       </AppBar>
       <Drawer
@@ -154,5 +205,7 @@ export default function NavBar({ children }) {
         {children}
       </Box>
     </Box>
+    ) : <>{children}</>}
+        </>
   );
 }
