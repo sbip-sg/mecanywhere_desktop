@@ -1,0 +1,10 @@
+syntax = "proto3";
+
+message Task {
+  string id = 1;
+  string content = 2;
+}
+
+message TaskResult {
+  string content = 2;
+}

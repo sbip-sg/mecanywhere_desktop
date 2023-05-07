@@ -14,6 +14,7 @@ import { autoUpdater } from 'electron-updater';
 import log from 'electron-log';
 import MenuBuilder from './menu';
 import { resolveHtmlPath } from './util';
+
 const Store = require('electron-store');
 
 const store = new Store();
@@ -27,6 +28,7 @@ class AppUpdater {
 }
 
 let mainWindow: BrowserWindow | null = null;
+let workerWindow: BrowserWindow | null = null;
 
 ipcMain.on('ipc-example', async (event, arg) => {
   const msgTemplate = (pingPong: string) => `IPC test: ${pingPong}`;
@@ -49,6 +51,21 @@ ipcMain.on('electron-store-set', async (event, key, val) => {
   console.log("encryptedPrivateKey", buffer)
   console.log("encryptedPrivateKey", buffer.toString('latin1'))
   store.set(key, buffer.toString('latin1'));
+});
+
+ipcMain.handle('publish-job', async (event, id, content) => {
+  if (!workerWindow) {
+    throw new Error('"workerWindow" is not defined');
+  }
+  workerWindow.webContents.send('publish-job', id, content);
+  return 'published';
+});
+
+ipcMain.on('job-results-received', async (event, id, result) => {
+  if (!mainWindow) {
+    throw new Error('"mainWindow" is not defined');
+  }
+  mainWindow.webContents.send('job-results-received', id, result);
 });
 
 if (process.env.NODE_ENV === 'production') {
@@ -103,6 +120,17 @@ const createWindow = async () => {
   });
 
   mainWindow.loadURL(resolveHtmlPath('index.html'));
+
+  workerWindow = new BrowserWindow({
+    show: false,
+    webPreferences: {
+      sandbox: false,
+      nodeIntegration: true,
+      contextIsolation: false,
+    },
+  });
+
+  workerWindow.loadFile('src/worker_renderer/worker.html');
 
   mainWindow.on('ready-to-show', () => {
     if (!mainWindow) {
