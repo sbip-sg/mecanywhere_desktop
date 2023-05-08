@@ -39,6 +39,10 @@ const electronHandler = {
   onSubscribeJobs: (callback: (...args: any[]) => void) => {
     ipcRenderer.on('job-received', callback);
   },
+  startConsumer: (queueName: string) =>
+    ipcRenderer.send('start-consumer', queueName),
+  startPublisher: (queueName: string) =>
+    ipcRenderer.send('start-publisher', queueName),
 };
 
 contextBridge.exposeInMainWorld('electron', electronHandler);

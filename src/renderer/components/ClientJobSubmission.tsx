@@ -89,9 +89,10 @@ export default function ClientJobSubmission() {
           </Typography>
           {jobResults.map((result) => {
             return (
-              <Alert
-                key={result.id}
-              >{`${result.id} : ${result.content}`}</Alert>
+              <Alert key={result.id}>
+                <Typography noWrap>{result.id}</Typography>
+                {result.content}
+              </Alert>
             );
           })}
         </Grid>
