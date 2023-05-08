@@ -1,4 +1,5 @@
-import { Typography, Stack, Grid, Button, Box } from '@mui/material';
+import { Typography, Stack, Grid, Box, ToggleButton } from '@mui/material';
+import CheckIcon from '@mui/icons-material/Check';
 import { useState } from 'react';
 
 export default function ClientRegistration() {
@@ -7,7 +8,9 @@ export default function ClientRegistration() {
     // TODO: register client
     setRegistered(true);
     // TODO: update global state
-    // TODO: start task publisher
+
+    // TODO: use queue name from registration
+    window.electron.startPublisher('rpc_queue');
   };
 
   return (
@@ -25,13 +28,23 @@ export default function ClientRegistration() {
             <Typography fontSize="24px">Register as Client</Typography>
           </Box>
 
-          <Button
-            variant="contained"
-            onClick={registerClient}
-            sx={{ minWidth: '10rem', width: '30%' }}
+          <ToggleButton
+            sx={{ minWidth: '10rem', width: '50%' }}
+            value="check"
+            selected={registered}
+            onChange={() => {
+              registerClient();
+              setRegistered(!registered);
+            }}
           >
-            Register
-          </Button>
+            {registered ? (
+              <>
+                REGISTERED <CheckIcon />
+              </>
+            ) : (
+              <>REGISTER</>
+            )}
+          </ToggleButton>
         </Stack>
       </Grid>
       <Grid item xs={3} />

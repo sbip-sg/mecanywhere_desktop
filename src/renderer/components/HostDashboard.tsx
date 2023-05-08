@@ -1,4 +1,4 @@
-import { Alert, Box, Typography } from '@mui/material';
+import { Alert, Box, Button, Typography } from '@mui/material';
 import { useEffect, useState } from 'react';
 import { Job, JobResult } from './utils/jobs';
 
@@ -22,6 +22,10 @@ function HostDashboard() {
     });
   }, []);
 
+  const clear = () => {
+    setJobs([]);
+  };
+
   return (
     <Box
       sx={{
@@ -33,10 +37,16 @@ function HostDashboard() {
         marginTop: '2rem',
       }}
     >
-      <Typography fontSize="24px">Host Dashboard</Typography>
+      <Typography fontSize="24px">
+        Host Dashboard
+        <Button onClick={clear}>Clear</Button>
+      </Typography>
       {jobs.map((result) => {
         return (
-          <Alert key={result.id}>{`${result.id} : ${result.content}`}</Alert>
+          <Alert key={result.id}>
+            <Typography noWrap>{result.id}</Typography>
+            {result.content}
+          </Alert>
         );
       })}
     </Box>
