@@ -36,6 +36,9 @@ const electronHandler = {
   onSubscribeJobResults: (callback: (...args: any[]) => void) => {
     ipcRenderer.on('job-results-received', callback);
   },
+  onSubscribeJobs: (callback: (...args: any[]) => void) => {
+    ipcRenderer.on('job-received', callback);
+  },
 };
 
 contextBridge.exposeInMainWorld('electron', electronHandler);

@@ -35,7 +35,7 @@ export default function App() {
               <Route path="/wallet" element={<Wallet />} />
               <Route path="/profile" element={<Profile />} />
               <Route path="/billing" element={<Billing />} />
-              <Route path="/support" element={<Support />} />          
+              <Route path="/support" element={<Support />} />
               </Route>
           </Routes>
         </NavBar>

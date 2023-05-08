@@ -9,11 +9,7 @@ import {
   Alert,
 } from '@mui/material';
 import { useEffect, useState } from 'react';
-
-type JobResult = {
-  id: string;
-  content: string;
-};
+import { JobResult } from './utils/jobs';
 
 export default function ClientJobSubmission() {
   const [jobContent, setJobContent] = useState('');
