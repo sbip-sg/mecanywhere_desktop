@@ -1,4 +1,5 @@
 const amqp = require('amqplib');
+const { ipcRenderer } = require('electron');
 const protobuf = require('protobufjs');
 
 const CONSUMER_QUEUE = 'rpc_queue';
@@ -35,7 +36,18 @@ channel.consume(CONSUMER_QUEUE, (msg) => {
     result = typeError.toString();
   } else {
     console.log(` [con] Received: ${JSON.stringify(deserializedTask)}`);
+
+    ipcRenderer.send(
+      'job-received',
+      deserializedTask.id,
+      deserializedTask.content
+    );
     result = compute(deserializedTask.content);
+    ipcRenderer.send(
+      'job-results-received',
+      deserializedTask.id,
+      result.toString()
+    );
   }
 
   channel.sendToQueue(msg.properties.replyTo, Buffer.from(result.toString()), {

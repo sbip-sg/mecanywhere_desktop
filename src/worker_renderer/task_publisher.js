@@ -36,11 +36,12 @@ channel.consume(
   }
 );
 
-async function publishTask(id, serializedTaskProto) {
+async function publishTask(id, taskObject) {
+  const serializedTask = Task.encode(Task.create(taskObject)).finish();
   correlationId = id;
 
-  console.log(' [pub] Requesting: ', serializedTaskProto);
-  channel.sendToQueue(CONSUMER_QUEUE, Buffer.from(serializedTaskProto), {
+  console.log(' [pub] Requesting: ', serializedTask);
+  channel.sendToQueue(CONSUMER_QUEUE, Buffer.from(serializedTask), {
     correlationId,
     replyTo: callbackQueue.queue,
     persistent: true,
@@ -60,6 +61,17 @@ ipcRenderer.on('publish-job', async (event, id, content) => {
     return;
   }
 
-  const serializedTask = Task.encode(Task.create(taskObject)).finish();
-  publishTask(id, serializedTask);
+  publishTask(id, taskObject);
+});
+
+// publish task on click
+document.getElementById('pub').addEventListener('click', () => {
+  const id = Math.random().toString();
+  const content = '1 + 1';
+  const taskObject = {
+    id,
+    content,
+  };
+
+  publishTask(id, taskObject);
 });
