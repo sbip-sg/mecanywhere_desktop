@@ -3,29 +3,34 @@ import CheckIcon from '@mui/icons-material/Check';
 import { useState } from 'react';
 import actions from "./states/actionCreators";
 import { reduxStore } from './states/store';
-import { registerHost, deregisterHost } from '../services/RegistrationServices';
+import { registerUser, deregisterUser } from '../services/RegistrationServices';
 
-export default function HostRegistration() {
+export default function UserRegistration() {
   const [registered, setRegistered] = useState(false);
-  const handleRegisterHost = async () => {
+  // TODO: register client 
+  // TODO: update global state
+  // TODO: use queue name from registration
+  
+  const handleRegisterUser = async () => {
     const credential = JSON.parse(window.electron.store.get('credential'));
     if (credential) {
         actions.setCredential(credential);
-        const response = await registerHost({ credential });
+        const response = await registerUser({ credential });
         const { access_token } = response;
-        actions.setHostAccessToken(access_token);
+        actions.setUserAccessToken(access_token);
         console.log("response", response)
         if (response.ok) {
             setRegistered(true);
-            window.electron.startConsumer('rpc_queue');
+            window.electron.startPublisher('rpc_queue');
         }
-    }      
-  };
-  const handleDeregisterHost = async () => {
-    const response = await deregisterHost(reduxStore.getState().accountUser.hostAccessToken)
+    }
+};
+  const handleDeregisterUser = async () => {
+    const response = await deregisterUser(reduxStore.getState().accountUser.userAccessToken)
     console.log("response", response);
     setRegistered(false)
   }
+
   return (
     <Grid container spacing={3} sx={{ margin: '0 0 0.5rem 0' }}>
       <Grid item xs={3} />
@@ -38,15 +43,16 @@ export default function HostRegistration() {
               marginBottom: '0.5rem',
             }}
           >
-            <Typography fontSize="24px">Register as Host</Typography>
+            <Typography fontSize="24px">Register as User</Typography>
           </Box>
 
           <ToggleButton
             sx={{ minWidth: '10rem', width: '50%' }}
             value="check"
             selected={registered}
-            onChange={handleRegisterHost}
+            onChange={handleRegisterUser}
           >
+            
             {registered ? (
               <>
                 REGISTERED <CheckIcon />
@@ -55,7 +61,7 @@ export default function HostRegistration() {
               <>REGISTER</>
             )}
           </ToggleButton>
-          <Button onClick={handleDeregisterHost}>DEREGISTER HOST</Button>
+          <Button onClick={handleDeregisterUser}>DEREGISTER</Button>
         </Stack>
       </Grid>
       <Grid item xs={3} />

@@ -3,67 +3,37 @@ import { useState } from 'react';
 import { Formik, Form } from 'formik';
 import TextFieldWrapper from '../utils/TextField';
 import FormSchema from '../utils/FormSchema';
-import { createChallenge, verifyResponse } from '../services/TestServices';
+import { createChallenge, verifyResponse } from '../services/RegistrationServices';
 import actions from "./states/actionCreators";
-import { store } from "./states/store";
-import { useSelector } from "react-redux";
-import RSASign from "../utils/RSASign"
-import {toByteArray} from "../utils/generateKeyPairAndMnemonics"
+import { reduxStore } from "./states/store";
+import signMessage from "../utils/signMessage"
 import { useNavigate } from 'react-router-dom';
 
 var nacl = require('tweetnacl');
 nacl.util = require('tweetnacl-util');
 
 const Login = () => {
-    const [error, setError] = useState(null);
+    const [error, setError] = useState("");
     const navigate = useNavigate();
     const handleSubmit = async (values, formActions) => {
         formActions.resetForm();
-        // console.log(window.electron.store.get('publicKey'))
-        // const publicKey = window.electron.store.get('publicKey')
-        // console.log("publicKey", publicKey)
-        // console.log("publicKey", nacl.util.decodeUTF8(publicKey))
-        // console.log(window.electron.store.get('mnemonic'))
-        // console.log(window.electron.store.get('did'))
-        // window.electron.ipcRenderer.sendMessage('retrieveKey', "");
         if (window.electron.store.get('did')) {
-            // console.log(window.electron.store.get('did'))
-            actions.setUserDID(window.electron.store.get('did'));
-            // console.log("DID RETRIEVED", store.getState().user.DID)
+            actions.setDID(window.electron.store.get('did'));
         } else {
             throw new Error("DID not found")
         }
-        const {did, challenge} = await createChallenge({did: store.getState().user.DID});
-        // console.log(challenge);
-        if (challenge && window.electron.store.get('privateKey')) {
-            // const msgStr = "My unencrypted message";
-            // const msg = nacl.util.decodeUTF8(challenge);
-            // const signazzture = nacl.sign.detached(msg, toByteArray(window.electron.store.get('privateKey')));
-            // const signatureB64 = nacl.util.encodeBase64(signature);
-            // console.log("msg", toByteArray(window.electron.store.get('privateKey')))
-            // console.log("private key", window.electron.store.get('privateKey'))
-            // console.log("signature", signature)
-            // console.log("signatureB64", signatureB64);
-            // const verifiedMsg = nacl.sign.open(signature, toByteArray(publicKey));
-            // console.log("verifiedMsg", verifiedMsg)
-            // console.log("nacl.util.encodeUTF8(verifiedMsg)", nacl.util.encodeUTF8(verifiedMsg));
-
-
-            // console.log("privateKEY RETRaIEVED")
-            const signedChallenge = RSASign(window.electron.store.get('privateKey'), challenge);
-            // console.log("signedChallenge", signedChallenge);
-            // let decrypted = nacl.sign.open(nacl.util.decodeBase64(signedChallenge), nacl.util.decodeUTF8(publicKey)) // is this right? -> Yes
-            // console.log(nacl.util.encodeUTF8(decrypted)) 
-            const res = await verifyResponse({did: store.getState().user.DID, signedChallenge: signedChallenge, challenge: challenge});
-            console.log(res)
-            console.log(store.getState().user.authenticated)
-            if (res === true) {
-                console.log("inside")
-                actions.setUserAuthenticated(true);
-                console.log(store.getState().user.authenticated)
-                
-                navigate("/clientjobsubmission")
-            }
+        const challenge = await createChallenge({...values, did: reduxStore.getState().accountUser.did});
+        const signedChallenge = signMessage(window.electron.store.get('privateKey-wallet'), challenge);
+        // for testing wrong private key
+        // const signedChallenge = signMessage("c4b12726bd9dae6a29c0c5cd43658cd8fb1d2c7418652d20ce372384dda73b347dfa0ac7febc06dacb656dda382804e855782ece48e8aa9062c7ddfdd4106f2", challenge);
+        const res = await verifyResponse({did: reduxStore.getState().accountUser.did, signedChallenge: signedChallenge, challenge: challenge});
+        if (res === true) {
+            console.log("User authenticated")
+            actions.setAuthenticated(true);
+            navigate("/clientjobsubmission")
+        } else {
+            console.log("User not authenticated")
+            setError("Authentication failed. Please check your credentials.");
         }
     }
 
@@ -74,7 +44,7 @@ const Login = () => {
             onSubmit={(values, formActions) => {
                 handleSubmit(values, formActions);
             }}>
-            {() => (
+            {({ errors, touched }) => (
                 <Form>
                     <Container component="main" maxWidth="xs">
                         <Box
@@ -97,7 +67,8 @@ const Login = () => {
                                 placeholder="Enter email"
                                 autoComplete="off"
                                 label="Email"
-
+                                error={errors.email && touched.email}
+                                helperText={errors.email && touched.email && errors.email}
                             />
                             <TextFieldWrapper
                                 margin="dense"
@@ -106,6 +77,8 @@ const Login = () => {
                                 autoComplete="off"
                                 label="Password"
                                 type="password"
+                                error={errors.password && touched.password}
+                                helperText={errors.password && touched.password && errors.password}
                             />
                             <Stack
                                 sx={{ pt: 4 }}

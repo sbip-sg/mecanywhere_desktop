@@ -1,6 +1,6 @@
 import { Box, Typography } from '@mui/material';
 
-const ClientDashboard = () => {
+const UserDashboard = () => {
     return(
 
         <Box
@@ -12,9 +12,9 @@ const ClientDashboard = () => {
             marginTop: "2rem"
         }}
 >
-<Typography fontSize="24px">Client Dashboard</Typography>
+<Typography fontSize="24px">User Dashboard</Typography>
 </Box>
     )
 }
 
-export default ClientDashboard;
+export default UserDashboard;

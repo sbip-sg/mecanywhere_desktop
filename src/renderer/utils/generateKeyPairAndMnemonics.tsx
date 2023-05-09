@@ -2,13 +2,10 @@ const bip39 = require('bip39');
 const tweetnacl = require('tweetnacl');
 
 export const generateMnemonicAndKeyPair = async () => {
-  console.log("aa")
   const mnemonic = bip39.generateMnemonic();
-  console.log("bb")
   const seed = await bip39.mnemonicToSeed(mnemonic);
   const truncatedSeed = seed.slice(0, 32); // take the first 32 bytes
   const keyPair = tweetnacl.sign.keyPair.fromSeed(truncatedSeed);
-  console.log("cc")
   console.log(mnemonic, keyPair)
   return {
     mnemonic,
@@ -31,9 +28,3 @@ export function toByteArray(hexString) {
   }
   return byteArray;
 }
-
-// const test = async () => {
-//   console.log(await generateMnemonicAndKeyPair());
-// };
-
-// test();

@@ -8,7 +8,7 @@ module.exports = {
     'import/extensions': 'off',
     'import/no-unresolved': 'off',
     'import/no-import-module-exports': 'off',
-    'eslint.rules.customizations': [1],
+    "eslint.rules.customizations": [ { "rule": "*", "severity": "warn" } ] },
   },
   parserOptions: {
     ecmaVersion: 2020,
