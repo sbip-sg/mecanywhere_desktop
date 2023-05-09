@@ -11,7 +11,7 @@ import {
 import { useEffect, useState } from 'react';
 import { JobResult } from './utils/jobs';
 
-export default function ClientJobSubmission() {
+export default function UserJobSubmission() {
   const [jobContent, setJobContent] = useState('');
   const [jobResults, setJobResults] = useState<JobResult[]>([]);
 

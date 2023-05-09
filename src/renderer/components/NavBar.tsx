@@ -1,4 +1,3 @@
-import * as React from 'react';
 import {useState} from 'react'
 import Box from '@mui/material/Box';
 import Drawer from '@mui/material/Drawer';
@@ -10,7 +9,6 @@ import Typography from '@mui/material/Typography';
 import Divider from '@mui/material/Divider';
 import ListItem from '@mui/material/ListItem';
 import ListItemButton from '@mui/material/ListItemButton';
-import ListItemIcon from '@mui/material/ListItemIcon';
 import ListItemText from '@mui/material/ListItemText';
 import Avatar from '@mui/material/Avatar';
 import Menu from '@mui/material/Menu';
@@ -19,32 +17,32 @@ import Collapse from '@mui/material/Collapse';
 import ExpandLessIcon from '@mui/icons-material/ExpandLess';
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 import { useNavigate } from 'react-router-dom';
-import { Navigate } from "react-router";
 import { useSelector } from "react-redux";
 import actions from "./states/actionCreators";
-import { store } from "./states/store";
+
+
 const drawerWidth = 240;
 
 const listData = {
     documents: [
       {
         Id: 1,
-        Name: "CLIENT",
+        Name: "USER",
         Sheets: [
           {
             Id: 1,
-            Title: "Register as Client",
-            Link: "/clientregistration"
+            Title: "Register as USER",
+            Link: "/userregistration"
           },
           {
             Id: 2,
             Title: "Job Submission",
-            Link: "/clientjobsubmission"
+            Link: "/userjobsubmission"
           },
           {
             Id: 3,
             Title: "Dashboard",
-            Link: "/clientdashboard"
+            Link: "/userdashboard"
           },
         ]
       },
@@ -68,11 +66,6 @@ const listData = {
         Id: 1,
         Name: "ACCOUNT",
         Sheets: [
-            // {
-            //     Id: 1,
-            //     Title: "Wallet",
-            //     Link: "/wallet"
-            //   },
           {
             Id: 1,
             Title: "Profile",
@@ -88,16 +81,6 @@ const listData = {
             Title: "Support",
             Link: "/support"
           },
-          // {
-          //   Id: 5,
-          //   Title: "Login",
-          //   Link: "/login"
-          // },
-          // {
-          //   Id: 6,
-          //   Title: "Register",
-          //   Link: "/register"
-          // },
         ]
       }
     ]
@@ -150,18 +133,14 @@ export default function NavBar({ children }) {
     };
   
     const handleLogout = () => {
-      console.log("log out");
       handleClose();
-      actions.setUserAuthenticated(false);
-      console.log("aaa")
+      actions.setAuthenticated(false);
       navigate("/login")
-      console.log("bb")
-
     };
   
   return (
     <>
-    {useSelector((state) => state.user.authenticated) ? (
+    {useSelector((state) => state.accountUser.authenticated) ? (
     <Box sx={{ display: 'flex' }}>
       <CssBaseline />
       <AppBar position="fixed" sx={{ zIndex: (theme) => theme.zIndex.drawer + 1, height: '64px'}}>

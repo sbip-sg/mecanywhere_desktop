@@ -1,62 +1,48 @@
 import { combineReducers } from 'redux';
 
-const userReducer = (
+const accountUserReducer = (
   state = {
     publicKey: '',
-    DID: '',
+    did: '',
     authenticated: false,
+    userAccessToken: '',
+    hostAccessToken: '',
   },
   action
 ) => {
   switch (action.type) {
-    case 'setUserPublicKey':
+    case 'setPublicKey':
       return {
         ...state,
         publicKey: action.payload,
       };
-    case 'setUserDID':
+    case 'setDID':
       return {
         ...state,
-        DID: action.payload,
+        did: action.payload,
       };
-    case 'setUserAuthenticated':
+    case 'setAuthenticated':
       return {
         ...state,
         authenticated: action.payload,
       };
-    default:
-      return state;
-  }
-};
-
-
-const hostReducer = (
-  state = {
-    publicKey: '',
-    DID: '',
-  },
-  action
-) => {
-  switch (action.type) {
-    case 'setHostPublicKey':
+    case 'setUserAccessToken':
+        return {
+          ...state,
+          userAccessToken: action.payload,
+        };
+    case 'setHostAccessToken':
       return {
         ...state,
-        publicKey: action.payload,
-      };
-    case 'setHostDID':
-      return {
-        ...state,
-        DID: action.payload,
+        hostAccessToken: action.payload,
       };
     default:
       return state;
   }
 };
-
 
 const reducers = combineReducers({
-  user: userReducer,
-  host: hostReducer,
+  accountUser: accountUserReducer,
 });
 
 export default reducers;

@@ -32,7 +32,7 @@ let workerWindow: BrowserWindow | null = null;
 
 ipcMain.on('ipc-example', async (event, arg) => {
   const msgTemplate = (pingPong: string) => `IPC test: ${pingPong}`;
-  console.log(msgTemplate(arg));
+  // console.log(msgTemplate(arg));
   event.reply('ipc-example', msgTemplate('pong'));
 });
 
@@ -40,16 +40,15 @@ ipcMain.on('electron-store-get', async (event, key) => {
   const encryptedKey = store.get(key);
   //help correct the line below
   const decryptedKey = safeStorage.decryptString(Buffer.from(encryptedKey, 'latin1'))
-  console.log("decryptedPrivateKey", decryptedKey)
   event.returnValue = decryptedKey;
 });
 
 ipcMain.on('electron-store-set', async (event, key, val) => {
-  console.log("key", key)
-  console.log("val", val)
+  // console.log("key", key)
+  // console.log("val", val)
   const buffer = safeStorage.encryptString(val);
-  console.log("encryptedPrivateKey", buffer)
-  console.log("encryptedPrivateKey", buffer.toString('latin1'))
+  // console.log("encryptedPrivateKey", buffer)
+  // console.log("encryptedPrivateKey", buffer.toString('latin1'))
   store.set(key, buffer.toString('latin1'));
 });
 

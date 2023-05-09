@@ -1,21 +1,23 @@
 import { bindActionCreators } from 'redux';
-import { store } from './store';
+import { reduxStore } from './store';
 
-const setUserPublicKey = (payload) => ({ type: 'setUserPublicKey', payload });
-const setUserDID = (payload) => ({ type: 'setUserDID', payload });
-const setUserAuthenticated = (payload) => ({ type: 'setUserAuthenticated', payload });
-const setHostPublicKey = (payload) => ({ type: 'setHostPublicKey', payload });
-const setHostDID = (payload) => ({ type: 'setHostDID', payload });
+const setPublicKey = (payload) => ({ type: 'setPublicKey', payload });
+const setDID = (payload) => ({ type: 'setDID', payload });
+const setCredential = (payload) => ({ type: 'setCredential', payload });
+const setAuthenticated = (payload) => ({ type: 'setAuthenticated', payload });
+const setUserAccessToken = (payload) => ({ type: 'setUserAccessToken', payload });
+const setHostAccessToken = (payload) => ({ type: 'setHostAccessToken', payload });
 
 const boundToDoActions = bindActionCreators(
   {
-    setUserPublicKey: setUserPublicKey,
-    setUserAuthenticated: setUserAuthenticated,
-    setUserDID: setUserDID,
-    setHostPublicKey: setHostPublicKey,
-    setHostDID: setHostDID
+    setPublicKey: setPublicKey,
+    setDID: setDID,
+    setCredential: setCredential,
+    setAuthenticated: setAuthenticated,
+    setUserAccessToken: setUserAccessToken,
+    setHostAccessToken: setHostAccessToken,
   },
-  store.dispatch
+  reduxStore.dispatch
 );
 
 export default boundToDoActions;

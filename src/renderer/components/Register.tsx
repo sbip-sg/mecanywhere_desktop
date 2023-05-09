@@ -4,25 +4,32 @@ import { useState } from 'react';
 import { Formik, Form } from 'formik';
 import TextFieldWrapper from 'renderer/utils/TextField';
 import FormSchema from 'renderer/utils/FormSchema';
-import { createUser } from '../services/TestServices';
-import { useSelector } from "react-redux";
+import { createAccount } from '../services/RegistrationServices';
+import { createKeyPair } from '../services/DIDServices';
+import { useNavigate } from 'react-router-dom';
+
 const Register = () => {
     const [error, setError] = useState(null);
-    const [mnemonic, setMnemonic] = useState('');
+    const navigate = useNavigate();
+    
     const did = window.electron.store.get('did');
     const handleSubmit = async (values, formActions) => {
-        console.log("register", values)
-        const { mnemonic, publicKey, secretKey } = await generateMnemonicAndKeyPair()
-        setMnemonic(mnemonic);
-        console.log("mnemonics and keypair", mnemonic, toHexString(publicKey), toHexString(secretKey))
-        
         formActions.resetForm();
-        const {email, did, id} = await createUser({...values, public_key: toHexString(publicKey)});
-        console.log(email, did, id)
-        window.electron.store.set('publicKey', toHexString(publicKey))
-        window.electron.store.set('privateKey', toHexString(secretKey))
+        const { mnemonic, publicKey, secretKey } = await generateMnemonicAndKeyPair()
+        window.electron.store.set('publicKey-wallet', toHexString(publicKey))
+        window.electron.store.set('privateKey-wallet', toHexString(secretKey))
         window.electron.store.set('mnemonic', mnemonic)
+        // console.log("mnemonics", mnemonic, "keyPair", keyPair);
+        // console.log("pkey", publicKey, secretKey)
+        // const data = await createAccount({...values, publicKey: toHexString(publicKey)});
+        
+        const keyPair = await createKeyPair();
+        const data = await createAccount({...values, publicKey: keyPair.result.publicKey, publicKeyWallet: toHexString(publicKey)});
+        const { did, credential} = data
+        window.electron.store.set('publicKey', keyPair.result.publicKey)
+        window.electron.store.set('privateKey', keyPair.result.privateKey)
         window.electron.store.set('did', did)
+        window.electron.store.set('credential',JSON.stringify(credential.result))
         console.log("saved to electron store")
     }
 
