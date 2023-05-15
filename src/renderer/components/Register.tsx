@@ -29,7 +29,7 @@ const Register = () => {
         window.electron.store.set('publicKey', keyPair.result.publicKey)
         window.electron.store.set('privateKey', keyPair.result.privateKey)
         window.electron.store.set('did', did)
-        window.electron.store.set('credential',JSON.stringify(credential.result))
+        window.electron.store.set('credential',JSON.stringify({"credential": credential.result}))
         console.log("saved to electron store")
     }
 

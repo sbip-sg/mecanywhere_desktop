@@ -92,13 +92,14 @@ export async function heartbeat(token: string, did: string) {
 export async function assignHost(token: string, did: string) {
     try {
       console.log(`Bearer ${token}`)
+      console.log("didxx", JSON.stringify({"did": did}))
         const response = await fetch(url + "/assign_host", {
             method: "POST",
             headers: {
               'content-type': 'application/json',
               'Authorization': `Bearer ${token}`,
             },
-            body: JSON.stringify({did}),
+            body: JSON.stringify({"did": did}),
         });
         if (!response.ok) {
             throw new Error(`Failed to assign host: ${response.statusText}`);
@@ -144,7 +145,7 @@ export async function deregisterHost(token: string, did: string) {
         if (!response.ok) {
             throw new Error("Network response not ok");
         }
-        return response.ok;
+        return response;
     } catch (error) {
         console.error("There was a problem with the fetch operation:", error);
     }
@@ -182,7 +183,7 @@ export async function deregisterUser(token: string, did: string) {
         if (!response.ok) {
             throw new Error("Network response not ok");
         }
-        return response.ok;
+        return response;
     } catch (error) {
         console.error("There was a problem with the fetch operation:", error);
     }
