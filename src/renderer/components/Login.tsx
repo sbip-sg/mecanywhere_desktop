@@ -30,7 +30,7 @@ const Login = () => {
         if (res === true) {
             console.log("User authenticated")
             actions.setAuthenticated(true);
-            navigate("/clientjobsubmission")
+            navigate("/userjobsubmission")
         } else {
             console.log("User not authenticated")
             setError("Authentication failed. Please check your credentials.");

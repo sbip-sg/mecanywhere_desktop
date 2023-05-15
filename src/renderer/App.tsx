@@ -1,8 +1,6 @@
 import { MemoryRouter as Router, Routes, Route } from "react-router-dom";
 import { Outlet, Navigate } from "react-router";
 import UserJobSubmission from "./components/UserJobSubmission";
-import UserRegistration from "./components/UserRegistration";
-import HostRegistration from "./components/HostRegistration";
 import UserDashboard from "./components/UserDashboard";
 import HostDashboard from "./components/HostDashboard";
 import NavBar from "./components/NavBar"
@@ -27,9 +25,7 @@ export default function App() {
           <Route path="/register" element={<Register />} />
           <Route element={<PrivateRoutes />}>
               <Route path="/userjobsubmission" element={<UserJobSubmission />} />
-              <Route path="/userregistration" element={<UserRegistration />} />
               <Route path="/userdashboard" element={<UserDashboard />} />
-              <Route path="/hostregistration" element={<HostRegistration />} />
               <Route path="/hostdashboard" element={<HostDashboard />} />
               <Route path="/profile" element={<Profile />} />
               <Route path="/billing" element={<Billing />} />

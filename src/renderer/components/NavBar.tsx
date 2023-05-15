@@ -10,81 +10,22 @@ import Divider from '@mui/material/Divider';
 import ListItem from '@mui/material/ListItem';
 import ListItemButton from '@mui/material/ListItemButton';
 import ListItemText from '@mui/material/ListItemText';
-import Avatar from '@mui/material/Avatar';
+import Button from '@mui/material/Button';
 import Menu from '@mui/material/Menu';
-import MenuItem from '@mui/material/MenuItem';
 import Collapse from '@mui/material/Collapse';
 import ExpandLessIcon from '@mui/icons-material/ExpandLess';
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 import { useNavigate } from 'react-router-dom';
 import { useSelector } from "react-redux";
 import actions from "./states/actionCreators";
-
+import clientIcon from '../../../assets/icon-client.png';
+import hostIcon from '../../../assets/icon-host.png';
+import noroleIcon from '../../../assets/icon-norole.png';
+import bothroleIcon from '../../../assets/icon-bothrole.png';
+import { handleRegisterClient, handleRegisterHost, handleDeregisterClient, handleDeregisterHost } from './utils/handleRegistration';
+import {NavBarItems} from './utils/NavBarItems'
 
 const drawerWidth = 240;
-
-const listData = {
-    documents: [
-      {
-        Id: 1,
-        Name: "USER",
-        Sheets: [
-          {
-            Id: 1,
-            Title: "Register as USER",
-            Link: "/userregistration"
-          },
-          {
-            Id: 2,
-            Title: "Job Submission",
-            Link: "/userjobsubmission"
-          },
-          {
-            Id: 3,
-            Title: "Dashboard",
-            Link: "/userdashboard"
-          },
-        ]
-      },
-      {
-        Id: 1,
-        Name: "HOST",
-        Sheets: [
-          {
-            Id: 1,
-            Title: "Register as Host",
-            Link: "/hostregistration"
-          },
-          {
-            Id: 2,
-            Title: "Dashboard",
-            Link: "/hostdashboard"
-          },
-        ]
-      },
-      {
-        Id: 1,
-        Name: "ACCOUNT",
-        Sheets: [
-          {
-            Id: 1,
-            Title: "Profile",
-            Link: "/profile"
-          },
-          {
-            Id: 2,
-            Title: "Billing Information",
-            Link: "/billing"
-          },
-          {
-            Id: 3,
-            Title: "Support",
-            Link: "/support"
-          },
-        ]
-      }
-    ]
-  };
 
   const CustomizedListItem = ({ doc }) => {
     const [open, setOpen] = useState(false);
@@ -119,11 +60,40 @@ const listData = {
     );
   };
   
+  const CustomButton = ({ onClick, actionText, buttonText }) => (
+    <Button
+    onClick={onClick}
+    variant="contained"
+    color="primary"
+    style={{ marginRight: '8px',}}
+    sx={{
+      display: 'flex',
+      flexDirection: 'column',
+      alignItems: 'center',
+      textAlign: 'center',
+      width: '7rem'
+    }}
+  >
+    <Box>
+      {actionText && (
+        <Typography variant="body1" component="span" display="block" style={{ fontSize: '12px' }}>
+          {actionText}
+        </Typography>
+      )}
+      <Typography variant="body1" component="span" display="block" style={{ fontSize: '12px' }}>
+        {buttonText}
+      </Typography>
+    </Box>
+  </Button>
+  );
 
 export default function NavBar({ children }) {
-    const docs = listData.documents
+    const docs = NavBarItems.documents
     const [anchorEl, setAnchorEl] = useState(null);
     const navigate = useNavigate();
+    const isHost = useSelector((state) => state.accountUser.hostAccessToken).length !== 0
+    const isClient = useSelector((state) => state.accountUser.userAccessToken).length !== 0
+    
     const handleClick = (event) => {
       setAnchorEl(event.currentTarget);
     };
@@ -143,6 +113,7 @@ export default function NavBar({ children }) {
     {useSelector((state) => state.accountUser.authenticated) ? (
     <Box sx={{ display: 'flex' }}>
       <CssBaseline />
+      
       <AppBar position="fixed" sx={{ zIndex: (theme) => theme.zIndex.drawer + 1, height: '64px'}}>
         <Toolbar sx={{
         display: "flex",
@@ -152,17 +123,60 @@ export default function NavBar({ children }) {
           <Typography variant="h6" noWrap component="div">
             MECAnywhere
           </Typography>
-          <Avatar sx={{ bgcolor: "primary.main", mr: 2, cursor: "pointer", // Add this line to change cursor to pointer on hover
-    "&:hover": {
-      bgcolor: "primary.dark"
-    }}} onClick={handleClick} >
-            {/* Add your avatar icon here */}
-          </Avatar>
+
+          <Box sx={{display: "flex", alignItems: "center", justifyContent: "right", width: "75px", height: "75px"}}>
+
+          <Button onClick={handleClick}>
+          <img
+            src={isHost && isClient
+              ? bothroleIcon
+              : isHost
+              ? hostIcon
+              : isClient
+              ? clientIcon
+              : noroleIcon}
+            alt="Image"
+            style={{ width: '100%', height: '100%', objectFit: 'cover' }}
+          />
+        </Button>
+     
+          </Box>
           <Menu anchorEl={anchorEl} open={Boolean(anchorEl)} onClose={handleClose}>
-            <MenuItem onClick={handleLogout}>Log out</MenuItem>
-          </Menu>
+          <List>
+  <ListItem>
+    <Box display="flex" justifyContent="center" marginTop={2} width="100%">
+      
+      <ListItemText>
+        {isHost && isClient
+          ? 'Registered as both client and host'
+          : isHost
+          ? 'Registered as host'
+          : isClient
+          ? 'Registered as client'
+          : 'Currently not registered'}
+      </ListItemText>
+    </Box>
+  </ListItem>
+
+  <ListItem style={{ paddingTop: '0' }}>
+  <Box display="flex" justifyContent="center" flexWrap="wrap" width="100%">
+  {isClient 
+  ? <CustomButton onClick={handleDeregisterClient} actionText="Deregister" buttonText="as Client" /> 
+  : <CustomButton onClick={handleRegisterClient} actionText="Register" buttonText="as Client" />}
+  {isHost 
+  ? <CustomButton onClick={handleDeregisterHost} actionText="Deregister" buttonText="as Host" /> 
+  : <CustomButton onClick={handleRegisterHost} actionText="Register" buttonText="as Host" />}
+  
+</Box>
+  </ListItem>
+  <ListItemButton onClick={handleLogout}>
+    <ListItemText primary="Log out" />
+  </ListItemButton>
+</List>
+      </Menu>
         </Toolbar>
       </AppBar>
+      
       <Drawer
         variant="permanent"
         sx={{
@@ -179,6 +193,7 @@ export default function NavBar({ children }) {
         })}
       </List>
         </Box>
+        
       </Drawer>
       <Box sx={{ flexGrow: 1, position: "relative", top: "64px", height: "100%"}}>
         {children}

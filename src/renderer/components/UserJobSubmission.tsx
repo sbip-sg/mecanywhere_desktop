@@ -1,19 +1,25 @@
-import {
-  Typography,
-  Grid,
-  Button,
-  Box,
-  FormControl,
-  FormLabel,
-  TextField,
-  Alert,
-} from '@mui/material';
+import Typography from '@mui/material/Typography';
+import Grid from '@mui/material/Grid';
+import Button from '@mui/material/Button';
+import Box from '@mui/material/Box';
+import FormControl from '@mui/material/FormControl';
+import FormLabel from '@mui/material/FormLabel';
+import TextField from '@mui/material/TextField';
+import Alert from '@mui/material/Alert';
+import Dialog from '@mui/material/Dialog';
+import DialogTitle from '@mui/material/DialogTitle';
+import DialogContent from '@mui/material/DialogContent';
+import DialogActions from '@mui/material/DialogActions';
 import { useEffect, useState } from 'react';
 import { JobResult } from './utils/jobs';
+import { useSelector } from "react-redux";
+import { handleRegisterClient } from './utils/handleRegistration';
 
 export default function UserJobSubmission() {
   const [jobContent, setJobContent] = useState('');
   const [jobResults, setJobResults] = useState<JobResult[]>([]);
+  const [open, setOpen] = useState(false);
+  const userAccessToken = useSelector((state) => state.accountUser.userAccessToken);
 
   useEffect(() => {
     window.electron.onSubscribeJobResults((_event, id, result) => {
@@ -33,11 +39,9 @@ export default function UserJobSubmission() {
     );
   };
 
-  const handleJobSubmit = async (e) => {
-    e.preventDefault();
+  const submitJob = async () => {
     const id = generateUuid();
     const status = await window.electron.publishJob(id, jobContent);
-
     setJobResults((prevJobResults) => [
       ...prevJobResults,
       {
@@ -47,7 +51,26 @@ export default function UserJobSubmission() {
     ]);
   };
 
-  const clear = () => {
+  const handleJobSubmit = async (e) => {
+    e.preventDefault();
+    if (userAccessToken.length === 0) {
+      setOpen(true);
+    } else {
+      await submitJob();
+    }
+  };
+    
+  const handleCloseDialog = () => {
+    setOpen(false);
+  };
+
+  const handleRegisterClientAndSubmitJob = async () => {
+    await handleRegisterClient(); // Handle registration
+    await submitJob(); 
+    setOpen(false); // Close the dialog
+  };
+
+  const handleClear = () => {
     setJobResults([]);
   };
 
@@ -82,10 +105,22 @@ export default function UserJobSubmission() {
             </Button>
           </FormControl>
         </form>
+        <Dialog open={open} onClose={handleCloseDialog}>
+        <DialogTitle>Client Registration Required</DialogTitle>
+        <DialogContent>
+          <Typography variant="body1">You need to be registered to submit a job. Please register as a client.</Typography>
+        </DialogContent>
+        <DialogActions>
+          <Button onClick={handleCloseDialog}>Cancel</Button>
+          <Button onClick={handleRegisterClientAndSubmitJob} autoFocus>
+            Register as Client
+          </Button>
+        </DialogActions>
+      </Dialog>
         <Grid>
           <Typography>
             Job Results
-            <Button onClick={clear}>Clear</Button>
+            <Button onClick={handleClear}>Clear</Button>
           </Typography>
           {jobResults.map((result) => {
             return (
