@@ -39,7 +39,7 @@ function HostDashboard() {
     >
       <Typography fontSize="24px">
         Host Dashboard
-        <Button onClick={clear}>Clear</Button>
+        {/* <Button onClick={clear}>Clear</Button> */}
       </Typography>
       {jobs.map((result) => {
         return (
@@ -49,6 +49,18 @@ function HostDashboard() {
           </Alert>
         );
       })}
+      <Box
+            sx={{
+                display: "flex",
+                justifyContent: "center",
+                flexDirection: "column",
+                alignItems: "center",
+                height: "100%",
+                marginTop: "1rem"
+            }}
+            >
+          <Button fullWidth variant="contained" color="secondary" onClick={clear}>Clear Job</Button>
+            </Box>
     </Box>
   );
 }

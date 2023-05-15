@@ -32,6 +32,7 @@ const configuration: webpack.Configuration = {
     ],
   },
 
+
   output: {
     path: webpackPaths.srcPath,
     // https://github.com/webpack/webpack/issues/1114
