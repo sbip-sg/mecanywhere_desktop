@@ -40,7 +40,7 @@ export const handleRegisterHost = async () => {
         const { access_token } = response;
         actions.setHostAccessToken(access_token);
         console.log("responseHost", response)
-        if (response && response.ok) {
+        if (response) {
             window.electron.startConsumer(did);
         }
     }
@@ -52,7 +52,7 @@ export const handleDeregisterClient= async () => {
     const accessToken = reduxStore.getState().accountUser.userAccessToken;
     const response = await deregisterUser(accessToken, did)
     console.log("response", response);
-    if (response && response.ok) {   
+    if (response && response.ok) {
         actions.setUserAccessToken("");
     }
 };
@@ -63,7 +63,7 @@ export const handleDeregisterHost= async () => {
     const accessToken = reduxStore.getState().accountUser.hostAccessToken;
     const response = await deregisterHost(accessToken, did)
     console.log("response", response);
-    if (response && response.ok) {   
+    if (response && response.ok) {
         actions.setHostAccessToken("");
     }
 };
