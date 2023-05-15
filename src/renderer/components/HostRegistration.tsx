@@ -1,7 +1,14 @@
-import { Button, Typography, Stack, Grid, Box, ToggleButton } from '@mui/material';
+import {
+  Button,
+  Typography,
+  Stack,
+  Grid,
+  Box,
+  ToggleButton,
+} from '@mui/material';
 import CheckIcon from '@mui/icons-material/Check';
 import { useState } from 'react';
-import actions from "./states/actionCreators";
+import actions from './states/actionCreators';
 import { reduxStore } from './states/store';
 import { registerHost, deregisterHost } from '../services/RegistrationServices';
 
@@ -9,23 +16,31 @@ export default function HostRegistration() {
   const [registered, setRegistered] = useState(false);
   const handleRegisterHost = async () => {
     const credential = JSON.parse(window.electron.store.get('credential'));
-    if (credential) {
-        actions.setCredential(credential);
-        const response = await registerHost({ credential });
-        const { access_token } = response;
+    const { did } = reduxStore.getState().accountUser;
+    if (credential && did) {
+      actions.setCredential(credential);
+      const registrationRes = await registerHost(did, credential);
+      console.log('registration response:', registrationRes);
+      if (registrationRes) {
+        const { access_token } = registrationRes;
         actions.setHostAccessToken(access_token);
-        console.log("response", response)
-        if (response.ok) {
-            setRegistered(true);
-            window.electron.startConsumer('rpc_queue');
-        }
-    }      
+        window.electron.startConsumer(did);
+        setRegistered(true);
+      }
+    }
   };
+
   const handleDeregisterHost = async () => {
-    const response = await deregisterHost(reduxStore.getState().accountUser.hostAccessToken)
-    console.log("response", response);
-    setRegistered(false)
-  }
+    const { did } = reduxStore.getState().accountUser;
+    const responseSuccess = await deregisterHost(
+      reduxStore.getState().accountUser.hostAccessToken,
+      did
+    );
+    if (responseSuccess) {
+      setRegistered(false);
+    }
+  };
+
   return (
     <Grid container spacing={3} sx={{ margin: '0 0 0.5rem 0' }}>
       <Grid item xs={3} />
@@ -45,7 +60,7 @@ export default function HostRegistration() {
             sx={{ minWidth: '10rem', width: '50%' }}
             value="check"
             selected={registered}
-            onChange={handleRegisterHost}
+            onChange={registered ? handleDeregisterHost : handleRegisterHost}
           >
             {registered ? (
               <>
