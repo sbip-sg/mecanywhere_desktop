@@ -24,6 +24,7 @@ import noroleIcon from '../../../assets/icon-norole.png';
 import bothroleIcon from '../../../assets/icon-bothrole.png';
 import { handleRegisterClient, handleRegisterHost, handleDeregisterClient, handleDeregisterHost } from './utils/handleRegistration';
 import {NavBarItems} from './utils/NavBarItems'
+import { deleteAccount } from './utils/deleteAccount';
 
 const drawerWidth = 240;
 
@@ -38,7 +39,7 @@ const drawerWidth = 240;
       <div>
         <ListItem key={doc.Id} onClick={handleClick} disablePadding>
         <ListItemButton >
-          <ListItemText primary={<Typography sx={{ fontWeight: 'bold', fontSize: '15px' }}>{doc.Name}</Typography>} />
+          <ListItemText primary={<Typography variant="body1">{doc.Name}</Typography>} />
           {open ? <ExpandLessIcon /> : <ExpandMoreIcon />}
           </ListItemButton>
         </ListItem>
@@ -71,7 +72,7 @@ const drawerWidth = 240;
       flexDirection: 'column',
       alignItems: 'center',
       textAlign: 'center',
-      width: '7rem'
+      width: '9rem'
     }}
   >
     <Box>
@@ -107,6 +108,14 @@ export default function NavBar({ children }) {
       actions.setAuthenticated(false);
       navigate("/login")
     };
+
+    const handleDeleteAccount = () => {
+      handleClose();
+      deleteAccount()
+      actions.setAuthenticated(false);
+      navigate("/register")
+    };
+  
   
   return (
     <>
@@ -120,11 +129,11 @@ export default function NavBar({ children }) {
         alignItems: "center",
         justifyContent: "space-between"
       }}>
-          <Typography variant="h6" noWrap component="div">
+          <Typography variant="h1" noWrap component="div">
             MECAnywhere
           </Typography>
 
-          <Box sx={{display: "flex", alignItems: "center", justifyContent: "right", width: "75px", height: "75px"}}>
+          <Box sx={{display: "flex", alignItems: "center", justifyContent: "right", width: "60px", height: "60px"}}>
 
           <Button onClick={handleClick}>
           <img
@@ -144,33 +153,39 @@ export default function NavBar({ children }) {
           <Menu anchorEl={anchorEl} open={Boolean(anchorEl)} onClose={handleClose}>
           <List>
   <ListItem>
-    <Box display="flex" justifyContent="center" marginTop={2} width="100%">
+    <Box display="flex" justifyContent="center" width="100%" style={{ paddingTop: '0', paddingBottom: "0" }}>
       
-      <ListItemText>
-        {isHost && isClient
-          ? 'Registered as both client and host'
-          : isHost
-          ? 'Registered as host'
-          : isClient
-          ? 'Registered as client'
-          : 'Currently not registered'}
-      </ListItemText>
+    <ListItemText>
+    <Typography fontStyle="italic">
+      {isHost && isClient
+        ? 'Registered as both client and host'
+        : isHost
+        ? 'Registered as host'
+        : isClient
+        ? 'Registered as client'
+        : 'Currently not registered'}
+    </Typography>
+  </ListItemText>
     </Box>
   </ListItem>
 
-  <ListItem style={{ paddingTop: '0' }}>
+  <ListItem style={{ paddingTop: '0', marginBottom: "1rem" }}>
   <Box display="flex" justifyContent="center" flexWrap="wrap" width="100%">
-  {isClient 
-  ? <CustomButton onClick={handleDeregisterClient} actionText="Deregister" buttonText="as Client" /> 
-  : <CustomButton onClick={handleRegisterClient} actionText="Register" buttonText="as Client" />}
-  {isHost 
-  ? <CustomButton onClick={handleDeregisterHost} actionText="Deregister" buttonText="as Host" /> 
-  : <CustomButton onClick={handleRegisterHost} actionText="Register" buttonText="as Host" />}
-  
-</Box>
+    {isClient 
+    ? <CustomButton onClick={handleDeregisterClient} actionText="Deregister" buttonText="as Client" /> 
+    : <CustomButton onClick={handleRegisterClient} actionText="Register" buttonText="as Client" />}
+    {isHost 
+    ? <CustomButton onClick={handleDeregisterHost} actionText="Deregister" buttonText="as Host" /> 
+    : <CustomButton onClick={handleRegisterHost} actionText="Register" buttonText="as Host" />}
+    
+  </Box>
   </ListItem>
+  <Divider />
   <ListItemButton onClick={handleLogout}>
-    <ListItemText primary="Log out" />
+    <ListItemText primary="Log out"  sx={{ textAlign: 'center' }}/>
+  </ListItemButton>
+  <ListItemButton onClick={handleDeleteAccount}>
+    <ListItemText primary="Delete account"  sx={{ textAlign: 'center' }}/>
   </ListItemButton>
 </List>
       </Menu>

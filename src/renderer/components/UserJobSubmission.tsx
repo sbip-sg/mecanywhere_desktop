@@ -86,11 +86,11 @@ export default function UserJobSubmission() {
             marginBottom: '0.5rem',
           }}
         >
-          <Typography fontSize="24px">Submit Jobs</Typography>
+          <Typography marginTop="1rem" variant="body1" fontSize="36px">Submit Jobs</Typography>
         </Box>
         <form onSubmit={handleJobSubmit}>
-          <FormControl>
-            <FormLabel>Job</FormLabel>
+          <FormControl sx={{ marginBottom: '1rem', marginTop: "0.5rem" }}>
+            <FormLabel>Please enter your Python function or code snippet:</FormLabel>
             <TextField
               onChange={(e) => setJobContent(e.target.value)}
               multiline
@@ -99,7 +99,8 @@ export default function UserJobSubmission() {
               fullWidth
               variant="contained"
               type="submit"
-              sx={{ backgroundColor: 'purple' }}
+              color="secondary"
+              sx={{ marginTop: '1rem' }}
             >
               Submit Job
             </Button>
@@ -120,7 +121,7 @@ export default function UserJobSubmission() {
         <Grid>
           <Typography>
             Job Results
-            <Button onClick={handleClear}>Clear</Button>
+            
           </Typography>
           {jobResults.map((result) => {
             return (
@@ -130,6 +131,18 @@ export default function UserJobSubmission() {
               </Alert>
             );
           })}
+           <Box
+            sx={{
+                display: "flex",
+                justifyContent: "center",
+                flexDirection: "column",
+                alignItems: "center",
+                height: "100%",
+                marginTop: "1rem"
+            }}
+            >
+          <Button fullWidth variant="contained" color="secondary" onClick={handleClear}>Clear Job</Button>
+            </Box>
         </Grid>
       </Grid>
     </Grid>

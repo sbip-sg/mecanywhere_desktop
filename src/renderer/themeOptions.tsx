@@ -7,9 +7,12 @@ const themeOptions: ThemeOptions = {
     },
     primary: {
       //blue
-      light: `#849BBB`,
-      main: `#1D2939`,
-      dark: `#121A25`,
+      light: `#333333`,
+      main: `#333333`,
+      dark: `#333333`,
+      // light: `#849BBB`,
+      // main: `#1D2939`,
+      // dark: `#121A25`,
       contrastText: `#FFFFFF`,
     },
     secondary: {
@@ -30,8 +33,8 @@ const themeOptions: ThemeOptions = {
     ].join(`,`),
     fontSize: 16,
     h1: {
-      letterSpacing: `1em`,
-      fontSize: `2rem`,
+      letterSpacing: `0.2em`,
+      fontSize: `1.6rem`,
     },
     h2: {
       letterSpacing: `1em`,
@@ -39,7 +42,7 @@ const themeOptions: ThemeOptions = {
     },
     body1: {
       // letterSpacing: '1em',
-      fontSize: `1.2rem`,
+      fontSize: `1.1rem`,
     },
     button: {
       fontWeight: 500,
