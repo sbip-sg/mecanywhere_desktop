@@ -27,10 +27,10 @@ const accountUserReducer = (
         authenticated: action.payload,
       };
     case 'setUserAccessToken':
-        return {
-          ...state,
-          userAccessToken: action.payload,
-        };
+      return {
+        ...state,
+        userAccessToken: action.payload,
+      };
     case 'setHostAccessToken':
       return {
         ...state,

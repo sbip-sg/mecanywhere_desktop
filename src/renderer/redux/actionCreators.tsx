@@ -5,8 +5,14 @@ const setPublicKey = (payload) => ({ type: 'setPublicKey', payload });
 const setDID = (payload) => ({ type: 'setDID', payload });
 const setCredential = (payload) => ({ type: 'setCredential', payload });
 const setAuthenticated = (payload) => ({ type: 'setAuthenticated', payload });
-const setUserAccessToken = (payload) => ({ type: 'setUserAccessToken', payload });
-const setHostAccessToken = (payload) => ({ type: 'setHostAccessToken', payload });
+const setUserAccessToken = (payload) => ({
+  type: 'setUserAccessToken',
+  payload,
+});
+const setHostAccessToken = (payload) => ({
+  type: 'setHostAccessToken',
+  payload,
+});
 
 const boundToDoActions = bindActionCreators(
   {

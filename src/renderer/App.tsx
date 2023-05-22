@@ -1,47 +1,59 @@
-import { MemoryRouter as Router, Routes, Route } from "react-router-dom";
-import { Outlet, Navigate } from "react-router";
-import { useEffect } from 'react'
-import UserJobSubmission from "./components/UserJobSubmission";
-import UserDashboard from "./components/UserDashboard";
-import HostDashboard from "./components/HostDashboard";
-import NavBar from "./components/NavBar"
-import Profile from "./components/Profile";
-import Billing from "./components/Billing";
-import Support from "./components/Support";
-import Login from "./components/Login";
-import Register from "./components/Register";
-import { useSelector } from "react-redux";
-import { useNavigate } from 'react-router-dom';
-import Mnemonics from "./components/Mnemonics";
+import {
+  MemoryRouter as Router,
+  Routes,
+  Route,
+} from 'react-router-dom';
+import { Outlet, Navigate } from 'react-router';
+import { lazy, Suspense } from 'react';
+import { useSelector } from 'react-redux';
+import NavBar from './components/navigation/NavBar';
+
+const Register = lazy(() => import('./components/auth/Register'));
+const Login = lazy(() => import('./components/auth/Login'));
+const Mnemonics = lazy(() => import('./components/auth/Mnemonics'));
+const UserJobSubmission = lazy(() => import('./components/client/UserJobSubmission'));
+const UserDashboard = lazy(() => import('./components/client/UserDashboard'));
+const HostDashboard = lazy(() => import('./components/host/HostDashboard'));
+const Profile = lazy(() => import('./components/profile/Profile'));
+const Billing = lazy(() => import('./components/payment/Billing'));
+const Support = lazy(() => import('./components/misc/Support'));
 
 function PrivateRoutes({ element, ...rest }) {
-  return useSelector((state) => state.accountUser.authenticated) ? <Outlet /> : <Navigate to="/Userjobsubmission" />
+  return useSelector((state) => state.accountUser.authenticated) ? (
+    <Outlet />
+  ) : (
+    <Navigate to="/Userjobsubmission" />
+  );
 }
 
 export default function App() {
-  
   return (
     <Router>
+      <Suspense fallback={<div>Loading...</div>}>
         <NavBar>
-      <Routes>
-          {window.electron.store.get('did') === "" ? (
-            <Route path="/" element={<Register />} />
-          ) : (
-            <Route path="/" element={<Login />} />
-          )}
-          <Route path="/login" element={<Login />} />
-          <Route path="/register" element={<Register />} />
-          <Route path="/mnemonics" element={<Mnemonics />} />
-          <Route element={<PrivateRoutes />}>
-              <Route path="/userjobsubmission" element={<UserJobSubmission />} />
+          <Routes>
+            {window.electron.store.get('did') === '' ? (
+              <Route path="/" element={<Register />} />
+            ) : (
+              <Route path="/" element={<Login />} />
+            )}
+            <Route path="/login" element={<Login />} />
+            <Route path="/register" element={<Register />} />
+            <Route path="/mnemonics" element={<Mnemonics />} />
+            <Route element={<PrivateRoutes />}>
+              <Route
+                path="/userjobsubmission"
+                element={<UserJobSubmission />}
+              />
               <Route path="/userdashboard" element={<UserDashboard />} />
               <Route path="/hostdashboard" element={<HostDashboard />} />
               <Route path="/profile" element={<Profile />} />
               <Route path="/billing" element={<Billing />} />
               <Route path="/support" element={<Support />} />
-              </Route>
+            </Route>
           </Routes>
         </NavBar>
+      </Suspense>
     </Router>
   );
 }
