@@ -2,7 +2,6 @@ const url = process.env.REGISTRATION_SERVICE_API_URL;
 
 export async function createAccount(data) {
   try {
-    console.log(JSON.stringify(data));
     const response = await fetch(url + '/create_account', {
       method: 'POST',
       credentials: 'include',
@@ -24,7 +23,6 @@ export async function createAccount(data) {
 
 export async function createChallenge(data) {
   try {
-    console.log(JSON.stringify(data));
     const response = await fetch(url + '/create_challenge', {
       method: 'POST',
       credentials: 'include',
@@ -46,7 +44,6 @@ export async function createChallenge(data) {
 
 export async function verifyResponse(data) {
   try {
-    console.log(JSON.stringify(data));
     const response = await fetch(url + '/verify_response', {
       method: 'POST',
       credentials: 'include',
@@ -87,8 +84,6 @@ export async function heartbeat(token: string, did: string) {
 
 export async function assignHost(token: string, did: string) {
   try {
-    console.log(`Bearer ${token}`);
-    console.log('didxx', JSON.stringify({ did: did }));
     const response = await fetch(url + '/assign_host', {
       method: 'POST',
       headers: {
