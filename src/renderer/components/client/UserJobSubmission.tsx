@@ -11,15 +11,17 @@ import DialogTitle from '@mui/material/DialogTitle';
 import DialogContent from '@mui/material/DialogContent';
 import DialogActions from '@mui/material/DialogActions';
 import { useEffect, useState } from 'react';
-import { JobResult } from './utils/jobs';
-import { useSelector } from "react-redux";
-import { handleRegisterClient } from './utils/handleRegistration';
+import { JobResult } from '../../utils/jobs';
+import { useSelector } from 'react-redux';
+import { handleRegisterClient } from '../../utils/handleRegistration';
 
 export default function UserJobSubmission() {
   const [jobContent, setJobContent] = useState('');
   const [jobResults, setJobResults] = useState<JobResult[]>([]);
   const [open, setOpen] = useState(false);
-  const userAccessToken = useSelector((state) => state.accountUser.userAccessToken);
+  const userAccessToken = useSelector(
+    (state) => state.accountUser.userAccessToken
+  );
 
   useEffect(() => {
     window.electron.onSubscribeJobResults((_event, id, result) => {
@@ -59,14 +61,14 @@ export default function UserJobSubmission() {
       await submitJob();
     }
   };
-    
+
   const handleCloseDialog = () => {
     setOpen(false);
   };
 
   const handleRegisterClientAndSubmitJob = async () => {
     await handleRegisterClient(); // Handle registration
-    await submitJob(); 
+    await submitJob();
     setOpen(false); // Close the dialog
   };
 
@@ -86,11 +88,15 @@ export default function UserJobSubmission() {
             marginBottom: '0.5rem',
           }}
         >
-          <Typography marginTop="1rem" variant="body1" fontSize="36px">Submit Jobs</Typography>
+          <Typography marginTop="1rem" variant="body1" fontSize="36px">
+            Submit Jobs
+          </Typography>
         </Box>
         <form onSubmit={handleJobSubmit}>
-          <FormControl sx={{ marginBottom: '1rem', marginTop: "0.5rem" }}>
-            <FormLabel>Please enter your Python function or code snippet:</FormLabel>
+          <FormControl sx={{ marginBottom: '1rem', marginTop: '0.5rem' }}>
+            <FormLabel>
+              Please enter your Python function or code snippet:
+            </FormLabel>
             <TextField
               onChange={(e) => setJobContent(e.target.value)}
               multiline
@@ -107,22 +113,22 @@ export default function UserJobSubmission() {
           </FormControl>
         </form>
         <Dialog open={open} onClose={handleCloseDialog}>
-        <DialogTitle>Client Registration Required</DialogTitle>
-        <DialogContent>
-          <Typography variant="body1">You need to be registered to submit a job. Please register as a client.</Typography>
-        </DialogContent>
-        <DialogActions>
-          <Button onClick={handleCloseDialog}>Cancel</Button>
-          <Button onClick={handleRegisterClientAndSubmitJob} autoFocus>
-            Register as Client
-          </Button>
-        </DialogActions>
-      </Dialog>
+          <DialogTitle>Client Registration Required</DialogTitle>
+          <DialogContent>
+            <Typography variant="body1">
+              You need to be registered to submit a job. Please register as a
+              client.
+            </Typography>
+          </DialogContent>
+          <DialogActions>
+            <Button onClick={handleCloseDialog}>Cancel</Button>
+            <Button onClick={handleRegisterClientAndSubmitJob} autoFocus>
+              Register as Client
+            </Button>
+          </DialogActions>
+        </Dialog>
         <Grid>
-          <Typography>
-            Job Results
-            
-          </Typography>
+          <Typography>Job Results</Typography>
           {jobResults.map((result) => {
             return (
               <Alert key={result.id}>
@@ -131,18 +137,25 @@ export default function UserJobSubmission() {
               </Alert>
             );
           })}
-           <Box
+          <Box
             sx={{
-                display: "flex",
-                justifyContent: "center",
-                flexDirection: "column",
-                alignItems: "center",
-                height: "100%",
-                marginTop: "1rem"
+              display: 'flex',
+              justifyContent: 'center',
+              flexDirection: 'column',
+              alignItems: 'center',
+              height: '100%',
+              marginTop: '1rem',
             }}
+          >
+            <Button
+              fullWidth
+              variant="contained"
+              color="secondary"
+              onClick={handleClear}
             >
-          <Button fullWidth variant="contained" color="secondary" onClick={handleClear}>Clear Job</Button>
-            </Box>
+              Clear Job
+            </Button>
+          </Box>
         </Grid>
       </Grid>
     </Grid>

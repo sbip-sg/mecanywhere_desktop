@@ -2,7 +2,6 @@ import { useState } from 'react';
 import { Box, Typography, IconButton } from '@mui/material';
 import VisibilityIcon from '@mui/icons-material/Visibility';
 
-
 const SeedPhraseReveal = ({ seedPhrase }) => {
   const [reveal, setReveal] = useState(false);
 
@@ -11,7 +10,14 @@ const SeedPhraseReveal = ({ seedPhrase }) => {
   };
 
   return (
-    <Box maxWidth="25rem" display="inline-flex" flexWrap="wrap" bgcolor="#f0f0f0" p={2} borderRadius={1}>
+    <Box
+      maxWidth="25rem"
+      display="inline-flex"
+      flexWrap="wrap"
+      bgcolor="#f0f0f0"
+      p={2}
+      borderRadius={1}
+    >
       {reveal ? (
         seedPhrase.map((word, index) => (
           <Typography key={index} variant="body1" color="textPrimary" mr={1}>

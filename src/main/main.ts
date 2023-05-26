@@ -39,7 +39,9 @@ ipcMain.on('ipc-example', async (event, arg) => {
 ipcMain.on('electron-store-get', async (event, key) => {
   const encryptedKey = store.get(key);
   //help correct the line below
-  const decryptedKey = safeStorage.decryptString(Buffer.from(encryptedKey, 'latin1'))
+  const decryptedKey = safeStorage.decryptString(
+    Buffer.from(encryptedKey, 'latin1')
+  );
   event.returnValue = decryptedKey;
 });
 
@@ -135,7 +137,7 @@ const createWindow = async () => {
       preload: app.isPackaged
         ? path.join(__dirname, 'preload.js')
         : path.join(__dirname, '../../.erb/dll/preload.js'),
-      webSecurity: false
+      webSecurity: false,
     },
   });
 

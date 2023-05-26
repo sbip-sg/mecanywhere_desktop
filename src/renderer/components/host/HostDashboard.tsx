@@ -1,6 +1,6 @@
 import { Alert, Box, Button, Typography } from '@mui/material';
 import { useEffect, useState } from 'react';
-import { Job, JobResult } from './utils/jobs';
+import { Job, JobResult } from '../../utils/jobs';
 
 function HostDashboard() {
   const [jobs, setJobs] = useState<Job[]>([]);
@@ -50,17 +50,19 @@ function HostDashboard() {
         );
       })}
       <Box
-            sx={{
-                display: "flex",
-                justifyContent: "center",
-                flexDirection: "column",
-                alignItems: "center",
-                height: "100%",
-                marginTop: "1rem"
-            }}
-            >
-          <Button fullWidth variant="contained" color="secondary" onClick={clear}>Clear Job</Button>
-            </Box>
+        sx={{
+          display: 'flex',
+          justifyContent: 'center',
+          flexDirection: 'column',
+          alignItems: 'center',
+          height: '100%',
+          marginTop: '1rem',
+        }}
+      >
+        <Button fullWidth variant="contained" color="secondary" onClick={clear}>
+          Clear Job
+        </Button>
+      </Box>
     </Box>
   );
 }
