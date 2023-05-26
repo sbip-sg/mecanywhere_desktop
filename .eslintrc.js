@@ -8,7 +8,7 @@ module.exports = {
     'import/extensions': 'off',
     'import/no-unresolved': 'off',
     'import/no-import-module-exports': 'off',
-    "eslint.rules.customizations": [ { "rule": "*", "severity": "warn" } ] ,
+    'eslint.rules.customizations': [{ rule: '*', severity: 'warn' }],
   },
   parserOptions: {
     ecmaVersion: 2020,
@@ -30,5 +30,5 @@ module.exports = {
       '@typescript-eslint/parser': ['.ts', '.tsx'],
     },
   },
-  plugins: ['only-warn']
+  plugins: ['only-warn'],
 };

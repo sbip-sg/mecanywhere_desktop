@@ -21,27 +21,22 @@ const CustomListItem = ({ doc }) => {
     <div>
       <ListItem key={doc.Id} onClick={handleClick} disablePadding>
         <ListItemButton>
-          <ListItemText
-            primary={<Typography variant="body1">{doc.Name}</Typography>}
-          />
+          <Typography variant="body1">{doc.Name}</Typography>
           {open ? <ExpandLessIcon /> : <ExpandMoreIcon />}
         </ListItemButton>
       </ListItem>
       <Collapse key={doc.Sheets.Id} in={open} timeout="auto" unmountOnExit>
         <List component="li" disablePadding key={doc.Id}>
-          {doc.Sheets.map((sheet) => {
+          {doc.Sheets.map((sheet, i) => {
             return (
-              <ListItem key={sheet.Id} disablePadding>
-                <ListItemButton>
-                  <ListItemText
-                    key={sheet.Id}
-                    primary={sheet.Title}
-                    onClick={() => {
-                      navigate(sheet.Link);
-                    }}
-                  />
-                </ListItemButton>
-              </ListItem>
+              <ListItemButton
+                onClick={() => {
+                  navigate(sheet.Link);
+                }}
+                key={i}
+              >
+                <Typography key={i}>{sheet.Title}</Typography>
+              </ListItemButton>
             );
           })}
         </List>
