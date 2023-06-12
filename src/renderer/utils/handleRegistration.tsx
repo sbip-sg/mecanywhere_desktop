@@ -6,11 +6,12 @@ import {
   deregisterHost,
   assignHost,
 } from '../services/RegistrationServices';
-import { reduxStore } from '../redux/store';
+import reduxStore from '../redux/store';
 
 export const handleRegisterClient = async () => {
   const credential = JSON.parse(window.electron.store.get('credential'));
   const did = window.electron.store.get('did');
+  console.log("cdcd", credential, did)
   if (credential) {
     actions.setCredential(credential);
     const response = await registerUser(did, credential);

@@ -1,6 +1,7 @@
 const url = process.env.REGISTRATION_SERVICE_API_URL;
 
-export async function createAccount(data) {
+export async function createAccount(data: any): Promise<any> {
+  console.log(data);
   try {
     const response = await fetch(url + '/create_account', {
       method: 'POST',
@@ -17,11 +18,11 @@ export async function createAccount(data) {
     const res = await response.json();
     return res;
   } catch (error) {
-    console.error('There was a problem withas the fetch operation:', error);
+    console.error('There was a problem with the fetch operation:', error);
   }
 }
 
-export async function createChallenge(data) {
+export async function createChallenge(data: any): Promise<any> {
   try {
     const response = await fetch(url + '/create_challenge', {
       method: 'POST',
@@ -31,18 +32,17 @@ export async function createChallenge(data) {
       },
       body: JSON.stringify(data),
     });
-
     if (!response.ok) {
       throw new Error('Network response not ok');
     }
     const res = await response.json();
     return res;
   } catch (error) {
-    console.error('There was a problem withas the fetch operation:', error);
+    throw new Error('Network error occurred');
   }
 }
 
-export async function verifyResponse(data) {
+export async function verifyResponse(data: any): Promise<any> {
   try {
     const response = await fetch(url + '/verify_response', {
       method: 'POST',

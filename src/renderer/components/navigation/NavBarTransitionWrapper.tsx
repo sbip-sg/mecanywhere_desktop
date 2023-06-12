@@ -1,8 +1,14 @@
 import Transitions from '../Transition';
 import { useSelector } from 'react-redux';
+import { RootState } from '../../redux/store';
+import { ReactNode } from 'react';
 
-const NavBarTransitionWrapper = ({ children }) => {
-  return useSelector((state) => state.accountUser.authenticated) ? (
+interface NavBarTransitionWrapperProps {
+  children: ReactNode;
+}
+
+const NavBarTransitionWrapper: React.FC<NavBarTransitionWrapperProps> = ({ children }) => { 
+  return useSelector((state: RootState) => state.accountUser.authenticated) ? (
     <Transitions>{children}</Transitions>
   ) : (
     <>{children}</>

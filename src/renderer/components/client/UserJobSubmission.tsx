@@ -10,17 +10,18 @@ import Dialog from '@mui/material/Dialog';
 import DialogTitle from '@mui/material/DialogTitle';
 import DialogContent from '@mui/material/DialogContent';
 import DialogActions from '@mui/material/DialogActions';
-import { useEffect, useState } from 'react';
+import { useEffect, useState, MouseEvent } from 'react';
 import { JobResult } from '../../utils/jobs';
 import { useSelector } from 'react-redux';
 import { handleRegisterClient } from '../../utils/handleRegistration';
+import { RootState } from 'renderer/redux/store';
 
 export default function UserJobSubmission() {
   const [jobContent, setJobContent] = useState('');
   const [jobResults, setJobResults] = useState<JobResult[]>([]);
   const [open, setOpen] = useState(false);
   const userAccessToken = useSelector(
-    (state) => state.accountUser.userAccessToken
+    (state: RootState) => state.accountUser.userAccessToken
   );
 
   useEffect(() => {
@@ -53,7 +54,7 @@ export default function UserJobSubmission() {
     ]);
   };
 
-  const handleJobSubmit = async (e) => {
+  const handleJobSubmit = async (e: MouseEvent<HTMLFormElement>) => {
     e.preventDefault();
     if (userAccessToken.length === 0) {
       setOpen(true);

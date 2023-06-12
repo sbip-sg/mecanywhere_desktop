@@ -7,6 +7,7 @@ import ListItemButton from '@mui/material/ListItemButton';
 import ListItemText from '@mui/material/ListItemText';
 import Button from '@mui/material/Button';
 import Menu from '@mui/material/Menu';
+import { MouseEvent, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useSelector } from 'react-redux';
 import CustomButton from './CustomButton';
@@ -22,14 +23,32 @@ import {
   handleDeregisterHost,
 } from '../../utils/handleRegistration';
 import { deleteAccount } from '../../electron-store';
+import { RootState } from '../../redux/store';
 
-const CustomDropDownMenu = ({ anchorEl, handleClose, handleClick }) => {
+// export interface CustomDropDownMenuProps {
+//   anchorEl: null | HTMLElement;
+//   handleClose: () => void;
+//   handleClick: (event: MouseEvent<HTMLButtonElement>) => void;
+// }
+
+
+const CustomDropDownMenu: React.FC = (
+  // anchorEl,
+  // handleClose,
+  // handleClick,
+) => {
+  const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
+  const handleClick = (event: MouseEvent<HTMLButtonElement>) => {
+    setAnchorEl(event.currentTarget);
+  };
+  const handleClose = () => {
+    setAnchorEl(null);
+  };
   const navigate = useNavigate();
-
   const isHost =
-    useSelector((state) => state.accountUser.hostAccessToken).length !== 0;
+    useSelector((state: RootState) => state.accountUser.hostAccessToken).length !== 0;
   const isClient =
-    useSelector((state) => state.accountUser.userAccessToken).length !== 0;
+    useSelector((state: RootState) => state.accountUser.userAccessToken).length !== 0;
   const handleLogout = () => {
     handleClose();
     actions.setAuthenticated(false);

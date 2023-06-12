@@ -1,15 +1,22 @@
 import { combineReducers } from 'redux';
 
-const accountUserReducer = (
-  state = {
-    publicKey: '',
-    did: '',
-    authenticated: false,
-    userAccessToken: '',
-    hostAccessToken: '',
-  },
-  action
-) => {
+export interface AccountUserState {
+  publicKey: string;
+  did: string;
+  authenticated: boolean;
+  userAccessToken: string;
+  hostAccessToken: string;
+}
+
+export const initialAccountUserState: AccountUserState = {
+  publicKey: '',
+  did: '',
+  authenticated: false,
+  userAccessToken: '',
+  hostAccessToken: '',
+};
+
+export const accountUserReducer = (state: AccountUserState = initialAccountUserState, action: any): AccountUserState => {
   switch (action.type) {
     case 'setPublicKey':
       return {

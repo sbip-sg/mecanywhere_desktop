@@ -1,8 +1,15 @@
-import Box from '@mui/material/Box';
-import Typography from '@mui/material/Typography';
+import { FC, MouseEvent } from 'react';
 import Button from '@mui/material/Button';
+import Typography from '@mui/material/Typography';
+import Box from '@mui/material/Box';
 
-const CustomButton = ({ onClick, actionText, buttonText }) => (
+interface CustomButtonProps {
+  onClick: (event: MouseEvent<HTMLButtonElement>) => void;
+  actionText?: string;
+  buttonText: string;
+}
+
+const CustomButton: FC<CustomButtonProps> = ({ onClick, actionText, buttonText }) => (
   <Button
     onClick={onClick}
     variant="contained"
@@ -15,6 +22,7 @@ const CustomButton = ({ onClick, actionText, buttonText }) => (
       textAlign: 'center',
       width: '9rem',
     }}
+    data-testid={actionText + " " + buttonText}
   >
     <Box>
       {actionText && (

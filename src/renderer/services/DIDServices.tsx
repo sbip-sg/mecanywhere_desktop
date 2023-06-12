@@ -19,7 +19,7 @@ export async function createKeyPair() {
   }
 }
 
-export async function addPublicKey(publicKey) {
+export async function addPublicKey(publicKey: string): Promise<string> {
   const response = await fetch(url + '/api/v1/did/addPublicKey', {
     method: 'POST',
     headers: {
@@ -31,10 +31,10 @@ export async function addPublicKey(publicKey) {
     throw new Error('Network response not ok');
   }
   const data = await response.json();
-  return data; //contains DID
+  return data as string; // contains DID
 }
 
-export async function verifyCredential(verifyCredentialRequest) {
+export async function verifyCredential(verifyCredentialRequest: any): Promise<any> {
   const response = await fetch(url + '/api/v1/did/verify', {
     method: 'POST',
     headers: {
@@ -51,7 +51,7 @@ export async function verifyCredential(verifyCredentialRequest) {
   return data;
 }
 
-export async function createCredential(createCredentialRequest) {
+export async function createCredential(createCredentialRequest: any): Promise<any> {
   try {
     const response = await fetch(url + 'api/v1/did/create', {
       method: 'POST',
