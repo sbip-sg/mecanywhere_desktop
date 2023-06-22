@@ -81,7 +81,6 @@ export default function UserJobSubmission() {
     <Grid container spacing={3} sx={{ margin: '0 0 2rem 0' }}>
       <Grid item xs={3} />
       <Grid item xs={6}>
-        {/* <Divider sx={{margin:"1rem 0 1rem 0", borderBottomWidth: 1.5}}/> */}
         <Box
           sx={{
             display: 'flex',

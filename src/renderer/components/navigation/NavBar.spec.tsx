@@ -1,64 +1,78 @@
-import {render, fireEvent, screen } from '@testing-library/react'
 import '@testing-library/jest-dom'
-import { createStore, Store } from 'redux';
+import {render, fireEvent, screen } from '@testing-library/react'
+import { createStore } from 'redux';
 import { BrowserRouter } from 'react-router-dom';
 import { Provider } from 'react-redux';
-import CustomDropDownMenu from './CustomDropDownMenu'
-import reduxStore from 'renderer/redux/store';
+import { MenuComponent } from './menu';
 import { accountUserReducer, AccountUserState } from 'renderer/redux/reducers';
 import NavBar from './NavBar';
 import { combineReducers } from 'redux';
 
-const MockNavbar = () => {
-    return (
-      <Provider store={reduxStore}>
-        <BrowserRouter>
-            <NavBar>
-              <h1>Children</h1>
-            </NavBar>
-        </BrowserRouter>
-      </Provider>
-    )
+interface MockMenuComponentProps {
+  userAccessToken: string;
+  hostAccessToken: string;
 }
 
-const rootReducer = combineReducers({
-    accountUser: accountUserReducer,
-});
-
 const initialAccountUserState: AccountUserState = {
-    publicKey: '',
-    did: '',
-    authenticated: false,
-    userAccessToken: '', // Set userAccessToken to your desired string value
-    hostAccessToken: '',
+  publicKey: '',
+  did: '',
+  authenticated: false,
+  userAccessToken: '',
+  hostAccessToken: '',
 };
 
-const MockCustomDropDownMenu: React.FC<{ mockStore: Store<{ accountUser: AccountUserState }> }> = ({ mockStore }) => {
-    return (
-      <Provider store={mockStore}>
-        <BrowserRouter>
-          <CustomDropDownMenu />
-        </BrowserRouter>
-      </Provider>
-    );
+const MockNavbar = () => {
+  const AccountUserState: AccountUserState = {
+    ...initialAccountUserState,
+    authenticated: true,
   };
+  const rootReducer = combineReducers({
+    accountUser: accountUserReducer,
+  });
+  const mockStore = createStore(rootReducer, { accountUser: AccountUserState });
+  return (
+    <Provider store={mockStore}>
+      <BrowserRouter>
+        <NavBar>
+          <h1>Children</h1>
+        </NavBar>
+      </BrowserRouter>
+    </Provider>
+  )
+}
 
+const MockMenuComponent: React.FC<MockMenuComponentProps> = ({userAccessToken, hostAccessToken}) => {
+  const accountUserState: AccountUserState = {
+    ...initialAccountUserState,
+    userAccessToken: userAccessToken,
+    hostAccessToken: hostAccessToken,
+  };
+  const rootReducer = combineReducers({
+    accountUser: accountUserReducer,
+  });
+  const mockStore = createStore(rootReducer, { accountUser: accountUserState });
+  return (
+    <Provider store={mockStore}>
+      <BrowserRouter>
+        <MenuComponent />
+      </BrowserRouter>
+    </Provider>
+  )
+}
 
 describe('Nav Bar', () => {
   beforeEach(() => {
-    // (useSelector as jest.Mock).mockReset();
   });
 
   afterEach(() => {
   });
 
-  test('vertical navbar renders with required elements', () => {
+  test('drawer component renders with required elements', () => {
     render(<MockNavbar />);
     const userExpandButton = screen.getByRole("button", { name: /USER/i});
     const hostExpandButton = screen.getByRole("button", { name: /HOST/i});
     const accountExpandButton = screen.getByRole("button", { name: /account/i});
-    // click on expand button
-    fireEvent.click(userExpandButton);
+    fireEvent.click(userExpandButton); // click on expand button
     fireEvent.click(hostExpandButton);
     fireEvent.click(accountExpandButton);
     const jobSubmissionButton = screen.getByRole("button", { name: /Job Submission/i});
@@ -76,29 +90,18 @@ describe('Nav Bar', () => {
     expect(dashboardButton).toHaveLength(2);
   });
 
-    test('renders host icon when isClient is true', () => {
-        const AccountUserStateWithUserAccessToken: AccountUserState = {
-            ...initialAccountUserState,
-            userAccessToken: 'test',
-        };
-        const mockStore = createStore(rootReducer, { accountUser: AccountUserStateWithUserAccessToken });
-        render(<MockCustomDropDownMenu mockStore={mockStore}/>);
-        const iconButton = screen.getByRole("button")
+    test('renders correct icon when isClient is true', () => {
+        render(<MockMenuComponent userAccessToken={'test'} hostAccessToken={''}/>);
+        const iconButton = screen.getByRole("button", { name: /role-icon/i })
         fireEvent.click(iconButton)
         expect(iconButton).toBeInTheDocument();
         expect(screen.getByText(/(^|\b)Registered as client(\b|$)/)).toBeInTheDocument();
         expect(screen.getByTestId('Deregister as Client')).toBeInTheDocument();
         expect(screen.getByTestId('Register as Host')).toBeInTheDocument();
-
     });
 
-    test('renders host icon when isHost is true', () => {
-        const AccountUserStateWithHostAccessToken: AccountUserState = {
-            ...initialAccountUserState,
-            hostAccessToken: 'test',
-        };
-        const mockStore = createStore(rootReducer, { accountUser: AccountUserStateWithHostAccessToken });
-        render(<MockCustomDropDownMenu mockStore={mockStore}/>);
+    test('renders correct icon when isHost is true', () => {
+        render(<MockMenuComponent userAccessToken={''} hostAccessToken={'test'}/>);
         const iconButton = screen.getByRole("button")
         fireEvent.click(iconButton)
         expect(iconButton).toBeInTheDocument();
@@ -107,14 +110,8 @@ describe('Nav Bar', () => {
         expect(screen.getByTestId('Deregister as Host')).toBeInTheDocument();
     });
 
-    test('renders host icon when both isClient and isHost is true', () => {
-        const AccountUserStateWithUserAndHostAccessToken: AccountUserState = {
-            ...initialAccountUserState,
-            userAccessToken: 'test', 
-            hostAccessToken: 'test', 
-        };
-        const mockStore = createStore(rootReducer, { accountUser: AccountUserStateWithUserAndHostAccessToken });
-        render(<MockCustomDropDownMenu mockStore={mockStore}/>);
+    test('renders correct icon when both isClient and isHost is true', () => {
+        render(<MockMenuComponent userAccessToken={'test'} hostAccessToken={'test'}/>);
         const iconButton = screen.getByRole("button")
         fireEvent.click(iconButton)
         expect(iconButton).toBeInTheDocument();
@@ -123,9 +120,8 @@ describe('Nav Bar', () => {
         expect(screen.getByTestId('Deregister as Host')).toBeInTheDocument();
     });
 
-    test('renders host icon when both isClient and isHost is false', () => {
-        const mockStore = createStore(rootReducer, { accountUser: initialAccountUserState });
-        render(<MockCustomDropDownMenu mockStore={mockStore}/>);
+    test('renders correct icon when both isClient and isHost is false', () => {
+        render(<MockMenuComponent userAccessToken={''} hostAccessToken={''}/>);
         const iconButton = screen.getByRole("button")
         fireEvent.click(iconButton)
         expect(iconButton).toBeInTheDocument();

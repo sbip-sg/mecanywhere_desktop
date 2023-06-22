@@ -1,9 +1,8 @@
 const url = process.env.REGISTRATION_SERVICE_API_URL;
 
 export async function createAccount(data: any): Promise<any> {
-  console.log(data);
   try {
-    const response = await fetch(url + '/create_account', {
+    const response = await fetch(url + '/create_account/', {
       method: 'POST',
       credentials: 'include',
       headers: {
@@ -11,20 +10,19 @@ export async function createAccount(data: any): Promise<any> {
       },
       body: JSON.stringify(data),
     });
-
     if (!response.ok) {
       throw new Error('Network response not ok');
     }
     const res = await response.json();
     return res;
   } catch (error) {
-    console.error('There was a problem with the fetch operation:', error);
+    throw error
   }
 }
 
 export async function createChallenge(data: any): Promise<any> {
   try {
-    const response = await fetch(url + '/create_challenge', {
+    const response = await fetch(url + '/create_challenge/', {
       method: 'POST',
       credentials: 'include',
       headers: {
@@ -44,7 +42,7 @@ export async function createChallenge(data: any): Promise<any> {
 
 export async function verifyResponse(data: any): Promise<any> {
   try {
-    const response = await fetch(url + '/verify_response', {
+    const response = await fetch(url + '/verify_response/', {
       method: 'POST',
       credentials: 'include',
       headers: {
@@ -96,6 +94,7 @@ export async function assignHost(token: string, did: string) {
       throw new Error(`Failed to assign host: ${response.statusText}`);
     }
     const res = await response.json();
+    console.log(res)
     return res;
   } catch (error) {
     console.error('There was a problem with the fetch operation:', error);
@@ -144,7 +143,7 @@ export async function deregisterHost(token: string, did: string) {
 
 export async function registerUser(did: string, credential: object) {
   try {
-    const response = await fetch(url + '/registration/register_user', {
+    const response = await fetch(url + '/registration/register_client', {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
@@ -163,7 +162,7 @@ export async function registerUser(did: string, credential: object) {
 
 export async function deregisterUser(token: string, did: string) {
   try {
-    const response = await fetch(url + '/registration/deregister_user', {
+    const response = await fetch(url + '/registration/deregister_client', {
       method: 'POST',
       headers: {
         'content-type': 'application/json',

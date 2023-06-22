@@ -5,19 +5,6 @@ import {
   encryptWithPassword,
 } from '../../utils/cryptoUtils';
 import { createAccount } from '../../services/RegistrationServices';
-
-const generateRandomString = () => {
-    const characters =
-      'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
-    let randomString = '';
-  
-    for (let i = 0; i < 6; i++) {
-      const randomIndex = Math.floor(Math.random() * characters.length);
-      randomString += characters.charAt(randomIndex);
-    }
-  
-    return randomString;
-  };
   
 const handleAccountRegistration = async (password: string) => {
     try {
@@ -27,14 +14,14 @@ const handleAccountRegistration = async (password: string) => {
       }
   
       const { mnemonic, publicKey, privateKey, publicKeyCompressed } = keyPair;
-  
+      console.log("keyPair", keyPair)
       try {
         const { did, credential } = await createAccount({
-          email: 'placeholder-' + generateRandomString(),
-          password: 'placeholder-pw',
           publicKey: uint8ArrayToDecimal(publicKey),
-          publicKeyWallet: uint8ArrayToDecimal(publicKey),
         });
+        if (!credential.result) {
+          throw new Error("error" + credential.errorMessage)
+        }
         window.electron.store.set('mnemonic', mnemonic);
         window.electron.store.set('publicKeyCompressed', utf8ToHex(publicKeyCompressed));
         window.electron.store.set('publicKey', utf8ToHex(publicKey));
@@ -42,10 +29,10 @@ const handleAccountRegistration = async (password: string) => {
         window.electron.store.set('did', did);
         window.electron.store.set('credential', JSON.stringify({ credential: credential.result }));
       } catch (createAccountError) {
-        console.log(createAccountError);
+        throw createAccountError;
       }
     } catch (keyPairGenerationError) {
-      console.log(keyPairGenerationError);
+      throw keyPairGenerationError
     }
   };
   

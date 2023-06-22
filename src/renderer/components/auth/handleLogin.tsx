@@ -7,8 +7,6 @@ import { signMessage, decryptWithPassword } from '../../utils/cryptoUtils';
 
 const handleLogin = async (password: string): Promise<boolean | undefined> => {
     const challenge = await createChallenge({
-        email: 'placeholder-email',
-        password: 'placeholder-pw',
         did: reduxStore.getState().accountUser.did,
     });
     const signature = signMessage(

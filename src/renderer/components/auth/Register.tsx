@@ -9,6 +9,7 @@ import logoBlack from '../../../../assets/logo-black.png';
 import Transitions from '../Transition';
 import { FormikHelpers } from 'formik';
 import handleAccountRegistration from './handleAccountRegistration'
+import ErrorDialog from '../../utils/ErrorDialogue';
 
 interface FormValues {
   password: string;
@@ -17,6 +18,11 @@ interface FormValues {
 const Register = () => {
   const navigate = useNavigate();
   const [isLoading, setIsLoading] = useState(false);
+  const [errorDialogOpen, setErrorDialogOpen] = useState(false);
+  const [errorMessage, setErrorMessage] = useState('');
+  const handleCloseErrorDialog = () => {
+    setErrorDialogOpen(false);
+  };
   const did = window.electron.store.get('did');
   const handleSubmit = useCallback(async (values: FormValues, formActions: FormikHelpers<FormValues>) => {
     setIsLoading(true);
@@ -26,7 +32,9 @@ const Register = () => {
       await handleAccountRegistration(password);
       navigate('/mnemonics');
     } catch (error) {
-      console.log(error)
+      setErrorMessage(String(error));
+      setErrorDialogOpen(true);
+      console.error(error)
     }
     setIsLoading(false);
   }, []);
@@ -102,6 +110,11 @@ const Register = () => {
                       Back
                     </Button>
                   </Stack>
+                  <ErrorDialog 
+                    open={errorDialogOpen}
+                    onClose={handleCloseErrorDialog}
+                    errorMessage={errorMessage}
+                    />
                 </Box>
               </Container>
             </Form>

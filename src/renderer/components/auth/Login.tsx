@@ -3,19 +3,13 @@ import Typography from '@mui/material/Typography';
 import Button from '@mui/material/Button';
 import Stack from '@mui/material/Stack';
 import Container from '@mui/material/Container';
-import Dialog from '@mui/material/Dialog';
-import DialogTitle from '@mui/material/DialogTitle';
-import DialogContent from '@mui/material/DialogContent';
-import DialogContentText from '@mui/material/DialogContentText';
-import DialogActions from '@mui/material/DialogActions';
+import ErrorDialog from '../../utils/ErrorDialogue';
 import CircularProgress from '@mui/material/CircularProgress';
 import { useState, useCallback } from 'react';
 import { Formik, Form } from 'formik';
 import { useNavigate } from 'react-router-dom';
 import TextFieldWrapper from '../../utils/TextField';
 import actions from '../../redux/actionCreators';
-import reduxStore from '../../redux/store';
-import { signMessage, decryptWithPassword } from '../../utils/cryptoUtils';
 import logoBlack from '../../../../assets/logo-black.png';
 import Transitions from '../Transition';
 import { FormikHelpers } from 'formik';
@@ -116,18 +110,11 @@ function Login() {
                       Create Account
                     </Button>
                   </Stack>
-                  <Dialog
+                  <ErrorDialog 
                     open={errorDialogOpen}
                     onClose={handleCloseErrorDialog}
-                  >
-                    <DialogTitle>Error</DialogTitle>
-                    <DialogContent>
-                      <DialogContentText>{errorMessage}</DialogContentText>
-                    </DialogContent>
-                    <DialogActions>
-                      <Button onClick={handleCloseErrorDialog}>OK</Button>
-                    </DialogActions>
-                  </Dialog>
+                    errorMessage={errorMessage}
+                    />
                 </Box>
               </Container>
             </Form>

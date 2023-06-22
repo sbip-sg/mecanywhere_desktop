@@ -8,7 +8,7 @@ import Collapse from '@mui/material/Collapse';
 import ExpandLessIcon from '@mui/icons-material/ExpandLess';
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 import { useNavigate } from 'react-router-dom';
-import { NavBarItem } from './navBarItems';
+import { NavBarItem } from '../navBarItems';
 
 interface CustomListItemProps {
   doc: NavBarItem;
@@ -22,7 +22,7 @@ const CustomListItem: React.FC<CustomListItemProps> = ({ doc }) => {
   const navigate = useNavigate();
 
   return (
-    <div>
+    <>
       <ListItem onClick={handleClick} disablePadding>
         <ListItemButton>
           <Typography variant="body1">{doc.Name}</Typography>
@@ -46,7 +46,7 @@ const CustomListItem: React.FC<CustomListItemProps> = ({ doc }) => {
         </List>
       </Collapse>
       <Divider />
-    </div>
+    </>
   );
 };
 
