@@ -18,13 +18,11 @@ import Profile from './components/profile/Profile';
 import Billing from './components/payment/Billing';
 import Support from './components/misc/Support';
 import NavBarTransitionWrapper from './components/navigation/NavBarTransitionWrapper';
+import { RootState } from './redux/store';
 
-function PrivateRoutes({ element, shouldTransition, ...rest }) {
-  return useSelector((state) => state.accountUser.authenticated) ? (
-    <Outlet />
-  ) : (
-    <Navigate to="/Userjobsubmission" />
-  );
+const PrivateRoutes = () => {
+  const authenticated = useSelector((state: RootState) => state.accountUser.authenticated);
+  return authenticated ? <Outlet /> : <Navigate to="/Userjobsubmission" />;
 }
 
 const Animated = () => {

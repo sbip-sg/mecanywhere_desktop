@@ -1,4 +1,16 @@
-export const navBarItems = {
+export interface NavBarItemSheet {
+  Title: string;
+  Link: string;
+}
+
+export interface NavBarItem {
+  Name: string;
+  Sheets: NavBarItemSheet[];
+}
+
+export const navBarItems: {
+  documents: NavBarItem[];
+} = {
   documents: [
     {
       Name: 'USER',

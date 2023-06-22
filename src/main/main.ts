@@ -14,8 +14,10 @@ import { autoUpdater } from 'electron-updater';
 import log from 'electron-log';
 import MenuBuilder from './menu';
 import { resolveHtmlPath } from './util';
-
+import { performance } from 'perf_hooks';
 const Store = require('electron-store');
+
+const start = performance.now();
 
 const store = new Store();
 
@@ -95,7 +97,7 @@ if (isDebug) {
 const installExtensions = async () => {
   const installer = require('electron-devtools-installer');
   const forceDownload = !!process.env.UPGRADE_EXTENSIONS;
-  const extensions = ['REACT_DEVELOPER_TOOLS'];
+  const extensions: string[] = [];
 
   return installer
     .default(
@@ -107,7 +109,11 @@ const installExtensions = async () => {
 
 const createWindow = async () => {
   if (isDebug) {
+    const debug1 = performance.now() - start;
+    console.log(`debug1 ${debug1} ms`);
     await installExtensions();
+    const debug2 = performance.now() - start;
+    console.log(`debug2 ${debug2} ms`);
   }
 
   const RESOURCES_PATH = app.isPackaged
@@ -144,10 +150,17 @@ const createWindow = async () => {
 
   workerWindow.loadFile('src/worker_renderer/worker.html');
 
+  mainWindow.once('focus', () => {
+    const focusMs = performance.now() - start;
+    console.log(`Window created in ${focusMs} ms`);
+  });
+
   mainWindow.on('ready-to-show', () => {
     if (!mainWindow) {
       throw new Error('"mainWindow" is not defined');
     }
+    const readyToShowMs = performance.now() - start;
+    console.log(`Window ready to show in ${readyToShowMs} ms`);
     if (process.env.START_MINIMIZED) {
       mainWindow.minimize();
     } else {
@@ -188,6 +201,8 @@ app.on('window-all-closed', () => {
 app
   .whenReady()
   .then(() => {
+    const appReadyMs = performance.now() - start;
+    console.log(`App ready in ${appReadyMs} ms`);
     createWindow();
     app.on('activate', () => {
       // On macOS it's common to re-create a window in the app when the

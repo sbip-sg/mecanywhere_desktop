@@ -3,80 +3,57 @@ import Typography from '@mui/material/Typography';
 import Button from '@mui/material/Button';
 import Stack from '@mui/material/Stack';
 import Container from '@mui/material/Container';
-import Dialog from '@mui/material/Dialog';
-import DialogTitle from '@mui/material/DialogTitle';
-import DialogContent from '@mui/material/DialogContent';
-import DialogContentText from '@mui/material/DialogContentText';
-import DialogActions from '@mui/material/DialogActions';
+import ErrorDialog from '../../utils/ErrorDialogue';
 import CircularProgress from '@mui/material/CircularProgress';
-import { useState } from 'react';
+import { useState, useCallback } from 'react';
 import { Formik, Form } from 'formik';
 import { useNavigate } from 'react-router-dom';
 import TextFieldWrapper from '../../utils/TextField';
-import {
-  createChallenge,
-  verifyResponse,
-} from '../../services/RegistrationServices';
 import actions from '../../redux/actionCreators';
-import { reduxStore } from '../../redux/store';
-import { signMessage, decryptWithPassword } from '../../utils/cryptoUtils';
 import logoBlack from '../../../../assets/logo-black.png';
 import Transitions from '../Transition';
+import { FormikHelpers } from 'formik';
+import FormSchema from '../../utils/FormSchema';
+import handleLogin from './handleLogin';
+
+interface FormValues {
+  password: string;
+}
 
 function Login() {
+  const [isLoading, setIsLoading] = useState(false);
   const [errorDialogOpen, setErrorDialogOpen] = useState(false);
   const [errorMessage, setErrorMessage] = useState('');
-  const [error, setError] = useState('');
-  const [isLoading, setIsLoading] = useState(false);
 
   const navigate = useNavigate();
   const handleCloseErrorDialog = () => {
-    setErrorDialogOpen(false); // Close the error dialog
+    setErrorDialogOpen(false);
   };
-  const handleSubmit = async (values, formActions) => {
+  const handleSubmit = useCallback(async (values: FormValues, formActions: FormikHelpers<FormValues>) => {
     setIsLoading(true);
-    formActions.resetForm();
-    if (window.electron.store.get('did')) {
-      actions.setDID(window.electron.store.get('did'));
-    } else {
-      throw new Error('DID not found');
-    }
-    const { password } = values;
-    const challenge = await createChallenge({
-      email: 'placeholder-email',
-      password: 'placeholder-pw',
-      did: reduxStore.getState().accountUser.did,
-    });
-
     try {
-      const signature = signMessage(
-        decryptWithPassword(window.electron.store.get('privateKey'), password),
-        challenge
-      );
-      const res = await verifyResponse({
-        message: challenge,
-        publicKey: window.electron.store.get('publicKeyCompressed'),
-        signature: signature,
-      });
-      if (res === true) {
+      formActions.resetForm();
+      const { password } = values;
+      const userIsAuthenticated = await handleLogin(password);  
+      if (userIsAuthenticated) {
         actions.setAuthenticated(true);
-        setIsLoading(false);
         navigate('/userjobsubmission');
       } else {
-        console.log('User not authenticated');
-        setError('Authentication failed. Please check your credentials.');
+        setErrorMessage('Wrong password');
+        setErrorDialogOpen(true);
       }
     } catch (error) {
-      console.error('An error occurred:', error);
-      setErrorMessage('Wrong password'); // Set the error message
+      setErrorMessage('Wrong password');
       setErrorDialogOpen(true);
+      console.error(error);
     }
-  };
+    setIsLoading(false);
+  }, [])
 
   return (
     <>
       {isLoading ? (
-        <Transitions>
+        <Transitions duration={2}>
           <CircularProgress
             size={36}
             style={{
@@ -90,12 +67,12 @@ function Login() {
       ) : (
         <Formik
           initialValues={{ password: '' }}
-          // validationSchema={FormSchema}
+          validationSchema={FormSchema}
           onSubmit={(values, formActions) => {
             handleSubmit(values, formActions);
           }}
         >
-          {({ errors, touched }) => (
+          {() => (
             <Form>
               <Container component="main" maxWidth="xs">
                 <Box
@@ -110,20 +87,11 @@ function Login() {
                   <Typography variant="h5" py={2}>
                     LOG IN
                   </Typography>
-                  <Typography variant="h6" align="center" color="red">
-                    {error}
-                  </Typography>
                   <TextFieldWrapper
-                    margin="dense"
                     name="password"
                     placeholder="Enter password"
-                    autoComplete="off"
                     label="Password"
                     type="password"
-                    error={errors.password && touched.password}
-                    helperText={
-                      errors.password && touched.password && errors.password
-                    }
                   />
                   <Stack
                     sx={{ pt: 4 }}
@@ -142,18 +110,11 @@ function Login() {
                       Create Account
                     </Button>
                   </Stack>
-                  <Dialog
+                  <ErrorDialog 
                     open={errorDialogOpen}
                     onClose={handleCloseErrorDialog}
-                  >
-                    <DialogTitle>Error</DialogTitle>
-                    <DialogContent>
-                      <DialogContentText>{errorMessage}</DialogContentText>
-                    </DialogContent>
-                    <DialogActions>
-                      <Button onClick={handleCloseErrorDialog}>OK</Button>
-                    </DialogActions>
-                  </Dialog>
+                    errorMessage={errorMessage}
+                    />
                 </Box>
               </Container>
             </Form>

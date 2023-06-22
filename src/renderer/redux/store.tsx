@@ -1,5 +1,11 @@
-import { createStore, applyMiddleware } from 'redux';
-import thunk from 'redux-thunk';
+import { createStore, applyMiddleware, Store } from 'redux';
+import thunk, { ThunkMiddleware } from 'redux-thunk';
 import reducers from './reducers';
 
-export const reduxStore = createStore(reducers, {}, applyMiddleware(thunk));
+// Define the RootState type based on the combined reducers
+export type RootState = ReturnType<typeof reducers>;
+
+const middleware = [thunk as ThunkMiddleware<RootState>];
+const reduxStore: Store<RootState> = createStore(reducers, {}, applyMiddleware(...middleware));
+
+export default reduxStore;

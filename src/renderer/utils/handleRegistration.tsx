@@ -6,20 +6,22 @@ import {
   deregisterHost,
   assignHost,
 } from '../services/RegistrationServices';
-import { reduxStore } from '../redux/store';
+import reduxStore from '../redux/store';
 
 export const handleRegisterClient = async () => {
   const credential = JSON.parse(window.electron.store.get('credential'));
   const did = window.electron.store.get('did');
+  console.log("credentials, did", credential, did)
   if (credential) {
-    actions.setCredential(credential);
     const response = await registerUser(did, credential);
     const { access_token } = response;
-    actions.setUserAccessToken(access_token);
     const assignmentRes = await assignHost(access_token, did);
     if (assignmentRes) {
       const { queue } = assignmentRes;
       window.electron.startPublisher(queue);
+      actions.setCredential(credential);
+      actions.setUserAccessToken(access_token);
+      console.log('host assigned')
     }
   }
 };

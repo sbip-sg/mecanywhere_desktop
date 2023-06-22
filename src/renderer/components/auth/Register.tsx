@@ -1,62 +1,48 @@
 import { Box, Typography, Button, Stack, Container } from '@mui/material';
-import {
-  generateMnemonicAndKeyPair,
-  uint8ArrayToDecimal,
-  utf8ToHex,
-  encryptWithPassword,
-} from '../../utils/cryptoUtils';
-import { useState } from 'react';
+import { useState, useCallback } from 'react';
 import { Formik, Form } from 'formik';
 import TextFieldWrapper from '../../utils/TextField';
 import FormSchema from '../../utils/FormSchema';
-import { createAccount } from '../../services/RegistrationServices';
 import CircularProgress from '@mui/material/CircularProgress';
 import { useNavigate } from 'react-router-dom';
 import logoBlack from '../../../../assets/logo-black.png';
-import { generateRandomString } from '../../utils/generateRandomString';
 import Transitions from '../Transition';
+import { FormikHelpers } from 'formik';
+import handleAccountRegistration from './handleAccountRegistration'
+import ErrorDialog from '../../utils/ErrorDialogue';
+
+interface FormValues {
+  password: string;
+}
 
 const Register = () => {
-  const [error, setError] = useState(null);
   const navigate = useNavigate();
   const [isLoading, setIsLoading] = useState(false);
-
-  const did = window.electron.store.get('did');
-  const handleSubmit = async (values, formActions) => {
-    setIsLoading(true);
-    formActions.resetForm();
-    const { password } = values;
-    const { mnemonic, publicKey, privateKey, publicKeyCompressed } =
-      await generateMnemonicAndKeyPair();
-    const { did, credential } = await createAccount({
-      email: 'placeholder-' + generateRandomString(),
-      password: 'placeholder-pw',
-      publicKey: uint8ArrayToDecimal(publicKey),
-      publicKeyWallet: uint8ArrayToDecimal(publicKey),
-    });
-    window.electron.store.set('mnemonic', mnemonic);
-    window.electron.store.set(
-      'publicKeyCompressed',
-      utf8ToHex(publicKeyCompressed)
-    );
-    window.electron.store.set('publicKey', utf8ToHex(publicKey));
-    window.electron.store.set(
-      'privateKey',
-      encryptWithPassword(utf8ToHex(privateKey), password)
-    );
-    window.electron.store.set('did', did);
-    window.electron.store.set(
-      'credential',
-      JSON.stringify({ credential: credential.result })
-    );
-    setIsLoading(false);
-    navigate('/mnemonics');
+  const [errorDialogOpen, setErrorDialogOpen] = useState(false);
+  const [errorMessage, setErrorMessage] = useState('');
+  const handleCloseErrorDialog = () => {
+    setErrorDialogOpen(false);
   };
+  const did = window.electron.store.get('did');
+  const handleSubmit = useCallback(async (values: FormValues, formActions: FormikHelpers<FormValues>) => {
+    setIsLoading(true);
+    try {
+      formActions.resetForm();
+      const { password } = values;
+      await handleAccountRegistration(password);
+      navigate('/mnemonics');
+    } catch (error) {
+      setErrorMessage(String(error));
+      setErrorDialogOpen(true);
+      console.error(error)
+    }
+    setIsLoading(false);
+  }, []);
 
   return (
     <>
       {isLoading ? (
-        <Transitions>
+        <Transitions duration={1}>
           <CircularProgress
             size={36}
             style={{
@@ -90,14 +76,9 @@ const Register = () => {
                   <Typography variant="h5" py={2}>
                     CREATE ACCOUNT
                   </Typography>
-                  <Typography variant="h6" align="center" color="red">
-                    {error}
-                  </Typography>
                   <TextFieldWrapper
-                    margin="dense"
                     name="password"
                     placeholder="Enter password"
-                    autoComplete="off"
                     label="Password"
                     type="password"
                   />
@@ -129,6 +110,11 @@ const Register = () => {
                       Back
                     </Button>
                   </Stack>
+                  <ErrorDialog 
+                    open={errorDialogOpen}
+                    onClose={handleCloseErrorDialog}
+                    errorMessage={errorMessage}
+                    />
                 </Box>
               </Container>
             </Form>

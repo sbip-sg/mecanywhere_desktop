@@ -2,7 +2,7 @@ import App from './App';
 import themeOptions from './utils/themeOptions';
 import { createRoot } from 'react-dom/client';
 import { Provider } from 'react-redux';
-import { reduxStore } from './redux/store';
+import reduxStore from './redux/store';
 import { ThemeProvider, CssBaseline, createTheme } from '@mui/material';
 import { StyledEngineProvider } from '@mui/material/styles';
 import { Helmet } from 'react-helmet';

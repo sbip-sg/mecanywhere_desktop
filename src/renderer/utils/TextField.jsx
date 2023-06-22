@@ -8,6 +8,8 @@ const TextFieldWrapper = ({ name, ...otherProps }) => {
   const configTextField = {
     fullWidth: true,
     variant: 'outlined',
+    margin: "dense",
+    autoComplete: "off",
     ...field,
     ...otherProps,
   };

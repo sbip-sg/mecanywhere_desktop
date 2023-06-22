@@ -1,21 +1,29 @@
-import { motion } from 'framer-motion';
+import { motion, Variants } from 'framer-motion';
+import React, { ReactNode } from 'react';
 
-const animationConfiguration = {
+const animationConfiguration: Variants = {
   initial: { opacity: 0 },
   animate: { opacity: 1 },
   exit: { opacity: 0 },
 };
-const Transitions = ({ children }) => {
+
+interface TransitionsProps {
+  children: ReactNode;
+  duration?: number;
+}
+
+const Transitions: React.FC<TransitionsProps> = ({ children, duration = 0.4 }) => {
   return (
     <motion.div
       variants={animationConfiguration}
       initial="initial"
       animate="animate"
       exit="exit"
-      transition={{ duration: 0.4 }}
+      transition={{ duration }}
     >
       {children}
     </motion.div>
   );
 };
+
 export default Transitions;

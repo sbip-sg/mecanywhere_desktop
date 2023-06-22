@@ -63,6 +63,7 @@
     ]
   },
   "jest": {
+    "testTimeout": 90000,
     "moduleDirectories": [
       "node_modules",
       "release/app/node_modules",
@@ -86,12 +87,22 @@
     "testEnvironmentOptions": {
       "url": "http://localhost/"
     },
+    "testMatch": [
+      "<rootDir>/src/**/__tests__/**/*.(js|jsx|ts|tsx)",
+      "<rootDir>/src/**/*.spec.tsx",
+      "<rootDir>/src/**/?(*.)+(spec|test).(js|jsx|ts|tsx)"
+    ],
     "testPathIgnorePatterns": [
       "release/app/dist",
       ".erb/dll"
     ],
     "transform": {
-      "\\.(ts|tsx|js|jsx)$": "ts-jest"
+      "\\.(ts|tsx|js|jsx)$": [
+        "ts-jest",
+        {
+          "isolatedModules": true
+        }
+      ]
     }
   },
   "dependencies": {
@@ -99,6 +110,7 @@
     "@emotion/styled": "^11.10.6",
     "@mui/icons-material": "^5.11.16",
     "@mui/material": "^5.12.1",
+    "@reduxjs/toolkit": "^1.9.5",
     "amqplib": "^0.10.3",
     "bip32": "^4.0.0",
     "bip39": "^3.1.0",
@@ -117,6 +129,7 @@
     "hdkey": "^2.1.0",
     "js-sha3": "^0.8.0",
     "jsrsasign": "^10.8.6",
+    "msw": "^1.2.1",
     "protobufjs": "^7.2.3",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
@@ -125,6 +138,7 @@
     "react-router-dom": "^6.8.1",
     "react-transition-group": "^4.4.5",
     "redux": "^4.2.1",
+    "redux-mock-store": "^1.5.4",
     "redux-thunk": "^2.4.2",
     "secp256k1": "^5.0.0",
     "tweetnacl": "^1.0.3",
@@ -137,14 +151,18 @@
     "@pmmmwh/react-refresh-webpack-plugin": "^0.5.10",
     "@svgr/webpack": "^6.5.1",
     "@teamsupercell/typings-for-css-modules-loader": "^2.5.2",
+    "@testing-library/dom": "^9.3.0",
     "@testing-library/jest-dom": "^5.16.5",
     "@testing-library/react": "^13.4.0",
     "@types/amqplib": "^0.10.1",
+    "@types/crypto-js": "^4.1.1",
     "@types/jest": "^29.4.0",
     "@types/node": "18.13.0",
     "@types/react": "^18.0.27",
     "@types/react-dom": "^18.0.10",
     "@types/react-test-renderer": "^18.0.0",
+    "@types/redux-mock-store": "^1.0.3",
+    "@types/secp256k1": "^4.0.3",
     "@types/terser-webpack-plugin": "^5.0.4",
     "@types/webpack-bundle-analyzer": "^4.6.0",
     "@typescript-eslint/eslint-plugin": "^5.51.0",
