@@ -1,7 +1,8 @@
 import { generateMnemonic, mnemonicToSeedSync } from 'bip39';
 import { AES, enc, SHA256 } from 'crypto-js';
 import sha3 from 'js-sha3';
-import secp256k1 from 'secp256k1';
+// @ts-ignore
+import secp256k1 from '../../node_modules/secp256k1';
 
 export const generateMnemonicAndKeyPair = async () => {
   const mnemonic = generateMnemonic();
