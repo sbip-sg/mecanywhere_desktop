@@ -13,7 +13,7 @@ class Publisher {
 
   constructor(consumerQueueName) {
     if (Publisher.openQueues[consumerQueueName]) {
-      throw new Error(`Consumer queue ${consumerQueueName} already exists`);
+      return Publisher.openQueues[consumerQueueName];
     }
     Publisher.openQueues[consumerQueueName] = this;
 
@@ -29,7 +29,9 @@ class Publisher {
       callbackQueue = await channel.assertQueue('', {
         exclusive: true,
         durable: true,
+        expires: 1000 * 60 * 30,
       });
+      console.log(' [pub] Awaiting RPC requests')
 
       channel.consume(
         callbackQueue.queue,
@@ -49,28 +51,32 @@ class Publisher {
         }
       );
 
-      ipcRenderer.on('publish-job', async (event, id, content) => {
-        const taskObject = {
-          id,
-          content,
-        };
-
-        const typeError = Task.verify(taskObject);
-        if (typeError) {
-          console.log(' [pub] Got type error: %s', typeError.toString());
-          event.sender.send('job-results-received', id, typeError.toString());
-          return;
-        }
-
-        this.publishTask(id, taskObject);
-      });
     };
 
+    ipcRenderer.on('publish-job', async (event, id, content) => {
+      const taskObject = {
+        id,
+        content,
+      };
+
+      const typeError = Task.verify(taskObject);
+      if (typeError) {
+        console.log(' [pub] Got type error: %s', typeError.toString());
+        event.sender.send('job-results-received', id, typeError.toString());
+        return;
+      }
+
+      this.publishTask(id, taskObject);
+    });
+
     this.publishTask = async function publishTask(id, taskObject) {
+      if (!callbackQueue) {
+        throw new Error('Queue is not initialized');
+      }
       const serializedTask = Task.encode(Task.create(taskObject)).finish();
       correlationId = id;
 
-      console.log(' [pub] Requesting: ', serializedTask);
+      console.log(' [pub] Requesting: ', taskObject);
       channel.sendToQueue(consumerQueueName, Buffer.from(serializedTask), {
         correlationId,
         replyTo: callbackQueue.queue,
@@ -92,17 +98,21 @@ ipcRenderer.on('start-publisher', async (event, consumerQueueName) => {
   await publisher.startPublisher();
 });
 
+ipcRenderer.on('stop-publisher', async (event, consumerQueueName) => {
+  await publisher.close();
+});
+
 // const publisher = new Publisher('rpc_queue');
 // await publisher.startPublisher();
 
 // publish task on click
-document.getElementById('pub').addEventListener('click', () => {
-  const id = Math.random().toString();
-  const content = '1 + 1';
-  const taskObject = {
-    id,
-    content,
-  };
+// document.getElementById('pub').addEventListener('click', () => {
+//   const id = Math.random().toString();
+//   const content = '1 + 1';
+//   const taskObject = {
+//     id,
+//     content,
+//   };
 
-  publisher.publishTask(id, taskObject);
-});
+//   publisher.publishTask(id, taskObject);
+// });

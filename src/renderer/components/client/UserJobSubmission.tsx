@@ -13,7 +13,7 @@ import DialogActions from '@mui/material/DialogActions';
 import { useEffect, useState, MouseEvent } from 'react';
 import { JobResult } from '../../utils/jobs';
 import { useSelector } from 'react-redux';
-import { handleRegisterClient } from '../../utils/handleRegistration';
+import { handleRegisterClient, handleDeregisterClient } from '../../utils/handleRegistration';
 import { RootState } from 'renderer/redux/store';
 
 export default function UserJobSubmission() {
@@ -32,6 +32,25 @@ export default function UserJobSubmission() {
       };
       setJobResults((prevJobResults) => [...prevJobResults, newJobResult]);
     });
+    window.electron.onRegisterClient( async (_event) => {
+      await handleRegisterClient();
+      window.electron.clientRegistered();
+    });
+    window.electron.onOffloadJob( async (_event, job) => {
+      setJobContent(job);
+      const id = generateUuid();
+      const status = await window.electron.publishJob(id, job);
+      setJobResults((prevJobResults) => [
+        ...prevJobResults,
+        {
+          id: `job ${id.toString()}`,
+          content: status,
+        },
+      ]);
+    })
+    window.electron.onDeregisterClient( async (_event) => {
+      await handleDeregisterClient();
+    })
   }, []);
 
   const generateUuid = () => {
@@ -98,7 +117,7 @@ export default function UserJobSubmission() {
               Please enter your Python function or code snippet:
             </FormLabel>
             <TextField
-              onChange={(e) => setJobContent(e.target.value)}
+              // onChange={(e) => setJobContent(e.target.value)}
               multiline
             />
             <Button
