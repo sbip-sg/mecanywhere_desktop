@@ -16,7 +16,7 @@ import MenuBuilder from './menu';
 import { resolveHtmlPath } from './util';
 import { performance } from 'perf_hooks';
 const Store = require('electron-store');
-
+const { shell } = require('electron');
 const start = performance.now();
 
 const store = new Store();
@@ -31,6 +31,30 @@ class AppUpdater {
 
 let mainWindow: BrowserWindow | null = null;
 let workerWindow: BrowserWindow | null = null;
+
+function showLoginWindow() {
+  // window.loadURL('https://www.your-site.com/login')
+  if (mainWindow) {
+    shell.openExternal('localhost:1212/login');
+    // mainWindow
+    //   .loadFile('src/main/login.html') // For testing purposes only
+    //   .then(() => {
+    //     if (mainWindow) {
+    //       mainWindow.show();
+    //       console.log("mainwindowshowdone")
+    //     }
+    //   });
+  }
+}
+ipcMain.handle('openLinkPlease', () => {
+  shell.openExternal("http://localhost:3000/");
+})
+
+ipcMain.on('message:loginShow', (event) => {
+  console.log("showLoginWindowpre")
+  showLoginWindow();
+  console.log("showLoginWindowpost")
+});
 
 ipcMain.on('electron-store-get', async (event, key) => {
   const encryptedKey = store.get(key);
@@ -136,6 +160,7 @@ const createWindow = async () => {
       webSecurity: false,
     },
   });
+  console.log('mainWindow', mainWindow);
 
   mainWindow.loadURL(resolveHtmlPath('index.html'));
 
@@ -176,10 +201,10 @@ const createWindow = async () => {
   menuBuilder.buildMenu();
 
   // Open urls in the user's browser
-  mainWindow.webContents.setWindowOpenHandler((edata) => {
-    shell.openExternal(edata.url);
-    return { action: 'deny' };
-  });
+  // mainWindow.webContents.setWindowOpenHandler((edata) => {
+  //   shell.openExternal(edata.url);
+  //   return { action: 'deny' };
+  // });
 
   // Remove this if your app does not use auto updates
   // eslint-disable-next-line
@@ -189,6 +214,11 @@ const createWindow = async () => {
 /**
  * Add event listeners...
  */
+// function showLoginWindow() {
+//   // window.loadURL('https://www.your-site.com/login')
+//   mainWindow.loadFile('login.html') // For testing purposes only
+//       .then(() => { mainWindow.show(); })
+// }
 
 app.on('window-all-closed', () => {
   // Respect the OSX convention of having the application in memory even

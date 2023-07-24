@@ -34,6 +34,7 @@ function Login() {
     try {
       formActions.resetForm();
       const { password } = values;
+      
       const userIsAuthenticated = await handleLogin(password);  
       if (userIsAuthenticated) {
         actions.setAuthenticated(true);
@@ -41,6 +42,7 @@ function Login() {
       } else {
         setErrorMessage('Wrong password');
         setErrorDialogOpen(true);
+
       }
     } catch (error) {
       setErrorMessage('Wrong password');

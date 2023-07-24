@@ -15,13 +15,16 @@ export const handleRegisterClient = async () => {
   if (credential) {
     const response = await registerUser(did, credential);
     const { access_token } = response;
-    const assignmentRes = await assignHost(access_token, did);
+    const assignmentRes = true;
+    // const assignmentRes = await assignHost(access_token, did);
     if (assignmentRes) {
-      const { queue } = assignmentRes;
-      window.electron.startPublisher(queue);
+      // const { queue } = assignmentRes;
+      // window.electron.startPublisher(queue);
       actions.setCredential(credential);
       actions.setUserAccessToken(access_token);
+      const accessToken = reduxStore.getState().accountUser.userAccessToken;
       console.log('host assigned')
+      console.log('accessToken', accessToken)
     }
   }
 };

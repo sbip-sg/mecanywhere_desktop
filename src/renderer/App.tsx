@@ -17,6 +17,7 @@ import HostDashboard from './components/host/HostDashboard';
 import Profile from './components/profile/Profile';
 import Billing from './components/payment/Billing';
 import Support from './components/misc/Support';
+import Payment from './components/misc/Payment';
 import NavBarTransitionWrapper from './components/navigation/NavBarTransitionWrapper';
 import { RootState } from './redux/store';
 
@@ -54,6 +55,12 @@ const Animated = () => {
           <Transitions>
             <Login />
           </Transitions>
+        }
+      />
+      <Route
+        path="/payment"
+        element={
+            <Payment />
         }
       />
       <Route

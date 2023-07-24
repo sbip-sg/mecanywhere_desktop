@@ -42,7 +42,11 @@ export const navBarItems: {
           Link: '/profile',
         },
         {
-          Title: 'Billing Information',
+          Title: 'Payment',
+          Link: '/Payment',
+        },
+        {
+          Title: 'Billing',
           Link: '/billing',
         },
         {
