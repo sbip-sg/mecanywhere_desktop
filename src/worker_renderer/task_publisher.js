@@ -27,7 +27,7 @@ class Publisher {
       connection = await amqp.connect(MQ_URL);
       channel = await connection.createChannel();
       callbackQueue = await channel.assertQueue('', {
-        exclusive: true,
+        // exclusive: true,
         durable: true,
         expires: 1000 * 60 * 30,
       });
@@ -71,7 +71,8 @@ class Publisher {
 
     this.publishTask = async function publishTask(id, taskObject) {
       if (!callbackQueue) {
-        throw new Error('Queue is not initialized');
+        await this.startPublisher();
+        // throw new Error('Queue is not initialized');
       }
       const serializedTask = Task.encode(Task.create(taskObject)).finish();
       correlationId = id;
@@ -93,8 +94,6 @@ class Publisher {
 
 let publisher;
 
-ipcRenderer.on('start-publisher', async (event, consumerQueueName) => {
-  publisher = new Publisher(consumerQueueName);
   await publisher.startPublisher();
 });
 
