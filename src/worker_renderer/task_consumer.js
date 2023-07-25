@@ -37,7 +37,6 @@ class Consumer {
         durable: true,
         expires: 1000 * 60 * 30,
       });
-      channel.prefetch(1);
       console.log(' [con] Awaiting RPC requests');
 
       channel.consume(queueName, (msg) => {

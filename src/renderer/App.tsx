@@ -11,7 +11,6 @@ import Transitions from './components/Transition';
 import Register from './components/auth/Register';
 import Login from './components/auth/Login';
 import Mnemonics from './components/auth/Mnemonics';
-import UserJobSubmission from './components/client/UserJobSubmission';
 import UserDashboard from './components/client/UserDashboard';
 import HostDashboard from './components/host/HostDashboard';
 import Profile from './components/profile/Profile';
@@ -22,7 +21,7 @@ import { RootState } from './redux/store';
 
 const PrivateRoutes = () => {
   const authenticated = useSelector((state: RootState) => state.accountUser.authenticated);
-  return authenticated ? <Outlet /> : <Navigate to="/Userjobsubmission" />;
+  return authenticated ? <Outlet /> : <Navigate to="/userdashboard" />;
 }
 
 const Animated = () => {
@@ -73,14 +72,6 @@ const Animated = () => {
         }
       />
       <Route element={<PrivateRoutes />}>
-        <Route
-          path="/userjobsubmission"
-          element={
-            <Transitions>
-              <UserJobSubmission />
-            </Transitions>
-          }
-        />
         <Route
           path="/userdashboard"
           element={

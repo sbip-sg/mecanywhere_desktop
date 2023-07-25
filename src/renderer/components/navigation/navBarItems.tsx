@@ -16,10 +16,6 @@ export const navBarItems: {
       Name: 'USER',
       Sheets: [
         {
-          Title: 'Job Submission',
-          Link: '/userjobsubmission',
-        },
-        {
           Title: 'Dashboard',
           Link: '/userdashboard',
         },
