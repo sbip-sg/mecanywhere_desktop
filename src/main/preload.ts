@@ -40,20 +40,35 @@ const electronHandler = {
     },
     // Other method you want to add like has(), reset(), etc.
   },
+  // from client
   
   
   publishJob: (id: string, content: string) =>
     ipcRenderer.invoke('publish-job', id, content),
-  onSubscribeJobResults: (callback: (...args: any[]) => void) => {
-    ipcRenderer.on('job-results-received', callback);
+  startPublisher: (queueName: string) =>
+    ipcRenderer.send('start-publisher', queueName),
+  clientRegistered: () => ipcRenderer.send('client-registered'),
+  // to client
+  onRegisterClient: (callback: (...args: any[]) => void) => {
+    ipcRenderer.on('register-client', callback);
   },
+  onOffloadJob: (callback: (...args: any[]) => void) => {
+    ipcRenderer.on('offload-job', callback);
+  },
+  onDeregisterClient: (callback: (...args: any[]) => void) => {
+    ipcRenderer.on('deregister-client', callback);
+  },
+  // from host
+  startConsumer: (queueName: string) =>
+  ipcRenderer.send('start-consumer', queueName),
+  // to host
   onSubscribeJobs: (callback: (...args: any[]) => void) => {
     ipcRenderer.on('job-received', callback);
   },
-  startConsumer: (queueName: string) =>
-    ipcRenderer.send('start-consumer', queueName),
-  startPublisher: (queueName: string) =>
-    ipcRenderer.send('start-publisher', queueName),
+  // to client and host
+  onSubscribeJobResults: (callback: (...args: any[]) => void) => {
+    ipcRenderer.on('job-results-received', callback);
+  },
 };
 
 contextBridge.exposeInMainWorld('electron', electronHandler);

@@ -44,7 +44,7 @@
     "start": "ts-node ./.erb/scripts/check-port-in-use.js && npm run start:renderer",
     "start:main": "cross-env NODE_ENV=development electronmon -r ts-node/register/transpile-only .",
     "start:preload": "cross-env NODE_ENV=development TS_NODE_TRANSPILE_ONLY=true webpack --config ./.erb/configs/webpack.config.preload.dev.ts",
-    "start:renderer": "cross-env NODE_ENV=development TS_NODE_TRANSPILE_ONLY=true webpack serve --config ./.erb/configs/webpack.config.renderer.dev.ts",
+    "start:renderer": "cross-env NODE_ENV=development SOCKET_PORT=3001 TS_NODE_TRANSPILE_ONLY=true webpack serve --config ./.erb/configs/webpack.config.renderer.dev.ts",
     "test": "jest"
   },
   "browserslist": [],
@@ -133,6 +133,7 @@
     "recharts": "^2.7.2",
     "redux": "^4.2.1",
     "redux-thunk": "^2.4.2",
+    "socket.io": "^4.7.1",
     "web3": "^4.0.2",
     "yup": "^1.1.1"
   },

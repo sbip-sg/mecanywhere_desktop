@@ -11,7 +11,6 @@ import Transitions from './components/transitions/Transition';
 import Register from './components/auth/Register';
 import Login from './components/auth/Login';
 import Mnemonics from './components/auth/Mnemonics';
-import UserJobSubmission from './components/client/UserJobSubmission';
 import ClientDashboard from './components/dashboard/ClientDashboard';
 import HostDashboard from './components/dashboard/HostDashboard';
 import Profile from './components/profile/Profile';
@@ -34,7 +33,7 @@ import HostWithdrawal from './components/misc/HostWithdrawal';
 
 const PrivateRoutes = () => {
   const authenticated = useSelector((state: RootState) => state.accountUser.authenticated);
-  return authenticated ? <Outlet /> : <Navigate to="/Userjobsubmission" />;
+  return authenticated ? <Outlet /> : <Navigate to="/userdashboard" />;
 }
 
 const Animated = () => {
@@ -91,14 +90,6 @@ const Animated = () => {
         }
       />
       <Route element={<PrivateRoutes />}>
-        <Route
-          path="/userjobsubmission"
-          element={
-            <Transitions>
-              <UserJobSubmission />
-            </Transitions>
-          }
-        />
         
         <Route
           path="/profile"

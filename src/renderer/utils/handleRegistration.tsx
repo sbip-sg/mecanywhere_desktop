@@ -11,21 +11,26 @@ import reduxStore from '../redux/store';
 export const handleRegisterClient = async () => {
   const credential = JSON.parse(window.electron.store.get('credential'));
   const did = window.electron.store.get('did');
-  console.log("credentials, did", credential, did)
-  if (credential) {
+  if (credential && did) {
     const response = await registerUser(did, credential);
     const { access_token } = response;
     const assignmentRes = true;
     // const assignmentRes = await assignHost(access_token, did);
     if (assignmentRes) {
-      // const { queue } = assignmentRes;
-      // window.electron.startPublisher(queue);
+      const { queue } = assignmentRes;
+      if (queue == "") {
+        throw new Error('No host available');
+      }
+      window.electron.startPublisher(queue);
       actions.setCredential(credential);
       actions.setUserAccessToken(access_token);
       const accessToken = reduxStore.getState().accountUser.userAccessToken;
       console.log('host assigned')
-      console.log('accessToken', accessToken)
+    } else {
+      throw new Error('Host assignment failed');
     }
+  } else {
+    throw new Error('Credential not found');
   }
 };
 
@@ -39,7 +44,11 @@ export const handleRegisterHost = async () => {
     actions.setHostAccessToken(access_token);
     if (response) {
       window.electron.startConsumer(did);
+    } else {
+      throw new Error('Host registration failed');
     }
+  } else {
+    throw new Error('Credential not found');
   }
 };
 
@@ -49,6 +58,8 @@ export const handleDeregisterClient = async () => {
   const response = await deregisterUser(accessToken, did);
   if (response && response.ok) {
     actions.setUserAccessToken('');
+  } else {
+    throw new Error('Deregistration failed');
   }
 };
 
@@ -58,5 +69,7 @@ export const handleDeregisterHost = async () => {
   const response = await deregisterHost(accessToken, did);
   if (response && response.ok) {
     actions.setHostAccessToken('');
+  } else {
+    throw new Error('Deregistration failed');
   }
 };

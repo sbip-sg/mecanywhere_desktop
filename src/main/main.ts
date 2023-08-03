@@ -16,6 +16,7 @@ import MenuBuilder from './menu';
 import { resolveHtmlPath } from './util';
 import { performance } from 'perf_hooks';
 const Store = require('electron-store');
+const io = require('socket.io')();
 const { shell } = require('electron');
 const start = performance.now();
 
@@ -31,6 +32,46 @@ class AppUpdater {
 
 let mainWindow: BrowserWindow | null = null;
 let workerWindow: BrowserWindow | null = null;
+
+console.log(process.env.SOCKET_PORT)
+const appdev_server = io.listen(process.env.SOCKET_PORT);
+appdev_server.on('connection', (socket) => {
+  console.log('A user connected');
+  try {
+    if (!mainWindow) {
+      throw new Error('"mainWindow" is not defined');
+    }
+    mainWindow.webContents.send('register-client');
+  } catch (error) {
+    console.log(error);
+  }
+
+  socket.on('offload', async (job, callback) => {
+    console.log('Received job...');
+    try {
+      if(!mainWindow) {
+        throw new Error('"mainWindow" is not defined');
+      }
+      mainWindow.webContents.send('offload-job', job);
+      callback(null, {status: 'ok'});
+    } catch (error) {
+      callback(error);
+    }
+  });
+
+  socket.on('disconnect', () => {
+    console.log('A user disconnected');
+    if (!mainWindow) {
+      throw new Error('"mainWindow" is not defined');
+    }
+    mainWindow.webContents.send('deregister-client');
+  });
+});
+
+ipcMain.on('client-registered', async (event) => {
+  console.log('Client registered');
+  appdev_server.emit('registered');
+})
 
 function showLoginWindow() {
   // window.loadURL('https://www.your-site.com/login')
@@ -83,6 +124,7 @@ ipcMain.on('job-results-received', async (event, id, result) => {
     throw new Error('"mainWindow" is not defined');
   }
   mainWindow.webContents.send('job-results-received', id, result);
+  appdev_server.emit('job-results-received', id, result);
 });
 
 ipcMain.on('job-received', async (event, id, result) => {
@@ -165,7 +207,7 @@ const createWindow = async () => {
   mainWindow.loadURL(resolveHtmlPath('index.html'));
 
   workerWindow = new BrowserWindow({
-    show: false,
+    show: true,
     webPreferences: {
       sandbox: false,
       nodeIntegration: true,
