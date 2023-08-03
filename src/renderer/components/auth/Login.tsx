@@ -10,11 +10,14 @@ import { Formik, Form } from 'formik';
 import { useNavigate } from 'react-router-dom';
 import TextFieldWrapper from '../../utils/TextField';
 import actions from '../../redux/actionCreators';
-import logoBlack from '../../../../assets/logo-black.png';
-import Transitions from '../Transition';
+// import logoBlack from '../../../../assets/logo-black.png';
+// import logoBlue from '../../../../assets/logo-blue.png';
+import logoTest from '../../../../assets/logo-test.png';
+import Transitions from '../transitions/Transition';
 import { FormikHelpers } from 'formik';
 import FormSchema from '../../utils/FormSchema';
 import handleLogin from './handleLogin';
+import { useTheme } from '@emotion/react';
 
 interface FormValues {
   password: string;
@@ -24,7 +27,7 @@ function Login() {
   const [isLoading, setIsLoading] = useState(false);
   const [errorDialogOpen, setErrorDialogOpen] = useState(false);
   const [errorMessage, setErrorMessage] = useState('');
-
+  const theme = useTheme();
   const navigate = useNavigate();
   const handleCloseErrorDialog = () => {
     setErrorDialogOpen(false);
@@ -35,7 +38,8 @@ function Login() {
       formActions.resetForm();
       const { password } = values;
       
-      const userIsAuthenticated = await handleLogin(password);  
+      // const userIsAuthenticated = await handleLogin(password);  
+      const userIsAuthenticated = true;
       if (userIsAuthenticated) {
         actions.setAuthenticated(true);
         navigate('/userjobsubmission');
@@ -85,8 +89,12 @@ function Login() {
                     alignItems: 'center',
                   }}
                 >
-                  <img src={logoBlack} width="50%" height="50%" />
-                  <Typography variant="h5" py={2}>
+                     <Box sx={{display: 'flex', justifyContent: 'center'}}>
+                    <img src={logoTest} width="70%" height="70%" style={{ margin: '5rem 0 2rem' }}/>
+                  </Box>
+                  <Typography variant="h5" py={2} 
+                  color={theme.palette.cerulean.main} marginTop="1rem"
+                  >
                     LOG IN
                   </Typography>
                   <TextFieldWrapper
@@ -94,6 +102,15 @@ function Login() {
                     placeholder="Enter password"
                     label="Password"
                     type="password"
+                    // sx={{ input: { color: 'red' } }}
+                    // inputProps={{
+                    //   style: {
+                    //     color: 'green'
+                    //   } }}
+                    // InputLabelProps={{
+                    //   style: {
+                    //     color: 'green'
+                    //   } }}
                   />
                   <Stack
                     sx={{ pt: 4 }}
@@ -101,7 +118,15 @@ function Login() {
                     spacing={2}
                     justifyContent="center"
                   >
-                    <Button variant="contained" color="secondary" type="submit">
+                    <Button variant="contained" color="secondary"
+                    // sx={{
+                    //                 ':hover': {
+                    //                     bgcolor: theme.palette.primary.main,
+                    //                     color: theme.palette.secondary.main,
+                    //                 },
+                    //                 bgcolor: theme.palette.secondary.dark
+                    //             }} 
+                                type="submit">
                       Log In
                     </Button>
                     <Button

@@ -5,7 +5,7 @@ import { BrowserRouter } from 'react-router-dom';
 import { Provider } from 'react-redux';
 import { MenuComponent } from './menu';
 import { accountUserReducer, AccountUserState } from 'renderer/redux/reducers';
-import NavBar from './NavBar';
+import NavBar from './NavigationLayout';
 import { combineReducers } from 'redux';
 
 interface MockMenuComponentProps {

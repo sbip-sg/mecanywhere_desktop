@@ -6,20 +6,31 @@ import {
 } from 'react-router-dom';
 import { Outlet, Navigate } from 'react-router';
 import { useSelector } from 'react-redux';
-import NavBar from './components/navigation/NavBar';
-import Transitions from './components/Transition';
+import NavigationLayout from './components/navigation/NavigationLayout';
+import Transitions from './components/transitions/Transition';
 import Register from './components/auth/Register';
 import Login from './components/auth/Login';
 import Mnemonics from './components/auth/Mnemonics';
 import UserJobSubmission from './components/client/UserJobSubmission';
-import UserDashboard from './components/client/UserDashboard';
-import HostDashboard from './components/host/HostDashboard';
+import ClientDashboard from './components/dashboard/ClientDashboard';
+import HostDashboard from './components/dashboard/HostDashboard';
 import Profile from './components/profile/Profile';
-import Billing from './components/payment/Billing';
-import Support from './components/misc/Support';
-import Payment from './components/misc/Payment';
-import NavBarTransitionWrapper from './components/navigation/NavBarTransitionWrapper';
+import ClientBilling from './components/billing/ClientBilling';
+import HostBilling from './components/billing/HostBilling';
+import AppView from './components/appview/AppView';
+import DatagridTransition from './components/transitions/DatagridTransition'
+import ClientDashboardNoChart from './components/dashboard/ClientDashboardNoChart';
+import HostDashboardNoChart from './components/dashboard/HostDashboardNoChart';
+import NavigationLayoutTransitionWrapper from './components/navigation/NavigationLayoutTransitionWrapper';
 import { RootState } from './redux/store';
+import ClientPastTxn from './components/billing/ClientPastTxn';
+import HostPastTxn from './components/billing/HostPastTxn';
+import ClientPayment from './components/misc/ClientPayment';
+import HostWithdrawal from './components/misc/HostWithdrawal';
+
+// import Support from './components/misc/Support';
+// import Payment from './components/misc/Payment';
+// import Dashboard from './components/dashboard/ClientDashboard'
 
 const PrivateRoutes = () => {
   const authenticated = useSelector((state: RootState) => state.accountUser.authenticated);
@@ -57,12 +68,12 @@ const Animated = () => {
           </Transitions>
         }
       />
-      <Route
+      {/* <Route
         path="/payment"
         element={
             <Payment />
         }
-      />
+      /> */}
       <Route
         path="/register"
         element={
@@ -88,14 +99,7 @@ const Animated = () => {
             </Transitions>
           }
         />
-        <Route
-          path="/userdashboard"
-          element={
-            <Transitions>
-              <UserDashboard />
-            </Transitions>
-          }
-        />
+        
         <Route
           path="/profile"
           element={
@@ -104,19 +108,12 @@ const Animated = () => {
             </Transitions>
           }
         />
+        
         <Route
-          path="/billing"
+          path="/clientdashboard"
           element={
             <Transitions>
-              <Billing />
-            </Transitions>
-          }
-        />
-        <Route
-          path="/support"
-          element={
-            <Transitions>
-              <Support />
+              <ClientDashboard />
             </Transitions>
           }
         />
@@ -128,6 +125,79 @@ const Animated = () => {
             </Transitions>
           }
         />
+        <Route
+          path="/clientdashboardnochart"
+          element={
+            <Transitions>
+              <ClientDashboardNoChart />
+            </Transitions>
+          }
+        />
+        <Route
+          path="/hostdashboardnochart"
+          element={
+            <DatagridTransition>
+              <HostDashboardNoChart />
+            </DatagridTransition>
+          }
+        />
+        <Route
+          path="/clientbilling"
+          element={
+            <Transitions>
+              <ClientBilling />
+            </Transitions>
+          }
+        />
+         <Route
+          path="/hostbilling"
+          element={
+            <Transitions>
+              <HostBilling />
+            </Transitions>
+          }
+        />
+        <Route
+          path="/clientpasttxn"
+          element={
+            <Transitions>
+              <ClientPastTxn />
+            </Transitions>
+          }
+        />
+         <Route
+          path="/hostpasttxn"
+          element={
+            <Transitions>
+              <HostPastTxn />
+            </Transitions>
+          }
+        />
+        <Route
+          path="/appview"
+          element={
+            <Transitions>
+              <AppView />
+            </Transitions>
+          }
+        />
+        <Route
+          path="/clientpayment"
+          element={
+            <Transitions>
+              <ClientPayment />
+            </Transitions>
+          }
+        />
+        <Route
+          path="/hostpayment"
+          element={
+            <Transitions>
+              <HostWithdrawal />
+            </Transitions>
+          }
+        />
+        
       </Route>
     </Routes>
   );
@@ -136,11 +206,11 @@ const Animated = () => {
 export default function App() {
   return (
     <Router>
-      <NavBarTransitionWrapper>
-        <NavBar>
+      <NavigationLayoutTransitionWrapper>
+        <NavigationLayout>
           <Animated />
-        </NavBar>
-      </NavBarTransitionWrapper>
+        </NavigationLayout>
+      </NavigationLayoutTransitionWrapper>
     </Router>
   );
 }

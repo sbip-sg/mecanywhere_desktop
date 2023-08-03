@@ -5,33 +5,36 @@ import { DropDownComponent } from '../dropdown';
 import Box from '@mui/material/Box';
 import Button from '@mui/material/Button';
 import Menu from '@mui/material/Menu';
-import clientIcon from '../../../../../assets/icon-client.png';
-import hostIcon from '../../../../../assets/icon-host.png';
-import noroleIcon from '../../../../../assets/icon-norole.png';
-import bothroleIcon from '../../../../../assets/icon-bothrole.png';
-import { useSelector } from 'react-redux';
-import { RootState } from '../../../redux/store';
+import Avatar from './Avatar'
+import logoTest from '../../../../../assets/logo-test.png';
+
 import { MouseEvent, useState } from 'react';
+import { RightDrawerComponent } from '../rightDrawer';
+import { useTheme } from '@emotion/react';
 
 const MenuComponent = () => {
-  const isHost =
-    useSelector((state: RootState) => state.accountUser.hostAccessToken).length !== 0;
-  const isClient =
-    useSelector((state: RootState) => state.accountUser.userAccessToken).length !== 0;
-  const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
-  const handleClick = (event: MouseEvent<HTMLButtonElement>) => {
-    setAnchorEl(event.currentTarget);
-  };
-  const handleClose = () => {
-    setAnchorEl(null);
-  };
 
-    return (
-      <AppBar position="fixed" sx={{ zIndex: (theme) => theme.zIndex.drawer + 1, height: '64px' }}>
+  const [isRightDrawerOpen, setRightDrawerOpen] = useState(false);
+  const toggleRightDrawer = (open: boolean) => (event: React.MouseEvent) => {
+    setRightDrawerOpen(open);
+  };
+  const theme = useTheme();
+  return (
+    <AppBar position="fixed" sx={{ zIndex: (theme) => theme.zIndex.drawer + 1, height: '64px', backgroundColor: theme.palette.mediumBlack.main }}>
+        <RightDrawerComponent isOpen={isRightDrawerOpen} onClose={toggleRightDrawer(false)}/>
         <Toolbar sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
-          <Typography variant="h1" noWrap component="div">
+          <Box sx={{
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'left',
+            }}>
+                    <img src={logoTest} width="10%" height="10%" style={{ margin: '0 0.5rem 0 0' }}/>
+          <Typography variant="h1" noWrap component="div" 
+            sx={{color: theme.palette.cerulean.main, marginLeft: '0.5rem'}}
+            >
             MECAnywhere
           </Typography>
+              </Box>
           <Box
             sx={{
               display: 'flex',
@@ -42,31 +45,14 @@ const MenuComponent = () => {
             }}
             onMouseEnter={() => console.log('Hovering over the image')}
           >
-          <Button onClick={handleClick} sx={{pointerEvents: 'auto'}}>
-            <img
-              src={
-                isHost && isClient
-                  ? bothroleIcon
-                  : isHost
-                  ? hostIcon
-                  : isClient
-                  ? clientIcon
-                  : noroleIcon
-              }
-              alt="Image"
-              aria-label="role-icon"
-              style={{
-                width: '100%',
-                height: '100%',
-                objectFit: 'cover',
-              }}
-              
-            />
-          </Button>
+            <Button onClick={toggleRightDrawer(true)} 
+            sx={{
+              pointerEvents: 'auto',
+              backgroundColor: theme.palette.mediumBlack.main,
+            }}>
+              <Avatar />
+            </Button>
         </Box>
-        <Menu anchorEl={anchorEl} open={Boolean(anchorEl)} onClose={handleClose}>
-          <DropDownComponent handleClose={handleClose}/>
-        </Menu>
         </Toolbar>
       </AppBar>
     );
