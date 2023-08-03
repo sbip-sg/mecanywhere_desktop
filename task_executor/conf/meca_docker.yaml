@@ -1,0 +1,4 @@
+# now only support docker
+type: "docker"
+# timeout in minutes
+timeout: 1
