@@ -15,13 +15,15 @@ export default function UserDashboard() {
       actions.addJob(id.toString(), content);
     });
     window.electron.onSubscribeJobResults((_event, id, result) => {
-      console.log(result);
       actions.addJobResults(id.toString(), result);
-      console.log(jobResults)
     });
-    window.electron.onRegisterClient( async (_event) => {
-      await handleRegisterClient();
-      window.electron.clientRegistered();
+    window.electron.onRegisterClient( async (_event, containerRef) => {
+      try {
+        await handleRegisterClient(containerRef);
+        window.electron.clientRegistered(true);
+      } catch (error) {
+        window.electron.clientRegistered(false);
+      }
     });
     window.electron.onOffloadJob( async (_event, job) => {
       const id = generateUuid();

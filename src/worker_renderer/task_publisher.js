@@ -11,7 +11,7 @@ const Task = protobuf
 class Publisher {
   static openQueues = {};
 
-  constructor(consumerQueueName) {
+  constructor(consumerQueueName, containerRef) {
     if (Publisher.openQueues[consumerQueueName]) {
       return Publisher.openQueues[consumerQueueName];
     }
@@ -51,6 +51,10 @@ class Publisher {
         }
       );
 
+      await this.publishTask("containerRef", {
+        id: "containerRef",
+        content: containerRef
+      });
     };
 
     ipcRenderer.on('publish-job', async (event, id, content) => {
@@ -94,6 +98,8 @@ class Publisher {
 
 let publisher;
 
+ipcRenderer.on('start-publisher', async (event, consumerQueueName, containerRef) => {
+  publisher = new Publisher(consumerQueueName, containerRef);
   await publisher.startPublisher();
 });
 

@@ -1,8 +1,8 @@
 const io = require('socket.io-client');
 
-async function connectAndListen(port, callback) {
+async function initiateConnection(containerRef, callbackOnReceive) {
     return new Promise((resolve, reject) => {
-        const socket = io('http://localhost:' + port);
+        const socket = io('http://localhost:3000', {query: {containerRef}});
         socket.on('connect', () => {
             console.log('Connected to server');
         });
@@ -15,37 +15,22 @@ async function connectAndListen(port, callback) {
         });
         socket.on('job-results-received', (id, result) => {
             console.log('Received result:', result, 'for job:', id);
-            callback(id, result);
+            callbackOnReceive(id, result);
         });
-        socket.on('registered', () => {
-            console.log('Registered with server');
+        socket.on('registered', (registered) => {
+            console.log('Registered with server: ', registered);
+            if (!registered) {
+                reject('Container not registered');
+            }
             resolve(socket);
         })
     });
 }
 
-async function main() {
-  const socket = await connectAndListen(3000, (id, result) => console.log("callbacked ", id, result));
-  
 async function offloadTask(task, callback) { // publish job
   console.log('Offloading task...');
   socket.emit('offload', task, callback);
 }
 
-  offloadTask('1+1', (err, response) => {
-    if (err) {
-      console.error('Error executing code:', err);
-    } else {
-      console.log(response.status);
-    }
-  });
-
-  exports.connectAndListen = connectAndListen;
-  exports.offloadTask = offloadTask;
-  
-}
-
-main();
-
-// exports.connectAndListen = connectAndListen;
-// exports.offloadTask = offloadTask;
+exports.connectAndListen = connectAndListen;
+exports.offloadTask = offloadTask;
