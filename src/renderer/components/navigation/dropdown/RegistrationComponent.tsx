@@ -9,7 +9,7 @@ import {
 } from '../../../utils/handleRegistration';
 import { useSelector } from 'react-redux';
 import { RootState } from '../../../redux/store';
-import Transitions from 'renderer/components/Transition';
+import Transitions from 'renderer/components/transitions/Transition';
 import { useState } from 'react';
 import CircularProgress from '@mui/material/CircularProgress';
 

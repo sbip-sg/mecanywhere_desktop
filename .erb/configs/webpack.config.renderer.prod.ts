@@ -39,6 +39,14 @@ const configuration: webpack.Configuration = {
   module: {
     rules: [
       {
+        test: /\.csv$/,
+        use: [
+            {
+                loader: 'file-loader',
+            },
+        ],
+      },
+      {
         test: /\.s?(a|c)ss$/,
         use: [
           MiniCssExtractPlugin.loader,

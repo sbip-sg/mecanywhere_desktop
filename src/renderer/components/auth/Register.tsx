@@ -5,11 +5,13 @@ import TextFieldWrapper from '../../utils/TextField';
 import FormSchema from '../../utils/FormSchema';
 import CircularProgress from '@mui/material/CircularProgress';
 import { useNavigate } from 'react-router-dom';
-import logoBlack from '../../../../assets/logo-black.png';
-import Transitions from '../Transition';
+// import logoBlack from '../../../../assets/logo-black.png';
+import logoTest from '../../../../assets/logo-test.png';
+import Transitions from '../transitions/Transition';
 import { FormikHelpers } from 'formik';
 import handleAccountRegistration from './handleAccountRegistration'
 import ErrorDialog from '../../utils/ErrorDialogue';
+import { useTheme } from '@emotion/react';
 
 interface FormValues {
   password: string;
@@ -17,6 +19,7 @@ interface FormValues {
 
 const Register = () => {
   const navigate = useNavigate();
+  const theme = useTheme();
   const [isLoading, setIsLoading] = useState(false);
   const [errorDialogOpen, setErrorDialogOpen] = useState(false);
   const [errorMessage, setErrorMessage] = useState('');
@@ -72,8 +75,12 @@ const Register = () => {
                     alignItems: 'center',
                   }}
                 >
-                  <img src={logoBlack} width="50%" height="50%" />
-                  <Typography variant="h5" py={2}>
+                     <Box sx={{display: 'flex', justifyContent: 'center'}}>
+                    <img src={logoTest} width="70%" height="70%" style={{ margin: '5rem 0 2rem' }}/>
+                  </Box>
+                  <Typography variant="h5" py={2} 
+                  color={theme.palette.cerulean.main} marginTop="1rem"
+                  >
                     CREATE ACCOUNT
                   </Typography>
                   <TextFieldWrapper

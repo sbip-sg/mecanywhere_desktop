@@ -3,25 +3,30 @@ import Box from '@mui/material/Box';
 import CssBaseline from '@mui/material/CssBaseline';
 import { useSelector } from 'react-redux';
 import { RootState } from '../../redux/store';
-import { navBarItems, NavBarItem } from './navBarItems';
-import { DrawerComponent } from './drawer';
+import { LeftDrawerComponent } from './leftDrawer';
+import { RightDrawerComponent } from './rightDrawer';
 import { MenuComponent } from './menu';
+import { useTheme } from '@emotion/react';
 
-export default function NavBar({ children }: { children: ReactNode }) {
-  const docs: NavBarItem[] = navBarItems.documents;
+export default function NavigationLayout({ children }: { children: ReactNode }) {
+  const theme = useTheme();
   return (
-    <>
+    <Box sx={{height:"100%"}} id="aaaaaaaa" >
       {useSelector((state: RootState) => state.accountUser.authenticated) ? (
-        <Box sx={{ display: 'flex' }}>
+        <Box sx={{ display: 'flex', height:"100%" }} id="bbbbb">
           <CssBaseline />
           <MenuComponent />
-          <DrawerComponent docs={docs}/>
+          <LeftDrawerComponent/>
           <Box
+            id="main-nav-container"
             sx={{
               flexGrow: 1,
               position: 'relative',
               top: '64px',
-              height: '100%',
+              height:'calc(100vh - 64px)',
+              // backgroundColor: theme.palette.primary.main
+                overflowY: 'hidden',
+                      overflowX: 'auto',
             }}
           >
             {children}
@@ -30,6 +35,6 @@ export default function NavBar({ children }: { children: ReactNode }) {
       ) : (
         <>{children}</>
       )}
-    </>
+    </Box>
   );
 }
