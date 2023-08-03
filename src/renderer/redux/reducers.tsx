@@ -1,4 +1,5 @@
 import { combineReducers } from 'redux';
+import { Job, JobResult } from 'renderer/utils/jobs';
 
 export interface AccountUserState {
   publicKey: string;
@@ -14,6 +15,16 @@ export const initialAccountUserState: AccountUserState = {
   authenticated: false,
   userAccessToken: '',
   hostAccessToken: '',
+};
+
+interface JobsState {
+  jobs: Job[];
+  jobResults: JobResult[];
+}
+
+const initialJobsState: JobsState = {
+  jobs: [],
+  jobResults: [],
 };
 
 export const accountUserReducer = (state: AccountUserState = initialAccountUserState, action: any): AccountUserState => {
@@ -48,8 +59,44 @@ export const accountUserReducer = (state: AccountUserState = initialAccountUserS
   }
 };
 
+const jobsReducer = (state: JobsState = initialJobsState, action: any): JobsState => {
+  switch (action.type) {
+    case 'addJob':
+      const newJob = {
+        id: action.id,
+        content: action.content,
+      };
+      return {
+        ...state,
+        jobs: [...state.jobs, newJob],
+      };
+    case 'setJobs':
+      return {
+        ...state,
+        jobs: [action.payload],
+      }
+    case 'addJobResults':
+      const newJobResult = {
+        id: action.id,
+        content: action.content,
+      };
+      return {
+        ...state,
+        jobResults: [...state.jobResults, newJobResult],
+      };
+    case 'setJobResults':
+      return {
+        ...state,
+        jobResults: [action.payload],
+      };
+    default:
+      return state;
+  }
+}
+
 const reducers = combineReducers({
   accountUser: accountUserReducer,
+  jobs: jobsReducer,
 });
 
 export default reducers;

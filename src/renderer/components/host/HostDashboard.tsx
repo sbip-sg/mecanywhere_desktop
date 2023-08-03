@@ -1,29 +1,15 @@
 import { Alert, Box, Button, Typography } from '@mui/material';
-import { useEffect, useState } from 'react';
-import { Job, JobResult } from '../../utils/jobs';
+import { useSelector } from 'react-redux';
+import { RootState } from 'renderer/redux/store';
+import actions from 'renderer/redux/actionCreators';
 
 function HostDashboard() {
-  const [jobs, setJobs] = useState<Job[]>([]);
-
-  useEffect(() => {
-    window.electron.onSubscribeJobs((_event, id, result) => {
-      const newJob = {
-        id: `job ${id.toString()}`,
-        content: result,
-      };
-      setJobs((prevJobs) => [...prevJobs, newJob]);
-    });
-    window.electron.onSubscribeJobResults((_event, id, result) => {
-      const newJobResult = {
-        id: `result ${id.toString()}`,
-        content: result,
-      };
-      setJobs((prevJobs) => [...prevJobs, newJobResult]);
-    });
-  }, []);
+  const jobs = useSelector((state: RootState) => state.jobs.jobs);
+  const jobResults = useSelector((state: RootState) => state.jobs.jobResults);
 
   const clear = () => {
-    setJobs([]);
+    actions.setJobs([]);
+    actions.setJobResults([]);
   };
 
   return (
@@ -41,7 +27,10 @@ function HostDashboard() {
         Host Dashboard
         {/* <Button onClick={clear}>Clear</Button> */}
       </Typography>
-      {jobs.map((result) => {
+      {!jobs || jobs.length == 0 ? (
+          <Typography>No jobs</Typography>
+        )
+        : jobs.map((result) => {
         return (
           <Alert key={result.id}>
             <Typography noWrap>{result.id}</Typography>

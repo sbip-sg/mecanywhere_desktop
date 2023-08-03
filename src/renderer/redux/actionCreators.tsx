@@ -7,6 +7,10 @@ const setCredential: ActionCreator<AnyAction> = (payload: any) => ({ type: 'setC
 const setAuthenticated: ActionCreator<AnyAction> = (payload: boolean) => ({ type: 'setAuthenticated', payload });
 const setUserAccessToken: ActionCreator<AnyAction> = (payload: string) => ({ type: 'setUserAccessToken', payload });
 const setHostAccessToken: ActionCreator<AnyAction> = (payload: string) => ({ type: 'setHostAccessToken', payload });
+const addJob: ActionCreator<AnyAction> = (id: string, content: string) => ({ type: 'addJob', id, content });
+const setJobs: ActionCreator<AnyAction> = (payload: any) => ({ type: 'setJobs', payload });
+const addJobResults: ActionCreator<AnyAction> = (id: string, content: string) => ({ type: 'addJobResults', id, content });
+const setJobResults: ActionCreator<AnyAction> = (payload: any) => ({ type: 'setJobResults', payload });
 
 const boundToDoActions = bindActionCreators(
   {
@@ -16,6 +20,10 @@ const boundToDoActions = bindActionCreators(
     setAuthenticated,
     setUserAccessToken,
     setHostAccessToken,
+    addJob,
+    setJobs,
+    addJobResults,
+    setJobResults,
   },
   reduxStore.dispatch
 );

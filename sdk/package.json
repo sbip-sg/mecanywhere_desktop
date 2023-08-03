@@ -1,0 +1,14 @@
+{
+  "name": "meca_connector",
+  "version": "1.0.0",
+  "description": "API for using MECA",
+  "main": "api.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "socket.io-client": "^4.7.1"
+  }
+}

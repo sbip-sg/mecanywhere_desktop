@@ -22,7 +22,7 @@ class Consumer {
 
   constructor(queueName) {
     if (Consumer.openQueues[queueName]) {
-      throw new Error(`Consumer for queue ${queueName} already exists`);
+      return Consumer.openQueues[queueName];
     }
     Consumer.openQueues[queueName] = this;
 
@@ -33,12 +33,12 @@ class Consumer {
     this.startConsumer = async function startConsumer() {
       connection = await amqp.connect(MQ_URL);
       channel = await connection.createChannel();
-      channel.assertQueue(queueName, {
+      let callbackQueue = await channel.assertQueue(queueName, {
         durable: true,
+        expires: 1000 * 60 * 30,
       });
-      channel.prefetch(1);
-
       console.log(' [con] Awaiting RPC requests');
+
       channel.consume(queueName, (msg) => {
         let result;
         const deserializedTask = Task.decode(msg.content).toJSON();

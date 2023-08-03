@@ -34,10 +34,10 @@ function Login() {
     try {
       formActions.resetForm();
       const { password } = values;
-      const userIsAuthenticated = await handleLogin(password);  
+      const userIsAuthenticated = await handleLogin(password);
       if (userIsAuthenticated) {
         actions.setAuthenticated(true);
-        navigate('/userjobsubmission');
+        navigate('/userdashboard');
       } else {
         setErrorMessage('Wrong password');
         setErrorDialogOpen(true);
@@ -110,7 +110,7 @@ function Login() {
                       Create Account
                     </Button>
                   </Stack>
-                  <ErrorDialog 
+                  <ErrorDialog
                     open={errorDialogOpen}
                     onClose={handleCloseErrorDialog}
                     errorMessage={errorMessage}
