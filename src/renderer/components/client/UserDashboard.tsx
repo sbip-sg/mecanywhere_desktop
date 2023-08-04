@@ -1,7 +1,8 @@
-import { Alert, Box, Button, Grid, Typography } from '@mui/material';
+import { Alert, Box, Button, Grid, Stack, Typography } from '@mui/material';
 import { useSelector } from 'react-redux';
 import { RootState } from 'renderer/redux/store';
 import { useEffect } from 'react';
+import { useTheme } from '@emotion/react';
 import actions from 'renderer/redux/actionCreators';
 import { handleDeregisterClient, handleRegisterClient } from 'renderer/utils/handleRegistration';
 
@@ -47,53 +48,80 @@ export default function UserDashboard() {
     actions.setJobs([]);
     actions.setJobResults([]);
   };
+  const theme = useTheme();
 
   return (
-    <>
-      <Box
-        sx={{
-          display: 'flex',
+    <Stack sx={{display: 'flex', alignItems: 'center'}}>
+      <Typography 
+        margin="4rem 0 4rem 0"
+        variant="h1" 
+        fontSize="28px">
+          Test Job Submission
+      </Typography>
+      <Typography 
+        color={theme.palette.cerulean.main}
+        margin="2rem 0 2rem 0" 
+        variant="h1"
+        fontSize="23px">
+          JOB RESULTS
+      </Typography>
+      <Box sx={{
+        width: "80%",
+        height: "80%",
+        backgroundColor: theme.palette.mediumBlack.main,
+        padding: "2rem 2rem 2rem 2rem",
+        borderRadius: '10px',
+        display: 'flex',
           justifyContent: 'center',
           alignItems: 'center',
-          height: '100%',
-          marginTop: '2rem',
-        }}
-      >
-        <Typography fontSize="24px">User Dashboard</Typography>
-      </Box>
-      <Grid>
-        <Typography>Job Results</Typography>
-        {!jobResults || jobResults.length == 0 ? (
-          <Typography>No jobs</Typography>
+        }}>
+
+
+      {!jobResults || jobResults.length == 0 ? (
+        <Typography margin="2rem 0 2rem 0" textAlign='center'
+          sx={{ 
+            width: "100%", 
+            height: "100%",
+            wordWrap: "break-word",
+            overflowWrap: "break-word" 
+          }}>
+            No jobs detected
+        {/* TEST LONGS MESSAGE ascascascascROR in C:\Users\JERYONG\Documents\mec_anywhere_desktop\src\renderer\components\client\UserDashboard.tsx
+./src/renderer/components/client/UserDashboard.tsx 81:121-122 ERROR in C:\Users\JERYONG\Documents\mec_anywhere_desktop\src\renderer\components\client\UserDashboard.tsx(81,122)
+      TS1381: Unexpected token. Did you mean ?    
+ @ ./src/renderer/App.tsx 26:0-62 36:2025-2038
+ @ ./src/renderer/index.tsx 4:0-24 15
+        ascscscscscscscscscscscscscscscscscscscscscscscscscscscscscscscsc */}
+        </Typography>
         )
         : jobResults.map((result) => {
           return (
             <Alert key={result.id}>
-              <Typography noWrap>{result.id}</Typography>
-              {result.content}
-            </Alert>
-          );
-        })}
-        <Box
-          sx={{
-            display: 'flex',
-            justifyContent: 'center',
-            flexDirection: 'column',
-            alignItems: 'center',
-            height: '100%',
-            marginTop: '1rem',
-          }}
-        >
-          <Button
-            fullWidth
-            variant="contained"
-            color="secondary"
-            onClick={handleClear}
-          >
-            Clear Job
-          </Button>
+             <Typography margin="2rem 0 2rem 0" 
+              sx={{ 
+                width: "100%", 
+                height: "100%",
+                wordWrap: "break-word",
+                overflowWrap: "break-word" 
+              }}>
+            {result.id}
+            {result.content}
+              </Typography>
+          </Alert>
+        );})}
         </Box>
-      </Grid>
-    </>
+             
+        <Button
+          sx={{
+            width: '20rem',
+            backgroundColor: theme.palette.violet.main,
+            margin: "2rem 0 2rem 0"
+          }}
+          variant="contained"
+          onClick={handleClear}
+          >
+          Clear Job
+        </Button>
+      </Stack>
   );
 };
