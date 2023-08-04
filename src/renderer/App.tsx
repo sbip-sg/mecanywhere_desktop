@@ -26,6 +26,7 @@ import ClientPastTxn from './components/billing/ClientPastTxn';
 import HostPastTxn from './components/billing/HostPastTxn';
 import ClientPayment from './components/misc/ClientPayment';
 import HostWithdrawal from './components/misc/HostWithdrawal';
+import UserDashboard from './components/client/UserDashboard';
 
 // import Support from './components/misc/Support';
 // import Payment from './components/misc/Payment';
@@ -185,6 +186,14 @@ const Animated = () => {
           element={
             <Transitions>
               <HostWithdrawal />
+            </Transitions>
+          }
+        />
+        <Route
+          path="/userjobsubmission"
+          element={
+            <Transitions>
+              <UserDashboard />
             </Transitions>
           }
         />
