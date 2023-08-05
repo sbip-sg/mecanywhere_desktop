@@ -13,15 +13,14 @@ import (
 
 	"github.com/docker/docker/api/types"
 	"github.com/docker/docker/api/types/container"
-	"github.com/docker/docker/api/types/network"
 	"github.com/docker/docker/client"
+	"github.com/docker/go-connections/nat"
 )
 
 const (
 	dockerTaskPrefix = "meca"
 	dockerInitMark   = "meca-init-done"
 	dockerReadyRetry = 5
-	mecaVnet         = "meca"
 )
 
 var (
@@ -36,7 +35,7 @@ var _ TaskFactory = (*DockerTaskFactory)(nil)
 type DockerTask struct {
 	taskId      string
 	containerId string
-	vIP         string
+	port        int
 	cli         *client.Client
 }
 
@@ -48,13 +47,13 @@ func NewDockerTask(id string, cli *client.Client) *DockerTask {
 }
 
 // extract just the image name then add meca prefix and port suffix
-func createContainerName(id string) string {
+func createContainerName(id string, port int) string {
 	first_colon_idx := strings.Index(id, ":")
 	if first_colon_idx == -1 {
 		first_colon_idx = len(id)
 	}
 	last_slash_idx := strings.LastIndex(id, "/") + 1
-	return fmt.Sprintf("%s_%s", dockerTaskPrefix, id[last_slash_idx:first_colon_idx])
+	return fmt.Sprintf("%s_%s_%d", dockerTaskPrefix, id[last_slash_idx:first_colon_idx], port)
 }
 
 func (t *DockerTask) checkForReadyLogEntry(ctx context.Context) error {
@@ -99,15 +98,20 @@ func (t *DockerTask) GetId() string {
 
 // start the container which should run a server
 // to replace with using docker bridge network only
-func (t *DockerTask) Init(ctx context.Context, _ string, _ int) error {
-	log.Printf("init started %d for %s", time.Now().UnixMicro(), createContainerName(t.taskId))
-
-	networkConfig := &network.NetworkingConfig{
-		EndpointsConfig: map[string]*network.EndpointSettings{
-			mecaVnet: {},
+func (t *DockerTask) Init(ctx context.Context, _ string, port int) error {
+	log.Printf("init started %d", time.Now().UnixMicro())
+	portBindings := nat.PortMap{
+		nat.Port("8080/tcp"): []nat.PortBinding{
+			{
+				HostIP:   "localhost",             // only allow internal traffic
+				HostPort: fmt.Sprintf("%d", port), // should be replaced with a proper port allocation
+			},
 		},
 	}
-	resp, err := t.cli.ContainerCreate(ctx, &container.Config{Image: t.taskId}, &container.HostConfig{}, networkConfig, nil, createContainerName(t.taskId))
+
+	log.Printf("container name: %s", createContainerName(t.taskId, port))
+
+	resp, err := t.cli.ContainerCreate(ctx, &container.Config{Image: t.taskId}, &container.HostConfig{PortBindings: portBindings}, nil, nil, createContainerName(t.taskId, port))
 	if err != nil {
 		return err
 	}
@@ -120,21 +124,11 @@ func (t *DockerTask) Init(ctx context.Context, _ string, _ int) error {
 		return err
 	}
 	log.Printf("init container started %d", time.Now().UnixMicro())
-
-	// container inspect to retrieve virtual IP
-	containerInfo, err := t.cli.ContainerInspect(ctx, resp.ID)
-	if err != nil {
-		return err
-	}
-	networkSettings := containerInfo.NetworkSettings
-	log.Printf("container network settings: %v", networkSettings)
-
-	t.vIP = networkSettings.Networks[mecaVnet].IPAddress
-	log.Printf("container assigned IP: %s", t.vIP)
 	// ensure task server is ready
 	if err := t.waitForTaskReady(ctx); err != nil {
 		return err
 	}
+	t.port = port
 	log.Printf("init finished %d", time.Now().UnixMicro())
 	return nil
 }
@@ -143,7 +137,7 @@ func (t *DockerTask) Init(ctx context.Context, _ string, _ int) error {
 func (t *DockerTask) Execute(ctx context.Context, input []byte) ([]byte, error) {
 	// send the request to the task server
 	cli := http.DefaultClient
-	url := fmt.Sprintf("http://%s:8080", t.vIP)
+	url := fmt.Sprintf("http://localhost:%d", t.port)
 	if resp, err := cli.Post(url, "application/json", bytes.NewReader(input)); err != nil {
 		return nil, err
 	} else {
