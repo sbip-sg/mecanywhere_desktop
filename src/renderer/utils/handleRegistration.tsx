@@ -14,8 +14,7 @@ export const handleRegisterClient = async (containerRef) => {
   if (credential && did) {
     const response = await registerUser(did, credential);
     const { access_token } = response;
-    const assignmentRes = true;
-    // const assignmentRes = await assignHost(access_token, did);
+    const assignmentRes = await assignHost(access_token, did);
     if (assignmentRes) {
       const { queue } = assignmentRes;
       if (queue == "") {
@@ -58,6 +57,7 @@ export const handleDeregisterClient = async () => {
   const response = await deregisterUser(accessToken, did);
   if (response && response.ok) {
     actions.setUserAccessToken('');
+    window.electron.stopPublisher();
   } else {
     throw new Error('Deregistration failed');
   }

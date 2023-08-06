@@ -32,25 +32,28 @@ function convertEpochToStandardTimeWithDate(epochTimeInSeconds) {
 }
 const ClientDashboard = () => {
     const [data, setData] = useState<DataEntry[]>([]);
-  
+
     useEffect(() => {
-      const csvFilePath = 'http://localhost:3000/data'; 
+      const csvFilePath = 'http://localhost:3000/data';
       fetch(csvFilePath)
-        .then((response) => response.json()) 
+        .then((response) => response.json())
         .then((responseData) => {
           const convertedData = responseData.map(entry => ({
             ...entry,
             session_start_datetime: convertEpochToStandardTimeWithDate(entry.session_start_datetime),
             session_end_datetime: convertEpochToStandardTimeWithDate(entry.session_end_datetime),
           }));
-  
+
           setData(convertedData);
+        })
+        .catch((error) => {
+          console.error(error);
         });
     }, []);
     const groupedDataObject = data.reduce((acc, entry) => {
       const month = new Date(entry.session_start_datetime * 1000).toLocaleString('default', { month: 'long' });
       acc[month] = acc[month] || { month, resource_consumed: 0 };
-      acc[month].resource_consumed += Number(entry.resource_consumed); 
+      acc[month].resource_consumed += Number(entry.resource_consumed);
       return acc;
     }, {} as { [key: string]: GroupedData });
     const groupedData: GroupedData[] = Object.values(groupedDataObject);
@@ -87,7 +90,7 @@ const ClientDashboard = () => {
               {/* <Legend /> */}
               <Line type="monotone" dataKey="resource_consumed" stroke="#8884d8" />
             </LineChart>
-          </ResponsiveContainer>          
+          </ResponsiveContainer>
         </Box>
         <Box id='datagrid-container-outer' sx={{ height: '53%', width: "95%", display: "flex", justifyContent: "center", alignItems: "center"}}>
           <Datagrid data={data} hasButton={true} expandView={false} rotateButton={false} fromClient={true}/>
@@ -95,6 +98,6 @@ const ClientDashboard = () => {
       </Stack>
       );
   };
-  
+
 export default ClientDashboard;
 

@@ -1,14 +1,14 @@
 import json
 import torch
 import multiprocessing
-from flask import Flask
+from flask import Flask, request
 
 app = Flask(__name__)
 print("meca-init-done")
 
-@app.route('/')
-def entry_point(json_input):
-    input = json.loads(json_input)
+@app.route('/', methods=['POST'])
+def entry_point():
+    input = request.json
 
     dataset = torch.Tensor(input.get('dataset'))
     point = torch.Tensor(input.get('point'))

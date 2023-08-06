@@ -103,7 +103,7 @@ ipcRenderer.on('start-publisher', async (event, consumerQueueName, containerRef)
   await publisher.startPublisher();
 });
 
-ipcRenderer.on('stop-publisher', async (event, consumerQueueName) => {
+ipcRenderer.on('stop-publisher', async (event) => {
   await publisher.close();
 });
 

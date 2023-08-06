@@ -41,12 +41,13 @@ const electronHandler = {
     // Other method you want to add like has(), reset(), etc.
   },
   // from client
-  
-  
+
+
   publishJob: (id: string, content: string) =>
     ipcRenderer.invoke('publish-job', id, content),
   startPublisher: (queueName: string, containerRef: string) =>
     ipcRenderer.send('start-publisher', queueName, containerRef),
+  stopPublisher: () => ipcRenderer.send('stop-publisher'),
   clientRegistered: (status: boolean) => ipcRenderer.send('client-registered', status),
   // to client
   onRegisterClient: (callback: (...args: any[]) => void) => {

@@ -52,15 +52,15 @@ export default function UserDashboard() {
 
   return (
     <Stack sx={{display: 'flex', alignItems: 'center'}}>
-      <Typography 
+      <Typography
         margin="4rem 0 4rem 0"
-        variant="h1" 
+        variant="h1"
         fontSize="28px">
           Test Job Submission
       </Typography>
-      <Typography 
+      <Typography
         color={theme.palette.cerulean.main}
-        margin="2rem 0 2rem 0" 
+        margin="2rem 0 2rem 0"
         variant="h1"
         fontSize="23px">
           JOB RESULTS
@@ -74,21 +74,21 @@ export default function UserDashboard() {
         display: 'flex',
           justifyContent: 'center',
           alignItems: 'center',
+          flexDirection: 'column',
         }}>
-
 
       {!jobResults || jobResults.length == 0 ? (
         <Typography margin="2rem 0 2rem 0" textAlign='center'
-          sx={{ 
-            width: "100%", 
+          sx={{
+            width: "100%",
             height: "100%",
             wordWrap: "break-word",
-            overflowWrap: "break-word" 
+            overflowWrap: "break-word"
           }}>
             No jobs detected
         {/* TEST LONGS MESSAGE ascascascascROR in C:\Users\JERYONG\Documents\mec_anywhere_desktop\src\renderer\components\client\UserDashboard.tsx
 ./src/renderer/components/client/UserDashboard.tsx 81:121-122 ERROR in C:\Users\JERYONG\Documents\mec_anywhere_desktop\src\renderer\components\client\UserDashboard.tsx(81,122)
-      TS1381: Unexpected token. Did you mean ?    
+      TS1381: Unexpected token. Did you mean ?
  @ ./src/renderer/App.tsx 26:0-62 36:2025-2038
  @ ./src/renderer/index.tsx 4:0-24 15
         ascscscscscscscscscscscscscscscscscscscscscscscscscscscscscscscsc */}
@@ -97,20 +97,20 @@ export default function UserDashboard() {
         : jobResults.map((result) => {
           return (
             <Alert key={result.id}>
-             <Typography margin="2rem 0 2rem 0" 
-              sx={{ 
-                width: "100%", 
+             <Typography margin="2rem 0 2rem 0"
+              sx={{
+                width: "100%",
                 height: "100%",
                 wordWrap: "break-word",
-                overflowWrap: "break-word" 
+                overflowWrap: "break-word"
               }}>
-            {result.id}
+            {result.id} :
             {result.content}
               </Typography>
           </Alert>
         );})}
         </Box>
-             
+
         <Button
           sx={{
             width: '20rem',

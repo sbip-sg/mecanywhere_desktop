@@ -4,6 +4,7 @@ import { useTheme } from '@emotion/react'
 import CircularProgress from '@mui/material/CircularProgress';
 import Transitions from '../../transitions/Transition';
 import { styled } from '@mui/material/styles';
+import { handleRegisterHost, handleDeregisterHost } from 'renderer/utils/handleRegistration';
 
 const HostSharingWidget = () => {
     const theme = useTheme();
@@ -15,15 +16,17 @@ const HostSharingWidget = () => {
     const handleEnableResourceSharing = async () => {
         setIsLoading(true);
         console.log("handleEnableResourceSharing");
-      
+        await handleRegisterHost();
+
         // Wrap the setTimeout in a Promise to use await
         await new Promise((resolve) => setTimeout(resolve, 2000));
-      
+
         setResourceSharingEnabled(true);
         setIsLoading(false);
       };
     const handleDisableResourceSharing = async () => {
         setIsLoading(true);
+        await handleDeregisterHost();
 
       console.log("handleDisableResourceSharing");
       await new Promise((resolve) => setTimeout(resolve, 1000));
@@ -66,11 +69,11 @@ const HostSharingWidget = () => {
     }, []);
 
     return (
-        
+
         <Box sx={{
-            height: '13rem', 
-            width: '100%',  
-            position: "relative", 
+            height: '13rem',
+            width: '100%',
+            position: "relative",
             display: 'inline-block',
         }}>
             {isLoading &&
@@ -101,11 +104,11 @@ const HostSharingWidget = () => {
                   alignItems: "center",
                   position: "absolute",
                   left: "50%",
-                  top: "50%", 
+                  top: "50%",
                   transform: "translate(-50%, -50%)"
                 }}>
-                    
-                    {resourceSharingEnabled ? 
+
+                    {resourceSharingEnabled ?
                         <Stack width="100%" sx={{display: 'flex', justifyContent:"center", alignItems: "center"}}>
                             <Grid container margin='2rem 0 0.5rem 0'>
                                 <Grid item xs={5} padding='0rem 0rem 0.5rem 2rem'>
@@ -149,11 +152,11 @@ const HostSharingWidget = () => {
                                     </Typography>
                                 </Grid>
                             </Grid>
-                            <Button 
+                            <Button
                                 onClick={handleDisableResourceSharing}
                                 sx={{
                                     width:"80%",
-                                    padding: "0.7rem", 
+                                    padding: "0.7rem",
                                     color: isLoading ? theme.palette.cerulean.main : 'inherit',
                                     backgroundColor: isLoading ? theme.palette.darkBlack.main : theme.palette.violet.main,
                                 }}
@@ -162,7 +165,7 @@ const HostSharingWidget = () => {
                                     Disable Resource&nbsp;Sharing
                                 </Typography>
                             </Button>
-                            
+
                         </Stack>
                         :
                         <Stack width="100%" sx={{display: 'flex', justifyContent:"center", alignItems: "center"}}>
@@ -171,11 +174,11 @@ const HostSharingWidget = () => {
                                     You are currently not registered for resource sharing.
                                 </Typography>
                             </Box>
-                            <Button 
+                            <Button
                                 onClick={handleEnableResourceSharing}
                                 sx={{
                                     width:"80%",
-                                    padding: "0.7rem", 
+                                    padding: "0.7rem",
                                     color: isLoading ? theme.palette.cerulean.main : theme.palette.darkBlack.main  ,
                                     backgroundColor: isLoading ?  theme.palette.darkBlack.main : theme.palette.mintGreen.main,
                                 }}                        >

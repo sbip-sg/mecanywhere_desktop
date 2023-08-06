@@ -1,5 +1,7 @@
 import asyncio
+import json
 import queue
+import time
 from py import meca_api
 import torch
 
@@ -22,10 +24,11 @@ async def distributed_knn(input_data, dataset, k, num_processes):
 
     # ==================== MECA OFFLOAD API ====================
 
-    result_queue = queue.Queue()
+    result_list = []
 
     def callback_on_receive(id, result):
-        result_queue.put(result)
+        result_list.extend(json.loads(result))
+        print("Received:", result)
 
     def callback_on_offload(err, result):
         if err:
@@ -33,7 +36,7 @@ async def distributed_knn(input_data, dataset, k, num_processes):
         else:
             print('Callbacked:', result)
 
-    await meca_api.initiateConnection(containerRef='jyume/meca:0.0.1', callbackOnReceive=callback_on_receive)
+    await meca_api.initiateConnection(containerRef='jyume/meca:0.0.4', callbackOnReceive=callback_on_receive)
 
     for i in range(num_processes):
         start_index = i * chunk_size
@@ -41,22 +44,17 @@ async def distributed_knn(input_data, dataset, k, num_processes):
         sliced_dataset = dataset[start_index:end_index].clone().detach()
 
         await meca_api.offload({
-            'dataset': sliced_dataset.tolist(),
-            'point': input_data.tolist(),
-            'k': k,
-            'num_processes': num_processes
+            "dataset": sliced_dataset.tolist(),
+            "point": input_data.tolist(),
+            "k": k,
+            "num_processes": num_processes
         }, callback_on_offload)
 
-    result_queue.join()
-    # await meca_api.disconnect()
+    await meca_api.join()
 
     # ====================  ====================
 
-    neighbors_list = []
-    while not result_queue.empty():
-        neighbors_list.extend(result_queue.get())
-
-    distances = [(index, euclidean_distance(input_data, dataset[index])) for index in neighbors_list]
+    distances = [(index, euclidean_distance(input_data, dataset[index])) for index in result_list]
     distances.sort(key=lambda x: x[1])
     overall_neighbors = [index for index, _ in distances[:k]]
 
@@ -75,17 +73,16 @@ async def main():
     # Example input data point
     input_data = torch.Tensor([2, 3])
     k = 2
-    num_processes = 2
+    num_processes = 1
 
     print("Number of processes:", num_processes)
     print("Number of nearest neighbors:", k)
 
-    task = asyncio.create_task(distributed_knn(input_data, dataset, k, num_processes))
-    await task
-    neighbors = task.result()
+    neighbors = await distributed_knn(input_data, dataset, k, num_processes)
 
     print("Nearest neighbors indices:", neighbors)
     print("Nearest neighbors data points:", dataset[neighbors])
+    await meca_api.disconnect()
 
 if __name__ == '__main__':
     try:

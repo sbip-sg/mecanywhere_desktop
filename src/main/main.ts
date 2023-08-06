@@ -9,7 +9,7 @@
  * `./src/main.js` using webpack. This gives us some performance wins.
  */
 import path from 'path';
-import { app, BrowserWindow, shell, ipcMain, safeStorage } from 'electron';
+import { app, BrowserWindow, shell, ipcMain, safeStorage, IpcMainEvent } from 'electron';
 import { autoUpdater } from 'electron-updater';
 import log from 'electron-log';
 import MenuBuilder from './menu';
@@ -38,10 +38,17 @@ const appdev_server = io.listen(process.env.SOCKET_PORT);
 appdev_server.on('connection', (socket) => {
   console.log('A user connected');
 
-  ipcMain.on('client-registered', async (event, status) => {
-    console.log('Client registered: ', status);
-    socket.emit('registered', status);
-  })
+  async function clientRegistered(event: IpcMainEvent, containerRef: string) {
+    console.log('Client registered: ', containerRef);
+    socket.emit('registered', containerRef);
+  }
+  ipcMain.on('client-registered', clientRegistered)
+
+  async function jobResultsReceived(event: IpcMainEvent, id: string, result: string) {
+    console.log('Sending job results to client... ', id, result)
+    socket.emit('job_results_received', id, result.toString());
+  }
+  ipcMain.on('job-results-received', jobResultsReceived)
 
   socket.on('offload', async (job) => {
     console.log('Received job...', job);
@@ -62,6 +69,9 @@ appdev_server.on('connection', (socket) => {
       throw new Error('"mainWindow" is not defined');
     }
     mainWindow.webContents.send('deregister-client');
+
+    ipcMain.removeAllListeners('client-registered');
+    ipcMain.removeListener('job-results-received', jobResultsReceived);
   });
 
   try {
@@ -126,7 +136,6 @@ ipcMain.on('job-results-received', async (event, id, result) => {
     throw new Error('"mainWindow" is not defined');
   }
   mainWindow.webContents.send('job-results-received', id, result);
-  appdev_server.emit('job-results-received', id, result);
 });
 
 ipcMain.on('job-received', async (event, id, result) => {
