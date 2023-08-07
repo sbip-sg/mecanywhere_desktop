@@ -2,7 +2,7 @@ const amqp = require('amqplib');
 const { ipcRenderer } = require('electron');
 const protobuf = require('protobufjs');
 
-const MQ_URL = 'amqp://localhost';
+const MQ_URL = 'amqp://sbip-g2.d2.comp.nus.edu.sg:11007';
 
 const Task = protobuf
   .loadSync('src/worker_renderer/schema.proto')
