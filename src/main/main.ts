@@ -18,7 +18,10 @@ import { performance } from 'perf_hooks';
 const Store = require('electron-store');
 const io = require('socket.io')();
 const { shell } = require('electron');
+
 const start = performance.now();
+
+const SDK_SOCKET_PORT = process.env.SDK_SOCKET_PORT || 3001;
 
 const store = new Store();
 
@@ -33,8 +36,7 @@ class AppUpdater {
 let mainWindow: BrowserWindow | null = null;
 let workerWindow: BrowserWindow | null = null;
 
-console.log(process.env.SOCKET_PORT)
-const appdev_server = io.listen(process.env.SOCKET_PORT);
+const appdev_server = io.listen(SDK_SOCKET_PORT);
 appdev_server.on('connection', (socket) => {
   console.log('A user connected');
 
