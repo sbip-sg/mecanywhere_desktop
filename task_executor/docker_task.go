@@ -100,14 +100,15 @@ func (t *DockerTask) GetId() string {
 // start the container which should run a server
 // to replace with using docker bridge network only
 func (t *DockerTask) Init(ctx context.Context, _ string, _ int) error {
-	log.Printf("init started %d for %s", time.Now().UnixMicro(), createContainerName(t.taskId))
+	containerName := createContainerName(t.taskId)
+	log.Printf("init started %d for %s", time.Now().UnixMicro(), containerName)
 
 	networkConfig := &network.NetworkingConfig{
 		EndpointsConfig: map[string]*network.EndpointSettings{
 			mecaVnet: {},
 		},
 	}
-	resp, err := t.cli.ContainerCreate(ctx, &container.Config{Image: t.taskId}, &container.HostConfig{}, networkConfig, nil, createContainerName(t.taskId))
+	resp, err := t.cli.ContainerCreate(ctx, &container.Config{Image: t.taskId}, &container.HostConfig{}, networkConfig, nil, containerName)
 	if err != nil {
 		return err
 	}
@@ -129,7 +130,7 @@ func (t *DockerTask) Init(ctx context.Context, _ string, _ int) error {
 	networkSettings := containerInfo.NetworkSettings
 	log.Printf("container network settings: %v", networkSettings)
 
-	t.vIP = networkSettings.Networks[mecaVnet].IPAddress
+	t.vIP = containerName
 	log.Printf("container assigned IP: %s", t.vIP)
 	// ensure task server is ready
 	if err := t.waitForTaskReady(ctx); err != nil {

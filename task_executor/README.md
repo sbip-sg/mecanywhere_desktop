@@ -38,3 +38,10 @@ send a curl request to invoke the sample task
 ```sh
 curl http://172.18.0.255:2591 -X POST -H "Content-Type: application/json" -d '{"id": "yourDockerAccount/sampleserver:latest", "input": "{\"name\": \"sbip\"}"}'
 ```
+
+for non-linux machines
+  
+```sh
+docker run --name meca_executor_test -v /var/run/docker.sock:/var/run/docker.sock --net=meca --ip=172.18.0.255 -p 2591:2591 meca-executor:latest
+curl http://localhost:2591 -X POST -H "Content-Type: application/json" -d '{"id": "yourDockerAccount/sampleserver:latest", "input": "{\"name\": \"sbip\"}"}'
+```
