@@ -47,14 +47,14 @@ func NewDockerTask(id string, cli *client.Client) *DockerTask {
 	}
 }
 
-// extract just the image name then add meca prefix and port suffix
+// extract the image name then add meca prefix and version suffix
 func createContainerName(id string) string {
 	first_colon_idx := strings.Index(id, ":")
 	if first_colon_idx == -1 {
 		first_colon_idx = len(id)
 	}
 	last_slash_idx := strings.LastIndex(id, "/") + 1
-	return fmt.Sprintf("%s_%s", dockerTaskPrefix, id[last_slash_idx:first_colon_idx])
+	return fmt.Sprintf("%s_%s_%s", dockerTaskPrefix, id[last_slash_idx:first_colon_idx], id[first_colon_idx+1:])
 }
 
 func (t *DockerTask) checkForReadyLogEntry(ctx context.Context) error {
