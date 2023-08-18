@@ -4,6 +4,7 @@ import { useTheme } from '@emotion/react'
 import CircularProgress from '@mui/material/CircularProgress';
 import Transitions from '../../transitions/Transition';
 import { styled } from '@mui/material/styles';
+import { handleRegisterHost } from 'renderer/utils/handleRegistration';
 
 const HostSharingWidget = () => {
     const theme = useTheme();
@@ -15,10 +16,10 @@ const HostSharingWidget = () => {
     const handleEnableResourceSharing = async () => {
         setIsLoading(true);
         console.log("handleEnableResourceSharing");
-      
+        // await handleRegisterHost();
         // Wrap the setTimeout in a Promise to use await
         await new Promise((resolve) => setTimeout(resolve, 2000));
-      
+        console.log("handleRegisterHost")
         setResourceSharingEnabled(true);
         setIsLoading(false);
       };

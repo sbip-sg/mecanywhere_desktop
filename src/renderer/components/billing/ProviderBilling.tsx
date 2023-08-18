@@ -4,7 +4,7 @@ import { Grid, Typography, Button} from '@mui/material';
 import { Card, CardContent, Stack } from '@mui/material';
 import { PieChart, Pie, Cell } from 'recharts';
 import { useTheme } from '@emotion/react'
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 
 
 interface DataEntry {
@@ -36,12 +36,11 @@ function convertEpochToStandardTimeWithDate(epochTimeInSeconds) {
 
 const getRandomPercent = () => Math.floor(Math.random() * 50) + 10; // Random percent between 10 and 60
 
-const ClientBilling = () => {
+const ProviderBilling = () => {
   const theme = useTheme();
   const [data, setData] = useState<DataEntry[]>([]);
-  const tasks = ['game_render', 'ml_lstm', 'vr_render', 'ml_dbn'];
+  const tasks = ['A', 'B', 'C', 'D'];
   const usageData = tasks.map((task) => ({ name: task, value: getRandomPercent() }));
-  console.log("usageData", usageData)
   useEffect(() => {
     const csvFilePath = 'http://localhost:3000/data'; // Replace with the correct endpoint URL where your server is serving the CSV data.
     fetch(csvFilePath)
@@ -65,11 +64,11 @@ const ClientBilling = () => {
   
   const groupedData: GroupedData[] = Object.values(groupedDataObject);
   console.log("groupedData", groupedData);
-
+  const navigate = useNavigate();
   return (
     <Grid container direction="column" height="100%" justifyContent="center" alignItems="center">
         <Grid container item xs={1} justifyContent="center" alignItems="center">
-          <Typography variant="h1" style={{ fontSize: '23px', margin: '1.5rem 0 1.5rem 0' }}>
+          <Typography variant="h1" style={{ fontSize: '20px', margin: '1.5rem 0 0 0' }}>
             Billing Overview
           </Typography>
         </Grid>
@@ -81,22 +80,23 @@ const ClientBilling = () => {
               <CardContent sx={{width:"100%", height:"100%"}}>
                 <Grid container sx={{width:"100%", height:"100%"}}>
                   <Grid xs={12}>
-                    <Typography sx={{ fontSize: 14, marginBottom: '1rem'}} color={theme.palette.cerulean.main} gutterBottom>
+                    <Typography sx={{ fontSize: 14, marginBottom: '1rem'}} color="text.primary" gutterBottom>
                       Current Billing Cycle
                     </Typography>
                   </Grid>
                   <Grid xs={12}>
                     <Typography variant="h5" component="div" textAlign="end">
-                      36.12 SGD
+                      432.17 SGD
                     </Typography>
                   </Grid>
                   <Grid xs={12}>
                     <Typography sx={{ mb: 1.8 }} color="text.secondary" textAlign="end">
-                      Amount Due
+                      Amount Deficit
                     </Typography>
                   </Grid>
                   <Grid xs={12} sx={{ height: "30%", display: 'flex', justifyContent: "end", alignItems: "center" }}>
-                    <Button sx={{ backgroundColor: "#00FF89", height: "90%", width: "90%", mb: 0.5 }}>
+                    <Button onClick={()=> navigate('/providerpayment')}
+                    sx={{ backgroundColor: "#00FF89", height: "90%", width: "90%", mb: 0.5 }}>
                       <Typography variant="h3" fontSize="16px" textAlign='center'>
                         Settle Payment
                       </Typography>
@@ -104,7 +104,7 @@ const ClientBilling = () => {
                   </Grid>
                   <Grid xs={12} sx={{ display: 'flex', justifyContent: "end", alignItems: "center" }}>
                     <Typography variant="body1" fontSize="10px" textAlign="end" width="90%">
-                      You will be redirected to your provider's payment gateway
+                      *Payment will be due by August 31st 2023.
                     </Typography>
                   </Grid>
                 </Grid>
@@ -116,10 +116,10 @@ const ClientBilling = () => {
           <Grid item xs={6}>
             <Card sx={{minWidth: 220, height: 230, backgroundColor: theme.palette.lightBlack.main}}>
               <CardContent sx={{display:"flex", justifyContent:"center",alignItems:"center"}}>
-                <Typography sx={{ fontSize: 16, marginBottom: '2rem'}} color={theme.palette.cerulean.main} gutterBottom>
+                <Typography sx={{ fontSize: 16, marginBottom: '2rem'}} color="text.primary" gutterBottom>
                 Usage percent by Tasks
-                </Typography>
-                <PieChart width={240} height={180}>
+            </Typography>
+                <PieChart width={180} height={180}>
                   <Pie
                     dataKey="value"
                     labelLine={false}
@@ -127,31 +127,42 @@ const ClientBilling = () => {
                     cx={80}
                     cy={80}
                     outerRadius={80}
-                    
                     fill="#8884d8"
-                    label={({ cx, cy, midAngle, innerRadius, outerRadius, percent, index }) => {
+                    label={({ cx, cy, midAngle, innerRadius, outerRadius, percent }) => {
                       const RADIAN = Math.PI / 180;
                       const radius = innerRadius + (outerRadius - innerRadius) * 0.5;
                       const x = cx + radius * Math.cos(-midAngle * RADIAN);
                       const y = cy + radius * Math.sin(-midAngle * RADIAN);
 
-                      const labelRadius = radius * 1.1; // Adjust this factor as needed
-
-                      const labelX = cx + labelRadius * Math.cos(-midAngle * RADIAN);
-                      const labelY = cy + labelRadius * Math.sin(-midAngle * RADIAN);
+                      const labelX = cx + radius * Math.cos(-midAngle * RADIAN);
+                      const labelY = cy + radius * Math.sin(-midAngle * RADIAN);
                       const isLeftHalf = x > cx;
 
                       return (
-                        <text
-                          x={labelX}
-                          y={labelY}
-                          fill="white"
-                          textAnchor={isLeftHalf ? 'start' : 'end'}
-                          dominantBaseline="central"
-                          fontSize={12}
-                        >
-                          {`${tasks[index]}: ${(percent * 100).toFixed(0)}%`}
-                        </text>
+                        <>
+                      <text
+                        x={labelX}
+                        y={labelY}
+                        fill="white"
+                        textAnchor={isLeftHalf ? 'start' : 'end'}
+                        dominantBaseline="central"
+                        fontSize={12} // Adjust the font size as needed
+                      >
+                        {`${(percent * 100).toFixed(0)}%`}
+                      </text>
+                      <text
+                        x={labelX}
+                        y={labelY - 16} // Adjust the dy to position the label above the percentage number
+                        fill="white"
+                        textAnchor={isLeftHalf ? 'start' : 'end'}
+                        dominantBaseline="central"
+                        fontSize={12} // Adjust the font size as needed
+                      >
+                        {usageData.map((entry, index) => (
+                      index
+                    ))}
+                      </text>
+                  </>
                       );
                     }}
                   >
@@ -164,23 +175,23 @@ const ClientBilling = () => {
             </Card>
           </Grid>
       </Grid>
-      <Grid container item xs={5.8} height="100%" justifyContent="center" alignItems="center"  sx={{padding:"1rem 0 1rem 0"}}>
-            <ResponsiveContainer width="85%" height="90%" >
-        <BarChart data={groupedData} margin={{ top: 0 }}>
-          <CartesianGrid strokeDasharray="3 3" />
-          <XAxis dataKey="month" tick={{ fontSize: 12 }} />
-          <YAxis tick={{ fontSize: 12 }}>
-            <Label
-              value="Amount Billed (SGD) by Month"
-              position="insideLeft"
-              angle={-90}
-              style={{ textAnchor: 'middle', fontSize: 16 }}
-            />
-          </YAxis>
-          <Tooltip />
-          <Bar dataKey="resource_consumed" fill="#8884d8" barSize={60} />
-        </BarChart>
-      </ResponsiveContainer>
+      <Grid container item xs={5.8} height="100%" justifyContent="center" alignItems="center">
+            <ResponsiveContainer width="85%" height="90%">
+            <BarChart data={groupedData} margin={{ top: 0 }}>
+              <CartesianGrid strokeDasharray="3 3" />
+              <XAxis dataKey="month" tick={{ fontSize: 12 }} />
+              <YAxis tick={{ fontSize: 12 }}>
+                <Label
+                  value="Amount Billed (SGD) by Month"
+                  position="insideLeft"
+                  angle={-90}
+                  style={{ textAnchor: 'middle', fontSize: 16 }}
+                />
+              </YAxis>
+              <Tooltip />
+              <Bar dataKey="resource_consumed" fill="#8884d8" />
+            </BarChart>
+          </ResponsiveContainer>
         </Grid>
         <Grid container item xs={0.7} height="100%" justifyContent="end" alignItems="center" paddingRight="4rem">
           <Link to='/clientpasttxn' style={{ textDecoration: 'none' }}>
@@ -193,4 +204,4 @@ const ClientBilling = () => {
   )
 }
 
-export default ClientBilling;
+export default ProviderBilling;

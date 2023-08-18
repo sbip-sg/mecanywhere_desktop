@@ -11,6 +11,7 @@ const addJob: ActionCreator<AnyAction> = (id: string, content: string) => ({ typ
 const setJobs: ActionCreator<AnyAction> = (payload: any) => ({ type: 'setJobs', payload });
 const addJobResults: ActionCreator<AnyAction> = (id: string, content: string) => ({ type: 'addJobResults', id, content });
 const setJobResults: ActionCreator<AnyAction> = (payload: any) => ({ type: 'setJobResults', payload });
+const setIsProvider: ActionCreator<AnyAction> = (payload: any) => ({ type: 'setIsProvider', payload });
 
 const boundToDoActions = bindActionCreators(
   {
@@ -24,6 +25,7 @@ const boundToDoActions = bindActionCreators(
     setJobs,
     addJobResults,
     setJobResults,
+    setIsProvider
   },
   reduxStore.dispatch
 );

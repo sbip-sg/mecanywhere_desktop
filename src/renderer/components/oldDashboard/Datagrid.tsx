@@ -18,6 +18,7 @@ import { styled } from '@mui/material/styles';
 import { useTheme } from '@emotion/react';
 import ExpandCircleDownIcon from '@mui/icons-material/ExpandCircleDown';
 import { useNavigate } from 'react-router-dom';
+const txn_data_url = process.env.TXN_SERVICE_API_URL;
 
 interface DataEntry {
     session_id: string;
@@ -195,6 +196,12 @@ const Datagrid: React.FC<DatagridProps> = ({ data, hasButton, expandView, rotate
   const [orderBy, setOrderBy] = React.useState<keyof DataEntry>('session_start_datetime');
   const [page, setPage] = React.useState(0);
   var initialRowsPerPage = 5;
+  const handleTableRowClick = (sessionId: string) => {
+    console.log("handleTableRowClick", txn_data_url);
+    navigate(`/details/${sessionId}`);
+
+    // navigate(txn_data_url+'?session_id=01H65Y8SMXXCZQDMG71YV492QN')
+  }
   if (expandView) {
     initialRowsPerPage = 20
     }
@@ -314,6 +321,7 @@ const Datagrid: React.FC<DatagridProps> = ({ data, hasButton, expandView, rotate
                 const labelId = `enhanced-table-checkbox-${index}`;
                 return (
                   <TableRow
+                    onClick={() => handleTableRowClick(data.session_id)}
                     hover
                     role="checkbox"
                     tabIndex={-1}
@@ -348,7 +356,7 @@ const Datagrid: React.FC<DatagridProps> = ({ data, hasButton, expandView, rotate
             </TableBody>
           </Table>
         </TableContainer>
-        <Box id='paginationBox' sx={{position: 'relative', overflowY: 'hidden', height:"23%"}}>
+        <Box id='paginationBox' sx={{position: 'relative', overflowY: 'hidden', height:"29%"}}>
 
             <TablePagination  id='pagination'  
               rowsPerPageOptions={[5, 10, 25]}

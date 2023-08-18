@@ -18,6 +18,8 @@ import SettingsIcon from '@mui/icons-material/Settings';
 import LogoutIcon from '@mui/icons-material/Logout';
 import themeOptions from 'renderer/utils/theme';
 import { useTheme } from '@mui/material/styles';
+import { useNavigate } from 'react-router-dom';
+import actions from '../../../redux/actionCreators';
 
 // import ExitToAppIcon from '@mui/icons-material/ExitToApp';
 
@@ -34,6 +36,13 @@ const CustomListItemText: React.FC<{ text: string }> = ({ text }) => {
 
 const RightDrawerComponent: React.FC<RightDrawerComponentProps> = ({ isOpen, onClose }) => {
   const theme = useTheme();
+  const navigate = useNavigate();
+  const handleSignOut = () => {
+    // handleClose();
+    console.log("aaaa")
+    actions.setAuthenticated(false);
+    navigate('/login');
+  };
   return (
         <Drawer anchor="right" open={isOpen} onClose={onClose} 
           sx={{ zIndex: 1500 }} 
@@ -72,8 +81,7 @@ const RightDrawerComponent: React.FC<RightDrawerComponentProps> = ({ isOpen, onC
                     justifyContent: 'right',
                     margin: '0 1rem 1rem 1.5rem'
                   }}>
-                <Typography variant="h5" fontSize="16px" >
-                Resource sharing enabled.
+                
                 <Box paddingTop="0.5rem" >
                   Device Information:
                   <Box paddingLeft="1rem" paddingTop="0.5rem">
@@ -90,7 +98,9 @@ const RightDrawerComponent: React.FC<RightDrawerComponentProps> = ({ isOpen, onC
                     </Typography>
                   </Box>
                 </Box>
-              </Typography>        
+                {/* <Typography variant="h5" fontSize="16px" >
+                Registered as a parent organization.
+              </Typography>         */}
       
                 </Box>
               </ListItem >
@@ -103,7 +113,7 @@ const RightDrawerComponent: React.FC<RightDrawerComponentProps> = ({ isOpen, onC
                 </ListItemButton>
               </ListItem>
               <ListItem key={"Settings"} disablePadding sx={{ marginLeft: "0.5rem" }}>
-                <ListItemButton>
+                <ListItemButton  onClick={()=> navigate('/settings')}>
                   <ListItemIcon><SettingsIcon style={{ fontSize: 28, color: "white" }}/></ListItemIcon>
                   <CustomListItemText text="Settings"/>
                 </ListItemButton>
@@ -123,7 +133,7 @@ const RightDrawerComponent: React.FC<RightDrawerComponentProps> = ({ isOpen, onC
               </ListItem>
               <Divider variant="middle" color="white" sx={{margin:"0.5rem"}}/>
               <ListItem key={"Sign Out"} disablePadding sx={{ marginLeft: "0.5rem" }}>
-                <ListItemButton>
+                <ListItemButton  onClick={handleSignOut}>
                   <ListItemIcon><LogoutIcon style={{ fontSize: 28, color: "white" }}/></ListItemIcon>
                   <CustomListItemText text="Sign Out"/>
                 </ListItemButton>

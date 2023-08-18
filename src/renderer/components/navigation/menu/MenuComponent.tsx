@@ -28,13 +28,13 @@ const MenuComponent = () => {
               alignItems: 'center',
               justifyContent: 'left',
             }}>
-                    <img src={logoTest} width="10%" height="10%" style={{ margin: '0 0.5rem 0 0' }}/>
-          <Typography variant="h1" noWrap component="div" 
-            sx={{color: theme.palette.cerulean.main, marginLeft: '0.5rem'}}
-            >
-            MECAnywhere
-          </Typography>
-              </Box>
+            <img src={logoTest} width="10%" height="10%" style={{ margin: '0 0.5rem 0 0' }}/>
+            <Typography variant="h1" noWrap component="div" 
+              sx={{color: theme.palette.cerulean.main, marginLeft: '0.5rem'}}
+              >
+              MECAnywhere
+            </Typography>
+          </Box>
           <Box
             sx={{
               display: 'flex',

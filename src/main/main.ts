@@ -73,6 +73,30 @@ ipcMain.on('client-registered', async (event) => {
   appdev_server.emit('registered');
 })
 
+function showLoginWindow() {
+  // window.loadURL('https://www.your-site.com/login')
+  if (mainWindow) {
+    shell.openExternal('localhost:1212/login');
+    // mainWindow
+    //   .loadFile('src/main/login.html') // For testing purposes only
+    //   .then(() => {
+    //     if (mainWindow) {
+    //       mainWindow.show();
+    //       console.log("mainwindowshowdone")
+    //     }
+    //   });
+  }
+}
+ipcMain.handle('openLinkPlease', () => {
+  shell.openExternal("http://localhost:3002/");
+})
+
+ipcMain.on('message:loginShow', (event) => {
+  console.log("showLoginWindowpre")
+  showLoginWindow();
+  console.log("showLoginWindowpost")
+});
+
 ipcMain.on('electron-store-get', async (event, key) => {
   const encryptedKey = store.get(key);
   //help correct the line below

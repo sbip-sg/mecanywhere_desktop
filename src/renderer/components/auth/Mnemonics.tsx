@@ -45,19 +45,29 @@ const Mnemonics = () => {
       <Box
         sx={{
           display: 'flex',
+          flexDirection: 'row',
           justifyContent: 'center',
-          flexDirection: 'column',
+          // flexDirection: 'column',
           alignItems: 'center',
           height: '100%',
           marginTop: '4rem',
         }}
       >
         <Button
+          sx={{ margin: "0 1rem 0 0"}}
           variant="contained"
           color="secondary"
           onClick={() => navigate('/login')}
         >
           Continue to Login
+        </Button>
+        <Button
+          variant="contained"
+          color="secondary"
+          // sx={{padding: "0 1rem 0 1rem"}}
+          onClick={() => navigate('/roleSelection')}
+        >
+          Back
         </Button>
       </Box>
     </>

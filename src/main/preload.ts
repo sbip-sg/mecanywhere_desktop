@@ -5,6 +5,9 @@ import { contextBridge, ipcRenderer, IpcRendererEvent } from 'electron';
 export type Channels = 'ipc-example';
 
 const electronHandler = {
+  openLinkPlease: () => ipcRenderer.invoke('openLinkPlease'),
+  //   })
+  // });
   ipcRenderer: {
     sendMessage(channel: Channels, args: unknown[]) {
       ipcRenderer.send(channel, args);

@@ -45,6 +45,7 @@ const themeOptions: ThemeOptions = {
           scrollbarColor: "#6b6b6b #2b2b2b",
           "&::-webkit-scrollbar, & *::-webkit-scrollbar": {
             backgroundColor: "#2b2b2b",
+            width: '1rem'
           },
           "&::-webkit-scrollbar-thumb, & *::-webkit-scrollbar-thumb": {
             borderRadius: 8,

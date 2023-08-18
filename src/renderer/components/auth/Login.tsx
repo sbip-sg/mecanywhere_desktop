@@ -11,10 +11,13 @@ import { useNavigate } from 'react-router-dom';
 import TextFieldWrapper from '../../utils/TextField';
 import actions from '../../redux/actionCreators';
 import logoBlack from '../../../../assets/logo-black.png';
-import Transitions from '../Transition';
+import Transitions from '../transitions/Transition';
 import { FormikHelpers } from 'formik';
 import FormSchema from '../../utils/FormSchema';
 import handleLogin from './handleLogin';
+import { useTheme } from '@emotion/react';
+import { useSelector } from 'react-redux';
+import { RootState } from '../../redux/store';
 
 interface FormValues {
   password: string;
@@ -29,15 +32,23 @@ function Login() {
   const handleCloseErrorDialog = () => {
     setErrorDialogOpen(false);
   };
+  const isProvider = useSelector((state: RootState) => state.isProvider.isProvider)
+  console.log("isProvider", isProvider)
   const handleSubmit = useCallback(async (values: FormValues, formActions: FormikHelpers<FormValues>) => {
     setIsLoading(true);
     try {
       formActions.resetForm();
       const { password } = values;
-      const userIsAuthenticated = await handleLogin(password);
+      // const userIsAuthenticated = await handleLogin(password);
+      const userIsAuthenticated = true;
       if (userIsAuthenticated) {
         actions.setAuthenticated(true);
-        navigate('/userdashboard');
+        if (isProvider) {
+          navigate('/providerdashboard');
+        } else {
+          navigate('/clientdashboard');
+
+        }
       } else {
         setErrorMessage('Wrong password');
         setErrorDialogOpen(true);
@@ -93,6 +104,17 @@ function Login() {
                     label="Password"
                     type="password"
                   />
+                  <Typography
+                    fontSize="12px"
+                    maxWidth={'22rem'}
+                    textAlign="center"
+                    marginTop="0.5rem"
+                  >
+                    {useSelector((state: RootState) => state.isProvider.isProvider)
+
+                      ? 'You have previously registered as a parent organization on this device. Please log in to continue.'
+                      : 'You have previously registered as a client/host on this device. Please log in to continue.'}
+                  </Typography>
                   <Stack
                     sx={{ pt: 4 }}
                     direction="row"

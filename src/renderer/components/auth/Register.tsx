@@ -32,8 +32,8 @@ const Register = () => {
     try {
       formActions.resetForm();
       const { password } = values;
-      await handleAccountRegistration(password);
-      navigate('/mnemonics');
+      // await handleAccountRegistration(password);
+      navigate('/roleselection');
     } catch (error) {
       setErrorMessage(String(error));
       setErrorDialogOpen(true);

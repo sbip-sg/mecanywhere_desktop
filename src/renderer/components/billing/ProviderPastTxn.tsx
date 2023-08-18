@@ -24,7 +24,7 @@ function convertEpochToStandardTimeWithDate(epochTimeInSeconds) {
   return `${day}/${month}/${year} ${hours}:${minutes}`;
 }
 
-const HostDashboardNoChart = () => {
+const ProviderPastTxn = () => {
     const [data, setData] = useState<DataEntry[]>([]);
     useEffect(() => {
       const csvFilePath = 'http://localhost:3000/data'; // Replace with the correct endpoint URL where your server is serving the CSV data.
@@ -38,12 +38,7 @@ const HostDashboardNoChart = () => {
               session_end_datetime: convertEpochToStandardTimeWithDate(entry.session_end_datetime),
             }));
     
-            const middleIndex = Math.ceil(convertedData.length / 2);
-            const firstHalf = convertedData.slice(0, middleIndex);
-            const secondHalf = convertedData.slice(middleIndex);
-
-            // Swap the two halves and update the state
-            setData([...secondHalf, ...firstHalf]);
+            setData(convertedData);
         });
     }, []);
 
@@ -53,18 +48,16 @@ const HostDashboardNoChart = () => {
         height="100%"
         justifyContent="center"
         alignItems="center"
+        // marginTop="5rem"
         spacing={2}
       >
         {/* <Box sx={{ height: '10%', display: "flex", justifyContent: "center", alignItems: "center" }}>
-          <Typography variant="h1" style={{ fontSize: '20px', margin: '1.5rem 0 0 0' }}>
-            Past Transactions
-          </Typography>
         </Box> */}
         <Box id='boxy' sx={{ height: '100%', width: "95%", display: "flex", justifyContent: "center", alignItems: "center", overflowY: 'hidden' }}>
-          <Datagrid data={data} hasButton={false} expandView={true} rotateButton={true} fromClient={false}/>
+          <Datagrid data={data} hasButton={false} expandView={true} rotateButton={true} fromClient={true}/>
         </Box>
       </Stack>
       );
   };
   
-export default HostDashboardNoChart;
+export default ProviderPastTxn;
