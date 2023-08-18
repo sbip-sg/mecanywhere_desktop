@@ -32,7 +32,7 @@ function convertEpochToStandardTimeWithDate(epochTimeInSeconds) {
 }
 const HostDashboard = () => {
     const [data, setData] = useState<DataEntry[]>([]);
-  
+
     useEffect(() => {
       const csvFilePath = 'http://localhost:3000/data'; // Replace with the correct endpoint URL where your server is serving the CSV data.
       fetch(csvFilePath)
@@ -44,13 +44,16 @@ const HostDashboard = () => {
               session_start_datetime: convertEpochToStandardTimeWithDate(entry.session_start_datetime),
               session_end_datetime: convertEpochToStandardTimeWithDate(entry.session_end_datetime),
             }));
-    
+
             const middleIndex = Math.ceil(convertedData.length / 2);
             const firstHalf = convertedData.slice(0, middleIndex);
             const secondHalf = convertedData.slice(middleIndex);
 
             // Swap the two halves and update the state
             setData([...secondHalf, ...firstHalf]);
+        })
+        .catch((error) => {
+          console.error(error);
         });
     }, []);
     const last10Rows = data.slice(-33)
@@ -62,7 +65,7 @@ const HostDashboard = () => {
       acc[month].resource_consumed += Number(entry.resource_consumed); // Ensure resource_consumed is converted to a number.
       return acc;
     }, {} as { [key: string]: GroupedData });
-  
+
     // console.log("groupedDataObject", groupedDataObject)
     const groupedData: GroupedData[] = Object.values(groupedDataObject);
     // console.log("groupedData", groupedData)
@@ -98,7 +101,7 @@ const HostDashboard = () => {
               {/* <Legend /> */}
               <Line type="monotone" dataKey="resource_consumed" stroke="#8884d8" />
             </LineChart>
-          </ResponsiveContainer>          
+          </ResponsiveContainer>
         </Box>
         <Box id='datagrid-container-outer' sx={{ height: '53%', width: "95%", display: "flex", justifyContent: "center", alignItems: "center"}}>
           <Datagrid data={data} hasButton={true} expandView={false} rotateButton={false} fromClient={false}/>
@@ -106,6 +109,6 @@ const HostDashboard = () => {
       </Stack>
       );
   };
-  
+
 export default HostDashboard;
 

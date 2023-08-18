@@ -37,8 +37,11 @@ const ClientDashboardNoChart = () => {
               session_start_datetime: convertEpochToStandardTimeWithDate(entry.session_start_datetime),
               session_end_datetime: convertEpochToStandardTimeWithDate(entry.session_end_datetime),
             }));
-    
+
             setData(convertedData);
+        })
+        .catch((error) => {
+          console.error(error);
         });
     }, []);
 
@@ -59,5 +62,5 @@ const ClientDashboardNoChart = () => {
       </Stack>
       );
   };
-  
+
 export default ClientDashboardNoChart;

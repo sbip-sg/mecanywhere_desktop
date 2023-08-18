@@ -37,13 +37,16 @@ const HostDashboardNoChart = () => {
               session_start_datetime: convertEpochToStandardTimeWithDate(entry.session_start_datetime),
               session_end_datetime: convertEpochToStandardTimeWithDate(entry.session_end_datetime),
             }));
-    
+
             const middleIndex = Math.ceil(convertedData.length / 2);
             const firstHalf = convertedData.slice(0, middleIndex);
             const secondHalf = convertedData.slice(middleIndex);
 
             // Swap the two halves and update the state
             setData([...secondHalf, ...firstHalf]);
+        })
+        .catch((error) => {
+          console.error(error);
         });
     }, []);
 
@@ -66,5 +69,5 @@ const HostDashboardNoChart = () => {
       </Stack>
       );
   };
-  
+
 export default HostDashboardNoChart;

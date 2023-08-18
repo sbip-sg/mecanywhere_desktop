@@ -37,12 +37,12 @@ function Login() {
     try {
       formActions.resetForm();
       const { password } = values;
-      
+
       // const userIsAuthenticated = await handleLogin(password);
       const userIsAuthenticated = true;
       if (userIsAuthenticated) {
         actions.setAuthenticated(true);
-        navigate('/userdashboard');
+        navigate('/userjobsubmission');
       } else {
         setErrorMessage('Wrong password');
         setErrorDialogOpen(true);
@@ -92,7 +92,7 @@ function Login() {
                      <Box sx={{display: 'flex', justifyContent: 'center'}}>
                     <img src={logoTest} width="70%" height="70%" style={{ margin: '5rem 0 2rem' }}/>
                   </Box>
-                  <Typography variant="h5" py={2} 
+                  <Typography variant="h5" py={2}
                   color={theme.palette.cerulean.main} marginTop="1rem"
                   >
                     LOG IN
@@ -125,7 +125,7 @@ function Login() {
                     //                     color: theme.palette.secondary.main,
                     //                 },
                     //                 bgcolor: theme.palette.secondary.dark
-                    //             }} 
+                    //             }}
                                 type="submit">
                       Log In
                     </Button>

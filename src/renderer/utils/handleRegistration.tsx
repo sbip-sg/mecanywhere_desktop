@@ -8,20 +8,19 @@ import {
 } from '../services/RegistrationServices';
 import reduxStore from '../redux/store';
 
-export const handleRegisterClient = async () => {
+export const handleRegisterClient = async (containerRef) => {
   const credential = JSON.parse(window.electron.store.get('credential'));
   const did = window.electron.store.get('did');
   if (credential && did) {
     const response = await registerUser(did, credential);
     const { access_token } = response;
-    const assignmentRes = true;
-    // const assignmentRes = await assignHost(access_token, did);
+    const assignmentRes = await assignHost(access_token, did);
     if (assignmentRes) {
       const { queue } = assignmentRes;
       if (queue == "") {
         throw new Error('No host available');
       }
-      window.electron.startPublisher(queue);
+      window.electron.startPublisher(queue, containerRef);
       actions.setCredential(credential);
       actions.setUserAccessToken(access_token);
       const accessToken = reduxStore.getState().accountUser.userAccessToken;
@@ -58,6 +57,7 @@ export const handleDeregisterClient = async () => {
   const response = await deregisterUser(accessToken, did);
   if (response && response.ok) {
     actions.setUserAccessToken('');
+    window.electron.stopPublisher();
   } else {
     throw new Error('Deregistration failed');
   }

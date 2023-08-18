@@ -6,7 +6,7 @@ import webpack from 'webpack';
 import TsconfigPathsPlugins from 'tsconfig-paths-webpack-plugin';
 import webpackPaths from './webpack.paths';
 import { dependencies as externals } from '../../release/app/package.json';
-const Dotenv = require('dotenv-webpack');
+import dotenv from "dotenv";
 
 const configuration: webpack.Configuration = {
   externals: [...Object.keys(externals || {})],
@@ -57,8 +57,8 @@ const configuration: webpack.Configuration = {
   plugins: [
     new webpack.EnvironmentPlugin({
       NODE_ENV: 'production',
+      ...dotenv.config().parsed,
     }),
-    new Dotenv(),
     new webpack.ProvidePlugin({
       Buffer: ['buffer', 'Buffer'],
     }),

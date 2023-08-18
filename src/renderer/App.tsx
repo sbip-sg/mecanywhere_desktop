@@ -34,7 +34,7 @@ import UserDashboard from './components/client/UserDashboard';
 
 const PrivateRoutes = () => {
   const authenticated = useSelector((state: RootState) => state.accountUser.authenticated);
-  return authenticated ? <Outlet /> : <Navigate to="/userdashboard" />;
+  return authenticated ? <Outlet /> : <Navigate to="/userjobsubmission" />;
 }
 
 const Animated = () => {
@@ -91,7 +91,7 @@ const Animated = () => {
         }
       />
       <Route element={<PrivateRoutes />}>
-        
+
         <Route
           path="/profile"
           element={
@@ -100,7 +100,7 @@ const Animated = () => {
             </Transitions>
           }
         />
-        
+
         <Route
           path="/clientdashboard"
           element={
@@ -197,7 +197,7 @@ const Animated = () => {
             </Transitions>
           }
         />
-        
+
       </Route>
     </Routes>
   );

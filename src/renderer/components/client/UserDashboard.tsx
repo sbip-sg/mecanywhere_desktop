@@ -1,4 +1,4 @@
-import { Alert, Box, Button, Grid, Stack, Typography } from '@mui/material';
+import { Button, Divider, Grid, Stack, Typography } from '@mui/material';
 import { useSelector } from 'react-redux';
 import { RootState } from 'renderer/redux/store';
 import { useEffect } from 'react';
@@ -16,13 +16,15 @@ export default function UserDashboard() {
       actions.addJob(id.toString(), content);
     });
     window.electron.onSubscribeJobResults((_event, id, result) => {
-      console.log(result);
       actions.addJobResults(id.toString(), result);
-      console.log(jobResults)
     });
-    window.electron.onRegisterClient( async (_event) => {
-      await handleRegisterClient();
-      window.electron.clientRegistered();
+    window.electron.onRegisterClient( async (_event, containerRef) => {
+      try {
+        await handleRegisterClient(containerRef);
+        window.electron.clientRegistered(true);
+      } catch (error) {
+        window.electron.clientRegistered(false);
+      }
     });
     window.electron.onOffloadJob( async (_event, job) => {
       const id = generateUuid();
@@ -49,66 +51,111 @@ export default function UserDashboard() {
   const theme = useTheme();
 
   return (
-    <Stack sx={{display: 'flex', alignItems: 'center'}}>
-      <Typography 
+    <Stack sx={{display: 'flex', alignItems: 'center', height: "100%"}}>
+      <Typography
         margin="4rem 0 4rem 0"
-        variant="h1" 
+        variant="h1"
         fontSize="28px">
           Test Job Submission
       </Typography>
-      <Typography 
+      <Typography
         color={theme.palette.cerulean.main}
-        margin="2rem 0 2rem 0" 
+        margin="2rem 0 2rem 0"
         variant="h1"
         fontSize="23px">
           JOB RESULTS
       </Typography>
-      <Box sx={{
-        width: "80%",
-        height: "80%",
-        backgroundColor: theme.palette.mediumBlack.main,
-        padding: "2rem 2rem 2rem 2rem",
-        borderRadius: '10px',
-        display: 'flex',
-          justifyContent: 'center',
-          alignItems: 'center',
-        }}>
-
-
-      {!jobResults || jobResults.length == 0 ? (
-        <Typography margin="2rem 0 2rem 0" textAlign='center'
-          sx={{ 
-            width: "100%", 
-            height: "100%",
-            wordWrap: "break-word",
-            overflowWrap: "break-word" 
+      <Grid container xs={12} sx={{
+            height: "80%",
+            width: "90%",
+            justifyContent: 'center',
+            alignItems: 'top',
+            margin: "0 1.5rem 0rem 1.5rem",
+            backgroundColor: theme.palette.mediumBlack.main,
+            borderRadius: "12px",
+            padding: "1rem 0.5rem 0.5rem 0.5rem",
+            overflowY: "scroll"
           }}>
-            No jobs detected
-        {/* TEST LONGS MESSAGE ascascascascROR in C:\Users\JERYONG\Documents\mec_anywhere_desktop\src\renderer\components\client\UserDashboard.tsx
-./src/renderer/components/client/UserDashboard.tsx 81:121-122 ERROR in C:\Users\JERYONG\Documents\mec_anywhere_desktop\src\renderer\components\client\UserDashboard.tsx(81,122)
-      TS1381: Unexpected token. Did you mean ?    
- @ ./src/renderer/App.tsx 26:0-62 36:2025-2038
- @ ./src/renderer/index.tsx 4:0-24 15
-        ascscscscscscscscscscscscscscscscscscscscscscscscscscscscscscscsc */}
-        </Typography>
-        )
-        : jobResults.map((result) => {
-          return (
-            <Alert key={result.id}>
-             <Typography margin="2rem 0 2rem 0" 
-              sx={{ 
-                width: "100%", 
+        {!jobResults || jobResults.length == 0 ? (
+            <Typography margin="2rem 0 2rem 0" textAlign='center'
+              sx={{
+                width: "100%",
                 height: "100%",
                 wordWrap: "break-word",
-                overflowWrap: "break-word" 
+                overflowWrap: "break-word"
               }}>
-            {result.id}
-            {result.content}
-              </Typography>
-          </Alert>
-        );})}
-        </Box>
-             
+                No jobs detected
+            </Typography>
+          )
+          :
+          (
+            <>
+              <Grid container item xs={5} sx={{ margin: "1rem 1rem 0.5rem 1rem" }}>
+                <Typography
+                  variant="h6" // Use an appropriate variant for your header size
+                  margin="0rem 0 0rem 0"
+                  sx={{
+                    wordWrap: "break-word",
+                    overflowWrap: "break-word",
+                    color: theme.palette.cerulean.main
+                  }}
+                >
+                  ID Header
+                </Typography>
+              </Grid>
+              <Grid container item xs={5} sx={{ margin: "1rem 1rem 0.5rem 1rem" }}>
+                <Typography
+                  variant="h6" // Use an appropriate variant for your header size
+                  margin="0rem 0 0rem 0"
+                  sx={{
+                    wordWrap: "break-word",
+                    overflowWrap: "break-word",
+                    color: theme.palette.cerulean.main
+                  }}
+                >
+                  Content Header
+                </Typography>
+              </Grid>
+
+              {jobResults.map((result) => (
+                <>
+                  <Grid container item xs={5} sx={{ margin: "0.5rem 1rem 0.5rem 1rem" }}>
+                    <Typography
+                      margin="0rem 0 0rem 0"
+                      sx={{
+                        width: "100%",
+                        height: "100%",
+                        wordWrap: "break-word",
+                        overflowWrap: "break-word",
+                      }}
+                    >
+                      {result.id}:
+                    </Typography>
+                  </Grid>
+                  <Grid container item xs={5} sx={{ margin: "0.5rem 1rem 0.5rem 1rem" }}>
+                    <Typography
+                      margin="0rem 0 0rem 0"
+                      sx={{
+                        width: "100%",
+                        height: "100%",
+                        wordWrap: "break-word",
+                        overflowWrap: "break-word",
+                      }}
+                    >
+                      {result.content}
+                    </Typography>
+                  </Grid>
+                  <Grid item xs={12}>
+                    <Divider color={theme.palette.lightPurple.main} />
+                  </Grid>
+                </>
+              ))}
+            </>
+          )
+        }
+          </Grid>
+
+
         <Button
           sx={{
             width: '20rem',
@@ -118,7 +165,7 @@ export default function UserDashboard() {
           variant="contained"
           onClick={handleClear}
           >
-          Clear Job
+            Clear Job
         </Button>
       </Stack>
   );
