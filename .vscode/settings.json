@@ -29,7 +29,10 @@
   },
   "editor.defaultFormatter": null,
   "[typescriptreact]": {
-    "editor.defaultFormatter": "rvest.vs-code-prettier-eslint"
+    "editor.defaultFormatter": "esbenp.prettier-vscode"
   },
-  "eslint.execArgv": null
+  "eslint.execArgv": null,
+  "[typescript]": {
+    "editor.defaultFormatter": "esbenp.prettier-vscode"
+  }
 }

@@ -12,11 +12,7 @@ interface ErrorDialogProps {
   errorMessage: string;
 }
 
-const ErrorDialog: FC<ErrorDialogProps> = ({
-  open,
-  onClose,
-  errorMessage,
-}) => {
+const ErrorDialog: FC<ErrorDialogProps> = ({ open, onClose, errorMessage }) => {
   const handleClose = () => {
     onClose();
   };

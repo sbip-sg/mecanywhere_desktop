@@ -41,9 +41,9 @@ const configuration: webpack.Configuration = {
       {
         test: /\.csv$/,
         use: [
-            {
-                loader: 'file-loader',
-            },
+          {
+            loader: 'file-loader',
+          },
         ],
       },
       {
@@ -103,7 +103,6 @@ const configuration: webpack.Configuration = {
     minimize: true,
     minimizer: [new TerserPlugin(), new CssMinimizerPlugin()],
   },
-
 
   plugins: [
     /**

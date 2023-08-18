@@ -5,11 +5,10 @@ interface StyledTableRowProps {
   maxRowHeight: number;
 }
 
-const StyledTableRow = styled(TableRow)<StyledTableRowProps>(({ theme, maxRowHeight }) => ({
-    '&:nth-of-type(odd)': {
-      backgroundColor: "theme.palette.lightBlack.main",
-    },
-    '&:last-child td, &:last-child th': { // hide last border
+const StyledTableRow = styled(TableRow)<StyledTableRowProps>(
+  ({ theme, maxRowHeight }) => ({
+    '&:last-child td, &:last-child th': {
+      // hide last border
       border: 0,
     },
     hover: {
@@ -21,8 +20,9 @@ const StyledTableRow = styled(TableRow)<StyledTableRowProps>(({ theme, maxRowHei
       cursor: 'pointer',
     },
     [`&.${tableRowClasses.root}`]: {
-      height: `${maxRowHeight}px`
+      height: `${maxRowHeight}px`,
     },
-}));
-  
-export default StyledTableRow
+  })
+);
+
+export default StyledTableRow;

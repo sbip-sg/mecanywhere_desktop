@@ -1,6 +1,6 @@
 import { Box, Typography, Button } from '@mui/material';
-import SeedPhraseReveal from './SeedPhraseReveal';
 import { useNavigate } from 'react-router-dom';
+import SeedPhraseReveal from './SeedPhraseReveal';
 
 const Mnemonics = () => {
   const navigate = useNavigate();
@@ -54,7 +54,7 @@ const Mnemonics = () => {
         }}
       >
         <Button
-          sx={{ margin: "0 1rem 0 0"}}
+          sx={{ margin: '0 1rem 0 0' }}
           variant="contained"
           color="secondary"
           onClick={() => navigate('/login')}

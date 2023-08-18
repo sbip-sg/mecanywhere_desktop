@@ -6,6 +6,10 @@ import reducers from './reducers';
 export type RootState = ReturnType<typeof reducers>;
 
 const middleware = [thunk as ThunkMiddleware<RootState>];
-const reduxStore: Store<RootState> = createStore(reducers, {}, applyMiddleware(...middleware));
+const reduxStore: Store<RootState> = createStore(
+  reducers,
+  {},
+  applyMiddleware(...middleware)
+);
 
 export default reduxStore;

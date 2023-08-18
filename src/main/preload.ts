@@ -52,7 +52,7 @@ const electronHandler = {
   },
   // from host
   startConsumer: (queueName: string) =>
-  ipcRenderer.send('start-consumer', queueName),
+    ipcRenderer.send('start-consumer', queueName),
   // to host
   onSubscribeJobs: (callback: (...args: any[]) => void) => {
     ipcRenderer.on('job-received', callback);

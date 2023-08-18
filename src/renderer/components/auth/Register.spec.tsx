@@ -1,19 +1,20 @@
-import {render, fireEvent, screen, waitFor } from '@testing-library/react'
-import '@testing-library/jest-dom'
-import Register from './Register'
+import { render, fireEvent, screen, waitFor } from '@testing-library/react';
+import '@testing-library/jest-dom';
 import { BrowserRouter } from 'react-router-dom';
 import { Provider } from 'react-redux';
 import reduxStore from 'renderer/redux/store';
-import * as router from 'react-router'
+import * as router from 'react-router';
+import Register from './Register';
+
 const MockRegister = () => {
   return (
     <Provider store={reduxStore}>
       <BrowserRouter>
-          <Register />
+        <Register />
       </BrowserRouter>
     </Provider>
-  )
-}
+  );
+};
 
 // Mock the Electron store
 const electronMock = {
@@ -32,7 +33,6 @@ jest.mock('./handleAccountRegistration', () => {
   });
 });
 
-
 describe('Register Page', () => {
   beforeEach(() => {
     // Any setup or configuration needed before each test
@@ -44,10 +44,14 @@ describe('Register Page', () => {
 
   test('renders register page with required elements', () => {
     render(<MockRegister />);
-    const createAccountHeading = screen.getByRole("heading", { name: /CREATE ACCOUNT/i});
-    const passwordInput = screen.getByPlaceholderText(/password/i);    
-    const createAccountButton = screen.getByRole("button", {name: /CREATE ACCOUNT/i});
-    const backButton = screen.getByRole("button", { name: /BACK/i});
+    const createAccountHeading = screen.getByRole('heading', {
+      name: /CREATE ACCOUNT/i,
+    });
+    const passwordInput = screen.getByPlaceholderText(/password/i);
+    const createAccountButton = screen.getByRole('button', {
+      name: /CREATE ACCOUNT/i,
+    });
+    const backButton = screen.getByRole('button', { name: /BACK/i });
     expect(createAccountHeading).toBeInTheDocument();
     expect(passwordInput).toBeInTheDocument();
     expect(createAccountButton).toBeInTheDocument();
@@ -60,17 +64,19 @@ describe('Register Page', () => {
     fireEvent.change(passwordInput, { target: { value: '12345' } });
     fireEvent.blur(passwordInput);
     await waitFor(() => {
-      expect(screen.getByText(/too short/i)).toBeInTheDocument()
+      expect(screen.getByText(/too short/i)).toBeInTheDocument();
     });
   });
 
   test('displays error when password is too long', async () => {
     render(<MockRegister />);
     const passwordInput = screen.getByPlaceholderText(/password/i);
-    fireEvent.change(passwordInput, { target: { value: '123456789012345678901' } });
+    fireEvent.change(passwordInput, {
+      target: { value: '123456789012345678901' },
+    });
     fireEvent.blur(passwordInput);
     await waitFor(() => {
-      expect(screen.getByText(/too long/i)).toBeInTheDocument()
+      expect(screen.getByText(/too long/i)).toBeInTheDocument();
     });
   });
 
@@ -78,7 +84,7 @@ describe('Register Page', () => {
     const mockNavigate = jest.fn();
     jest.spyOn(router, 'useNavigate').mockReturnValue(mockNavigate);
     render(<MockRegister />);
-    const backButton = screen.getByRole("button", { name: /BACK/i });
+    const backButton = screen.getByRole('button', { name: /BACK/i });
     fireEvent.click(backButton);
     await waitFor(() => {
       expect(mockNavigate).toHaveBeenCalledWith('/login');
@@ -91,11 +97,12 @@ describe('Register Page', () => {
     render(<MockRegister />);
     const passwordInput = screen.getByPlaceholderText(/password/i);
     fireEvent.change(passwordInput, { target: { value: 'correctPassword' } });
-    const createAccountButton = screen.getByRole("button", { name: /CREATE ACCOUNT/i });
+    const createAccountButton = screen.getByRole('button', {
+      name: /CREATE ACCOUNT/i,
+    });
     fireEvent.click(createAccountButton);
     await waitFor(() => {
       expect(mockNavigate).toHaveBeenCalledWith('/mnemonics');
     });
   });
-  
 });

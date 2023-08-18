@@ -31,7 +31,10 @@ const initialJobsState: JobsState = {
   jobResults: [],
 };
 
-export const isProviderReducer = (state = initialProviderState, action: any) => {
+export const isProviderReducer = (
+  state = initialProviderState,
+  action: any
+) => {
   switch (action.type) {
     case 'setIsProvider':
       return {
@@ -43,8 +46,10 @@ export const isProviderReducer = (state = initialProviderState, action: any) => 
   }
 };
 
-
-export const accountUserReducer = (state: AccountUserState = initialAccountUserState, action: any): AccountUserState => {
+export const accountUserReducer = (
+  state: AccountUserState = initialAccountUserState,
+  action: any
+): AccountUserState => {
   switch (action.type) {
     case 'setPublicKey':
       return {
@@ -76,7 +81,10 @@ export const accountUserReducer = (state: AccountUserState = initialAccountUserS
   }
 };
 
-const jobsReducer = (state: JobsState = initialJobsState, action: any): JobsState => {
+const jobsReducer = (
+  state: JobsState = initialJobsState,
+  action: any
+): JobsState => {
   switch (action.type) {
     case 'addJob':
       const newJob = {
@@ -91,7 +99,7 @@ const jobsReducer = (state: JobsState = initialJobsState, action: any): JobsStat
       return {
         ...state,
         jobs: [action.payload],
-      }
+      };
     case 'addJobResults':
       const newJobResult = {
         id: action.id,
@@ -109,12 +117,12 @@ const jobsReducer = (state: JobsState = initialJobsState, action: any): JobsStat
     default:
       return state;
   }
-}
+};
 
 const reducers = combineReducers({
   accountUser: accountUserReducer,
   jobs: jobsReducer,
-  isProvider: isProviderReducer
+  isProvider: isProviderReducer,
 });
 
 export default reducers;

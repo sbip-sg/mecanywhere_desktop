@@ -25,7 +25,7 @@ import HostPastTxn from './components/billing/HostPastTxn';
 import ClientPayment from './components/misc/ClientPayment';
 import HostWithdrawal from './components/misc/HostWithdrawal';
 import UserDashboard from './components/client/UserDashboard';
-import TransactionDetails from './components/dashboard/TransactionDetails'
+import TransactionDetails from './components/dashboard/TransactionDetails';
 import RoleSelection from './components/auth/RoleSelection';
 import UserManagement from './components/parentOrganization/UserManagement';
 import ProviderPastTxn from './components/billing/ProviderPastTxn';
@@ -34,9 +34,11 @@ import ProviderPayment from './components/payment/ProviderPayment';
 import Settings from './components/settings/Settings';
 
 const PrivateRoutes = () => {
-  const authenticated = useSelector((state: RootState) => state.accountUser.authenticated);
+  const authenticated = useSelector(
+    (state: RootState) => state.accountUser.authenticated
+  );
   return authenticated ? <Outlet /> : <Navigate to="/clientdashboard" />;
-}
+};
 
 const Animated = () => {
   const location = useLocation();
@@ -134,7 +136,7 @@ const Animated = () => {
             </Transitions>
           }
         />
-         <Route
+        <Route
           path="/hostbilling"
           element={
             <Transitions>
@@ -150,7 +152,7 @@ const Animated = () => {
             </Transitions>
           }
         />
-         <Route
+        <Route
           path="/hostpasttxn"
           element={
             <Transitions>
@@ -190,48 +192,62 @@ const Animated = () => {
             </Transitions>
           }
         />
-        <Route path="/details/:sessionId" 
+        <Route
+          path="/details/:sessionId"
           element={
             <Transitions>
               <TransactionDetails />
             </Transitions>
-          } />
-        <Route path="/usermanagement" 
+          }
+        />
+        <Route
+          path="/usermanagement"
           element={
             <Transitions>
               <UserManagement />
             </Transitions>
-          } />
-          <Route path="/providerdashboard" 
+          }
+        />
+        <Route
+          path="/providerdashboard"
           element={
             <Transitions>
               <ProviderDashboard />
             </Transitions>
-          } />
-          <Route path="/providerbilling" 
+          }
+        />
+        <Route
+          path="/providerbilling"
           element={
             <Transitions>
               <ProviderBilling />
             </Transitions>
-          } />
-          <Route path="/providerpasttxn" 
+          }
+        />
+        <Route
+          path="/providerpasttxn"
           element={
             <Transitions>
               <ProviderPastTxn />
             </Transitions>
-          } />
-          <Route path="/providerpayment" 
+          }
+        />
+        <Route
+          path="/providerpayment"
           element={
             <Transitions>
               <ProviderPayment />
             </Transitions>
-          } />
-        <Route path="/settings" 
+          }
+        />
+        <Route
+          path="/settings"
           element={
             <Transitions>
               <Settings />
             </Transitions>
-          } />
+          }
+        />
       </Route>
     </Routes>
   );

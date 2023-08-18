@@ -2,7 +2,7 @@ const url = process.env.DID_SERVICE_API_URL;
 
 export async function createKeyPair() {
   try {
-    const response = await fetch(url + '/api/v1/did/genkey', {
+    const response = await fetch(`${url}/api/v1/did/genkey`, {
       method: 'GET',
     });
 
@@ -20,7 +20,7 @@ export async function createKeyPair() {
 }
 
 export async function addPublicKey(publicKey: string): Promise<string> {
-  const response = await fetch(url + '/api/v1/did/addPublicKey', {
+  const response = await fetch(`${url}/api/v1/did/addPublicKey`, {
     method: 'POST',
     headers: {
       'Content-Type': 'application/json',
@@ -34,8 +34,10 @@ export async function addPublicKey(publicKey: string): Promise<string> {
   return data as string; // contains DID
 }
 
-export async function verifyCredential(verifyCredentialRequest: any): Promise<any> {
-  const response = await fetch(url + '/api/v1/did/verify', {
+export async function verifyCredential(
+  verifyCredentialRequest: any
+): Promise<any> {
+  const response = await fetch(`${url}/api/v1/did/verify`, {
     method: 'POST',
     headers: {
       'Content-Type': 'application/json',
@@ -51,9 +53,11 @@ export async function verifyCredential(verifyCredentialRequest: any): Promise<an
   return data;
 }
 
-export async function createCredential(createCredentialRequest: any): Promise<any> {
+export async function createCredential(
+  createCredentialRequest: any
+): Promise<any> {
   try {
-    const response = await fetch(url + 'api/v1/did/create', {
+    const response = await fetch(`${url}api/v1/did/create`, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',

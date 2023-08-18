@@ -1,8 +1,14 @@
-import {Stack, Box, Button, Typography, useTheme, Switch} from '@mui/material'
-import reduxStore from '../../redux/store';
-import {useState} from 'react'
+import {
+  Stack,
+  Box,
+  Button,
+  Typography,
+  useTheme,
+  Switch,
+} from '@mui/material';
+import { useState } from 'react';
 import { styled } from '@mui/material/styles';
-
+import reduxStore from '../../redux/store';
 
 const IOSSwitch = styled(() => (
   <Switch focusVisibleClassName=".Mui-focusVisible" disableRipple />
@@ -56,23 +62,51 @@ const IOSSwitch = styled(() => (
 }));
 
 const Settings = () => {
-    const theme = useTheme();
+  const theme = useTheme();
 
-    return (
-        <Stack sx={{ display: 'flex', justifyContent: 'left', alignItems: 'top' , padding: '2rem'}}>
-            <Box  sx={{ display: 'flex', justifyContent: 'left', alignItems: 'center' , padding: '1rem'}}>
-                <Typography color={theme.palette.cerulean.main} variant="h1" style={{ fontSize: '24px', margin: '0rem 0 0 0' }}>
-                    PAYMENT
-                </Typography>
-            </Box>
-            <Box  sx={{ display: 'flex', justifyContent: 'left', alignItems: 'center' , padding: '1rem'}}>
-                <Typography variant="h4" style={{ fontSize: '16px', margin: '1.5rem 0 0 0' }}>
-                    You current have 432.17 SGD due by 31st August 2023.
-                </Typography>
-            </Box>
-         <IOSSwitch />
-        </Stack>
-    )
-}
+  return (
+    <Stack
+      sx={{
+        display: 'flex',
+        justifyContent: 'left',
+        alignItems: 'top',
+        padding: '2rem',
+      }}
+    >
+      <Box
+        sx={{
+          display: 'flex',
+          justifyContent: 'left',
+          alignItems: 'center',
+          padding: '1rem',
+        }}
+      >
+        <Typography
+          color={theme.palette.cerulean.main}
+          variant="h1"
+          style={{ fontSize: '24px', margin: '0rem 0 0 0' }}
+        >
+          PAYMENT
+        </Typography>
+      </Box>
+      <Box
+        sx={{
+          display: 'flex',
+          justifyContent: 'left',
+          alignItems: 'center',
+          padding: '1rem',
+        }}
+      >
+        <Typography
+          variant="h4"
+          style={{ fontSize: '16px', margin: '1.5rem 0 0 0' }}
+        >
+          You current have 432.17 SGD due by 31st August 2023.
+        </Typography>
+      </Box>
+      <IOSSwitch />
+    </Stack>
+  );
+};
 
-export default Settings
+export default Settings;

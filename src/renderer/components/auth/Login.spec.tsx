@@ -1,20 +1,21 @@
-import {render, fireEvent, screen, waitFor } from '@testing-library/react'
-import '@testing-library/jest-dom'
-import Login from './Login'
+import { render, fireEvent, screen, waitFor } from '@testing-library/react';
+import '@testing-library/jest-dom';
 import { BrowserRouter } from 'react-router-dom';
 import { Provider } from 'react-redux';
 import reduxStore from 'renderer/redux/store';
-import * as router from 'react-router'
+import * as router from 'react-router';
+import Login from './Login';
+
 const MockLogin = () => {
   return (
     <Provider store={reduxStore}>
       <BrowserRouter>
-          <Login />
+        <Login />
       </BrowserRouter>
     </Provider>
-  )
-}
-  
+  );
+};
+
 jest.mock('./handleLogin', () => {
   return jest.fn().mockImplementation((password) => {
     return Promise.resolve(password === 'correctPassword');
@@ -32,10 +33,12 @@ describe('Login Page', () => {
 
   test('renders login page with required elements', () => {
     render(<MockLogin />);
-    const logInHeading = screen.getByRole("heading", { name: /LOG IN/i});
-    const passwordInput = screen.getByPlaceholderText(/password/i);    
-    const logInButton = screen.getByRole("button", { name: /LOG IN/i});
-    const createAccountButton = screen.getByRole("button", {name: /CREATE ACCOUNT/i});
+    const logInHeading = screen.getByRole('heading', { name: /LOG IN/i });
+    const passwordInput = screen.getByPlaceholderText(/password/i);
+    const logInButton = screen.getByRole('button', { name: /LOG IN/i });
+    const createAccountButton = screen.getByRole('button', {
+      name: /CREATE ACCOUNT/i,
+    });
     expect(logInHeading).toBeInTheDocument();
     expect(passwordInput).toBeInTheDocument();
     expect(logInButton).toBeInTheDocument();
@@ -48,17 +51,19 @@ describe('Login Page', () => {
     fireEvent.change(passwordInput, { target: { value: '12345' } });
     fireEvent.blur(passwordInput);
     await waitFor(() => {
-      expect(screen.getByText(/too short/i)).toBeInTheDocument()
+      expect(screen.getByText(/too short/i)).toBeInTheDocument();
     });
   });
 
   test('displays error when password is too long', async () => {
     render(<MockLogin />);
     const passwordInput = screen.getByPlaceholderText(/password/i);
-    fireEvent.change(passwordInput, { target: { value: '123456789012345678901' } });
+    fireEvent.change(passwordInput, {
+      target: { value: '123456789012345678901' },
+    });
     fireEvent.blur(passwordInput);
     await waitFor(() => {
-      expect(screen.getByText(/too long/i)).toBeInTheDocument()
+      expect(screen.getByText(/too long/i)).toBeInTheDocument();
     });
   });
 
@@ -68,7 +73,7 @@ describe('Login Page', () => {
     render(<MockLogin />);
     const passwordInput = screen.getByPlaceholderText(/password/i);
     fireEvent.change(passwordInput, { target: { value: 'incorrectPassword' } });
-    const logInButton = screen.getByRole("button", { name: /LOG IN/i });
+    const logInButton = screen.getByRole('button', { name: /LOG IN/i });
     fireEvent.click(logInButton);
     await waitFor(() => {
       expect(mockNavigate).not.toHaveBeenCalled();
@@ -83,7 +88,7 @@ describe('Login Page', () => {
     render(<MockLogin />);
     const passwordInput = screen.getByPlaceholderText(/password/i);
     fireEvent.change(passwordInput, { target: { value: 'correctPassword' } });
-    const logInButton = screen.getByRole("button", { name: /LOG IN/i});
+    const logInButton = screen.getByRole('button', { name: /LOG IN/i });
     fireEvent.click(logInButton);
     await waitFor(() => {
       expect(mockNavigate).toHaveBeenCalledWith('/userjobsubmission');
@@ -94,11 +99,12 @@ describe('Login Page', () => {
     const mockNavigate = jest.fn();
     jest.spyOn(router, 'useNavigate').mockReturnValue(mockNavigate);
     render(<MockLogin />);
-    const createAccountButton = screen.getByRole("button", { name: /CREATE ACCOUNT/i });
+    const createAccountButton = screen.getByRole('button', {
+      name: /CREATE ACCOUNT/i,
+    });
     fireEvent.click(createAccountButton);
     await waitFor(() => {
       expect(mockNavigate).toHaveBeenCalledWith('/register');
     });
   });
-
 });

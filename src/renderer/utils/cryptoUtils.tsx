@@ -22,7 +22,7 @@ export const generateMnemonicAndKeyPair = async () => {
 
   return {
     mnemonic,
-    publicKey: publicKey,
+    publicKey,
     privateKey: privateKeyBuffer,
     publicKeyCompressed: compressedPublicKey,
   };
@@ -67,7 +67,7 @@ export const signMessage = (privateKey: string, message: string) => {
 export const utf8ToHex = (uint8Array: Uint8Array): string => {
   if (!isUint8Array(uint8Array)) {
     throw new Error('Input is not a valid Uint8Array');
-  } 
+  }
   return Buffer.from(uint8Array).toString('hex');
 };
 
@@ -101,4 +101,3 @@ function isHexString(value: any): value is string {
   const hexRegex = /^[0-9A-Fa-f]+$/;
   return hexRegex.test(value);
 }
-

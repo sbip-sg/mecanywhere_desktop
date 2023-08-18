@@ -17,13 +17,13 @@ export const handleRegisterClient = async () => {
     const assignmentRes = await assignHost(access_token, did);
     if (assignmentRes) {
       const { queue } = assignmentRes;
-      if (queue == "") {
+      if (queue == '') {
         throw new Error('No host available');
       }
       window.electron.startPublisher(queue);
       actions.setCredential(credential);
       actions.setUserAccessToken(access_token);
-      console.log('host assigned')
+      console.log('host assigned');
     } else {
       throw new Error('Host assignment failed');
     }

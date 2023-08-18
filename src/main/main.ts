@@ -12,9 +12,10 @@ import path from 'path';
 import { app, BrowserWindow, shell, ipcMain, safeStorage } from 'electron';
 import { autoUpdater } from 'electron-updater';
 import log from 'electron-log';
+import { performance } from 'perf_hooks';
 import MenuBuilder from './menu';
 import { resolveHtmlPath } from './util';
-import { performance } from 'perf_hooks';
+
 const Store = require('electron-store');
 const io = require('socket.io')();
 
@@ -33,9 +34,9 @@ class AppUpdater {
 let mainWindow: BrowserWindow | null = null;
 let workerWindow: BrowserWindow | null = null;
 
-console.log(process.env.SOCKET_PORT)
-const appdev_server = io.listen(process.env.SOCKET_PORT);
-appdev_server.on('connection', (socket) => {
+console.log(process.env.SOCKET_PORT);
+const appDevServer = io.listen(process.env.SOCKET_PORT);
+appDevServer.on('connection', (socket) => {
   console.log('A user connected');
   try {
     if (!mainWindow) {
@@ -49,11 +50,11 @@ appdev_server.on('connection', (socket) => {
   socket.on('offload', async (job, callback) => {
     console.log('Received job...');
     try {
-      if(!mainWindow) {
+      if (!mainWindow) {
         throw new Error('"mainWindow" is not defined');
       }
       mainWindow.webContents.send('offload-job', job);
-      callback(null, {status: 'ok'});
+      callback(null, { status: 'ok' });
     } catch (error) {
       callback(error);
     }
@@ -70,8 +71,8 @@ appdev_server.on('connection', (socket) => {
 
 ipcMain.on('client-registered', async (event) => {
   console.log('Client registered');
-  appdev_server.emit('registered');
-})
+  appDevServer.emit('registered');
+});
 
 function showLoginWindow() {
   // window.loadURL('https://www.your-site.com/login')
@@ -88,18 +89,18 @@ function showLoginWindow() {
   }
 }
 ipcMain.handle('openLinkPlease', () => {
-  shell.openExternal("http://localhost:3002/");
-})
+  shell.openExternal('http://localhost:3002/');
+});
 
 ipcMain.on('message:loginShow', (event) => {
-  console.log("showLoginWindowpre")
+  console.log('showLoginWindowpre');
   showLoginWindow();
-  console.log("showLoginWindowpost")
+  console.log('showLoginWindowpost');
 });
 
 ipcMain.on('electron-store-get', async (event, key) => {
   const encryptedKey = store.get(key);
-  //help correct the line below
+  // help correct the line below
   const decryptedKey = safeStorage.decryptString(
     Buffer.from(encryptedKey, 'latin1')
   );
@@ -124,7 +125,7 @@ ipcMain.on('job-results-received', async (event, id, result) => {
     throw new Error('"mainWindow" is not defined');
   }
   mainWindow.webContents.send('job-results-received', id, result);
-  appdev_server.emit('job-results-received', id, result);
+  appDevServer.emit('job-results-received', id, result);
 });
 
 ipcMain.on('job-received', async (event, id, result) => {

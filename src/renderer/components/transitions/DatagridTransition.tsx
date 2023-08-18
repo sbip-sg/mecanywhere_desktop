@@ -1,6 +1,5 @@
 import { motion, Variants } from 'framer-motion';
-import React, { ReactNode } from 'react';
-import { useEffect} from 'react'
+import React, { ReactNode, useEffect } from 'react';
 
 const animationConfiguration: Variants = {
   initial: { opacity: 0 },
@@ -13,7 +12,10 @@ interface DatagridTransitionProps {
   duration?: number;
 }
 
-const DatagridTransition: React.FC<DatagridTransitionProps> = ({ children, duration = 2 }) => {
+const DatagridTransition: React.FC<DatagridTransitionProps> = ({
+  children,
+  duration = 2,
+}) => {
   useEffect(() => {
     // Hide scrollbar during the animation
     document.body.style.overflow = 'hidden';
@@ -33,7 +35,7 @@ const DatagridTransition: React.FC<DatagridTransitionProps> = ({ children, durat
       y: '0%',
       transition: {
         duration: 0.5,
-        ease: [0.2, 0, 0.2, 1], 
+        ease: [0.2, 0, 0.2, 1],
       },
     },
     exit: {
@@ -47,8 +49,8 @@ const DatagridTransition: React.FC<DatagridTransitionProps> = ({ children, durat
   };
 
   return (
-  <motion.div
-  style={{ height: "100%" }}
+    <motion.div
+      style={{ height: '100%' }}
       initial="initial"
       animate="enter"
       exit="exit"

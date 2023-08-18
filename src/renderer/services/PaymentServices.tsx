@@ -2,13 +2,13 @@ const url = process.env.PAYMENT_SERVICE_API_URL;
 
 export async function withdrawFromContract(token: string, request: any) {
   try {
-    const response = await fetch(url + '/withdraw', {
+    const response = await fetch(`${url}/withdraw`, {
       method: 'POST',
       headers: {
         'content-type': 'application/json',
         Authorization: `Bearer ${token}`,
       },
-      body: JSON.stringify( request ),
+      body: JSON.stringify(request),
     });
     if (!response.ok) {
       throw new Error('Network response not ok');
@@ -21,13 +21,13 @@ export async function withdrawFromContract(token: string, request: any) {
 
 export async function getContract(token: string, request: any) {
   try {
-    const response = await fetch(url + '/getContract', {
+    const response = await fetch(`${url}/getContract`, {
       method: 'POST',
       headers: {
         'content-type': 'application/json',
         Authorization: `Bearer ${token}`,
       },
-      body: JSON.stringify( request ),
+      body: JSON.stringify(request),
     });
     if (!response.ok) {
       throw new Error('Network response not ok');
@@ -40,13 +40,13 @@ export async function getContract(token: string, request: any) {
 
 export async function depositToContract(token: string, request: any) {
   try {
-    const response = await fetch(url + '/deposit', {
+    const response = await fetch(`${url}/deposit`, {
       method: 'POST',
       headers: {
         'content-type': 'application/json',
         Authorization: `Bearer ${token}`,
       },
-      body: JSON.stringify( request ),
+      body: JSON.stringify(request),
     });
     if (!response.ok) {
       throw new Error('Network response not ok');
@@ -59,13 +59,13 @@ export async function depositToContract(token: string, request: any) {
 
 export async function registerMetamaskAccount(token: string, request: any) {
   try {
-    const response = await fetch(url + '/registerMetamaskAccount', {
+    const response = await fetch(`${url}/registerMetamaskAccount`, {
       method: 'POST',
       headers: {
         'content-type': 'application/json',
         Authorization: `Bearer ${token}`,
       },
-      body: JSON.stringify( request ),
+      body: JSON.stringify(request),
     });
     if (!response.ok) {
       throw new Error('Network response not ok');
