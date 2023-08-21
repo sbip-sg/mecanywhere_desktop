@@ -74,7 +74,7 @@ const LeftDrawerComponent = () => {
                 </ListItemButton>
               </List>
               <Divider />
-              <List disablePadding component="li">
+              {/* <List disablePadding component="li">
                 <ListItemButton
                   onClick={() => navigate('/providerbilling')}
                   key="billing"
@@ -89,7 +89,7 @@ const LeftDrawerComponent = () => {
                   </Typography>
                 </ListItemButton>
               </List>
-              <Divider />
+              <Divider /> */}
               <List disablePadding component="li">
                 <ListItemButton
                   sx={{
@@ -182,7 +182,7 @@ const LeftDrawerComponent = () => {
                   </ListItemButton>
                 </List>
                 <Divider />
-                <List disablePadding component="li">
+                {/* <List disablePadding component="li">
                   <ListItemButton
                     onClick={() => navigate('/clientbilling')}
                     key="billing"
@@ -197,7 +197,7 @@ const LeftDrawerComponent = () => {
                     </Typography>
                   </ListItemButton>
                 </List>
-                <Divider />
+                <Divider /> */}
                 <List disablePadding component="li">
                   <ListItemButton
                     sx={{
@@ -218,7 +218,7 @@ const LeftDrawerComponent = () => {
                   </ListItemButton>
                 </List>
                 <Divider />
-                <List disablePadding component="li">
+                {/* <List disablePadding component="li">
                   <ListItemButton
                     sx={{
                       '& .MuiButtonBase-root': {
@@ -236,7 +236,7 @@ const LeftDrawerComponent = () => {
                       Test Page
                     </Typography>
                   </ListItemButton>
-                </List>
+                </List> */}
                 {/* <Divider />
       <List disablePadding component="li">
         <ListItemButton onClick={() => navigate('/clientpayment')} key="billing">
@@ -279,7 +279,7 @@ const LeftDrawerComponent = () => {
                   </ListItemButton>
                 </List>
                 <Divider />
-                <List disablePadding component="li">
+                {/* <List disablePadding component="li">
                   <ListItemButton
                     onClick={() => navigate('/hostbilling')}
                     key="billing"
@@ -292,7 +292,7 @@ const LeftDrawerComponent = () => {
                     </Typography>
                   </ListItemButton>
                 </List>
-                <Divider />
+                <Divider /> */}
                 {/* <List disablePadding component="li">
         <ListItemButton onClick={() => navigate('/hostpayment')} key="billing">
           <AccountBalanceWalletIcon sx={{marginRight: listItemSpacing}} />

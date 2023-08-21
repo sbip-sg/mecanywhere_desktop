@@ -1,4 +1,4 @@
-import React from 'react'
+import React from 'react';
 import TableHead from '@mui/material/TableHead';
 import TableSortLabel from '@mui/material/TableSortLabel';
 import Box from '@mui/material/Box';

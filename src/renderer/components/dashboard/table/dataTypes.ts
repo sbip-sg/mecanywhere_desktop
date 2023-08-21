@@ -2,8 +2,8 @@ export interface ExternalDataEntry {
   session_id: string;
   did: string;
   resource_consumed: number;
-  session_start_datetime: number;
-  session_end_datetime: number;
+  session_start_datetime: number | string;
+  session_end_datetime: number | string;
   task: string;
   duration: number;
 }
@@ -13,8 +13,8 @@ export interface InternalDataEntry {
   did: string;
   provider_did: string;
   resource_consumed: number;
-  session_start_datetime: number;
-  session_end_datetime: number;
+  session_start_datetime: number | string;
+  session_end_datetime: number | string;
   task: string;
   duration: number;
   network_reliability: number;

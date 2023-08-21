@@ -12,7 +12,7 @@ import { useSelector } from 'react-redux';
 import ErrorDialog from '../../utils/ErrorDialogue';
 import TextFieldWrapper from '../../utils/TextField';
 import actions from '../../redux/actionCreators';
-import logoBlack from '../../../../assets/logo-black.png';
+import logoTest from '../../../../assets/logo-test.png';
 import Transitions from '../transitions/Transition';
 import FormSchema from '../../utils/FormSchema';
 import handleLogin from './handleLogin';
@@ -92,7 +92,13 @@ const Login = () => {
                 alignItems: 'center',
               }}
             >
-              <img alt="logo" src={logoBlack} width="50%" height="50%" />
+              <img
+                alt="logo"
+                src={logoTest}
+                width="70%"
+                height="70%"
+                style={{ margin: '5rem 0 2rem' }}
+              />
               <Typography variant="h5" py={2}>
                 LOG IN
               </Typography>

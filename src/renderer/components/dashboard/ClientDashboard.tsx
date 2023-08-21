@@ -7,6 +7,7 @@ import Datagrid from './table/Datagrid';
 import { ExternalDataEntry } from './table/dataTypes';
 import { ExternalPropConfigList } from './propConfig';
 import CustomLineChart from './linechart/CustomLineChart';
+import mockUserData from '../../../../assets/mockUserData.json';
 
 interface GroupedData {
   month: string;
@@ -20,25 +21,24 @@ const TestPage = () => {
   >([]);
   const [isTableExpanded, setIsTableExpanded] = useState(false);
   useEffect(() => {
-    const csvFilePath = 'http://localhost:3000/data';
-    fetch(csvFilePath)
-      .then((response) => response.json())
-      .then((responseData) => {
-        setData(responseData);
-        const convertedData = responseData.map((entry) => ({
-          ...entry,
-          session_start_datetime: convertEpochToStandardTimeWithDate(
-            entry.session_start_datetime
-          ),
-          session_end_datetime: convertEpochToStandardTimeWithDate(
-            entry.session_end_datetime
-          ),
-        }));
-        setDateConvertedData(convertedData);
-      });
+    setData(mockUserData);
+    const convertedData: ExternalDataEntry[] = mockUserData.map((entry) => ({
+      ...entry,
+      session_start_datetime: convertEpochToStandardTimeWithDate(
+        entry.session_start_datetime
+      ),
+      session_end_datetime: convertEpochToStandardTimeWithDate(
+        entry.session_end_datetime
+      ),
+    }));
+    setDateConvertedData(convertedData);
   }, []);
   const groupedDataObject = data.reduce((acc, entry) => {
-    const month = new Date(entry.session_start_datetime * 1000).toLocaleString(
+    const sessionStartDatetime =
+      typeof entry.session_start_datetime === 'string'
+        ? parseInt(entry.session_start_datetime)
+        : entry.session_start_datetime;
+    const month = new Date(sessionStartDatetime * 1000).toLocaleString(
       'default',
       { month: 'long' }
     );

@@ -7,6 +7,7 @@ import Datagrid from './table/Datagrid';
 import { ExternalDataEntry } from './table/dataTypes';
 import CustomLineChart from './linechart/CustomLineChart';
 import { ExternalPropConfigList } from './propConfig';
+import mockUserData from '../../../../assets/mockUserData.json';
 
 interface GroupedData {
   month: string;
@@ -20,25 +21,24 @@ const TestPage = () => {
   >([]);
   const [isTableExpanded, setIsTableExpanded] = useState(false);
   useEffect(() => {
-    const csvFilePath = 'http://localhost:3000/data';
-    fetch(csvFilePath)
-      .then((response) => response.json())
-      .then((responseData) => {
-        setData(responseData);
-        const convertedData = responseData.map((entry) => ({
-          ...entry,
-          session_start_datetime: convertEpochToStandardTimeWithDate(
-            entry.session_start_datetime
-          ),
-          session_end_datetime: convertEpochToStandardTimeWithDate(
-            entry.session_end_datetime
-          ),
-        }));
-        setDateConvertedData(convertedData);
-      });
+    setData(mockUserData);
+    const convertedData: ExternalDataEntry[] = mockUserData.map((entry) => ({
+      ...entry,
+      session_start_datetime: convertEpochToStandardTimeWithDate(
+        entry.session_start_datetime
+      ),
+      session_end_datetime: convertEpochToStandardTimeWithDate(
+        entry.session_end_datetime
+      ),
+    }));
+    setDateConvertedData(convertedData);
   }, []);
   const groupedDataObject = data.reduce((acc, entry) => {
-    const month = new Date(entry.session_start_datetime * 1000).toLocaleString(
+    const sessionStartDatetime =
+      typeof entry.session_start_datetime === 'string'
+        ? parseInt(entry.session_start_datetime)
+        : entry.session_start_datetime;
+    const month = new Date(sessionStartDatetime * 1000).toLocaleString(
       'default',
       { month: 'long' }
     );
@@ -51,10 +51,12 @@ const TestPage = () => {
   return (
     <Stack
       height="100%"
-      justifyContent="center"
+      // width="90"
+      justifyContent="space-between"
       alignItems="center"
       spacing={0}
       id="dashboard-stack"
+      padding="2rem 0 2rem 0"
     >
       <Box
         sx={{
@@ -72,9 +74,13 @@ const TestPage = () => {
         </Typography>
       </Box>
       <motion.div
+        id="motiondiv1"
         style={{
           height: isTableExpanded ? '0%' : '45%',
-          width: '100%',
+          width: '90%',
+          display: 'flex',
+          justifyContent: 'center',
+          alignContent: 'center',
         }}
         initial={{ height: '45%' }}
         animate={{ height: isTableExpanded ? '0%' : '45%' }}
@@ -83,12 +89,16 @@ const TestPage = () => {
         <CustomLineChart groupedData={groupedData} />
       </motion.div>
       <motion.div
+        id="motiondiv2"
         style={{
-          height: isTableExpanded ? '90%' : '45%',
-          width: '100%',
+          height: isTableExpanded ? '90%' : '282px',
+          width: '90%',
+          display: 'flex',
+          justifyContent: 'center',
+          alignContent: 'center',
         }}
-        initial={{ height: '45%' }}
-        animate={{ height: isTableExpanded ? '90%' : '45%' }}
+        initial={{ height: '282px' }}
+        animate={{ height: isTableExpanded ? '90%' : '282px' }}
         transition={{ duration: 0.5, ease: 'easeInOut' }}
       >
         <Datagrid
