@@ -2,7 +2,7 @@ const amqp = require('amqplib');
 const { ipcRenderer } = require('electron');
 const protobuf = require('protobufjs');
 
-const MQ_URL = 'amqp://localhost';
+const MQ_URL = process.env.MQ_URL || 'amqp://localhost:5672';
 
 const Task = protobuf
   .loadSync('src/worker_renderer/schema.proto')
@@ -11,7 +11,7 @@ const Task = protobuf
 class Publisher {
   static openQueues = {};
 
-  constructor(consumerQueueName) {
+  constructor(consumerQueueName, containerRef) {
     if (Publisher.openQueues[consumerQueueName]) {
       return Publisher.openQueues[consumerQueueName];
     }
@@ -51,6 +51,10 @@ class Publisher {
         }
       );
 
+      await this.publishTask("containerRef", {
+        id: "containerRef",
+        content: containerRef
+      });
     };
 
     ipcRenderer.on('publish-job', async (event, id, content) => {
@@ -94,10 +98,12 @@ class Publisher {
 
 let publisher;
 
+ipcRenderer.on('start-publisher', async (event, consumerQueueName, containerRef) => {
+  publisher = new Publisher(consumerQueueName, containerRef);
   await publisher.startPublisher();
 });
 
-ipcRenderer.on('stop-publisher', async (event, consumerQueueName) => {
+ipcRenderer.on('stop-publisher', async (event) => {
   await publisher.close();
 });
 

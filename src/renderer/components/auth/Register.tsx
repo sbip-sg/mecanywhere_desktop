@@ -11,6 +11,7 @@ import logoTest from '../../../../assets/logo-test.png';
 import Transitions from '../transitions/Transition';
 import handleAccountRegistration from './handleAccountRegistration';
 import ErrorDialog from '../../utils/ErrorDialogue';
+import { useTheme } from '@emotion/react';
 
 interface FormValues {
   password: string;
@@ -18,6 +19,7 @@ interface FormValues {
 
 const Register = () => {
   const navigate = useNavigate();
+  const theme = useTheme();
   const theme = useTheme();
   const [isLoading, setIsLoading] = useState(false);
   const [errorDialogOpen, setErrorDialogOpen] = useState(false);

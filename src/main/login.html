@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8">
+        <title>Login Window</title>
+    </head>
+
+    <body>
+        <div>Login Window</div><hr>
+
+        <label for="username">Username: </label>
+        <input type="text" id="username"><br>
+
+        <label for="password">Password: </label>
+        <input type="password" id="password"><br>
+
+        <button type="button" id="login">Login</button>
+    </body>
+
+    <script>
+        // For testing purposes only.
+        document.getElementById('login').addEventListener('click', () => {
+            window.ipcRender.send('message:loginSuccessful');
+        });
+    </script>
+</html>

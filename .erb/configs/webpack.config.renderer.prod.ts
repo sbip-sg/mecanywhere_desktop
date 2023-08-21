@@ -41,9 +41,9 @@ const configuration: webpack.Configuration = {
       {
         test: /\.csv$/,
         use: [
-          {
-            loader: 'file-loader',
-          },
+            {
+                loader: 'file-loader',
+            },
         ],
       },
       {

@@ -18,8 +18,6 @@ const Transitions: React.FC<TransitionsProps> = ({
 }) => {
   return (
     <motion.div
-      id="motiondiv"
-      style={{ height: '100%' }}
       variants={animationConfiguration}
       initial="initial"
       animate="animate"

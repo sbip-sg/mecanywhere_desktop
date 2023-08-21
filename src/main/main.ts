@@ -9,7 +9,7 @@
  * `./src/main.js` using webpack. This gives us some performance wins.
  */
 import path from 'path';
-import { app, BrowserWindow, shell, ipcMain, safeStorage } from 'electron';
+import { app, BrowserWindow, shell, ipcMain, safeStorage, IpcMainEvent } from 'electron';
 import { autoUpdater } from 'electron-updater';
 import log from 'electron-log';
 import { performance } from 'perf_hooks';
@@ -18,8 +18,11 @@ import { resolveHtmlPath } from './util';
 
 const Store = require('electron-store');
 const io = require('socket.io')();
+const { shell } = require('electron');
 
 const start = performance.now();
+
+const SDK_SOCKET_PORT = process.env.SDK_SOCKET_PORT || 3001;
 
 const store = new Store();
 
@@ -34,29 +37,32 @@ class AppUpdater {
 let mainWindow: BrowserWindow | null = null;
 let workerWindow: BrowserWindow | null = null;
 
-console.log(process.env.SOCKET_PORT);
-const appDevServer = io.listen(process.env.SOCKET_PORT);
-appDevServer.on('connection', (socket) => {
+const appdev_server = io.listen(SDK_SOCKET_PORT);
+appdev_server.on('connection', (socket) => {
   console.log('A user connected');
-  try {
-    if (!mainWindow) {
-      throw new Error('"mainWindow" is not defined');
-    }
-    mainWindow.webContents.send('register-client');
-  } catch (error) {
-    console.log(error);
-  }
 
-  socket.on('offload', async (job, callback) => {
-    console.log('Received job...');
+  async function clientRegistered(event: IpcMainEvent, containerRef: string) {
+    console.log('Client registered: ', containerRef);
+    socket.emit('registered', containerRef);
+  }
+  ipcMain.on('client-registered', clientRegistered)
+
+  async function jobResultsReceived(event: IpcMainEvent, id: string, result: string) {
+    console.log('Sending job results to client... ', id, result)
+    socket.emit('job_results_received', id, result.toString());
+  }
+  ipcMain.on('job-results-received', jobResultsReceived)
+
+  socket.on('offload', async (job) => {
+    console.log('Received job...', job);
     try {
       if (!mainWindow) {
         throw new Error('"mainWindow" is not defined');
       }
       mainWindow.webContents.send('offload-job', job);
-      callback(null, { status: 'ok' });
+      socket.emit('offloaded', null, 'success');
     } catch (error) {
-      callback(error);
+      socket.emit('offloaded', error, null);
     }
   });
 
@@ -66,12 +72,20 @@ appDevServer.on('connection', (socket) => {
       throw new Error('"mainWindow" is not defined');
     }
     mainWindow.webContents.send('deregister-client');
-  });
-});
 
-ipcMain.on('client-registered', async (event) => {
-  console.log('Client registered');
-  appDevServer.emit('registered');
+    ipcMain.removeAllListeners('client-registered');
+    ipcMain.removeListener('job-results-received', jobResultsReceived);
+  });
+
+  try {
+    if (!mainWindow) {
+      throw new Error('"mainWindow" is not defined');
+    }
+    const containerRef = socket.handshake.query.containerRef;
+    mainWindow.webContents.send('register-client', containerRef);
+  } catch (error) {
+    console.log(error);
+  }
 });
 
 function showLoginWindow() {
@@ -89,13 +103,13 @@ function showLoginWindow() {
   }
 }
 ipcMain.handle('openLinkPlease', () => {
-  shell.openExternal('http://localhost:3002/');
-});
+  shell.openExternal("http://localhost:3000/");
+})
 
 ipcMain.on('message:loginShow', (event) => {
-  console.log('showLoginWindowpre');
+  console.log("showLoginWindowpre")
   showLoginWindow();
-  console.log('showLoginWindowpost');
+  console.log("showLoginWindowpost")
 });
 
 ipcMain.on('electron-store-get', async (event, key) => {
@@ -125,7 +139,6 @@ ipcMain.on('job-results-received', async (event, id, result) => {
     throw new Error('"mainWindow" is not defined');
   }
   mainWindow.webContents.send('job-results-received', id, result);
-  appDevServer.emit('job-results-received', id, result);
 });
 
 ipcMain.on('job-received', async (event, id, result) => {
@@ -135,11 +148,11 @@ ipcMain.on('job-received', async (event, id, result) => {
   mainWindow.webContents.send('job-received', id, result);
 });
 
-ipcMain.on('start-publisher', async (event, queueName) => {
+ipcMain.on('start-publisher', async (event, queueName, containerRef) => {
   if (!workerWindow) {
     throw new Error('"workerWindow" is not defined');
   }
-  workerWindow.webContents.send('start-publisher', queueName);
+  workerWindow.webContents.send('start-publisher', queueName, containerRef);
 });
 
 ipcMain.on('start-consumer', async (event, queueName) => {
@@ -203,6 +216,7 @@ const createWindow = async () => {
       webSecurity: false,
     },
   });
+  console.log('mainWindow', mainWindow);
 
   mainWindow.loadURL(resolveHtmlPath('index.html'));
 
@@ -243,10 +257,10 @@ const createWindow = async () => {
   menuBuilder.buildMenu();
 
   // Open urls in the user's browser
-  mainWindow.webContents.setWindowOpenHandler((edata) => {
-    shell.openExternal(edata.url);
-    return { action: 'deny' };
-  });
+  // mainWindow.webContents.setWindowOpenHandler((edata) => {
+  //   shell.openExternal(edata.url);
+  //   return { action: 'deny' };
+  // });
 
   // Remove this if your app does not use auto updates
   // eslint-disable-next-line
@@ -256,6 +270,11 @@ const createWindow = async () => {
 /**
  * Add event listeners...
  */
+// function showLoginWindow() {
+//   // window.loadURL('https://www.your-site.com/login')
+//   mainWindow.loadFile('login.html') // For testing purposes only
+//       .then(() => { mainWindow.show(); })
+// }
 
 app.on('window-all-closed', () => {
   // Respect the OSX convention of having the application in memory even
