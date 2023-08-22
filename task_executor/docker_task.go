@@ -117,14 +117,10 @@ func (t *DockerTask) Init(ctx context.Context, _ string, _ int) error {
 		},
 	}
 
-	var resources container.Resources
-	if !t.resource.isDefault() {
-		resources = container.Resources{
-			NanoCPUs: t.resource.CPU * 1000000000,
-			Memory:   t.resource.MEM << 10 << 10,
-		}
+	resources := container.Resources{
+		NanoCPUs: t.resource.CPU * 1000000000,
+		Memory:   t.resource.MEM << 10 << 10,
 	}
-
 	resp, err := t.cli.ContainerCreate(ctx, &container.Config{Image: t.imageId}, &container.HostConfig{Resources: resources}, networkConfig, nil, containerName)
 	if err != nil {
 		return err

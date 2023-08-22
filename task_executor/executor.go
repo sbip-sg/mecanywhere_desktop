@@ -152,6 +152,11 @@ func (meca *MecaExecutor) Execute(ctx context.Context, imageId string, rsrc Reso
 		return nil, errInvalidMecaExecutor
 	}
 
+	// validate and tidy the resource limit
+	if rsrc.isEmpty() {
+		rsrc = getDefaultResourceLimit()
+	}
+
 	// ensure the task uses correct version of image
 	// TODO (expose more control for version later)
 	imageUpdate := false

@@ -10,7 +10,11 @@ type ResourceLimit struct {
 	MEM int64 `json:"mem"` // MB
 }
 
-func (l ResourceLimit) isDefault() bool {
+func getDefaultResourceLimit() ResourceLimit {
+	return ResourceLimit{CPU: 1, MEM: 128}
+}
+
+func (l ResourceLimit) isEmpty() bool {
 	return l.CPU == 0 && l.MEM == 0
 }
 
