@@ -56,7 +56,6 @@ func (h *taskHandle) release() {
 			break
 		}
 	}
-
 }
 
 type taskTracker struct {
@@ -116,6 +115,7 @@ func (t *taskTracker) clean(timeout int) {
 			t.mu.RLock()
 		}
 	}
+	time.Sleep(time.Second) // perfrom cleaning once per second to have low cpu load.
 	t.mu.RUnlock()
 }
 
@@ -147,7 +147,7 @@ func (meca *MecaExecutor) Start() {
 	go meca.cleaner()
 }
 
-func (meca *MecaExecutor) Execute(ctx context.Context, id string, input []byte) ([]byte, error) {
+func (meca *MecaExecutor) Execute(ctx context.Context, imageId string, rsrc ResourceLimit, input []byte) ([]byte, error) {
 	if meca == nil {
 		return nil, errInvalidMecaExecutor
 	}
@@ -155,10 +155,10 @@ func (meca *MecaExecutor) Execute(ctx context.Context, id string, input []byte) 
 	// ensure the task uses correct version of image
 	// TODO (expose more control for version later)
 	imageUpdate := false
-	if found, err := meca.repo.Exists(id, ""); err != nil && err != errUnFoundImageVersion {
+	if found, err := meca.repo.Exists(imageId, ""); err != nil && err != errUnFoundImageVersion {
 		return nil, err
 	} else if !found {
-		if err := meca.repo.Fetch(id, "", ""); err != nil {
+		if err := meca.repo.Fetch(imageId, "", ""); err != nil {
 			return nil, err
 		}
 		imageUpdate = true
@@ -167,30 +167,35 @@ func (meca *MecaExecutor) Execute(ctx context.Context, id string, input []byte) 
 	// if an image update is performed, launch a new task and schedule an cleanup of the last task
 	// here the id is the uid for an image.
 	// TODO: when id is not uid for an image (using image tag), we should construct uid for task id here, and release the old task handle under the old uid
+
+	// get the taskid as key for tracker.
+	taskId := GetTaskId(imageId, rsrc)
+
 	if imageUpdate {
-		task, err := meca.fac.Build(id)
+		task, err := meca.fac.Build(imageId, rsrc)
 		if err != nil {
 			return nil, err
 		}
-		meca.tracker.add(id, task)
+		meca.tracker.add(taskId, task)
 	}
 
 	log.Printf("image ready")
 	// get the task handle
 	var h *taskHandle
 	for {
-		if h = meca.tracker.get(id); h != nil {
+		if h = meca.tracker.get(taskId); h != nil {
 			break
 		}
 		log.Printf("adding task")
-		task, err := meca.fac.Build(id)
+		task, err := meca.fac.Build(imageId, rsrc)
 		if err != nil {
 			return nil, err
 		}
-		meca.tracker.add(id, task)
+		meca.tracker.add(taskId, task)
 		log.Printf("task handle added")
 	}
 	log.Printf("task handle ready")
+	defer h.release()
 
 	var err error
 	// initialize the task once
@@ -209,7 +214,6 @@ func (meca *MecaExecutor) Execute(ctx context.Context, id string, input []byte) 
 	if err != nil {
 		return nil, err
 	}
-	log.Printf("task %v added: %v ", id, h.task)
-	defer h.release()
+	log.Printf("task %v (CPU: %d core, MEM %dMB) added: %v ", imageId, rsrc.CPU, rsrc.MEM, h.task)
 	return h.task.Execute(ctx, input)
 }

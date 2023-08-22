@@ -8,8 +8,9 @@ import (
 )
 
 type Request struct {
-	ID    string `json:"id"`
-	Input string `json:"input"`
+	ID       string                 `json:"id"`
+	Resource executor.ResourceLimit `json:"resource"`
+	Input    string                 `json:"input"`
 }
 
 type Response struct {
@@ -30,7 +31,7 @@ func main() {
 			return
 		}
 		var ret Response
-		if resp, err := mecaExecutor.Execute(c, req.ID, []byte(req.Input)); err != nil {
+		if resp, err := mecaExecutor.Execute(c, req.ID, req.Resource, []byte(req.Input)); err != nil {
 			ret.Success = false
 			ret.Msg = err.Error()
 		} else {

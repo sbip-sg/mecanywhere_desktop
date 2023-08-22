@@ -34,16 +34,20 @@ var _ Task = (*DockerTask)(nil)
 var _ TaskFactory = (*DockerTaskFactory)(nil)
 
 type DockerTask struct {
+	imageId     string
 	taskId      string
 	containerId string
 	vIP         string
+	resource    ResourceLimit
 	cli         *client.Client
 }
 
-func NewDockerTask(id string, cli *client.Client) *DockerTask {
+func NewDockerTask(id string, rsrc ResourceLimit, cli *client.Client) *DockerTask {
 	return &DockerTask{
-		taskId: id,
-		cli:    cli,
+		imageId:  id,
+		taskId:   GetTaskId(id, rsrc),
+		resource: rsrc,
+		cli:      cli,
 	}
 }
 
@@ -97,6 +101,10 @@ func (t *DockerTask) GetId() string {
 	return t.taskId
 }
 
+func (t *DockerTask) GetResource() ResourceLimit {
+	return t.resource
+}
+
 // start the container which should run a server
 // to replace with using docker bridge network only
 func (t *DockerTask) Init(ctx context.Context, _ string, _ int) error {
@@ -108,7 +116,16 @@ func (t *DockerTask) Init(ctx context.Context, _ string, _ int) error {
 			mecaVnet: {},
 		},
 	}
-	resp, err := t.cli.ContainerCreate(ctx, &container.Config{Image: t.taskId}, &container.HostConfig{}, networkConfig, nil, containerName)
+
+	var resources container.Resources
+	if !t.resource.isDefault() {
+		resources = container.Resources{
+			NanoCPUs: t.resource.CPU * 1000000000,
+			Memory:   t.resource.MEM << 10 << 10,
+		}
+	}
+
+	resp, err := t.cli.ContainerCreate(ctx, &container.Config{Image: t.imageId}, &container.HostConfig{Resources: resources}, networkConfig, nil, containerName)
 	if err != nil {
 		return err
 	}
@@ -175,8 +192,8 @@ func NewDockerTaskFactory(cli *client.Client) *DockerTaskFactory {
 	}
 }
 
-func (f *DockerTaskFactory) Build(taskId string) (Task, error) {
-	return NewDockerTask(taskId, f.cli), nil
+func (f *DockerTaskFactory) Build(imageId string, resource ResourceLimit) (Task, error) {
+	return NewDockerTask(imageId, resource, f.cli), nil
 }
 
 func newDockerMecaExecutor(timeout int) *MecaExecutor {
