@@ -1,7 +1,6 @@
 import { useEffect, useState } from 'react';
-import Box from '@mui/material/Box'
-import {Typography } from '@mui/material';
-import { Stack } from '@mui/material';
+import Box from '@mui/material/Box';
+import { Typography, Stack } from '@mui/material';
 import Datagrid from './Datagrid';
 
 interface DataEntry {
@@ -25,39 +24,59 @@ function convertEpochToStandardTimeWithDate(epochTimeInSeconds) {
 }
 
 const HostPastTxn = () => {
-    const [data, setData] = useState<DataEntry[]>([]);
-    useEffect(() => {
-      const csvFilePath = 'http://localhost:3000/data'; // Replace with the correct endpoint URL where your server is serving the CSV data.
-      fetch(csvFilePath)
-        .then((response) => response.json()) // Assuming your server sends JSON data instead of raw text.
-        .then((responseData) => {
-            // console.log("responseData", responseData)
-            const convertedData = responseData.map(entry => ({
-              ...entry,
-              session_start_datetime: convertEpochToStandardTimeWithDate(entry.session_start_datetime),
-              session_end_datetime: convertEpochToStandardTimeWithDate(entry.session_end_datetime),
-            }));
-    
-            setData(convertedData);
-        });
-    }, []);
+  const [data, setData] = useState<DataEntry[]>([]);
+  useEffect(() => {
+    const csvFilePath = 'http://localhost:3000/data'; // Replace with the correct endpoint URL where your server is serving the CSV data.
+    fetch(csvFilePath)
+      .then((response) => response.json()) // Assuming your server sends JSON data instead of raw text.
+      .then((responseData) => {
+        // console.log("responseData", responseData)
+        const convertedData = responseData.map((entry) => ({
+          ...entry,
+          session_start_datetime: convertEpochToStandardTimeWithDate(
+            entry.session_start_datetime
+          ),
+          session_end_datetime: convertEpochToStandardTimeWithDate(
+            entry.session_end_datetime
+          ),
+        }));
 
-    return (
-      <Stack
-        id='dashboard-stack'
-        height="100%"
-        justifyContent="center"
-        alignItems="center"
-        // marginTop="5rem"
-        spacing={2}
-      >
-        {/* <Box sx={{ height: '10%', display: "flex", justifyContent: "center", alignItems: "center" }}>
+        setData(convertedData);
+      });
+  }, []);
+
+  return (
+    <Stack
+      id="dashboard-stack"
+      height="100%"
+      justifyContent="center"
+      alignItems="center"
+      // marginTop="5rem"
+      spacing={2}
+    >
+      {/* <Box sx={{ height: '10%', display: "flex", justifyContent: "center", alignItems: "center" }}>
         </Box> */}
-        <Box id='boxy' sx={{ height: '100%', width: "95%", display: "flex", justifyContent: "center", alignItems: "center", overflowY: 'hidden' }}>
-          <Datagrid data={data} hasButton={false} expandView={true} rotateButton={true} fromClient={true}/>
-        </Box>
-      </Stack>
-      );
-  };
-  
+      <Box
+        id="boxy"
+        sx={{
+          height: '100%',
+          width: '95%',
+          display: 'flex',
+          justifyContent: 'center',
+          alignItems: 'center',
+          overflowY: 'hidden',
+        }}
+      >
+        <Datagrid
+          data={data}
+          hasButton={false}
+          expandView
+          rotateButton
+          fromClient
+        />
+      </Box>
+    </Stack>
+  );
+};
+
 export default HostPastTxn;

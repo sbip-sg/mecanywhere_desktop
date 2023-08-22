@@ -1,12 +1,12 @@
-import App from './App';
-import theme from './utils/theme';
 import { createRoot } from 'react-dom/client';
 import { Provider } from 'react-redux';
-import reduxStore from './redux/store';
 import { ThemeProvider, CssBaseline, createTheme } from '@mui/material';
 import { StyledEngineProvider } from '@mui/material/styles';
 import { Helmet } from 'react-helmet';
-import GlobalStyles from "@mui/material/GlobalStyles";
+import GlobalStyles from '@mui/material/GlobalStyles';
+import reduxStore from './redux/store';
+import theme from './utils/theme';
+import App from './App';
 
 // const theme = createTheme(themeOptions);
 const container = document.getElementById('root') as HTMLElement;

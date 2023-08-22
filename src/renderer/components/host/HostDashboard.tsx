@@ -3,7 +3,7 @@ import { useSelector } from 'react-redux';
 import { RootState } from 'renderer/redux/store';
 import actions from 'renderer/redux/actionCreators';
 
-function HostDashboard() {
+const HostDashboard = () => {
   const jobs = useSelector((state: RootState) => state.jobs.jobs);
   const jobResults = useSelector((state: RootState) => state.jobs.jobResults);
 
@@ -28,16 +28,17 @@ function HostDashboard() {
         {/* <Button onClick={clear}>Clear</Button> */}
       </Typography>
       {!jobs || jobs.length == 0 ? (
-          <Typography>No jobs</Typography>
-        )
-        : jobs.map((result) => {
-        return (
-          <Alert key={result.id}>
-            <Typography noWrap>{result.id}</Typography>
-            {result.content}
-          </Alert>
-        );
-      })}
+        <Typography>No jobs</Typography>
+      ) : (
+        jobs.map((result) => {
+          return (
+            <Alert key={result.id}>
+              <Typography noWrap>{result.id}</Typography>
+              {result.content}
+            </Alert>
+          );
+        })
+      )}
       <Box
         sx={{
           display: 'flex',
@@ -54,6 +55,6 @@ function HostDashboard() {
       </Box>
     </Box>
   );
-}
+};
 
 export default HostDashboard;

@@ -52,7 +52,9 @@ export async function verifyCredential(verifyCredentialRequest: any): Promise<an
   return data;
 }
 
-export async function createCredential(createCredentialRequest: any): Promise<any> {
+export async function createCredential(
+  createCredentialRequest: any
+): Promise<any> {
   try {
     const response = await fetch(issuer_url + 'api/v1/did/create', {
       method: 'POST',

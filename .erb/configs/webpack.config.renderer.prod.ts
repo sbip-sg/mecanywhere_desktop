@@ -104,7 +104,6 @@ const configuration: webpack.Configuration = {
     minimizer: [new TerserPlugin(), new CssMinimizerPlugin()],
   },
 
-
   plugins: [
     /**
      * Create global constants which can be configured at compile time.

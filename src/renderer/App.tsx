@@ -13,13 +13,11 @@ import Login from './components/auth/Login';
 import Mnemonics from './components/auth/Mnemonics';
 import ClientDashboard from './components/dashboard/ClientDashboard';
 import HostDashboard from './components/dashboard/HostDashboard';
+import ProviderDashboard from './components/dashboard/ProviderDashboard';
 import Profile from './components/profile/Profile';
 import ClientBilling from './components/billing/ClientBilling';
 import HostBilling from './components/billing/HostBilling';
 import AppView from './components/appview/AppView';
-import DatagridTransition from './components/transitions/DatagridTransition'
-import ClientDashboardNoChart from './components/dashboard/ClientDashboardNoChart';
-import HostDashboardNoChart from './components/dashboard/HostDashboardNoChart';
 import NavigationLayoutTransitionWrapper from './components/navigation/NavigationLayoutTransitionWrapper';
 import { RootState } from './redux/store';
 import ClientPastTxn from './components/billing/ClientPastTxn';
@@ -27,15 +25,20 @@ import HostPastTxn from './components/billing/HostPastTxn';
 import ClientPayment from './components/misc/ClientPayment';
 import HostWithdrawal from './components/misc/HostWithdrawal';
 import UserDashboard from './components/client/UserDashboard';
-
-// import Support from './components/misc/Support';
-// import Payment from './components/misc/Payment';
-// import Dashboard from './components/dashboard/ClientDashboard'
+import TransactionDetails from './components/dashboard/TransactionDetails';
+import RoleSelection from './components/auth/RoleSelection';
+import UserManagement from './components/parentOrganization/UserManagement';
+import ProviderPastTxn from './components/billing/ProviderPastTxn';
+import ProviderBilling from './components/billing/ProviderBilling';
+import ProviderPayment from './components/payment/ProviderPayment';
+import Settings from './components/settings/Settings';
 
 const PrivateRoutes = () => {
-  const authenticated = useSelector((state: RootState) => state.accountUser.authenticated);
-  return authenticated ? <Outlet /> : <Navigate to="/userjobsubmission" />;
-}
+  const authenticated = useSelector(
+    (state: RootState) => state.accountUser.authenticated
+  );
+  return authenticated ? <Outlet /> : <Navigate to="/clientdashboard" />;
+};
 
 const Animated = () => {
   const location = useLocation();
@@ -68,12 +71,6 @@ const Animated = () => {
           </Transitions>
         }
       />
-      {/* <Route
-        path="/payment"
-        element={
-            <Payment />
-        }
-      /> */}
       <Route
         path="/register"
         element={
@@ -90,22 +87,36 @@ const Animated = () => {
           </Transitions>
         }
       />
+      <Route
+        path="/roleselection"
+        element={
+          <Transitions>
+            <RoleSelection />
+          </Transitions>
+        }
+      />
       <Route element={<PrivateRoutes />}>
-
         <Route
-          path="/profile"
+          path="/userdashboard"
           element={
             <Transitions>
-              <Profile />
+              <UserDashboard />
             </Transitions>
           }
         />
-
         <Route
           path="/clientdashboard"
           element={
             <Transitions>
               <ClientDashboard />
+            </Transitions>
+          }
+        />
+        <Route
+          path="/profile"
+          element={
+            <Transitions>
+              <Profile />
             </Transitions>
           }
         />
@@ -118,22 +129,6 @@ const Animated = () => {
           }
         />
         <Route
-          path="/clientdashboardnochart"
-          element={
-            <Transitions>
-              <ClientDashboardNoChart />
-            </Transitions>
-          }
-        />
-        <Route
-          path="/hostdashboardnochart"
-          element={
-            <DatagridTransition>
-              <HostDashboardNoChart />
-            </DatagridTransition>
-          }
-        />
-        <Route
           path="/clientbilling"
           element={
             <Transitions>
@@ -141,7 +136,7 @@ const Animated = () => {
             </Transitions>
           }
         />
-         <Route
+        <Route
           path="/hostbilling"
           element={
             <Transitions>
@@ -157,7 +152,7 @@ const Animated = () => {
             </Transitions>
           }
         />
-         <Route
+        <Route
           path="/hostpasttxn"
           element={
             <Transitions>
@@ -197,7 +192,62 @@ const Animated = () => {
             </Transitions>
           }
         />
-
+        <Route
+          path="/details/:sessionId"
+          element={
+            <Transitions>
+              <TransactionDetails />
+            </Transitions>
+          }
+        />
+        <Route
+          path="/usermanagement"
+          element={
+            <Transitions>
+              <UserManagement />
+            </Transitions>
+          }
+        />
+        <Route
+          path="/providerdashboard"
+          element={
+            <Transitions>
+              <ProviderDashboard />
+            </Transitions>
+          }
+        />
+        <Route
+          path="/providerbilling"
+          element={
+            <Transitions>
+              <ProviderBilling />
+            </Transitions>
+          }
+        />
+        <Route
+          path="/providerpasttxn"
+          element={
+            <Transitions>
+              <ProviderPastTxn />
+            </Transitions>
+          }
+        />
+        <Route
+          path="/providerpayment"
+          element={
+            <Transitions>
+              <ProviderPayment />
+            </Transitions>
+          }
+        />
+        <Route
+          path="/settings"
+          element={
+            <Transitions>
+              <Settings />
+            </Transitions>
+          }
+        />
       </Route>
     </Routes>
   );

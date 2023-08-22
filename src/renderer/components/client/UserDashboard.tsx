@@ -2,14 +2,17 @@ import { Button, Divider, Grid, Stack, Typography } from '@mui/material';
 import { useSelector } from 'react-redux';
 import { RootState } from 'renderer/redux/store';
 import { useEffect } from 'react';
-import { useTheme } from '@emotion/react';
 import actions from 'renderer/redux/actionCreators';
-import { handleDeregisterClient, handleRegisterClient } from 'renderer/utils/handleRegistration';
+import {
+  handleDeregisterClient,
+  handleRegisterClient,
+} from 'renderer/utils/handleRegistration';
+import { useTheme } from '@emotion/react';
 
 export default function UserDashboard() {
   const jobs = useSelector((state: RootState) => state.jobs.jobs);
   const jobResults = useSelector((state: RootState) => state.jobs.jobResults);
-
+  const theme = useTheme();
   // TODO: centralize subscriptions to ensure updating store only happens once
   useEffect(() => {
     window.electron.onSubscribeJobs((_event, id, content) => {
@@ -26,15 +29,15 @@ export default function UserDashboard() {
         window.electron.clientRegistered(false);
       }
     });
-    window.electron.onOffloadJob( async (_event, job) => {
+    window.electron.onOffloadJob(async (_event, job) => {
       const id = generateUuid();
       const status = await window.electron.publishJob(id, job);
       actions.addJob(id.toString(), status);
-    })
-    window.electron.onDeregisterClient( async (_event) => {
+    });
+    window.electron.onDeregisterClient(async (_event) => {
       await handleDeregisterClient();
-    })
-  }, []);
+    });
+    }, []);
 
   const generateUuid = () => {
     return (
@@ -48,7 +51,6 @@ export default function UserDashboard() {
     actions.setJobs([]);
     actions.setJobResults([]);
   };
-  const theme = useTheme();
 
   return (
     <Stack sx={{display: 'flex', alignItems: 'center', height: "100%"}}>
@@ -169,4 +171,4 @@ export default function UserDashboard() {
         </Button>
       </Stack>
   );
-};
+}

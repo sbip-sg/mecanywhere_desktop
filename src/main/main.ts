@@ -12,9 +12,10 @@ import path from 'path';
 import { app, BrowserWindow, shell, ipcMain, safeStorage, IpcMainEvent } from 'electron';
 import { autoUpdater } from 'electron-updater';
 import log from 'electron-log';
+import { performance } from 'perf_hooks';
 import MenuBuilder from './menu';
 import { resolveHtmlPath } from './util';
-import { performance } from 'perf_hooks';
+
 const Store = require('electron-store');
 const io = require('socket.io')();
 const { shell } = require('electron');
@@ -55,7 +56,7 @@ appdev_server.on('connection', (socket) => {
   socket.on('offload', async (job) => {
     console.log('Received job...', job);
     try {
-      if(!mainWindow) {
+      if (!mainWindow) {
         throw new Error('"mainWindow" is not defined');
       }
       mainWindow.webContents.send('offload-job', job);
@@ -113,7 +114,7 @@ ipcMain.on('message:loginShow', (event) => {
 
 ipcMain.on('electron-store-get', async (event, key) => {
   const encryptedKey = store.get(key);
-  //help correct the line below
+  // help correct the line below
   const decryptedKey = safeStorage.decryptString(
     Buffer.from(encryptedKey, 'latin1')
   );
@@ -170,7 +171,7 @@ const isDebug =
   process.env.NODE_ENV === 'development' || process.env.DEBUG_PROD === 'true';
 
 if (isDebug) {
-  require('electron-debug')();
+  require('electron-debug')({ showDevTools: false });
 }
 
 const installExtensions = async () => {
@@ -205,8 +206,8 @@ const createWindow = async () => {
 
   mainWindow = new BrowserWindow({
     show: false,
-    width: 1366,
-    height: 768,
+    width: 1440,
+    height: 900,
     icon: getAssetPath('logo-m.png'),
     webPreferences: {
       preload: app.isPackaged

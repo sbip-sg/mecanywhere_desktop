@@ -4,7 +4,7 @@ import {
   createTheme,
   PaletteColorOptions,
   ThemeProvider,
-  ThemeOptions
+  ThemeOptions,
 } from '@mui/material/styles';
 import { create } from 'domain';
 
@@ -25,16 +25,17 @@ declare module '@mui/material/styles' {
   interface PaletteOptions extends CustomPalette {}
 }
 
-const createColor = (mainColor: string) => createTheme().palette.augmentColor({ color: { main: mainColor } });
+const createColor = (mainColor: string) =>
+  createTheme().palette.augmentColor({ color: { main: mainColor } });
 
-const cerulean = '#' + '7f97d8'
-const lightPurple = '#' + '6D697D'
-const lightBlack = "#" + '292733'
-const mediumBlack = "#" + '202028'
-const darkBlack = "#" + '18191C'
-const mintGreen = '#' + '35D4C7'
-const offWhite = "#" + 'F7F7F7'
-// const lightBlue = 
+const cerulean = '#' + '7f97d8';
+const lightPurple = '#' + '6D697D';
+const lightBlack = '#' + '292733';
+const mediumBlack = '#' + '202028';
+const darkBlack = '#' + '18191C';
+const mintGreen = '#' + '35D4C7';
+const offWhite = '#' + 'F7F7F7';
+// const lightBlue =
 
 const themeOptions: ThemeOptions = {
   components: {
@@ -42,30 +43,34 @@ const themeOptions: ThemeOptions = {
       styleOverrides: {
         body: {
           backgroundColor: darkBlack,
-          scrollbarColor: "#6b6b6b #2b2b2b",
-          "&::-webkit-scrollbar, & *::-webkit-scrollbar": {
-            backgroundColor: "#2b2b2b",
+          scrollbarColor: '#6b6b6b #2b2b2b',
+          '&::-webkit-scrollbar, & *::-webkit-scrollbar': {
+            backgroundColor: '#2b2b2b',
+            width: '1rem',
           },
-          "&::-webkit-scrollbar-thumb, & *::-webkit-scrollbar-thumb": {
+          '&::-webkit-scrollbar-thumb, & *::-webkit-scrollbar-thumb': {
             borderRadius: 8,
-            backgroundColor: "#6b6b6b",
+            backgroundColor: '#6b6b6b',
             minHeight: 24,
-            border: "3px solid #2b2b2b",
+            border: '3px solid #2b2b2b',
           },
-          "&::-webkit-scrollbar-thumb:focus, & *::-webkit-scrollbar-thumb:focus": {
-            backgroundColor: "#959595",
-          },
-          "&::-webkit-scrollbar-thumb:active, & *::-webkit-scrollbar-thumb:active": {
-            backgroundColor: "#959595",
-          },
-          "&::-webkit-scrollbar-thumb:hover, & *::-webkit-scrollbar-thumb:hover": {
-            backgroundColor: "#959595",
-          },
-          "&::-webkit-scrollbar-corner, & *::-webkit-scrollbar-corner": {
-            backgroundColor: "#2b2b2b",
+          '&::-webkit-scrollbar-thumb:focus, & *::-webkit-scrollbar-thumb:focus':
+            {
+              backgroundColor: '#959595',
+            },
+          '&::-webkit-scrollbar-thumb:active, & *::-webkit-scrollbar-thumb:active':
+            {
+              backgroundColor: '#959595',
+            },
+          '&::-webkit-scrollbar-thumb:hover, & *::-webkit-scrollbar-thumb:hover':
+            {
+              backgroundColor: '#959595',
+            },
+          '&::-webkit-scrollbar-corner, & *::-webkit-scrollbar-corner': {
+            backgroundColor: '#2b2b2b',
           },
         },
-      }
+      },
     },
     MuiButton: {
       styleOverrides: {
@@ -74,7 +79,7 @@ const themeOptions: ThemeOptions = {
           backgroundColor: cerulean,
           '&:hover': {
             color: cerulean,
-            backgroundColor: darkBlack, 
+            backgroundColor: darkBlack,
           },
         },
       },
@@ -139,10 +144,10 @@ const themeOptions: ThemeOptions = {
       contrastText: `#FFFFFF`,
     },
     secondary: {
-      light: `#F51474`, //magenta
+      light: `#F51474`, // magenta
       main: `#f9f9f9`,
       dark: `#C5BDBA`,
-      contrastText: `#790EFC`, //purple
+      contrastText: `#790EFC`, // purple
     },
     text: {
       primary: offWhite,
@@ -150,8 +155,6 @@ const themeOptions: ThemeOptions = {
       // disabled: styles.ttt,
       // hint: styles.tttt,
     },
-
-    
   },
   typography: {
     fontFamily: [
