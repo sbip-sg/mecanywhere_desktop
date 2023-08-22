@@ -17,7 +17,6 @@ const HostSharingWidget = () => {
         setIsLoading(true);
         console.log("handleEnableResourceSharing");
         await handleRegisterHost();
-
         // Wrap the setTimeout in a Promise to use await
         await new Promise((resolve) => setTimeout(resolve, 2000));
 

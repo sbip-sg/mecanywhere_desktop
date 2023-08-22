@@ -2,7 +2,6 @@ import { Button, Divider, Grid, Stack, Typography } from '@mui/material';
 import { useSelector } from 'react-redux';
 import { RootState } from 'renderer/redux/store';
 import { useEffect } from 'react';
-import { useTheme } from '@emotion/react';
 import actions from 'renderer/redux/actionCreators';
 import {
   handleDeregisterClient,
@@ -38,16 +37,7 @@ export default function UserDashboard() {
     window.electron.onDeregisterClient(async (_event) => {
       await handleDeregisterClient();
     });
-    // actions.addJobResults(
-    //   '01H65Y8SNN5SQG6NCE6EZ3RB1601H65Y8SNN5SQG6NCE6EZ3RB1601H65Y8SNN5SQG6NCE6EZ3RB1601H65Y8SNN5SQG6NCE6EZ3RB16',
-    //   '01H65Y01H65Y8SNN5SQG6NCE6EZ3RB168SNN5SQG6NCE6EZ3RB1601H65Y8SNN5SQG6NCE6EZ3RB1601H65Y8SNN5SQG6NCE6EZ3RB1601H65Y8SNN5SQG6NCE6EZ3RB1601H65Y8SNN5SQG6NCE6EZ3RB16')
-    // actions.addJobResults(
-    //   'CE6EZ3RB1601H65Y8SNN5SQG6NCE6EZ3RB1601H65Y8SNN5SQG6NCE6EZ3RB16',
-    //   'EZ3RB1601H65Y8SNN5SQG6NCE6EZ3RB1601H65Y8SNN5SQG6NCE6EZ3RB1601H65Y8SNN5SQG6NCE6EZ3RB16')
-    // actions.addJobResults(
-    //   'CE6EZ3RB1601H65Y8SNN5SQG6NCE6EZ3RB1601H65Y8SNN5SQG6NCE66EZ3RB1601H65Y8SNN5SQG6NCE66EZ3RB1601H65Y8SNN5SQG6NCE66EZ3RB1601H65Y8SNN5SQG6NCE6EZ3RB16',
-    //   'EZ3RB1601H65Y8SNN5SQG6NCE6\Users\JERYONG\Documents\mec_anywhere_desktop\src\renderETS17015: Expected corresponding closing tag for JSX fragment.Z3RB1601H65Y8SNN5SQG6NCE6EZ6EZ3RB1601H65Y8SNN5SQG6NCE66EZ3RB1601H65Y8SNN5SQG6NCE66EZ3RB1601H65Y8SNN5SQG6NCE66EZ3RB1601H65Y8SNN5SQG6NCE66EZ3RB16')
-  }, []);
+    }, []);
 
   const generateUuid = () => {
     return (
@@ -61,7 +51,6 @@ export default function UserDashboard() {
     actions.setJobs([]);
     actions.setJobResults([]);
   };
-  const theme = useTheme();
 
   return (
     <Stack sx={{display: 'flex', alignItems: 'center', height: "100%"}}>

@@ -3,7 +3,6 @@ import { useState, useCallback } from 'react';
 import { Formik, Form, FormikHelpers } from 'formik';
 import CircularProgress from '@mui/material/CircularProgress';
 import { useNavigate } from 'react-router-dom';
-import { useTheme } from '@emotion/react';
 import TextFieldWrapper from '../../utils/TextField';
 import FormSchema from '../../utils/FormSchema';
 // import logoBlack from '../../../../assets/logo-black.png';
@@ -19,7 +18,6 @@ interface FormValues {
 
 const Register = () => {
   const navigate = useNavigate();
-  const theme = useTheme();
   const theme = useTheme();
   const [isLoading, setIsLoading] = useState(false);
   const [errorDialogOpen, setErrorDialogOpen] = useState(false);

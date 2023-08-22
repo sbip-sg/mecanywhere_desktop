@@ -6,10 +6,7 @@ import { useTheme } from '@emotion/react';
 import { RootState } from '../../redux/store';
 import { LeftDrawerComponent } from './leftDrawer';
 import { RightDrawerComponent } from './rightDrawer';
-import { LeftDrawerComponent } from './leftDrawer';
-import { RightDrawerComponent } from './rightDrawer';
 import { MenuComponent } from './menu';
-import { useTheme } from '@emotion/react';
 
 export default function NavigationLayout({
   children,
@@ -25,7 +22,6 @@ export default function NavigationLayout({
           <MenuComponent />
           <LeftDrawerComponent />
           <Box
-            id="main-nav-container"
             id="main-nav-container"
             sx={{
               flexGrow: 1,
@@ -43,7 +39,6 @@ export default function NavigationLayout({
       ) : (
         <>{children}</>
       )}
-    </Box>
     </Box>
   );
 }

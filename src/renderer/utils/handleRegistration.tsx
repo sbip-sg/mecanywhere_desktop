@@ -13,6 +13,7 @@ export const handleRegisterClient = async (containerRef) => {
   const did = window.electron.store.get('did');
   if (credential && did) {
     const response = await registerUser(did, credential);
+    console.log("client registration response", response)
     const { access_token } = response;
     const assignmentRes = await assignHost(access_token, did);
     if (assignmentRes) {
@@ -39,6 +40,7 @@ export const handleRegisterHost = async () => {
   if (credential && did) {
     actions.setCredential(credential);
     const response = await registerHost(did, credential);
+    console.log("host registration response", response)
     const { access_token } = response;
     actions.setHostAccessToken(access_token);
     if (response) {
