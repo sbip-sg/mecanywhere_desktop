@@ -1,7 +1,11 @@
 package main
 
 import (
+	"fmt"
 	"net/http"
+	"os"
+	"os/signal"
+	"syscall"
 
 	"github.com/gin-gonic/gin"
 	executor "github.com/sbip-sg/meca"
@@ -18,6 +22,17 @@ type Response struct {
 	Msg     string `json:"msg"`
 }
 
+func startTerminationHdl(executor *executor.MecaExecutor) {
+	interruptChn := make(chan os.Signal)
+	signal.Notify(interruptChn, os.Interrupt, syscall.SIGTERM)
+	go func() {
+		<-interruptChn
+		fmt.Println("\nProrgram interrupted. Cleaning up...")
+		executor.Stop()
+		os.Exit(0)
+	}()
+}
+
 func main() {
 	cfg := executor.MecaExecutorConfig{
 		Type:    "docker",
@@ -26,6 +41,10 @@ func main() {
 		Mem:     4096,
 	}
 	mecaExecutor := executor.NewMecaExecutorFromConfig(cfg)
+
+	// add interrupt handler to stop the executor and GC the tasks
+	startTerminationHdl(mecaExecutor)
+
 	mecaExecutor.Start()
 	meca_exec := func(c *gin.Context) {
 		var req Request

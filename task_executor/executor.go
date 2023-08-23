@@ -127,14 +127,15 @@ func (t *taskTracker) clean(timeout int) {
 }
 
 type MecaExecutor struct {
-	timeout int
-	tracker *taskTracker
-	rm      ResourceManager
-	repo    TaskRepo
-	fac     TaskFactory
-	started bool
-	stopped atomic.Bool
-	stopChn chan<- struct{}
+	timeout           int
+	tracker           *taskTracker
+	rm                ResourceManager
+	repo              TaskRepo
+	fac               TaskFactory
+	started           bool
+	stopped           atomic.Bool
+	stopChn           chan<- struct{}
+	cleanerStoppedChn <-chan struct{}
 }
 
 func NewMecaExecutorFromConfig(cfg MecaExecutorConfig) *MecaExecutor {
@@ -146,10 +147,20 @@ func NewMecaExecutorFromConfig(cfg MecaExecutorConfig) *MecaExecutor {
 	}
 }
 
-func (meca *MecaExecutor) cleaner(stopChn <-chan struct{}) {
+func (meca *MecaExecutor) cleaner(stopChn <-chan struct{}, cleanerStoppedChn chan<- struct{}) {
 	for {
 		select {
 		case <-stopChn:
+			// clean the tasks
+			time.Sleep(time.Second) // let the other goroutine that might have started execution on adding task handle to finish
+			meca.tracker.mu.Lock()
+			// release every task
+			for id, h := range meca.tracker.tasks {
+				meca.tracker.remove(id)
+				log.Printf("removed %s from task list", h.task.GetId())
+			}
+			meca.tracker.mu.Unlock()
+			cleanerStoppedChn <- struct{}{}
 			return
 		default:
 			time.Sleep(time.Millisecond)
@@ -162,18 +173,22 @@ func (meca *MecaExecutor) cleaner(stopChn <-chan struct{}) {
 func (meca *MecaExecutor) Start() {
 	if !meca.started {
 		stopChn := make(chan struct{})
+		cleanerStoppedChn := make(chan struct{})
 		meca.rm.Start()
-		go meca.cleaner(stopChn)
+		go meca.cleaner(stopChn, cleanerStoppedChn)
 		meca.stopChn = stopChn
+		meca.cleanerStoppedChn = cleanerStoppedChn
 		meca.started = true
 	}
 }
 
 func (meca *MecaExecutor) Stop() {
 	if meca.started {
-		meca.stopped.Store(true)
-		meca.stopChn <- struct{}{}
-		meca.rm.Stop()
+		if meca.stopped.CompareAndSwap(false, true) {
+			meca.stopChn <- struct{}{}
+			meca.rm.Stop()
+			<-meca.cleanerStoppedChn
+		}
 	}
 }
 
