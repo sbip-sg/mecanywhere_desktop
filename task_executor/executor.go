@@ -136,6 +136,7 @@ type MecaExecutor struct {
 	stopped           atomic.Bool
 	stopChn           chan<- struct{}
 	cleanerStoppedChn <-chan struct{}
+	pauseMu           sync.Mutex
 }
 
 func NewMecaExecutorFromConfig(cfg MecaExecutorConfig) *MecaExecutor {
@@ -161,7 +162,6 @@ func (meca *MecaExecutor) cleaner(stopChn <-chan struct{}, cleanerStoppedChn cha
 			}
 			meca.tracker.mu.Unlock()
 			cleanerStoppedChn <- struct{}{}
-			return
 		default:
 			time.Sleep(time.Millisecond)
 			meca.tracker.clean(meca.timeout)
@@ -184,11 +184,40 @@ func (meca *MecaExecutor) Start() {
 
 func (meca *MecaExecutor) Stop() {
 	if meca.started {
+		meca.pauseMu.Lock()
 		if meca.stopped.CompareAndSwap(false, true) {
 			meca.stopChn <- struct{}{}
 			meca.rm.Stop()
 			<-meca.cleanerStoppedChn
 		}
+		meca.pauseMu.Unlock()
+	}
+}
+
+func (meca *MecaExecutor) Pause() {
+	if meca.started {
+		if meca.stopped.Load() {
+			return
+		}
+		meca.pauseMu.Lock()
+		if meca.stopped.CompareAndSwap(false, true) {
+			// avoid concurrent pause and unpause
+			meca.stopChn <- struct{}{}
+			<-meca.cleanerStoppedChn
+		}
+		meca.pauseMu.Unlock()
+	}
+}
+
+func (meca *MecaExecutor) UnPause() {
+	if meca.started {
+		if !meca.stopped.Load() {
+			return
+		}
+		meca.pauseMu.Lock()
+		// to ensure no concurrent cleaning when the stopped switched off
+		meca.stopped.Store(false)
+		meca.pauseMu.Unlock()
 	}
 }
 

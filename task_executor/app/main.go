@@ -2,6 +2,7 @@ package main
 
 import (
 	"fmt"
+	"log"
 	"net/http"
 	"os"
 	"os/signal"
@@ -61,9 +62,26 @@ func main() {
 		}
 		c.IndentedJSON(http.StatusOK, ret)
 	}
+	meca_stop := func(c *gin.Context) {
+		log.Println("\nMECA executor stopped. Cleaning up...")
+		mecaExecutor.Stop()
+		os.Exit(0)
+	}
+	meca_pause := func(c *gin.Context) {
+		log.Println("\nMECA executor pausing")
+		mecaExecutor.Pause()
+	}
+	meca_unpause := func(c *gin.Context) {
+		log.Println("\nMECA executor unpausing")
+		mecaExecutor.UnPause()
+	}
 
 	router := gin.Default()
 	router.POST("/", meca_exec)
+	router.POST("/stop", meca_stop)
+	router.POST("/pause", meca_pause)
+	router.POST("/unpause", meca_unpause)
+
 	router.Run(":2591")
 }
 
