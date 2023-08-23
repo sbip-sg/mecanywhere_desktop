@@ -22,6 +22,8 @@ func main() {
 	cfg := executor.MecaExecutorConfig{
 		Type:    "docker",
 		Timeout: 1,
+		Cpu:     4,
+		Mem:     4096,
 	}
 	mecaExecutor := executor.NewMecaExecutorFromConfig(cfg)
 	mecaExecutor.Start()

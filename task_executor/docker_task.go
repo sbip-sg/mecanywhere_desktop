@@ -192,14 +192,15 @@ func (f *DockerTaskFactory) Build(imageId string, resource ResourceLimit) (Task,
 	return NewDockerTask(imageId, resource, f.cli), nil
 }
 
-func newDockerMecaExecutor(timeout int) *MecaExecutor {
+func newDockerMecaExecutor(cfg MecaExecutorConfig) *MecaExecutor {
 	cli, err := client.NewClientWithOpts(client.FromEnv, client.WithAPIVersionNegotiation())
 	if err != nil {
 		return nil
 	}
 	return &MecaExecutor{
-		timeout: timeout,
+		timeout: cfg.Timeout,
 		tracker: newTaskTracker(),
+		rm:      NewResourceManager(cfg.Cpu, cfg.Mem),
 		repo:    NewLocalDockerRepo(cli),
 		fac:     NewDockerTaskFactory(cli),
 	}

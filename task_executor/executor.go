@@ -16,7 +16,8 @@ const (
 )
 
 var (
-	errInvalidMecaExecutor = errors.New("meca executor in invalid state")
+	errInvalidMecaExecutor    = errors.New("meca executor in invalid state")
+	errMecaExecutorNotStarted = errors.New("meca executor not started")
 )
 
 func port_alloc() int {
@@ -24,10 +25,12 @@ func port_alloc() int {
 }
 
 type taskHandle struct {
-	task           Task
-	lastUsed       atomic.Uint64
-	ref            atomic.Uint64
-	initializeOnce sync.Once
+	task        Task
+	lastUsed    atomic.Uint64
+	ref         atomic.Uint64
+	initialized atomic.Bool
+	initMu      sync.Mutex
+	releaseCb   func() error
 }
 
 func (h *taskHandle) updateLastUsed() {
@@ -51,6 +54,10 @@ func (h *taskHandle) release() {
 				err := h.task.CleanUp()
 				if err != nil {
 					log.Println(err)
+				}
+				if h.releaseCb != nil {
+					// a handle not initialized will not have a release callback.
+					h.releaseCb()
 				}
 			}
 			break
@@ -122,34 +129,61 @@ func (t *taskTracker) clean(timeout int) {
 type MecaExecutor struct {
 	timeout int
 	tracker *taskTracker
+	rm      ResourceManager
 	repo    TaskRepo
 	fac     TaskFactory
+	started bool
+	stopped atomic.Bool
+	stopChn chan<- struct{}
 }
 
 func NewMecaExecutorFromConfig(cfg MecaExecutorConfig) *MecaExecutor {
 	switch cfg.Type {
 	case "docker":
-		return newDockerMecaExecutor(cfg.Timeout)
+		return newDockerMecaExecutor(cfg)
 	default:
 		return nil
 	}
 }
 
-func (meca *MecaExecutor) cleaner() {
+func (meca *MecaExecutor) cleaner(stopChn <-chan struct{}) {
 	for {
-		time.Sleep(time.Millisecond)
-		meca.tracker.clean(meca.timeout)
+		select {
+		case <-stopChn:
+			return
+		default:
+			time.Sleep(time.Millisecond)
+			meca.tracker.clean(meca.timeout)
+		}
 	}
 }
 
 // will launch cleaner goroutine to remove tasks after timeout
 func (meca *MecaExecutor) Start() {
-	go meca.cleaner()
+	if !meca.started {
+		stopChn := make(chan struct{})
+		meca.rm.Start()
+		go meca.cleaner(stopChn)
+		meca.stopChn = stopChn
+		meca.started = true
+	}
+}
+
+func (meca *MecaExecutor) Stop() {
+	if meca.started {
+		meca.stopped.Store(true)
+		meca.stopChn <- struct{}{}
+		meca.rm.Stop()
+	}
 }
 
 func (meca *MecaExecutor) Execute(ctx context.Context, imageId string, rsrc ResourceLimit, input []byte) ([]byte, error) {
 	if meca == nil {
 		return nil, errInvalidMecaExecutor
+	}
+	// if the service has been stopped or not started we reject all request.
+	if !meca.started || meca.stopped.Load() {
+		return nil, errMecaExecutorNotStarted
 	}
 
 	// validate and tidy the resource limit
@@ -204,18 +238,38 @@ func (meca *MecaExecutor) Execute(ctx context.Context, imageId string, rsrc Reso
 
 	var err error
 	// initialize the task once
-	h.initializeOnce.Do(func() {
-		// retry in port allocation
-		port := port_alloc()
-		retryCount := 0
-		for {
-			if err = h.task.Init(ctx, "", port); err == nil || retryCount > 10 {
-				break
+	if !h.initialized.Load() {
+		h.initMu.Lock()
+		if !h.initialized.Load() {
+			// reserve the resources
+			if err := meca.rm.Reserve(float64(rsrc.CPU), int(rsrc.MEM)); err != nil {
+				h.initMu.Unlock()
+				return nil, err
 			}
-			retryCount++
-			port = port_alloc()
+			// retry in port allocation
+			port := port_alloc()
+			retryCount := 0
+			for {
+				if err = h.task.Init(ctx, "", port); err == nil {
+					// register release callback when the task init successfully
+					releaseCpu := float64(rsrc.CPU)
+					releaseMem := int(rsrc.MEM)
+					h.releaseCb = func() error {
+						return meca.rm.Release(releaseCpu, releaseMem)
+					}
+					h.initialized.Store(true)
+					break
+				} else if retryCount > 10 {
+					// init failed, release resources
+					meca.rm.Release(float64(rsrc.CPU), int(rsrc.MEM))
+					break
+				}
+				retryCount++
+				port = port_alloc()
+			}
 		}
-	})
+		h.initMu.Unlock()
+	}
 	if err != nil {
 		return nil, err
 	}
