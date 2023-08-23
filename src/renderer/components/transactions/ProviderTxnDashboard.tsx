@@ -4,25 +4,26 @@ import { Typography, Stack } from '@mui/material';
 import { convertEpochToStandardTimeWithDate } from 'renderer/utils/unitConversion';
 import { motion } from 'framer-motion';
 import Datagrid from './table/Datagrid';
-import { ExternalDataEntry } from './table/dataTypes';
-import { ExternalPropConfigList } from './propConfig';
+import { InternalDataEntry } from './table/dataTypes';
 import CustomLineChart from './linechart/CustomLineChart';
-import mockUserData from '../../../../assets/mockUserData.json';
+import { InternalPropConfigList } from './propConfig';
+import mockProviderData from '../../../../assets/mockProviderData.json';
 
 interface GroupedData {
   month: string;
   resource_consumed: number;
 }
 
-const TestPage = () => {
-  const [data, setData] = useState<ExternalDataEntry[]>([]);
+const ProviderTxnDashboard = () => {
+  const [data, setData] = useState<InternalDataEntry[]>([]);
   const [dateConvertedData, setDateConvertedData] = useState<
-    ExternalDataEntry[]
+    InternalDataEntry[]
   >([]);
   const [isTableExpanded, setIsTableExpanded] = useState(false);
   useEffect(() => {
-    setData(mockUserData);
-    const convertedData: ExternalDataEntry[] = mockUserData.map((entry) => ({
+    // console.log(mockProviderData);
+    setData(mockProviderData);
+    const convertedData = mockProviderData.map((entry) => ({
       ...entry,
       session_start_datetime: convertEpochToStandardTimeWithDate(
         entry.session_start_datetime
@@ -46,6 +47,7 @@ const TestPage = () => {
     acc[month].resource_consumed += Number(entry.resource_consumed);
     return acc;
   }, {} as { [key: string]: GroupedData });
+
   const groupedData: GroupedData[] = Object.values(groupedDataObject);
 
   return (
@@ -105,11 +107,11 @@ const TestPage = () => {
           data={dateConvertedData}
           isTableExpanded={isTableExpanded}
           setIsTableExpanded={setIsTableExpanded}
-          propConfigList={ExternalPropConfigList}
+          propConfigList={InternalPropConfigList}
         />
       </motion.div>
     </Stack>
   );
 };
 
-export default TestPage;
+export default ProviderTxnDashboard;

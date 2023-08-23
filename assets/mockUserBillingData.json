@@ -1,0 +1,200 @@
+[
+  {
+    "did": "did:meca:0xd92ba694d0f8c73582e053a218b0be3e77bb9db4",
+    "billing_start_date": "07/01/23",
+    "total_resource_consumed": 167,
+    "number_of_sessions": 5,
+    "total_usage_hours": 20.875,
+    "total_tasks_run": 33,
+    "billing_amount": 37.2911,
+    "billing_due_date": "08/15/23",
+    "payment_date": "08/01/23"
+  },
+  {
+    "did": "did:meca:0xd92ba694d0f8c73582e053a218b0be3e77bb9db4",
+    "billing_start_date": "06/01/23",
+    "total_resource_consumed": 188,
+    "number_of_sessions": 18,
+    "total_usage_hours": 23.5,
+    "total_tasks_run": 11,
+    "billing_amount": 41.9804,
+    "billing_due_date": "07/15/23",
+    "payment_date": "08/02/23"
+  },
+  {
+    "did": "did:meca:0xd92ba694d0f8c73582e053a218b0be3e77bb9db4",
+    "billing_start_date": "05/01/23",
+    "total_resource_consumed": 144,
+    "number_of_sessions": 14,
+    "total_usage_hours": 18,
+    "total_tasks_run": 9,
+    "billing_amount": 32.1552,
+    "billing_due_date": "06/15/23",
+    "payment_date": "08/03/23"
+  },
+  {
+    "did": "did:meca:0xd92ba694d0f8c73582e053a218b0be3e77bb9db4",
+    "billing_start_date": "04/01/23",
+    "total_resource_consumed": 108,
+    "number_of_sessions": 13,
+    "total_usage_hours": 13.5,
+    "total_tasks_run": 6,
+    "billing_amount": 24.1164,
+    "billing_due_date": "05/15/23",
+    "payment_date": "08/04/23"
+  },
+  {
+    "did": "did:meca:0xd92ba694d0f8c73582e053a218b0be3e77bb9db4",
+    "billing_start_date": "03/01/23",
+    "total_resource_consumed": 167,
+    "number_of_sessions": 10,
+    "total_usage_hours": 20.875,
+    "total_tasks_run": 10,
+    "billing_amount": 37.2911,
+    "billing_due_date": "04/15/23",
+    "payment_date": "08/05/23"
+  },
+  {
+    "did": "did:meca:0xd92ba694d0f8c73582e053a218b0be3e77bb9db4",
+    "billing_start_date": "02/01/23",
+    "total_resource_consumed": 140,
+    "number_of_sessions": 5,
+    "total_usage_hours": 17.5,
+    "total_tasks_run": 17,
+    "billing_amount": 31.262,
+    "billing_due_date": "03/15/23",
+    "payment_date": "08/06/23"
+  },
+  {
+    "did": "did:meca:0xd92ba694d0f8c73582e053a218b0be3e77bb9db4",
+    "billing_start_date": "01/01/23",
+    "total_resource_consumed": 166,
+    "number_of_sessions": 8,
+    "total_usage_hours": 20.75,
+    "total_tasks_run": 20,
+    "billing_amount": 37.0678,
+    "billing_due_date": "02/15/23",
+    "payment_date": "08/07/23"
+  },
+  {
+    "did": "did:meca:0xd92ba694d0f8c73582e053a218b0be3e77bb9db4",
+    "billing_start_date": "12/01/22",
+    "total_resource_consumed": 165,
+    "number_of_sessions": 7,
+    "total_usage_hours": 20.625,
+    "total_tasks_run": 30,
+    "billing_amount": 36.8445,
+    "billing_due_date": "01/15/23",
+    "payment_date": "08/08/23"
+  },
+  {
+    "did": "did:meca:0xd92ba694d0f8c73582e053a218b0be3e77bb9db4",
+    "billing_start_date": "11/01/22",
+    "total_resource_consumed": 239,
+    "number_of_sessions": 15,
+    "total_usage_hours": 29.875,
+    "total_tasks_run": 29,
+    "billing_amount": 53.3687,
+    "billing_due_date": "12/15/22",
+    "payment_date": "08/09/23"
+  },
+  {
+    "did": "did:meca:0xd92ba694d0f8c73582e053a218b0be3e77bb9db4",
+    "billing_start_date": "10/01/22",
+    "total_resource_consumed": 200,
+    "number_of_sessions": 10,
+    "total_usage_hours": 25,
+    "total_tasks_run": 25,
+    "billing_amount": 44.66,
+    "billing_due_date": "11/15/22",
+    "payment_date": "08/10/23"
+  },
+  {
+    "did": "did:meca:0xd92ba694d0f8c73582e053a218b0be3e77bb9db4",
+    "billing_start_date": "09/01/22",
+    "total_resource_consumed": 133,
+    "number_of_sessions": 7,
+    "total_usage_hours": 16.625,
+    "total_tasks_run": 16,
+    "billing_amount": 29.6989,
+    "billing_due_date": "10/15/22",
+    "payment_date": "08/11/23"
+  },
+  {
+    "did": "did:meca:0xd92ba694d0f8c73582e053a218b0be3e77bb9db4",
+    "billing_start_date": "08/01/22",
+    "total_resource_consumed": 216,
+    "number_of_sessions": 6,
+    "total_usage_hours": 27,
+    "total_tasks_run": 40,
+    "billing_amount": 48.2328,
+    "billing_due_date": "09/15/22",
+    "payment_date": "08/12/23"
+  },
+  {
+    "did": "did:meca:0xd92ba694d0f8c73582e053a218b0be3e77bb9db4",
+    "billing_start_date": "07/01/22",
+    "total_resource_consumed": 235,
+    "number_of_sessions": 10,
+    "total_usage_hours": 29.375,
+    "total_tasks_run": 14,
+    "billing_amount": 52.4755,
+    "billing_due_date": "08/15/22",
+    "payment_date": "08/13/23"
+  },
+  {
+    "did": "did:meca:0xd92ba694d0f8c73582e053a218b0be3e77bb9db4",
+    "billing_start_date": "06/01/22",
+    "total_resource_consumed": 161,
+    "number_of_sessions": 13,
+    "total_usage_hours": 20.125,
+    "total_tasks_run": 20,
+    "billing_amount": 35.9513,
+    "billing_due_date": "07/15/22",
+    "payment_date": "08/14/23"
+  },
+  {
+    "did": "did:meca:0xd92ba694d0f8c73582e053a218b0be3e77bb9db4",
+    "billing_start_date": "05/01/22",
+    "total_resource_consumed": 226,
+    "number_of_sessions": 8,
+    "total_usage_hours": 28.25,
+    "total_tasks_run": 14,
+    "billing_amount": 50.4658,
+    "billing_due_date": "06/15/22",
+    "payment_date": "08/15/23"
+  },
+  {
+    "did": "did:meca:0xd92ba694d0f8c73582e053a218b0be3e77bb9db4",
+    "billing_start_date": "04/01/22",
+    "total_resource_consumed": 180,
+    "number_of_sessions": 15,
+    "total_usage_hours": 22.5,
+    "total_tasks_run": 22,
+    "billing_amount": 40.194,
+    "billing_due_date": "05/15/22",
+    "payment_date": "08/16/23"
+  },
+  {
+    "did": "did:meca:0xd92ba694d0f8c73582e053a218b0be3e77bb9db4",
+    "billing_start_date": "03/01/22",
+    "total_resource_consumed": 227,
+    "number_of_sessions": 21,
+    "total_usage_hours": 28.375,
+    "total_tasks_run": 28,
+    "billing_amount": 50.6891,
+    "billing_due_date": "04/15/22",
+    "payment_date": "08/17/23"
+  },
+  {
+    "did": "did:meca:0xd92ba694d0f8c73582e053a218b0be3e77bb9db4",
+    "billing_start_date": "02/01/22",
+    "total_resource_consumed": 220,
+    "number_of_sessions": 13,
+    "total_usage_hours": 27.5,
+    "total_tasks_run": 41,
+    "billing_amount": 49.126,
+    "billing_due_date": "03/15/22",
+    "payment_date": "08/18/23"
+  }
+]

@@ -14,7 +14,7 @@ interface GroupedData {
   resource_consumed: number;
 }
 
-const TestPage = () => {
+const HostTxnDashboard = () => {
   const [data, setData] = useState<ExternalDataEntry[]>([]);
   const [dateConvertedData, setDateConvertedData] = useState<
     ExternalDataEntry[]
@@ -112,4 +112,4 @@ const TestPage = () => {
   );
 };
 
-export default TestPage;
+export default HostTxnDashboard;

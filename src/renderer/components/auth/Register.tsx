@@ -3,6 +3,7 @@ import { useState, useCallback } from 'react';
 import { Formik, Form, FormikHelpers } from 'formik';
 import CircularProgress from '@mui/material/CircularProgress';
 import { useNavigate } from 'react-router-dom';
+import { useTheme } from '@emotion/react';
 import TextFieldWrapper from '../../utils/TextField';
 import FormSchema from '../../utils/FormSchema';
 // import logoBlack from '../../../../assets/logo-black.png';
@@ -10,7 +11,6 @@ import logoTest from '../../../../assets/logo-test.png';
 import Transitions from '../transitions/Transition';
 import handleAccountRegistration from './handleAccountRegistration';
 import ErrorDialog from '../../utils/ErrorDialogue';
-import { useTheme } from '@emotion/react';
 
 interface FormValues {
   password: string;

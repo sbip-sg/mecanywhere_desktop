@@ -11,25 +11,27 @@ import Transitions from './components/transitions/Transition';
 import Register from './components/auth/Register';
 import Login from './components/auth/Login';
 import Mnemonics from './components/auth/Mnemonics';
-import ClientDashboard from './components/dashboard/ClientDashboard';
-import HostDashboard from './components/dashboard/HostDashboard';
-import ProviderDashboard from './components/dashboard/ProviderDashboard';
+import ClientTxnDashboard from './components/transactions/ClientTxnDashboard';
+import HostTxnDashboard from './components/transactions/HostTxnDashboard';
+import ProviderTxnDashboard from './components/transactions/ProviderTxnDashboard';
 import Profile from './components/profile/Profile';
-import ClientBilling from './components/billing/ClientBilling';
-import HostBilling from './components/billing/HostBilling';
 import AppView from './components/appview/AppView';
 import NavigationLayoutTransitionWrapper from './components/navigation/NavigationLayoutTransitionWrapper';
 import { RootState } from './redux/store';
-import ClientPastTxn from './components/billing/ClientPastTxn';
-import HostPastTxn from './components/billing/HostPastTxn';
+
+import ClientBillingDashboard from './components/billing/dashboard/ClientBillingDashboard';
+import HostBillingDashboard from './components/billing/dashboard/HostBillingDashboard';
+import ProviderBillingDashboard from './components/billing/dashboard/ProviderBillingDashboard';
+import ClientBillingHistory from './components/billing/history/ClientBillingHistory';
+import HostBillingHistory from './components/billing/history/HostBillingHistory';
+import ProviderBillingHistory from './components/billing/history/ProviderBillingHistory';
+
 import ClientPayment from './components/misc/ClientPayment';
 import HostWithdrawal from './components/misc/HostWithdrawal';
-import UserDashboard from './components/client/UserDashboard';
-import TransactionDetails from './components/dashboard/TransactionDetails';
+import UserDashboard from './components/misc/UserDashboard';
+import TransactionDetails from './components/transactions/TransactionDetails';
 import RoleSelection from './components/auth/RoleSelection';
 import UserManagement from './components/parentOrganization/UserManagement';
-import ProviderPastTxn from './components/billing/ProviderPastTxn';
-import ProviderBilling from './components/billing/ProviderBilling';
 import ProviderPayment from './components/payment/ProviderPayment';
 import Settings from './components/settings/Settings';
 
@@ -97,18 +99,10 @@ const Animated = () => {
       />
       <Route element={<PrivateRoutes />}>
         <Route
-          path="/userdashboard"
+          path="/clienttxndashboard"
           element={
             <Transitions>
-              <UserDashboard />
-            </Transitions>
-          }
-        />
-        <Route
-          path="/clientdashboard"
-          element={
-            <Transitions>
-              <ClientDashboard />
+              <ClientTxnDashboard />
             </Transitions>
           }
         />
@@ -121,42 +115,42 @@ const Animated = () => {
           }
         />
         <Route
-          path="/hostdashboard"
+          path="/hosttxndashboard"
           element={
             <Transitions>
-              <HostDashboard />
+              <HostTxnDashboard />
             </Transitions>
           }
         />
         <Route
-          path="/clientbilling"
+          path="/clientbillingdashboard"
           element={
             <Transitions>
-              <ClientBilling />
+              <ClientBillingDashboard />
             </Transitions>
           }
         />
         <Route
-          path="/hostbilling"
+          path="/hostbillingdashboard"
           element={
             <Transitions>
-              <HostBilling />
+              <HostBillingDashboard />
             </Transitions>
           }
         />
         <Route
-          path="/clientpasttxn"
+          path="/clientbillinghistory"
           element={
             <Transitions>
-              <ClientPastTxn />
+              <ClientBillingHistory />
             </Transitions>
           }
         />
         <Route
-          path="/hostpasttxn"
+          path="/hostbillinghistory"
           element={
             <Transitions>
-              <HostPastTxn />
+              <HostBillingHistory />
             </Transitions>
           }
         />
@@ -209,26 +203,26 @@ const Animated = () => {
           }
         />
         <Route
-          path="/providerdashboard"
+          path="/providertxndashboard"
           element={
             <Transitions>
-              <ProviderDashboard />
+              <ProviderTxnDashboard />
             </Transitions>
           }
         />
         <Route
-          path="/providerbilling"
+          path="/providerbillingdashboard"
           element={
             <Transitions>
-              <ProviderBilling />
+              <ProviderBillingDashboard />
             </Transitions>
           }
         />
         <Route
-          path="/providerpasttxn"
+          path="/providerbillinghistory"
           element={
             <Transitions>
-              <ProviderPastTxn />
+              <ProviderBillingHistory />
             </Transitions>
           }
         />
