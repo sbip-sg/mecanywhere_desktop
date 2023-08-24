@@ -25,4 +25,4 @@ WORKDIR /app
 EXPOSE 8080
 
 # Run the Go application when the container starts
-CMD ["./app"]
+CMD ./app -config ./meca_executor.yaml
