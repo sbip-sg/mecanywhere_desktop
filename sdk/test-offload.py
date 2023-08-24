@@ -34,14 +34,15 @@ async def distributed_knn(input_data, dataset, k, num_processes):
         else:
             print('Callbacked:', result)
 
-    await meca_api.initiateConnection(containerRef='jyume/meca:0.0.4', callbackOnReceive=callback_on_receive)
+    await meca_api.initiateConnection(callbackOnReceive=callback_on_receive)
 
     for i in range(num_processes):
         start_index = i * chunk_size
         end_index = (i + 1) * chunk_size if i < num_processes - 1 else num_data_points
         sliced_dataset = dataset[start_index:end_index].clone().detach()
 
-        await meca_api.offload({
+        await meca_api.offload('jyume/meca:0.0.4',
+        {
             "dataset": sliced_dataset.tolist(),
             "point": input_data.tolist(),
             "k": k,

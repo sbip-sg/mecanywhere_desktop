@@ -3,6 +3,8 @@ import json
 import socketio
 from requests.models import PreparedRequest
 
+MECA_URL = 'http://localhost:3001'
+
 sio = socketio.AsyncClient(logger=False)
 
 registered_event = asyncio.Event()
@@ -22,30 +24,25 @@ async def disconnect():
     await sio.emit('disconnect')
 
 @sio.on('registered')
-async def on_registered(registered):
-    print('Registered with server: ', registered)
-    if not registered:
-        raise Exception('Failed to register with server')
+async def on_registered():
+    print('Registered with server.')
     registered_event.set()
 
-async def initiateConnection(containerRef, callbackOnReceive):
+async def initiateConnection(callbackOnReceive):
   @sio.on('job_results_received')
   async def on_job_results_received(id, result):
       print('Received result:', result, 'for job:', id)
       callbackOnReceive(id, result)
       task_events.pop(0).set()
 
-  server_url = 'http://localhost:3001'
-  query_req = PreparedRequest()
-  query_req.prepare_url(server_url, {'containerRef': containerRef})
   try:
-    await sio.connect(query_req.url)
+    await sio.connect(MECA_URL)
     await registered_event.wait()
   except Exception as e:
     print("Exception: ", e)
     await sio.disconnect()
 
-async def offload(data, callback):
+async def offload(containerRef, data, callback):
   offloaded_event = asyncio.Event()
 
   @sio.on('offloaded')
@@ -54,11 +51,11 @@ async def offload(data, callback):
     callback(err, result)
     offloaded_event.set()
 
-  print('Offloading task...')
+  print('Offloading task...', containerRef, data)
 
-  input_json = json.dumps(data)
+  job = json.dumps({'containerRef': containerRef, 'jobInput': json.dumps(data)})
   try:
-    await sio.emit('offload', input_json)
+    await sio.emit('offload', job)
     await offloaded_event.wait()
     task_events.append(asyncio.Event())
   except Exception as e:

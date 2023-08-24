@@ -41,25 +41,26 @@ const appdev_server = io.listen(SDK_SOCKET_PORT);
 appdev_server.on('connection', (socket) => {
   console.log('A user connected');
 
-  async function clientRegistered(event: IpcMainEvent, containerRef: string) {
-    console.log('Client registered: ', containerRef);
-    socket.emit('registered', containerRef);
+  async function clientRegistered(_event: IpcMainEvent) {
+    console.log('Client registered.');
+    socket.emit('registered');
   }
-  ipcMain.on('client-registered', clientRegistered)
+  ipcMain.on('client-registered', clientRegistered);
 
-  async function jobResultsReceived(event: IpcMainEvent, id: string, result: string) {
-    console.log('Sending job results to client... ', id, result)
+  async function jobResultsReceived(_event: IpcMainEvent, id: string, result: string) {
+    console.log('Sending job results to client... ', id, result);
     socket.emit('job_results_received', id, result.toString());
   }
-  ipcMain.on('job-results-received', jobResultsReceived)
+  ipcMain.on('job-results-received', jobResultsReceived);
 
-  socket.on('offload', async (job: string) => {
-    console.log('Received job...', job);
+  socket.on('offload', (job: string) => {
+    const { containerRef, jobInput } = JSON.parse(job);
+    console.log('Received job...', containerRef, jobInput);
     try {
       if (!mainWindow) {
         throw new Error('"mainWindow" is not defined');
       }
-      mainWindow.webContents.send('offload-job', job);
+      mainWindow.webContents.send('offload-job', containerRef, jobInput);
       socket.emit('offloaded', null, 'success');
     } catch (error) {
       socket.emit('offloaded', error, null);
@@ -81,8 +82,7 @@ appdev_server.on('connection', (socket) => {
     if (!mainWindow) {
       throw new Error('"mainWindow" is not defined');
     }
-    const containerRef = socket.handshake.query.containerRef;
-    mainWindow.webContents.send('register-client', containerRef);
+    mainWindow.webContents.send('register-client');
   } catch (error) {
     console.log(error);
   }
@@ -126,11 +126,11 @@ ipcMain.on('electron-store-set', async (event, key, val) => {
   store.set(key, buffer.toString('latin1'));
 });
 
-ipcMain.handle('publish-job', async (event, id, content) => {
+ipcMain.handle('publish-job', async (event, id, containerRef, content) => {
   if (!workerWindow) {
     throw new Error('"workerWindow" is not defined');
   }
-  workerWindow.webContents.send('publish-job', id, content);
+  workerWindow.webContents.send('publish-job', id, containerRef, content);
   return 'published';
 });
 
@@ -148,11 +148,12 @@ ipcMain.on('job-received', async (event, id, result) => {
   mainWindow.webContents.send('job-received', id, result);
 });
 
-ipcMain.on('start-publisher', async (event, queueName, containerRef) => {
+// TODO: remove queue name
+ipcMain.on('start-publisher', async (event, queueName) => {
   if (!workerWindow) {
     throw new Error('"workerWindow" is not defined');
   }
-  workerWindow.webContents.send('start-publisher', queueName, containerRef);
+  workerWindow.webContents.send('start-publisher', queueName);
 });
 
 ipcMain.on('start-consumer', async (event, queueName) => {

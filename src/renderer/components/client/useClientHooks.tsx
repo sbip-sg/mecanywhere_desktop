@@ -13,9 +13,9 @@ const useClientHooks = (isClient: boolean) => {
   };
 
   useEffect(() => {
-    const registerClient = async (containerRef: string) => {
+    const registerClient = async () => {
       try {
-        await handleRegisterClient(containerRef);
+        await handleRegisterClient();
         window.electron.clientRegistered(true);
       } catch (error) {
         console.log(error);
@@ -47,9 +47,9 @@ const useClientHooks = (isClient: boolean) => {
       actions.addJobResults(id, result);
     };
 
-    const offloadJob = async (job: string) => {
+    const offloadJob = async (containerRef: string, job: string) => {
       const id = generateUuid();
-      const status = await window.electron.publishJob(id, job);
+      const status = await window.electron.publishJob(id, containerRef, job);
       actions.addJob(id, status);
     };
 

@@ -11,7 +11,7 @@ const Task = protobuf
 class Publisher {
   static openQueues = {};
 
-  constructor(consumerQueueName, containerRef) {
+  constructor(consumerQueueName) {
     if (Publisher.openQueues[consumerQueueName]) {
       return Publisher.openQueues[consumerQueueName];
     }
@@ -31,7 +31,7 @@ class Publisher {
         durable: true,
         expires: 1000 * 60 * 30,
       });
-      console.log(' [pub] Awaiting RPC requests')
+      console.log(' [pub] Awaiting RPC requests');
 
       channel.consume(
         callbackQueue.queue,
@@ -50,16 +50,12 @@ class Publisher {
           noAck: true,
         }
       );
-
-      await this.publishTask("containerRef", {
-        id: "containerRef",
-        content: containerRef
-      });
     };
 
-    ipcRenderer.on('publish-job', async (event, id, content) => {
+    ipcRenderer.on('publish-job', async (event, id, containerRef, content) => {
       const taskObject = {
         id,
+        containerRef,
         content,
       };
 
@@ -98,8 +94,8 @@ class Publisher {
 
 let publisher;
 
-ipcRenderer.on('start-publisher', async (event, consumerQueueName, containerRef) => {
-  publisher = new Publisher(consumerQueueName, containerRef);
+ipcRenderer.on('start-publisher', async (event, consumerQueueName) => {
+  publisher = new Publisher(consumerQueueName);
   await publisher.startPublisher();
 });
 
