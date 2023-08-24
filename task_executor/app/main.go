@@ -33,7 +33,7 @@ func startTerminationHdl(executor *executor.MecaExecutor) {
 	signal.Notify(interruptChn, os.Interrupt, syscall.SIGTERM)
 	go func() {
 		<-interruptChn
-		fmt.Println("\nProrgram interrupted. Cleaning up...")
+		fmt.Println("\nProgram interrupted. Cleaning up...")
 		executor.Stop()
 		os.Exit(0)
 	}()
