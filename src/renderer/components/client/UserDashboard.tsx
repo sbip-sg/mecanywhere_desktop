@@ -1,51 +1,13 @@
 import { Button, Divider, Grid, Stack, Typography } from '@mui/material';
 import { useSelector } from 'react-redux';
 import { RootState } from 'renderer/redux/store';
-import { useEffect } from 'react';
 import actions from 'renderer/redux/actionCreators';
-import {
-  handleDeregisterClient,
-  handleRegisterClient,
-} from 'renderer/utils/handleRegistration';
 import { useTheme } from '@emotion/react';
 
 export default function UserDashboard() {
   const jobs = useSelector((state: RootState) => state.jobs.jobs);
   const jobResults = useSelector((state: RootState) => state.jobs.jobResults);
   const theme = useTheme();
-  // TODO: centralize subscriptions to ensure updating store only happens once
-  useEffect(() => {
-    window.electron.onSubscribeJobs((_event, id, content) => {
-      actions.addJob(id.toString(), content);
-    });
-    window.electron.onSubscribeJobResults((_event, id, result) => {
-      actions.addJobResults(id.toString(), result);
-    });
-    window.electron.onRegisterClient( async (_event, containerRef) => {
-      try {
-        await handleRegisterClient(containerRef);
-        window.electron.clientRegistered(true);
-      } catch (error) {
-        window.electron.clientRegistered(false);
-      }
-    });
-    window.electron.onOffloadJob(async (_event, job) => {
-      const id = generateUuid();
-      const status = await window.electron.publishJob(id, job);
-      actions.addJob(id.toString(), status);
-    });
-    window.electron.onDeregisterClient(async (_event) => {
-      await handleDeregisterClient();
-    });
-    }, []);
-
-  const generateUuid = () => {
-    return (
-      Math.random().toString() +
-      Math.random().toString() +
-      Math.random().toString()
-    );
-  };
 
   const handleClear = () => {
     actions.setJobs([]);

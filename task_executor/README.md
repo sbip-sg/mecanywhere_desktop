@@ -22,7 +22,7 @@ Build the docker image with: `docker build -t meca-executor -f docker/Dockerfile
 create the virtual network on which meca will be launched and allocate a subnet for use
 
 ```sh
-docker network create --subnet 172.18.0.0./16 meca
+docker network create --subnet 172.18.0.0/16 meca
 ```
 
 launch the executor
@@ -43,7 +43,7 @@ for non-linux machines
 
 change the subnet mask to any other available one
 ```sh
-docker network create --subnet 173.18.0.0./16 meca
+docker network create --subnet 173.18.0.0/16 meca
 docker run --name meca_executor_test -v /var/run/docker.sock:/var/run/docker.sock --net=meca --ip=173.18.0.255 -p 2591:2591 meca-executor:latest
 curl http://localhost:2591 -X POST -H "Content-Type: application/json" -d '{"id": "yourDockerAccount/sampleserver:latest", "input": "{\"name\": \"sbip\"}"}'
 ```
