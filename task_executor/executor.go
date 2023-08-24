@@ -221,6 +221,13 @@ func (meca *MecaExecutor) UnPause() {
 	}
 }
 
+func (meca *MecaExecutor) Stats() ResourceStats {
+	if !meca.started {
+		return ResourceStats{}
+	}
+	return meca.rm.Stats()
+}
+
 func (meca *MecaExecutor) Execute(ctx context.Context, imageId string, rsrc ResourceLimit, input []byte) ([]byte, error) {
 	if meca == nil {
 		return nil, errInvalidMecaExecutor

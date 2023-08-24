@@ -118,12 +118,28 @@ func (m *resourceMonitor) GetMEMAvail() float64 {
 	return 100 - float64(m.lastmemUsed.Load())/10
 }
 
+type ResourceStats struct {
+	TotalCPU    int     `json:"total_cpu"`     // core
+	TotalMEM    int     `json:"total_mem"`     // MB
+	UsedCPU     float64 `json:"used_cpu"`      // %
+	UsedMEM     float64 `json:"used_mem"`      // %
+	TaskCPU     float64 `json:"task_cpu"`      // core
+	TaskMEM     int     `json:"task_mem"`      // MB
+	TaskUsedCPU float64 `json:"task_used_cpu"` // %
+	TaskUsedMEM float64 `json:"task_used_mem"` // %
+}
+
+func (rs *ResourceStats) IsEmpty() bool {
+	return rs.TotalCPU == 0
+}
+
 // controls the allocation of resources to tasks.
 type ResourceManager interface {
 	Start() bool
 	Stop()
 	Reserve(cpu float64, mem int) error
 	Release(cpu float64, mem int) error
+	Stats() ResourceStats
 }
 
 var _ ResourceManager = (*resourceManager)(nil)
@@ -212,4 +228,16 @@ func (m *resourceManager) Release(cpu float64, mem int) error {
 	m.taskAvailMEM.Add(uint64(mem))
 	log.Printf("released cpu %.2f, mem %d; now task cpu %d, task mem %d", cpu, mem, m.taskAvailCPU.Load(), m.taskAvailMEM.Load())
 	return nil
+}
+
+func (m *resourceManager) Stats() (stats ResourceStats) {
+	stats.TotalCPU = m.monitor.GetCPU()
+	stats.TotalMEM = m.monitor.GetMEM()
+	stats.UsedCPU = m.monitor.GetCPUUsed()
+	stats.UsedMEM = m.monitor.GetMEMUsed()
+	stats.TaskCPU = float64(m.taskTotalCPU) / 10
+	stats.TaskMEM = int(m.taskTotalMEM)
+	stats.TaskUsedCPU = 100 - 100*float64(m.taskAvailCPU.Load())/float64(m.taskTotalCPU)
+	stats.TaskUsedMEM = 100 - 100*float64(m.taskAvailMEM.Load())/float64(m.taskTotalMEM)
+	return
 }

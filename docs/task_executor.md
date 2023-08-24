@@ -15,3 +15,13 @@ By default, if the request does not specify the resource usage intent, it is ass
 ## Cleaning
 
 A task is maintained as a running server on the host machine. It is periodically cleaned by the task executor if they are inactive for a configured threshold of time (default 1min).
+
+## Configuration
+
+When launching the meca executor container, one can mount a config file to determine the resources limit managed by meca. A sample config file is [here](../task_executor/conf/meca_docker.yaml).
+
+Mount the config file at `/app/meca_executor.yaml`
+
+```sh
+docker run -it --name meca_executor_test -v /var/run/docker.sock:/var/run/docker.sock -v <your-config-file>:/app/meca_executor.yaml --net=meca --ip=172.18.0.255 meca-executor:latest
+```
