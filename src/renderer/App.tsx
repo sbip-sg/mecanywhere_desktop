@@ -32,6 +32,8 @@ import ProviderPastTxn from './components/billing/ProviderPastTxn';
 import ProviderBilling from './components/billing/ProviderBilling';
 import ProviderPayment from './components/payment/ProviderPayment';
 import Settings from './components/settings/Settings';
+import useClientHooks from './components/client/useClientHooks';
+import useHeartbeatHook from './components/host/useHeartbeatHook';
 
 const PrivateRoutes = () => {
   const authenticated = useSelector(
@@ -254,6 +256,19 @@ const Animated = () => {
 };
 
 export default function App() {
+  const isClient = useSelector(
+    (state: RootState) => state.accountUser.userAccessToken !== ''
+  );
+  const isHost = useSelector(
+    (state: RootState) => state.accountUser.hostAccessToken !== ''
+  );
+  const hostAccessToken = useSelector(
+    (state: RootState) => state.accountUser.hostAccessToken
+  );
+  const did = window.electron.store.get('did');
+  useClientHooks(isClient);
+  useHeartbeatHook(isHost, hostAccessToken, did);
+
   return (
     <Router>
       <NavigationLayoutTransitionWrapper>
@@ -263,4 +278,4 @@ export default function App() {
       </NavigationLayoutTransitionWrapper>
     </Router>
   );
-}
+};

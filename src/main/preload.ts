@@ -2,7 +2,13 @@
 /* eslint no-unused-vars: off */
 import { contextBridge, ipcRenderer, IpcRendererEvent } from 'electron';
 
-export type Channels = 'ipc-example';
+// export type Channels = 'ipc-example';
+
+const subscribe = (channel: string, func: (...args: any[]) => void) => {
+  const subscription = (_event: IpcRendererEvent, ...args: any[]) =>
+    func(...args);
+  ipcRenderer.on(channel, subscription);
+};
 
 const electronHandler = {
   // ipcRenderer: {
@@ -40,9 +46,8 @@ const electronHandler = {
     },
     // Other method you want to add like has(), reset(), etc.
   },
+
   // from client
-
-
   publishJob: (id: string, content: string) =>
     ipcRenderer.invoke('publish-job', id, content),
   startPublisher: (queueName: string, containerRef: string) =>
@@ -51,24 +56,28 @@ const electronHandler = {
   clientRegistered: (status: boolean) => ipcRenderer.send('client-registered', status),
   // to client
   onRegisterClient: (callback: (...args: any[]) => void) => {
-    ipcRenderer.on('register-client', callback);
+    subscribe('register-client', callback);
   },
   onOffloadJob: (callback: (...args: any[]) => void) => {
-    ipcRenderer.on('offload-job', callback);
+    subscribe('offload-job', callback);
   },
   onDeregisterClient: (callback: (...args: any[]) => void) => {
-    ipcRenderer.on('deregister-client', callback);
+    subscribe('deregister-client', callback);
   },
   // from host
   startConsumer: (queueName: string) =>
     ipcRenderer.send('start-consumer', queueName),
   // to host
   onSubscribeJobs: (callback: (...args: any[]) => void) => {
-    ipcRenderer.on('job-received', callback);
+    subscribe('job-received', callback);
   },
   // to client and host
   onSubscribeJobResults: (callback: (...args: any[]) => void) => {
-    ipcRenderer.on('job-results-received', callback);
+    subscribe('job-results-received', callback);
+  },
+
+  removeListener: (channel: string, func: (...args: any[]) => void) => {
+    ipcRenderer.removeListener(channel, func);
   },
 };
 

@@ -53,7 +53,7 @@ appdev_server.on('connection', (socket) => {
   }
   ipcMain.on('job-results-received', jobResultsReceived)
 
-  socket.on('offload', async (job) => {
+  socket.on('offload', async (job: string) => {
     console.log('Received job...', job);
     try {
       if (!mainWindow) {

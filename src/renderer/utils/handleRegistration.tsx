@@ -9,7 +9,7 @@ import {
 import reduxStore from '../redux/store';
 
 //TODO move assignhost
-export const handleRegisterClient = async (containerRef) => {
+export const handleRegisterClient = async (containerRef: string) => {
   const credential = JSON.parse(window.electron.store.get('credential'));
   const did = window.electron.store.get('did');
   if (credential && did) {
@@ -24,7 +24,6 @@ export const handleRegisterClient = async (containerRef) => {
       window.electron.startPublisher(queue, containerRef);
       actions.setCredential(credential);
       actions.setUserAccessToken(access_token);
-      const accessToken = reduxStore.getState().accountUser.userAccessToken;
       console.log('host assigned')
     } else {
       throw new Error('Host assignment failed');
