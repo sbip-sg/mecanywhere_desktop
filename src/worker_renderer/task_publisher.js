@@ -88,6 +88,7 @@ class Publisher {
     this.close = async function close() {
       await connection.close();
       delete Publisher.openQueues[consumerQueueName];
+      ipcRenderer.removeAllListeners('publish-job');
     };
   }
 }

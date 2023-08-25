@@ -34,7 +34,7 @@ const useClientHooks = (isClient: boolean) => {
       window.electron.removeListener("register-client", registerClient);
       window.electron.removeListener("deregister-client", deregisterClient);
     };
-  });
+  }, []);
 
   useEffect(() => {
     if (!isClient) return () => {};

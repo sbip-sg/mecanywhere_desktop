@@ -31,7 +31,7 @@ async def on_registered():
 async def initiateConnection(callbackOnReceive):
   @sio.on('job_results_received')
   async def on_job_results_received(id, result):
-      print('Received result:', result, 'for job:', id)
+      print('Received in api:', result, 'for job:', id)
       callbackOnReceive(id, result)
       task_events.pop(0).set()
 

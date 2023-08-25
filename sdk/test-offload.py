@@ -24,9 +24,14 @@ async def distributed_knn(input_data, dataset, k, num_processes):
 
     result_list = []
 
-    def callback_on_receive(id, result):
-        result_list.extend(json.loads(result))
-        print("Received:", result)
+    def callback_on_receive(id, json_result):
+        try:
+          result = json.loads(json_result)
+        except Exception as e:
+          print("Exception while decoding json result: ", e)
+          return
+        result_list.extend(result)
+        print("Received in test:", result)
 
     def callback_on_offload(err, result):
         if err:
@@ -41,7 +46,7 @@ async def distributed_knn(input_data, dataset, k, num_processes):
         end_index = (i + 1) * chunk_size if i < num_processes - 1 else num_data_points
         sliced_dataset = dataset[start_index:end_index].clone().detach()
 
-        await meca_api.offload('jyume/meca:0.0.4',
+        await meca_api.offload('jyume/meca:0.0.5',
         {
             "dataset": sliced_dataset.tolist(),
             "point": input_data.tolist(),
@@ -88,3 +93,4 @@ if __name__ == '__main__':
       asyncio.run(main())
     except KeyboardInterrupt:
       print("Program closed by user.")
+      asyncio.run(meca_api.disconnect())
