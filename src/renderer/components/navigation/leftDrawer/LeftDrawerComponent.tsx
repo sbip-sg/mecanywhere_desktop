@@ -279,7 +279,7 @@ const LeftDrawerComponent = () => {
                     <Typography
                       margin={`${listTopBottomMargin} 0 ${listTopBottomMargin} 0`}
                     >
-                      Earnings
+                      Payout
                     </Typography>
                   </ListItemButton>
                 </List>

@@ -110,7 +110,9 @@ func main() {
 	router.POST("/pause", meca_pause)
 	router.POST("/unpause", meca_unpause)
 	router.POST("/stats", meca_stats)
-
+	router.GET("/health", func(c *gin.Context) {
+		c.JSON(http.StatusOK, gin.H{"status": "ok"})
+	})
 	router.Run(":2591")
 }
 

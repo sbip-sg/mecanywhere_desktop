@@ -1,4 +1,5 @@
 import { ExternalDataEntry, InternalDataEntry } from './table/dataTypes';
+import { convertEpochToStandardTimeWithDate } from 'renderer/utils/unitConversion';
 
 export interface PropConfig<T> {
   property: keyof T;
@@ -30,12 +31,14 @@ export const InternalPropConfigList: PropConfig<InternalDataEntry>[] = [
   },
   {
     property: 'session_start_datetime',
-    renderer: (data: InternalDataEntry) => data.session_start_datetime,
+    renderer: (data: InternalDataEntry) =>
+      convertEpochToStandardTimeWithDate(data.session_start_datetime),
     label: 'Session Start Datetime',
   },
   {
     property: 'session_end_datetime',
-    renderer: (data: InternalDataEntry) => data.session_end_datetime,
+    renderer: (data: InternalDataEntry) =>
+      convertEpochToStandardTimeWithDate(data.session_end_datetime),
     label: 'Session End Datetime',
   },
   {
@@ -83,12 +86,14 @@ export const ExternalPropConfigList: PropConfig<ExternalDataEntry>[] = [
   },
   {
     property: 'session_start_datetime',
-    renderer: (data: ExternalDataEntry) => data.session_start_datetime,
+    renderer: (data: ExternalDataEntry) =>
+      convertEpochToStandardTimeWithDate(data.session_start_datetime),
     label: 'Session Start Datetime',
   },
   {
     property: 'session_end_datetime',
-    renderer: (data: ExternalDataEntry) => data.session_end_datetime,
+    renderer: (data: ExternalDataEntry) =>
+      convertEpochToStandardTimeWithDate(data.session_end_datetime),
     label: 'Session End Datetime',
   },
   {
