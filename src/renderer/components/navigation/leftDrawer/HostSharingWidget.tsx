@@ -5,12 +5,13 @@ import CircularProgress from '@mui/material/CircularProgress';
 import Transitions from '../../transitions/Transition';
 import { styled } from '@mui/material/styles';
 import { handleRegisterHost, handleDeregisterHost } from 'renderer/utils/handleRegistration';
+import { getResourceStats } from 'renderer/services/ExecutorServices';
 
 const HostSharingWidget = () => {
     const theme = useTheme();
     const [isLoading, setIsLoading] = useState(false);
-    const [cpuUtilization, setCpuUtilization] = useState<string>('71%');
-    const [gpuUtilization, setGpuUtilization] = useState<string>('31%');
+    const [cpuUtilization, setCpuUtilization] = useState<string>('0%');
+    const [memUtilization, setMemUtilization] = useState<string>('0%');
 
     const [resourceSharingEnabled, setResourceSharingEnabled] = useState<Boolean>(false);
     const handleEnableResourceSharing = async () => {
@@ -43,26 +44,14 @@ const HostSharingWidget = () => {
         zIndex: -1,
       });
 
-    const getRandomCpuUtilization = () => {
-        return (60 + Math.random() * 2).toFixed(1);
-    };
-
-    const getRandomGpuUtilization = () => {
-        return (30 + Math.random() * 3).toFixed(1);
-    };
-
     useEffect(() => {
-        const interval = setInterval(() => {
-            const newCpuUtilization = getRandomCpuUtilization() + '%';
-            setCpuUtilization(newCpuUtilization);
-        }, 1000);
-    return () => clearInterval(interval);
-    }, []);
+        const interval = setInterval(async () => {
+          const resources = await getResourceStats();
+          const newCpuUtilization = resources.used_cpu + '%';
+          setCpuUtilization(newCpuUtilization);
 
-    useEffect(() => {
-        const interval = setInterval(() => {
-            const newGpuUtilization = getRandomGpuUtilization() + '%';
-            setGpuUtilization(newGpuUtilization);
+          const newMemUtilization = resources.used_mem + '%';
+          setMemUtilization(newMemUtilization);
         }, 1000);
     return () => clearInterval(interval);
     }, []);
@@ -142,12 +131,12 @@ const HostSharingWidget = () => {
                                 </Grid>
                                 <Grid item xs={7} padding='0rem 0rem 0.5rem 2rem'>
                                     <Typography fontWeight="500" variant="h4" fontSize="13px" textAlign='left'>
-                                    GPU Utilization:
+                                    Memory Utilization:
                                     </Typography>
                                 </Grid>
                                 <Grid item xs={5} padding='0rem 2rem 0.5rem 0rem'>
                                     <Typography fontWeight="700" variant="h4" fontSize="13px" textAlign='right'>
-                                    {gpuUtilization}
+                                    {memUtilization}
                                     </Typography>
                                 </Grid>
                             </Grid>
