@@ -3,6 +3,7 @@ const { ipcRenderer } = require('electron');
 const protobuf = require('protobufjs');
 
 const MQ_URL = process.env.MQ_URL || 'amqp://localhost:5672';
+const TASK_EXECUTOR_URL = process.env.TASK_EXECUTOR_URL || 'http://localhost:2591';
 
 const Task = protobuf
   .loadSync('src/worker_renderer/schema.proto')
@@ -62,7 +63,7 @@ class Consumer {
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ 'id': containerRef, 'input': input })
       }
-      const msg = await fetch('http://localhost:2591/', requestOptions).then((res) => {
+      const msg = await fetch(TASK_EXECUTOR_URL, requestOptions).then((res) => {
         if (!res.ok) {
           throw new Error('Network response was not ok');
         }
