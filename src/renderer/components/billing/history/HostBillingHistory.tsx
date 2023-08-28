@@ -1,9 +1,9 @@
 import { useEffect, useState } from 'react';
 import Box from '@mui/material/Box';
 import { Stack } from '@mui/material';
-import Datagrid from './table/Datagrid';
-import mockUserBillingData from '../../../../assets/mockUserBillingData.json';
-import { ExternalBillingDataEntry } from './table/dataTypes';
+import Datagrid from '../components/table/Datagrid';
+import mockUserBillingData from '../../../../../assets/mockUserBillingData.json';
+import { ExternalBillingDataEntry } from '../components/table/dataTypes';
 import { ExternalPropConfigList } from './propConfig';
 
 const ClientPastTxn = () => {

@@ -53,7 +53,7 @@ const LeftDrawerComponent = () => {
             <>
               <List disablePadding component="li" sx={{}}>
                 <ListItemButton
-                  onClick={() => navigate('/providerdashboard')}
+                  onClick={() => navigate('/providertxndashboard')}
                   key="dashboard"
                 >
                   <DashboardIcon sx={{ marginRight: listItemSpacing }} />
@@ -125,9 +125,9 @@ const LeftDrawerComponent = () => {
                 onChange={(event, newValue) => {
                   console.log('tab changed ', newValue);
                   if (newValue === 0) {
-                    navigate('/clientdashboard');
+                    navigate('/clienttxndashboard');
                   } else if (newValue === 1) {
-                    navigate('/hostdashboard');
+                    navigate('/hosttxndashboard');
                   } else {
                     console.error('uncaught error');
                   }
@@ -161,7 +161,7 @@ const LeftDrawerComponent = () => {
                 {/* Content for Tab 1 */}
                 <List disablePadding component="li" sx={{}}>
                   <ListItemButton
-                    onClick={() => navigate('/clientdashboard')}
+                    onClick={() => navigate('/clienttxndashboard')}
                     key="dashboard"
                   >
                     <DashboardIcon sx={{ marginRight: listItemSpacing }} />
@@ -175,7 +175,7 @@ const LeftDrawerComponent = () => {
                 <Divider />
                 <List disablePadding component="li">
                   <ListItemButton
-                    onClick={() => navigate('/clientbilling')}
+                    onClick={() => navigate('/clientbillingdashboard')}
                     key="billing"
                   >
                     <AccountBalanceWalletIcon
@@ -258,7 +258,7 @@ const LeftDrawerComponent = () => {
                 </List>
                 <List disablePadding component="li">
                   <ListItemButton
-                    onClick={() => navigate('/hostdashboard')}
+                    onClick={() => navigate('/hosttxndashboard')}
                     key="dashboard"
                   >
                     <DashboardIcon sx={{ marginRight: listItemSpacing }} />
@@ -270,9 +270,9 @@ const LeftDrawerComponent = () => {
                   </ListItemButton>
                 </List>
                 <Divider />
-                {/* <List disablePadding component="li">
+                <List disablePadding component="li">
                   <ListItemButton
-                    onClick={() => navigate('/hostbilling')}
+                    onClick={() => navigate('/hostbillingdashboard')}
                     key="billing"
                   >
                     <PaidIcon sx={{ marginRight: listItemSpacing }} />
@@ -283,7 +283,7 @@ const LeftDrawerComponent = () => {
                     </Typography>
                   </ListItemButton>
                 </List>
-                <Divider /> */}
+                <Divider />
                 {/* <List disablePadding component="li">
         <ListItemButton onClick={() => navigate('/hostpayment')} key="billing">
           <AccountBalanceWalletIcon sx={{marginRight: listItemSpacing}} />

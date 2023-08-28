@@ -11,21 +11,20 @@ import Transitions from './components/transitions/Transition';
 import Register from './components/auth/Register';
 import Login from './components/auth/Login';
 import Mnemonics from './components/auth/Mnemonics';
-import ClientTxnDashboard from './components/transactions/ClientTxnDashboard';
-import HostTxnDashboard from './components/transactions/HostTxnDashboard';
-import ProviderTxnDashboard from './components/transactions/ProviderTxnDashboard';
+
 import Profile from './components/profile/Profile';
 import AppView from './components/appview/AppView';
 import NavigationLayoutTransitionWrapper from './components/navigation/NavigationLayoutTransitionWrapper';
 import { RootState } from './redux/store';
-
+import ClientTxnDashboard from './components/transactions/ClientTxnDashboard';
+import HostTxnDashboard from './components/transactions/HostTxnDashboard';
+import ProviderTxnDashboard from './components/transactions/ProviderTxnDashboard';
 import ClientBillingDashboard from './components/billing/dashboard/ClientBillingDashboard';
 import HostBillingDashboard from './components/billing/dashboard/HostBillingDashboard';
 import ProviderBillingDashboard from './components/billing/dashboard/ProviderBillingDashboard';
 import ClientBillingHistory from './components/billing/history/ClientBillingHistory';
 import HostBillingHistory from './components/billing/history/HostBillingHistory';
 import ProviderBillingHistory from './components/billing/history/ProviderBillingHistory';
-
 import ClientPayment from './components/misc/ClientPayment';
 import HostWithdrawal from './components/misc/HostWithdrawal';
 import UserDashboard from './components/misc/UserDashboard';
@@ -39,7 +38,7 @@ const PrivateRoutes = () => {
   const authenticated = useSelector(
     (state: RootState) => state.accountUser.authenticated
   );
-  return authenticated ? <Outlet /> : <Navigate to="/clientdashboard" />;
+  return authenticated ? <Outlet /> : <Navigate to="/clienttxndashboard" />;
 };
 
 const Animated = () => {
@@ -99,14 +98,6 @@ const Animated = () => {
       />
       <Route element={<PrivateRoutes />}>
         <Route
-          path="/clienttxndashboard"
-          element={
-            <Transitions>
-              <ClientTxnDashboard />
-            </Transitions>
-          }
-        />
-        <Route
           path="/profile"
           element={
             <Transitions>
@@ -115,10 +106,26 @@ const Animated = () => {
           }
         />
         <Route
+          path="/clienttxndashboard"
+          element={
+            <Transitions>
+              <ClientTxnDashboard />
+            </Transitions>
+          }
+        />
+        <Route
           path="/hosttxndashboard"
           element={
             <Transitions>
               <HostTxnDashboard />
+            </Transitions>
+          }
+        />
+        <Route
+          path="/providertxndashboard"
+          element={
+            <Transitions>
+              <ProviderTxnDashboard />
             </Transitions>
           }
         />
@@ -139,6 +146,14 @@ const Animated = () => {
           }
         />
         <Route
+          path="/providerbillingdashboard"
+          element={
+            <Transitions>
+              <ProviderBillingDashboard />
+            </Transitions>
+          }
+        />
+        <Route
           path="/clientbillinghistory"
           element={
             <Transitions>
@@ -151,6 +166,14 @@ const Animated = () => {
           element={
             <Transitions>
               <HostBillingHistory />
+            </Transitions>
+          }
+        />
+        <Route
+          path="/providerbillinghistory"
+          element={
+            <Transitions>
+              <ProviderBillingHistory />
             </Transitions>
           }
         />
@@ -199,30 +222,6 @@ const Animated = () => {
           element={
             <Transitions>
               <UserManagement />
-            </Transitions>
-          }
-        />
-        <Route
-          path="/providertxndashboard"
-          element={
-            <Transitions>
-              <ProviderTxnDashboard />
-            </Transitions>
-          }
-        />
-        <Route
-          path="/providerbillingdashboard"
-          element={
-            <Transitions>
-              <ProviderBillingDashboard />
-            </Transitions>
-          }
-        />
-        <Route
-          path="/providerbillinghistory"
-          element={
-            <Transitions>
-              <ProviderBillingHistory />
             </Transitions>
           }
         />
