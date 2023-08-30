@@ -17,52 +17,33 @@ const HostTxnDashboard = () => {
 
   return (
     <Stack
+      id="dashboard-wrapper-stack"
       height="100%"
-      // width="90"
       justifyContent="space-between"
       alignItems="center"
       spacing={0}
-      id="dashboard-stack"
-      padding="2rem 0 2rem 0"
+      sx={{ padding: '2rem 0 2rem 0' }}
     >
-      <Box
-        sx={{
-          height: '10%',
-          display: 'flex',
-          justifyContent: 'center',
-          alignItems: 'center',
-        }}
-      >
-        <Typography
-          variant="h1"
-          style={{ fontSize: '20px', margin: '1.5rem 0 0 0' }}
-        >
-          Resource Utilization Overview
-        </Typography>
-      </Box>
       <motion.div
-        id="motiondiv1"
+        id="line-chart-motion-div"
         style={{
-          height: isTableExpanded ? '0%' : '45%',
+          height: isTableExpanded ? '0%' : 'calc(100% - 282px)',
           width: '90%',
           display: 'flex',
           justifyContent: 'center',
           alignContent: 'center',
         }}
-        initial={{ height: '45%' }}
-        animate={{ height: isTableExpanded ? '0%' : '45%' }}
+        initial={{ height: 'calc(100% - 282px)' }}
+        animate={{ height: isTableExpanded ? '0%' : 'calc(100% - 282px)' }}
         transition={{ duration: 0.5, ease: 'easeInOut' }}
       >
         <CustomLineChart data={data} yAxisLabel="Resource Utilized per Month" />
       </motion.div>
       <motion.div
-        id="motiondiv2"
+        id="table-motion-div"
         style={{
           height: isTableExpanded ? '90%' : '282px',
           width: '90%',
-          display: 'flex',
-          justifyContent: 'center',
-          alignContent: 'center',
         }}
         initial={{ height: '282px' }}
         animate={{ height: isTableExpanded ? '90%' : '282px' }}
