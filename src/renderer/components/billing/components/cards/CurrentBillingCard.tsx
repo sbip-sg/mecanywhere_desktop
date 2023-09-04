@@ -1,7 +1,7 @@
 import { Grid, Typography, Card, CardContent } from '@mui/material';
 import { useTheme } from '@emotion/react';
 
-const OverviewCard = () => {
+const CurrentBillingCard = () => {
   const theme = useTheme();
 
   return (
@@ -53,4 +53,4 @@ const OverviewCard = () => {
   );
 };
 
-export default OverviewCard;
+export default CurrentBillingCard;

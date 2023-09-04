@@ -46,39 +46,6 @@ const StyledDatePicker = styled(DatePicker)(({ theme }) => ({
   textAlign: 'center',
 }));
 
-// const CustomTooltip = ({ active, payload, label }) => {
-//   const theme = useTheme();
-//   if (active && payload && payload.length) {
-//     return (
-//       <Box
-//         sx={{
-//           backgroundColor: theme.palette.lightBlack.main,
-//           padding: '1rem 1rem 1rem 1rem',
-//           borderRadius: '7px',
-//           minWidth: 150,
-//         }}
-//       >
-//         <Box sx={{ color: theme.palette.mintGreen.main }}>{label}</Box>
-//         <Box>
-//           {payload.map((pld: any) => (
-//             <Box>
-//               <Box
-//                 sx={{ color: theme.palette.violet.main, textAlign: 'right' }}
-//               >
-//                 {pld.value}
-//               </Box>
-//               <Box sx={{ color: theme.palette.mintGreen.main }}>
-//                 {pld.dataKey}
-//               </Box>
-//             </Box>
-//           ))}
-//         </Box>
-//       </Box>
-//     );
-//   }
-//   return null;
-// };
-
 const CustomLineChart: React.FC<CustomLineChartProps> = ({
   data,
   yAxisLabel,
@@ -187,28 +154,9 @@ const CustomLineChart: React.FC<CustomLineChartProps> = ({
           display: 'flex',
           alignItems: 'center',
           height: '10%',
+          padding: '0 1rem 0 1rem',
         }}
       >
-        <Box
-          id="title-wrapper"
-          sx={{
-            height: '10%',
-            display: 'flex',
-            justifyContent: 'center',
-            alignItems: 'center',
-            padding: '0 0 0 4rem',
-          }}
-        >
-          <Typography
-            style={{
-              fontSize: '20px',
-              letterSpacing: '0.1em',
-              margin: '0 0 0 0',
-            }}
-          >
-            Resource Utilization Overview
-          </Typography>
-        </Box>
         <Box id="widget-wrapper" sx={{ ml: 'auto' }}>
           <IconButton size="small" onClick={handleClick}>
             <CalendarMonthIcon fontSize="small" sx={{ color: 'white' }} />
@@ -216,7 +164,6 @@ const CustomLineChart: React.FC<CustomLineChartProps> = ({
           <Backdrop
             sx={{ color: '#fff', zIndex: (theme) => theme.zIndex.drawer + 1 }}
             open={open}
-            // onClick={handleClose}
           >
             <Popover
               open={open}
@@ -224,11 +171,7 @@ const CustomLineChart: React.FC<CustomLineChartProps> = ({
               onClose={handleClose}
               anchorOrigin={{
                 vertical: 'bottom',
-                horizontal: 'left',
-              }}
-              transformOrigin={{
-                vertical: 'top',
-                horizontal: 'left',
+                horizontal: -260,
               }}
               sx={{
                 '.MuiPaper-root': {
@@ -363,7 +306,8 @@ const CustomLineChart: React.FC<CustomLineChartProps> = ({
             <Line
               type="monotone"
               dataKey="resource_consumed"
-              stroke="#8884d8"
+              stroke={theme.palette.violet.main}
+              strokeWidth={3}
             />
           </LineChart>
         </ResponsiveContainer>

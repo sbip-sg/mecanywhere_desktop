@@ -24,17 +24,39 @@ const HostTxnDashboard = () => {
       spacing={0}
       sx={{ padding: '2rem 0 2rem 0' }}
     >
+      <Box
+        id="title-wrapper"
+        sx={{
+          height: '10%',
+          width: '90%',
+          display: 'flex',
+          justifyContent: 'left',
+          alignItems: 'end',
+          padding: '0 0 0 2%',
+        }}
+      >
+        <Typography
+          style={{
+            fontSize: '24px',
+            letterSpacing: '0.1em',
+            margin: '0 0 0 0',
+            whiteSpace: 'nowrap',
+          }}
+        >
+          Resource Utilization Overview
+        </Typography>
+      </Box>
       <motion.div
         id="line-chart-motion-div"
         style={{
-          height: isTableExpanded ? '0%' : 'calc(100% - 282px)',
+          height: isTableExpanded ? '0%' : 'calc(90% - 282px)',
           width: '90%',
           display: 'flex',
           justifyContent: 'center',
           alignContent: 'center',
         }}
-        initial={{ height: 'calc(100% - 282px)' }}
-        animate={{ height: isTableExpanded ? '0%' : 'calc(100% - 282px)' }}
+        initial={{ height: 'calc(90% - 282px)' }}
+        animate={{ height: isTableExpanded ? '0%' : 'calc(90% - 282px)' }}
         transition={{ duration: 0.5, ease: 'easeInOut' }}
       >
         <CustomLineChart data={data} yAxisLabel="Resource Utilized per Month" />

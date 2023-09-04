@@ -20,6 +20,7 @@ declare module '@mui/material/styles' {
     darkBlack: PaletteColorOptions;
     offWhite: PaletteColorOptions;
     mintGreen: PaletteColorOptions;
+    deepCerulean: PaletteColorOptions;
   }
   interface Palette extends CustomPalette {}
   interface PaletteOptions extends CustomPalette {}
@@ -28,7 +29,9 @@ declare module '@mui/material/styles' {
 const createColor = (mainColor: string) =>
   createTheme().palette.augmentColor({ color: { main: mainColor } });
 
-const cerulean = '#' + '7f97d8';
+  // const cerulean = '#' + '7f97d8'; previous cerulean
+const cerulean = '#' + '829CFF';
+const deepCerulean = '#' + '6485FF';
 const lightPurple = '#' + '6D697D';
 const lightBlack = '#' + '292733';
 const mediumBlack = '#' + '202028';
@@ -130,6 +133,7 @@ const themeOptions: ThemeOptions = {
     magenta: createColor('#F51474'),
     purple: createColor('#790EFC'),
     cerulean: createColor(cerulean),
+    deepCerulean: createColor(deepCerulean),
     violet: createColor('#BC00A3'),
     lightPurple: createColor(lightPurple),
     lightBlack: createColor(lightBlack),

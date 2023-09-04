@@ -11,7 +11,6 @@ import Transitions from './components/transitions/Transition';
 import Register from './components/auth/Register';
 import Login from './components/auth/Login';
 import Mnemonics from './components/auth/Mnemonics';
-
 import Profile from './components/profile/Profile';
 import AppView from './components/appview/AppView';
 import NavigationLayoutTransitionWrapper from './components/navigation/NavigationLayoutTransitionWrapper';

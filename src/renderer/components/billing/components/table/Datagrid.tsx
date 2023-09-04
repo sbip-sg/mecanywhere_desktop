@@ -5,7 +5,10 @@ import Table from '@mui/material/Table';
 import TableContainer from '@mui/material/TableContainer';
 import { useTheme } from '@emotion/react';
 import { useNavigate } from 'react-router-dom';
-import { InternalBillingDataEntry, ExternalBillingDataEntry } from './dataTypes';
+import {
+  InternalBillingDataEntry,
+  ExternalBillingDataEntry,
+} from './dataTypes';
 import { PropConfig } from '../propConfig';
 import { Order, stableSort, getComparator } from './comparatorUtils';
 import CustomTableHead from './CustomTableHead';
@@ -22,11 +25,7 @@ interface DatagridProps {
     | PropConfig<ExternalBillingDataEntry>[];
 }
 
-const Datagrid: React.FC<DatagridProps> = ({
-  data,
-  propConfigList,
-}) => {
-  const unexpandedRowPerPage = 5;
+const Datagrid: React.FC<DatagridProps> = ({ data, propConfigList }) => {
   const expandedRowPerPage = 25;
   const maxRowHeight = 30; // px
   const theme = useTheme();
@@ -89,9 +88,7 @@ const Datagrid: React.FC<DatagridProps> = ({
         position: 'relative',
       }}
     >
-      <CustomToolbar
-        backgroundColor={theme.palette.lightBlack.main}
-      />
+      <CustomToolbar backgroundColor={theme.palette.lightBlack.main} />
       <TableContainer
         id="tablecontainer"
         sx={{

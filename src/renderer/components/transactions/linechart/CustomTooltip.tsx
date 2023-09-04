@@ -1,7 +1,16 @@
 import Box from '@mui/material/Box';
 import { useTheme } from '@emotion/react';
+import { TooltipProps } from 'recharts';
+import {
+  ValueType,
+  NameType,
+} from 'recharts/types/component/DefaultTooltipContent';
 
-const CustomTooltip = ({ active, payload, label }) => {
+const CustomTooltip = ({
+  active,
+  payload,
+  label,
+}: TooltipProps<ValueType, NameType>) => {
   const theme = useTheme();
   if (active && payload && payload.length) {
     return (
@@ -45,4 +54,5 @@ const CustomTooltip = ({ active, payload, label }) => {
   }
   return null;
 };
+
 export default CustomTooltip;

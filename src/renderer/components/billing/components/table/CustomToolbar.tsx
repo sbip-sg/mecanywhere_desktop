@@ -33,7 +33,7 @@ const CustomToolbar: React.FC<CustomToolbarProps> = ({
       }}
     >
       <Typography
-        sx={{ flex: '1 1 100%' }}
+        sx={{ flex: '1 1 100%', whiteSpace: 'nowrap' }}
         variant="body1"
         id="tableTitle"
         component="div"
@@ -41,13 +41,6 @@ const CustomToolbar: React.FC<CustomToolbarProps> = ({
         Past Transactions
       </Typography>
       <Tooltip title="Expand Table">
-        {/* <IconButton onClick={handleClickExpandButton}>
-          {isTableExpanded ? (
-            <ExpandMoreIcon sx={{ color: 'white' }} />
-          ) : (
-            <ExpandLessIcon sx={{ color: 'white' }} />
-          )}
-        </IconButton> */}
       </Tooltip>
     </Toolbar>
   );

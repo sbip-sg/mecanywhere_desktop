@@ -31,6 +31,18 @@ const initialJobsState: JobsState = {
   jobResults: [],
 };
 
+export const transactionDetailsReducer = (state = {}, action: any) => {
+  switch (action.type) {
+    case 'setTransactionDetails':
+      return {
+        ...state,
+        transactionDetails: action.payload,
+      };
+    default:
+      return state;
+  }
+};
+
 export const isProviderReducer = (
   state = initialProviderState,
   action: any
@@ -123,6 +135,7 @@ const reducers = combineReducers({
   accountUser: accountUserReducer,
   jobs: jobsReducer,
   isProvider: isProviderReducer,
+  transactionDetails: transactionDetailsReducer,
 });
 
 export default reducers;

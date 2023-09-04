@@ -47,8 +47,13 @@ const setIsProvider: ActionCreator<AnyAction> = (payload: any) => ({
   payload,
 });
 
+const setTransactionDetails: ActionCreator<AnyAction> = (payload: any) => ({
+  type: 'setTransactionDetails',
+  payload,
+});
 const boundToDoActions = bindActionCreators(
   {
+    setTransactionDetails,
     setPublicKey,
     setDID,
     setCredential,

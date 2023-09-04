@@ -1,5 +1,5 @@
-import { ExternalDataEntry, InternalDataEntry } from './table/dataTypes';
 import { convertEpochToStandardTimeWithDate } from 'renderer/utils/unitConversion';
+import { ExternalDataEntry, InternalDataEntry } from './table/dataTypes';
 
 export interface PropConfig<T> {
   property: keyof T;

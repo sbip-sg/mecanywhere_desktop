@@ -1,24 +1,11 @@
-import { useParams, useNavigate } from 'react-router-dom';
-import { useState, useEffect, FC } from 'react';
+import { convertEpochToStandardTimeWithDate } from '../../utils/unitConversion';
+import { useNavigate } from 'react-router-dom';
+import { FC } from 'react';
 import { Grid, Typography, Box, Button } from '@mui/material';
 import { useTheme } from '@emotion/react';
 import ArrowBackIcon from '@mui/icons-material/ArrowBack';
-import { convertEpochToStandardTimeWithDate } from '../../utils/unitConversion';
+import reduxStore from 'renderer/redux/store';
 
-interface DataEntry {
-  session_id: string;
-  did: string;
-  provider_did: string;
-  resource_consumed: number;
-  session_start_datetime: number;
-  session_end_datetime: number;
-  task: string;
-  duration: number;
-  network_reliability: number;
-  is_host: Boolean;
-  task_run: number;
-  usage_charge: number;
-}
 interface TitleTypographyProps {
   title: string;
 }
@@ -64,43 +51,15 @@ function limitDecimalPlaces(number, decimalPlaces) {
 }
 
 const TransactionDetails: React.FC = () => {
-  const params = useParams();
+  // const params = useParams();
+  // const { sessionId } = params;
+  const theme = useTheme();
   const navigate = useNavigate();
-  const { sessionId } = params;
-  console.log('sessionId', sessionId);
-  const [data, setData] = useState<DataEntry | null>(null);
-
-  useEffect(() => {
-    console.log('data', data);
-  }, [data]);
-
-  useEffect(() => {
-    const fetchData = async () => {
-      try {
-        const response = await fetch(
-          `http://localhost:3000/providerdata?session_id=${sessionId}`
-        );
-        if (!response.ok) {
-          throw new Error('Network response was not ok');
-        }
-        const responseData = await response.json();
-        console.log('responseData', responseData);
-        setData(responseData[0]);
-      } catch (error) {
-        console.error('Error fetching data:', error);
-        setData(null);
-      }
-    };
-
-    fetchData();
-  }, [sessionId]);
-
+  const data = reduxStore.getState().transactionDetails.transactionDetails;
   if (!data) {
     return <div>Loading...</div>;
   }
 
-  const theme = useTheme();
-  // Display the fetched data
   return (
     <Grid container sx={{ height: '100%' }}>
       <Box
@@ -108,10 +67,7 @@ const TransactionDetails: React.FC = () => {
           margin: '1.5rem 0 0 1.8rem',
         }}
       >
-        <Button
-          onClick={() => navigate('/clientdashboard')}
-          sx={{ width: '7rem' }}
-        >
+        <Button onClick={() => navigate(-1)} sx={{ width: '7rem' }}>
           <ArrowBackIcon style={{ fontSize: '16px', marginRight: '0.5rem' }} />
           <Typography variant="h3" fontSize="15px" paddingTop="2px">
             BACK

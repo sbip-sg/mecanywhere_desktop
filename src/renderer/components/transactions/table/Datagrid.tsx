@@ -12,8 +12,10 @@ import CustomTableHead from './CustomTableHead';
 import CustomTableBody from './CustomTableBody';
 import CustomTablePagination from './CustomTablePagination';
 import CustomToolbar from './CustomToolbar';
+import actions from 'renderer/redux/actionCreators';
+import { RootState } from 'renderer/redux/store';
+import reduxStore from 'renderer/redux/store';
 
-// const txn_data_url = process.env.TXN_SERVICE_API_URL;
 
 interface DatagridProps {
   data: InternalDataEntry[] | ExternalDataEntry[];
@@ -47,7 +49,14 @@ const Datagrid: React.FC<DatagridProps> = ({
     maxRowHeight * (unexpandedRowPerPage + 1) + unexpandedRowPerPage - 1
   );
   const handleTableRowClick = (sessionId: string) => {
-    navigate(`/details/${sessionId}`);
+    const sessionDetails = data.find((entry) => entry.session_id === sessionId);
+    // navigate(`/details/${sessionId}`);
+    if (sessionDetails) {
+      actions.setTransactionDetails(sessionDetails);
+      navigate(`/details/${sessionId}`);
+    } else {
+      console.error('entry doesnt exist');
+    }
   };
   const handleRequestSort = (
     event: React.MouseEvent<unknown>,
@@ -117,7 +126,6 @@ const Datagrid: React.FC<DatagridProps> = ({
       <TableContainer
         id="tablecontainer"
         sx={{
-          // maxHeight: rowsPerPage===5 ? `calc(${maxRowHeight * (unexpandedRowPerPage + 1)}px + 4px)` : `calc(${maxRowHeight * 25}px + 4px)`
           maxHeight: `${maxTableHeight}px`,
           overflowY: tableOverflow ? 'none' : 'hidden',
         }}
