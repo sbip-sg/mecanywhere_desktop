@@ -3,38 +3,35 @@ import { useState, useEffect } from 'react';
 import { useTheme } from '@emotion/react';
 import CircularProgress from '@mui/material/CircularProgress';
 import { styled } from '@mui/material/styles';
+import { motion, AnimatePresence } from 'framer-motion';
 import {
   handleRegisterHost,
   handleDeregisterHost,
 } from 'renderer/utils/handleRegistration';
 import Transitions from '../../transitions/Transition';
-import { getResourceStats } from 'renderer/services/ExecutorServices';
+import PreSharingEnabledComponent from './PreSharingEnabledComponent';
+import PostSharingEnabledComponent from './PostSharingEnabledComponent';
 
 const HostSharingWidget = () => {
   const theme = useTheme();
   const [isLoading, setIsLoading] = useState(false);
-  const [cpuUtilization, setCpuUtilization] = useState<string>('0%');
-  const [memUtilization, setMemUtilization] = useState<string>('0%');
 
   const [resourceSharingEnabled, setResourceSharingEnabled] =
     useState<Boolean>(false);
   const handleEnableResourceSharing = async () => {
     setIsLoading(true);
-    console.log('handleEnableResourceSharing');
-    await handleRegisterHost();
-    // Wrap the setTimeout in a Promise to use await
-    await new Promise((resolve) => setTimeout(resolve, 2000));
 
+    console.log('handleEnableResourceSharing');
+    // await handleRegisterHost();
+    await new Promise((resolve) => setTimeout(resolve, 1000));
     setResourceSharingEnabled(true);
     setIsLoading(false);
   };
   const handleDisableResourceSharing = async () => {
     setIsLoading(true);
-    await handleDeregisterHost();
-
-    console.log('handleDisableResourceSharing');
+    // await handleDeregisterHost();
     await new Promise((resolve) => setTimeout(resolve, 1000));
-
+    console.log('handleDisableResourceSharing');
     setResourceSharingEnabled(false);
     setIsLoading(false);
   };
@@ -44,44 +41,18 @@ const HostSharingWidget = () => {
     height: '100%',
     top: 0,
     left: 0,
-    backdropFilter: 'blur(5px)', // You can adjust the blur amount as needed
+    backdropFilter: 'blur(5px)',
     zIndex: -1,
   });
 
-  useEffect(() => {
-    // const interval = setInterval(async () => {
-    const fetchResource = async () => {
-      // const resources = await getResourceStats();
-      // console.log('resources', resources);
-      // if (resources.used_cpu) {
-      //   console.log('aaa');
-      //   const newCpuUtilization = resources.used_cpu + '%';
-      //   setCpuUtilization(newCpuUtilization);
-      // } else {
-      //   console.error('used_cpu not retrieved');
-      // }
-      // if (resources.used_mem) {
-      //   const newMemUtilization = resources.used_mem + '%';
-      //   setMemUtilization(newMemUtilization);
-      // } else {
-      //   console.error('used_mem not retrieved');
-      // }
-      setCpuUtilization("10")
-      setMemUtilization("20")
-    };
-    fetchResource();
-
-    // }, 1000);
-    // return () => clearInterval(interval);
-  }, []);
-
   return (
     <Box
+      id="transition-widget-wrapper"
       sx={{
-        height: '13rem',
+        height: '100%',
         width: '100%',
-        position: 'relative',
-        display: 'inline-block',
+        display: 'flex',
+        // padding: "1.2rem 1.2rem 1.2rem 1.2rem"
       }}
     >
       {isLoading && (
@@ -89,7 +60,6 @@ const HostSharingWidget = () => {
           <BlurredBackground />
           <Transitions duration={1}>
             <CircularProgress
-              // size={50}
               style={{
                 color: theme.palette.mintGreen.main,
                 position: 'absolute',
@@ -104,164 +74,27 @@ const HostSharingWidget = () => {
         </>
       )}
       <Box
+        id="widget-wrapper"
         sx={{
           width: '100%',
+          height: '100%',
           opacity: isLoading ? 0.2 : 1,
           transition: 'opacity 0.5s ease',
           display: 'flex',
           justifyContent: 'center',
-          alignItems: 'center',
-          position: 'absolute',
-          left: '50%',
-          top: '50%',
-          transform: 'translate(-50%, -50%)',
         }}
       >
-        {resourceSharingEnabled ? (
-          <Stack
-            width="100%"
-            sx={{
-              display: 'flex',
-              justifyContent: 'center',
-              alignItems: 'center',
-            }}
-          >
-            <Grid container margin="2rem 0 0.5rem 0">
-              <Grid item xs={5} padding="0rem 0rem 0.5rem 2rem">
-                <Typography
-                  fontWeight="500"
-                  variant="h4"
-                  fontSize="13px"
-                  textAlign="left"
-                >
-                  Session ID:
-                </Typography>
-              </Grid>
-              <Grid item xs={7} padding="0rem 2rem 0.5rem 0rem">
-                <Typography
-                  fontWeight="700"
-                  variant="h4"
-                  fontSize="13px"
-                  textAlign="right"
-                >
-                  01H65Y8SMXXCZQ
-                </Typography>
-              </Grid>
-              <Grid item xs={9} padding="0rem 0rem 0.5rem 2rem">
-                <Typography
-                  fontWeight="500"
-                  variant="h4"
-                  fontSize="13px"
-                  textAlign="left"
-                >
-                  No. of Task Running:
-                </Typography>
-              </Grid>
-              <Grid item xs={3} padding="0rem 2rem 0.5rem 0rem">
-                <Typography
-                  fontWeight="700"
-                  variant="h4"
-                  fontSize="13px"
-                  textAlign="right"
-                >
-                  3
-                </Typography>
-              </Grid>
-              <Grid item xs={7} padding="0rem 0rem 0.5rem 2rem">
-                <Typography
-                  fontWeight="500"
-                  variant="h4"
-                  fontSize="13px"
-                  textAlign="left"
-                >
-                  CPU Utilization:
-                </Typography>
-              </Grid>
-              <Grid item xs={5} padding="0rem 2rem 0.5rem 0rem">
-                <Typography
-                  fontWeight="700"
-                  variant="h4"
-                  fontSize="13px"
-                  textAlign="right"
-                >
-                  {cpuUtilization}
-                </Typography>
-              </Grid>
-              <Grid item xs={7} padding="0rem 0rem 0.5rem 2rem">
-                <Typography
-                  fontWeight="500"
-                  variant="h4"
-                  fontSize="13px"
-                  textAlign="left"
-                >
-                  Memory Utilization:
-                </Typography>
-              </Grid>
-              <Grid item xs={5} padding="0rem 2rem 0.5rem 0rem">
-                <Typography
-                  fontWeight="700"
-                  variant="h4"
-                  fontSize="13px"
-                  textAlign="right"
-                >
-                  {memUtilization}
-                </Typography>
-              </Grid>
-            </Grid>
-            <Button
-              onClick={handleDisableResourceSharing}
-              sx={{
-                width: '80%',
-                padding: '0.7rem',
-                color: isLoading ? theme.palette.cerulean.main : 'inherit',
-                backgroundColor: isLoading
-                  ? theme.palette.darkBlack.main
-                  : theme.palette.violet.main,
-              }}
-            >
-              <Typography variant="h3" fontSize="15px" textAlign="center">
-                Disable Resource&nbsp;Sharing
-              </Typography>
-            </Button>
-          </Stack>
+        {!resourceSharingEnabled ? (
+          <PreSharingEnabledComponent
+            handleEnableResourceSharing={handleEnableResourceSharing}
+            isLoading={isLoading}
+          />
         ) : (
-          <Stack
-            width="100%"
-            sx={{
-              display: 'flex',
-              justifyContent: 'center',
-              alignItems: 'center',
-            }}
-          >
-            <Box margin="2rem 0 0.5rem 0">
-              <Typography
-                variant="body2"
-                fontSize="14px"
-                textAlign="center"
-                padding="0 1.5rem 0 1.5rem"
-                marginBottom="1rem"
-              >
-                You are currently not registered for resource sharing.
-              </Typography>
-            </Box>
-            <Button
-              onClick={handleEnableResourceSharing}
-              sx={{
-                width: '80%',
-                padding: '0.7rem',
-                color: isLoading
-                  ? theme.palette.cerulean.main
-                  : theme.palette.darkBlack.main,
-                backgroundColor: isLoading
-                  ? theme.palette.darkBlack.main
-                  : theme.palette.mintGreen.main,
-              }}
-            >
-              <Typography variant="h3" fontSize="15px" textAlign="center">
-                Enable Resource&nbsp;Sharing
-              </Typography>
-            </Button>
-          </Stack>
+          <PostSharingEnabledComponent
+            handleDisableResourceSharing={handleDisableResourceSharing}
+            isLoading={isLoading}
+            setIsLoading={setIsLoading}
+          />
         )}
       </Box>
     </Box>

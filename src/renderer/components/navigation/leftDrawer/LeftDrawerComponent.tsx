@@ -37,10 +37,10 @@ const LeftDrawerComponent = () => {
         },
       }}
       sx={{
-        width: 300,
+        width: 325,
         flexShrink: 0,
         [`& .MuiDrawer-paper`]: {
-          width: 300,
+          width: 325,
           boxSizing: 'border-box',
         },
       }}
@@ -65,22 +65,6 @@ const LeftDrawerComponent = () => {
                 </ListItemButton>
               </List>
               <Divider />
-              {/* <List disablePadding component="li">
-                <ListItemButton
-                  onClick={() => navigate('/providerbilling')}
-                  key="billing"
-                >
-                  <AccountBalanceWalletIcon
-                    sx={{ marginRight: listItemSpacing }}
-                  />
-                  <Typography
-                    margin={`${listTopBottomMargin} 0 ${listTopBottomMargin} 0`}
-                  >
-                    Billing
-                  </Typography>
-                </ListItemButton>
-              </List>
-              <Divider /> */}
               <List disablePadding component="li">
                 <ListItemButton
                   sx={{
@@ -120,178 +104,39 @@ const LeftDrawerComponent = () => {
             </>
           ) : (
             <>
-              <Tabs
-                value={activeTab}
-                onChange={(event, newValue) => {
-                  console.log('tab changed ', newValue);
-                  if (newValue === 0) {
-                    navigate('/clienttxndashboard');
-                  } else if (newValue === 1) {
-                    navigate('/hosttxndashboard');
-                  } else {
-                    console.error('uncaught error');
-                  }
-                  setActiveTab(newValue);
-                }}
-                variant="fullWidth"
-                sx={{
-                  '& .MuiTabs-indicator': {
-                    backgroundColor: theme.palette.lightBlack.main,
-                  },
-                  '& .MuiButtonBase-root.MuiTab-root': {
-                    borderRadius: '15px 15px 0 0',
-                    paddingTop: '1rem',
-                  },
-                  backgroundColor: theme.palette.darkBlack.main,
-                  '& .Mui-selected': {
-                    backgroundColor: theme.palette.lightBlack.main,
-                    paddingTop: '1rem',
-                    height: '3rem',
-                    color: 'white !important',
-                  },
-                  // '& .MuiButtonBase-root.MuiTab-root.Mui-selected': {
-                  //   borderRadius: "15px 15px 0 0",
-                  // }
-                }}
-              >
-                <Tab label="Client" />
-                <Tab label="Host" />
-              </Tabs>
-              <div role="tabpanel" hidden={activeTab !== 0}>
-                {/* Content for Tab 1 */}
-                <List disablePadding component="li" sx={{}}>
-                  <ListItemButton
-                    onClick={() => navigate('/clienttxndashboard')}
-                    key="dashboard"
-                  >
-                    <DashboardIcon sx={{ marginRight: listItemSpacing }} />
-                    <Typography
-                      margin={`${listTopBottomMargin} 0 ${listTopBottomMargin} 0`}
-                    >
-                      Dashboard
-                    </Typography>
-                  </ListItemButton>
-                </List>
+              {/* <List disablePadding component="li">
+              </List> */}
+              
+              <List disablePadding component="li">
+                <HostSharingWidget />
                 <Divider />
-                <List disablePadding component="li">
-                  <ListItemButton
-                    onClick={() => navigate('/clientbillingdashboard')}
-                    key="billing"
+                <ListItemButton
+                  onClick={() => navigate('/hosttxndashboard')}
+                  key="dashboard"
+                >
+                  <DashboardIcon sx={{ marginRight: listItemSpacing }} />
+                  <Typography
+                    margin={`${listTopBottomMargin} 0 ${listTopBottomMargin} 0`}
                   >
-                    <AccountBalanceWalletIcon
-                      sx={{ marginRight: listItemSpacing }}
-                    />
-                    <Typography
-                      margin={`${listTopBottomMargin} 0 ${listTopBottomMargin} 0`}
-                    >
-                      Billing
-                    </Typography>
-                  </ListItemButton>
-                </List>
-                <Divider />
-                <List disablePadding component="li">
-                  <ListItemButton
-                    sx={{
-                      '& .MuiButtonBase-root': {
-                        height: '100%',
-                      },
-                      height: '100%',
-                    }}
-                    onClick={() => navigate('/appview')}
-                    key="appview"
+                    Dashboard
+                  </Typography>
+                </ListItemButton>
+              </List>
+              <Divider />
+              <List disablePadding component="li">
+                <ListItemButton
+                  onClick={() => navigate('/hostbillingdashboard')}
+                  key="billing"
+                >
+                  <PaidIcon sx={{ marginRight: listItemSpacing }} />
+                  <Typography
+                    margin={`${listTopBottomMargin} 0 ${listTopBottomMargin} 0`}
                   >
-                    <AppShortcutIcon sx={{ marginRight: listItemSpacing }} />
-                    <Typography
-                      margin={`${listTopBottomMargin} 0 ${listTopBottomMargin} 0`}
-                    >
-                      Installed Apps
-                    </Typography>
-                  </ListItemButton>
-                </List>
-                <Divider />
-                {/* <List disablePadding component="li">
-                  <ListItemButton
-                    sx={{
-                      '& .MuiButtonBase-root': {
-                        height: '100%',
-                      },
-                      height: '100%',
-                    }}
-                    onClick={() => navigate('/testpage')}
-                    key="testpage"
-                  >
-                    <AppShortcutIcon sx={{ marginRight: listItemSpacing }} />
-                    <Typography
-                      margin={`${listTopBottomMargin} 0 ${listTopBottomMargin} 0`}
-                    >
-                      Test Page
-                    </Typography>
-                  </ListItemButton>
-                </List> */}
-                {/* <Divider />
-      <List disablePadding component="li">
-        <ListItemButton onClick={() => navigate('/clientpayment')} key="billing">
-          <PaidIcon sx={{marginRight: listItemSpacing}} />
-          <Typography margin={`${listTopBottomMargin} 0 ${listTopBottomMargin} 0`}>PO Payment</Typography>
-        </ListItemButton>
-      </List> */}
-                <Divider />
-                <List disablePadding component="li">
-                  <ListItemButton
-                    onClick={() => navigate('/userjobsubmission')}
-                    key="billing"
-                  >
-                    <BackupIcon sx={{ marginRight: listItemSpacing }} />
-                    <Typography
-                      margin={`${listTopBottomMargin} 0 ${listTopBottomMargin} 0`}
-                    >
-                      Test Job Submission
-                    </Typography>
-                  </ListItemButton>
-                </List>
-                <Divider />
-              </div>
-              <div role="tabpanel" hidden={activeTab !== 1}>
-                {/* Content for Tab 2 */}
-                <List disablePadding component="li">
-                  <HostSharingWidget />
-                </List>
-                <List disablePadding component="li">
-                  <ListItemButton
-                    onClick={() => navigate('/hosttxndashboard')}
-                    key="dashboard"
-                  >
-                    <DashboardIcon sx={{ marginRight: listItemSpacing }} />
-                    <Typography
-                      margin={`${listTopBottomMargin} 0 ${listTopBottomMargin} 0`}
-                    >
-                      Dashboard
-                    </Typography>
-                  </ListItemButton>
-                </List>
-                <Divider />
-                <List disablePadding component="li">
-                  <ListItemButton
-                    onClick={() => navigate('/hostbillingdashboard')}
-                    key="billing"
-                  >
-                    <PaidIcon sx={{ marginRight: listItemSpacing }} />
-                    <Typography
-                      margin={`${listTopBottomMargin} 0 ${listTopBottomMargin} 0`}
-                    >
-                      Payout
-                    </Typography>
-                  </ListItemButton>
-                </List>
-                <Divider />
-                {/* <List disablePadding component="li">
-        <ListItemButton onClick={() => navigate('/hostpayment')} key="billing">
-          <AccountBalanceWalletIcon sx={{marginRight: listItemSpacing}} />
-          <Typography margin={`${listTopBottomMargin} 0 ${listTopBottomMargin} 0`}>PO Withdrawal</Typography>
-        </ListItemButton>
-      </List>
-      <Divider /> */}
-              </div>
+                    Payout
+                  </Typography>
+                </ListItemButton>
+              </List>
+              <Divider />
             </>
           )}
         </Box>

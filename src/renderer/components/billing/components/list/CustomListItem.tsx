@@ -10,6 +10,7 @@ import MuiAccordionSummary, {
 import MuiAccordionDetails from '@mui/material/AccordionDetails';
 import Typography from '@mui/material/Typography';
 import Divider from '@mui/material/Divider';
+
 const CustomTypography = ({ children, isExpanded }) => {
   const theme = useTheme();
   return (
@@ -88,7 +89,7 @@ const CustomStatus = ({ children, isExpanded }) => {
       sx={{
         color: statusColor,
         backgroundColor: bgColor,
-        borderRadius: '10px',
+        borderRadius: '5px',
       }}
     >
       <Typography
@@ -250,7 +251,7 @@ const CustomListItem = ({ item }) => {
       expanded={isExpanded}
       onChange={() => setIsExpanded(!isExpanded)}
       sx={{
-        margin: '0rem 0rem 0.5rem 0rem',
+        margin: '0rem 0rem 0.8rem 0rem',
         borderRadius: '10px',
       }}
     >
@@ -262,7 +263,7 @@ const CustomListItem = ({ item }) => {
                 ? theme.palette.cerulean.main
                 : theme.palette.mediumBlack.main,
               borderRadius: '5px',
-              height: '1.8rem',
+              height: '1.3rem',
               width: '1.8rem',
               display: 'flex',
               justifyContent: 'center',

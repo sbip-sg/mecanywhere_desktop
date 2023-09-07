@@ -7,13 +7,17 @@ import {
   assignHost,
 } from '../services/RegistrationServices';
 import reduxStore from '../redux/store';
+import { pauseExecutor } from 'renderer/services/ExecutorServices';
 
 //TODO move assignhost
 export const handleRegisterClient = async (containerRef: string) => {
+  console.log("handleRegisterClient")
   const credential = JSON.parse(window.electron.store.get('credential'));
   const did = window.electron.store.get('did');
   if (credential && did) {
+    console.log(credential, did)
     const response = await registerUser(did, credential);
+    console.log("responseclient", response)
     const { access_token } = response;
     const assignmentRes = await assignHost(access_token, did);
     if (assignmentRes) {
@@ -34,11 +38,16 @@ export const handleRegisterClient = async (containerRef: string) => {
 };
 
 export const handleRegisterHost = async () => {
+  console.log("handleRegisterHost")
   const credential = JSON.parse(window.electron.store.get('credential'));
   const did = window.electron.store.get('did');
   if (credential && did) {
+    console.log(credential, did)
+
     actions.setCredential(credential);
     const response = await registerHost(did, credential);
+    console.log("responsehost", response)
+
     const { access_token } = response;
     actions.setHostAccessToken(access_token);
     if (response) {
@@ -66,9 +75,12 @@ export const handleDeregisterClient = async () => {
 export const handleDeregisterHost = async () => {
   const did = window.electron.store.get('did');
   const accessToken = reduxStore.getState().accountUser.hostAccessToken;
+  const pauseResponse = await pauseExecutor();
+  console.log("pauseResponse from disabling sharing", pauseResponse)
   const response = await deregisterHost(accessToken, did);
   if (response && response.ok) {
     actions.setHostAccessToken('');
+    console.log("deregistersuccess", response)
   } else {
     throw new Error('Deregistration failed');
   }
