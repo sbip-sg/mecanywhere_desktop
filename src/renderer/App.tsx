@@ -248,18 +248,8 @@ const Animated = () => {
 };
 
 export default function App() {
-  const isClient = useSelector(
-    (state: RootState) => state.accountUser.userAccessToken !== ''
-  );
-  const isHost = useSelector(
-    (state: RootState) => state.accountUser.hostAccessToken !== ''
-  );
-  const hostAccessToken = useSelector(
-    (state: RootState) => state.accountUser.hostAccessToken
-  );
-  const did = window.electron.store.get('did');
-  useClientHooks(isClient);
-  useHeartbeatHook(isHost, hostAccessToken, did);
+  useClientHooks();
+  useHeartbeatHook();
 
   return (
     <Router>

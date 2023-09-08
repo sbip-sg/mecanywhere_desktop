@@ -1,8 +1,13 @@
 import { useEffect } from "react";
 import { handleRegisterClient, handleDeregisterClient } from "renderer/utils/handleRegistration";
 import actions from 'renderer/redux/actionCreators';
+import { useSelector } from 'react-redux';
+import { RootState } from "renderer/redux/store";
 
-const useClientHooks = (isClient: boolean) => {
+const useClientHooks = () => {
+  const isClient = useSelector(
+    (state: RootState) => state.accountUser.userAccessToken !== ''
+  );
 
   const generateUuid = () => {
     return (
