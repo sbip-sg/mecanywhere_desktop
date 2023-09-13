@@ -18,7 +18,7 @@ var (
 )
 
 type Request struct {
-	ID       string                 `json:"id"`
+	ID       string                 `json:"id" binding:"required"`
 	Resource executor.ResourceLimit `json:"resource"`
 	Runtime  string                 `json:"runtime"` // refer to TaskType in task.go
 	Input    string                 `json:"input"`
@@ -67,6 +67,7 @@ func main() {
 	meca_exec := func(c *gin.Context) {
 		var req Request
 		if err := c.BindJSON(&req); err != nil {
+			c.IndentedJSON(http.StatusBadRequest, "Bad execution request")
 			return
 		}
 		var ret Response
@@ -106,6 +107,24 @@ func main() {
 		}
 	}
 
+	meca_update := func(c *gin.Context) {
+		var req executor.MecaExecutorConfigReq
+		if err := c.BindJSON(&req); err != nil {
+			c.IndentedJSON(http.StatusBadRequest, "Bad reconfiguration request")
+			return
+		}
+
+		var ret Response
+		if msg, err := mecaExecutor.UpdateConfig(req); err != nil {
+			ret.Success = false
+			ret.Msg = err.Error()
+		} else {
+			ret.Success = true
+			ret.Msg = msg
+		}
+		c.IndentedJSON(http.StatusOK, ret)
+	}
+
 	router := gin.Default()
 	router.POST("/", meca_exec)
 	router.POST("/stop", meca_stop)
@@ -115,6 +134,8 @@ func main() {
 	router.GET("/health", func(c *gin.Context) {
 		c.JSON(http.StatusOK, gin.H{"status": "ok"})
 	})
+	router.POST("/update-config", meca_update)
+
 	router.Run(":2591")
 }
 

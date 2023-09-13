@@ -3,6 +3,7 @@ package executor
 import (
 	"context"
 	"errors"
+	"fmt"
 	"log"
 	"math/rand"
 	"sync"
@@ -18,6 +19,7 @@ const (
 var (
 	errInvalidMecaExecutor    = errors.New("meca executor in invalid state")
 	errMecaExecutorNotStarted = errors.New("meca executor not started")
+	errMecaExecutorRunning    = errors.New("meca executor is running")
 )
 
 func port_alloc() int {
@@ -138,7 +140,7 @@ type MecaExecutor struct {
 	stopped           atomic.Bool
 	stopChn           chan<- struct{}
 	cleanerStoppedChn <-chan struct{}
-	pauseMu           sync.Mutex
+	pauseMu           sync.RWMutex
 }
 
 func NewMecaExecutorFromConfig(cfg MecaExecutorConfig) *MecaExecutor {
@@ -223,8 +225,37 @@ func (meca *MecaExecutor) UnPause() {
 	}
 }
 
+func (meca *MecaExecutor) UpdateConfig(cfg MecaExecutorConfigReq) (string, error) {
+	if !meca.started {
+		return "", errMecaExecutorNotStarted
+	}
+	if !meca.stopped.Load() {
+		return "", errMecaExecutorRunning
+	}
+	meca.pauseMu.Lock()
+	defer meca.pauseMu.Unlock()
+	if !meca.stopped.Load() {
+		return "", errMecaExecutorRunning
+	}
+
+	// the executor is paused
+	if meca.timeout >= 1 {
+		meca.timeout = cfg.Timeout
+	}
+	msg := meca.rm.UpdateConfig(cfg.Cpu, cfg.Mem)
+	if len(cfg.MicroVMRuntime) > 0 {
+		meca.runtimes[TaskTypeMicroVM] = cfg.MicroVMRuntime
+	}
+	return fmt.Sprintf("meca executor config update: %v; microVM runtime: %v", msg, cfg.MicroVMRuntime), nil
+}
+
 func (meca *MecaExecutor) Stats() ResourceStats {
 	if !meca.started {
+		return ResourceStats{}
+	}
+	meca.pauseMu.RLock()
+	defer meca.pauseMu.RUnlock()
+	if meca.stopped.Load() {
 		return ResourceStats{}
 	}
 	return meca.rm.Stats()
@@ -235,7 +266,13 @@ func (meca *MecaExecutor) Execute(ctx context.Context, taskCfg TaskConfig, input
 		return nil, errInvalidMecaExecutor
 	}
 	// if the service has been stopped or not started we reject all request.
-	if !meca.started || meca.stopped.Load() {
+	if !meca.started {
+		return nil, errMecaExecutorNotStarted
+	}
+
+	meca.pauseMu.RLock()
+	defer meca.pauseMu.RUnlock()
+	if meca.stopped.Load() {
 		return nil, errMecaExecutorNotStarted
 	}
 

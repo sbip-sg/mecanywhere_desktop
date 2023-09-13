@@ -27,3 +27,10 @@ func ParseMecaExecutorConfig(filename string) (MecaExecutorConfig, error) {
 	}
 	return cfg, nil
 }
+
+type MecaExecutorConfigReq struct {
+	Timeout        int     `json:"timeout"`
+	Cpu            float64 `json:"cpu" binding:"required,gt=0.0"`
+	Mem            int     `json:"mem" binding:"required,gt=0"`
+	MicroVMRuntime string  `json:"microVM_runtime"`
+}

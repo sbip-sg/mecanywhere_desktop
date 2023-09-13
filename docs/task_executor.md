@@ -25,3 +25,11 @@ Mount the config file at `/app/meca_executor.yaml`
 ```sh
 docker run -it --name meca_executor_test -v /var/run/docker.sock:/var/run/docker.sock -v <your-config-file>:/app/meca_executor.yaml --net=meca --ip=172.18.0.255 meca-executor:latest
 ```
+
+Reconfiguration is supported by pausing the executor and passing a new executor configuration file. Currently we the executor type field is ignored, since only docker is supported.
+
+```sh
+curl http://172.18.0.255:2591/pause -X POST
+curl http://172.18.0.255:2591/update-config -X POST -H "Content-Type: application/json" -d '{"timeout": 2, "cpu":2, "mem":4096, "microVM_runtime":"kata"}'
+curl http://172.18.0.255:2591/unpause -X POST
+```
