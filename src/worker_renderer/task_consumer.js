@@ -2,12 +2,33 @@ const amqp = require('amqplib');
 const { ipcRenderer } = require('electron');
 const protobuf = require('protobufjs');
 const { postTaskExecution } = require('./executor_api');
+const { struct } = require('pb-util');
 
 const MQ_URL = process.env.MQ_URL || 'amqp://localhost:5672';
 
 const Task = protobuf
   .loadSync('src/worker_renderer/schema.proto')
   .lookupType('Task');
+
+const TaskResult = protobuf
+  .loadSync('src/worker_renderer/schema.proto')
+  .lookupType('TaskResult');
+
+const parseTaskFromProto = (content) => {
+  const task = Task.decode(content);
+  task.resource = struct.decode(task.resource);
+  const typeError = Task.verify(task);
+
+  if (typeError) {
+    console.log(' [con] Got type error: %s', typeError.toString());
+    let id = '';
+    if ('id' in task) id = task.id;
+    return { id, content: typeError.toString() };
+  }
+  console.log(` [con] Received: ${JSON.stringify(task)}`);
+
+  return task;
+};
 
 class Consumer {
   static openQueues = {};
@@ -33,10 +54,12 @@ class Consumer {
 
       channel.consume(queueName, async (msg) => {
         const { correlationId } = msg.properties;
-        const result = await this.handleMsgContent(msg.content);
+        const resultObject = await this.handleMsgContent(msg.content);
+        const serializedResult = TaskResult.encode(resultObject).finish();
+
         channel.sendToQueue(
           msg.properties.replyTo,
-          Buffer.from(result.toString()),
+          Buffer.from(serializedResult),
           {
             correlationId,
             persistent: true,
@@ -53,30 +76,25 @@ class Consumer {
     };
 
     this.handleMsgContent = async function handleMsgContent(content) {
-      const deserializedTask = Task.decode(content).toJSON();
-
-      const typeError = Task.verify(deserializedTask);
-      if (typeError) {
-        console.log(' [con] Got type error: %s', typeError.toString());
-        return typeError.toString();
-      }
-      console.log(` [con] Received: ${JSON.stringify(deserializedTask)}`);
+      const task = parseTaskFromProto(content);
 
       ipcRenderer.send(
         'job-received',
-        deserializedTask.id,
-        deserializedTask.containerRef,
-        deserializedTask.content
+        task.id,
+        task.containerRef,
+        task.content,
+        // task.resource
       );
 
       let result = '';
       result = await postTaskExecution(
-        deserializedTask.containerRef,
-        deserializedTask.content
+        task.containerRef,
+        task.content,
+        task.resource
       );
 
-      ipcRenderer.send('job-results-received', deserializedTask.id, result);
-      return result;
+      ipcRenderer.send('job-results-received', task.id, result);
+      return { id: task.id, content: result };
     };
   }
 }

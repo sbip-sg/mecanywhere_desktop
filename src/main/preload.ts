@@ -52,8 +52,7 @@ const electronHandler = {
   // from client
   publishJob: (id: string, containerRef: string, content: string) =>
     ipcRenderer.invoke('publish-job', id, containerRef, content),
-  startPublisher: (queueName: string) =>
-    ipcRenderer.send('start-publisher', queueName),
+  startPublisher: () => ipcRenderer.send('start-publisher'),
   stopPublisher: () => ipcRenderer.send('stop-publisher'),
   clientRegistered: (status: boolean) => ipcRenderer.send('client-registered', status),
   // to client

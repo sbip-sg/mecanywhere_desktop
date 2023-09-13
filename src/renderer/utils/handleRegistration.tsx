@@ -15,19 +15,10 @@ export const handleRegisterClient = async () => {
   if (credential && did) {
     const response = await registerUser(did, credential);
     const { access_token } = response;
-    const assignmentRes = await assignHost(access_token, did);
-    if (assignmentRes) {
-      const { queue } = assignmentRes;
-      if (queue == '') {
-        throw new Error('No host available');
-      }
-      window.electron.startPublisher(queue);
-      actions.setCredential(credential);
-      actions.setUserAccessToken(access_token);
-      console.log('host assigned')
-    } else {
-      throw new Error('Host assignment failed');
-    }
+
+    window.electron.startPublisher();
+    actions.setCredential(credential);
+    actions.setUserAccessToken(access_token);
   } else {
     throw new Error('Credential not found');
   }

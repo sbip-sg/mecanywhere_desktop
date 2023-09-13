@@ -1,11 +1,15 @@
 syntax = "proto3";
 
+import "google/protobuf/struct.proto";
+
 message Task {
   string id = 1;
   string containerRef = 2;
   string content = 3;
+  google.protobuf.Struct resource = 4;
 }
 
 message TaskResult {
+  string id = 1;
   string content = 2;
 }

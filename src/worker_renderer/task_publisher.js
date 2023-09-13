@@ -9,14 +9,7 @@ const Task = protobuf
   .lookupType('Task');
 
 class Publisher {
-  static openQueues = {};
-
-  constructor(consumerQueueName) {
-    if (Publisher.openQueues[consumerQueueName]) {
-      return Publisher.openQueues[consumerQueueName];
-    }
-    Publisher.openQueues[consumerQueueName] = this;
-
+  constructor() {
     // private variables
     let connection = null;
     let channel = null;
@@ -45,9 +38,6 @@ class Publisher {
               msg.content.toString()
             );
           }
-        },
-        {
-          noAck: true,
         }
       );
     };
@@ -78,16 +68,16 @@ class Publisher {
       correlationId = id;
 
       console.log(' [pub] Requesting: ', taskObject);
-      channel.sendToQueue(consumerQueueName, Buffer.from(serializedTask), {
-        correlationId,
-        replyTo: callbackQueue.queue,
-        persistent: true,
-      });
+      // offload
+      // channel.sendToQueue(consumerQueueName, Buffer.from(serializedTask), {
+      //   correlationId,
+      //   replyTo: callbackQueue.queue,
+      //   persistent: true,
+      // });
     };
 
     this.close = async function close() {
       await connection.close();
-      delete Publisher.openQueues[consumerQueueName];
       ipcRenderer.removeAllListeners('publish-job');
     };
   }
@@ -95,8 +85,8 @@ class Publisher {
 
 let publisher;
 
-ipcRenderer.on('start-publisher', async (event, consumerQueueName) => {
-  publisher = new Publisher(consumerQueueName);
+ipcRenderer.on('start-publisher', async (event) => {
+  publisher = new Publisher();
   await publisher.startPublisher();
 });
 
