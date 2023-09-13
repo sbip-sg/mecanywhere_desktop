@@ -127,11 +127,13 @@ func (t *taskTracker) clean(timeout int) {
 }
 
 type MecaExecutor struct {
-	timeout           int
-	tracker           *taskTracker
-	rm                ResourceManager
-	repo              TaskRepo
-	fac               TaskFactory
+	timeout  int
+	tracker  *taskTracker
+	rm       ResourceManager
+	repo     TaskRepo
+	fac      TaskFactory
+	runtimes map[string]string // map the meca runtime tag to the corresponding runtime name specified by host
+
 	started           bool
 	stopped           atomic.Bool
 	stopChn           chan<- struct{}
@@ -228,7 +230,7 @@ func (meca *MecaExecutor) Stats() ResourceStats {
 	return meca.rm.Stats()
 }
 
-func (meca *MecaExecutor) Execute(ctx context.Context, imageId string, rsrc ResourceLimit, input []byte) ([]byte, error) {
+func (meca *MecaExecutor) Execute(ctx context.Context, taskCfg TaskConfig, input []byte) ([]byte, error) {
 	if meca == nil {
 		return nil, errInvalidMecaExecutor
 	}
@@ -238,17 +240,27 @@ func (meca *MecaExecutor) Execute(ctx context.Context, imageId string, rsrc Reso
 	}
 
 	// validate and tidy the resource limit
-	if rsrc.isEmpty() {
-		rsrc = getDefaultResourceLimit()
+	if taskCfg.Rsrc.isEmpty() {
+		taskCfg.Rsrc = getDefaultResourceLimit()
+	}
+
+	// translate the runtime type
+	if len(taskCfg.Runtime) > 0 {
+		if rt, ok := meca.runtimes[taskCfg.Runtime]; !ok {
+			log.Printf("unknown runtime %s, using docker default", taskCfg.Runtime)
+		} else {
+			log.Printf("using runtime %s -> %s", taskCfg.Runtime, rt)
+			taskCfg.Runtime = rt
+		}
 	}
 
 	// ensure the task uses correct version of image
 	// TODO (expose more control for version later)
 	imageUpdate := false
-	if found, err := meca.repo.Exists(imageId, ""); err != nil && err != errUnFoundImageVersion {
+	if found, err := meca.repo.Exists(taskCfg.ImageId, ""); err != nil && err != errUnFoundImageVersion {
 		return nil, err
 	} else if !found {
-		if err := meca.repo.Fetch(imageId, "", ""); err != nil {
+		if err := meca.repo.Fetch(taskCfg.ImageId, "", ""); err != nil {
 			return nil, err
 		}
 		imageUpdate = true
@@ -259,10 +271,10 @@ func (meca *MecaExecutor) Execute(ctx context.Context, imageId string, rsrc Reso
 	// TODO: when id is not uid for an image (using image tag), we should construct uid for task id here, and release the old task handle under the old uid
 
 	// get the taskid as key for tracker.
-	taskId := GetTaskId(imageId, rsrc)
+	taskId := GetTaskId(taskCfg)
 
 	if imageUpdate {
-		task, err := meca.fac.Build(imageId, rsrc)
+		task, err := meca.fac.Build(taskId, taskCfg)
 		if err != nil {
 			return nil, err
 		}
@@ -277,7 +289,7 @@ func (meca *MecaExecutor) Execute(ctx context.Context, imageId string, rsrc Reso
 			break
 		}
 		log.Printf("adding task")
-		task, err := meca.fac.Build(imageId, rsrc)
+		task, err := meca.fac.Build(taskId, taskCfg)
 		if err != nil {
 			return nil, err
 		}
@@ -293,7 +305,7 @@ func (meca *MecaExecutor) Execute(ctx context.Context, imageId string, rsrc Reso
 		h.initMu.Lock()
 		if !h.initialized.Load() {
 			// reserve the resources
-			if err := meca.rm.Reserve(float64(rsrc.CPU), int(rsrc.MEM)); err != nil {
+			if err := meca.rm.Reserve(float64(taskCfg.Rsrc.CPU), int(taskCfg.Rsrc.MEM)); err != nil {
 				h.initMu.Unlock()
 				return nil, err
 			}
@@ -303,8 +315,8 @@ func (meca *MecaExecutor) Execute(ctx context.Context, imageId string, rsrc Reso
 			for {
 				if err = h.task.Init(ctx, "", port); err == nil {
 					// register release callback when the task init successfully
-					releaseCpu := float64(rsrc.CPU)
-					releaseMem := int(rsrc.MEM)
+					releaseCpu := float64(taskCfg.Rsrc.CPU)
+					releaseMem := int(taskCfg.Rsrc.MEM)
 					h.releaseCb = func() error {
 						return meca.rm.Release(releaseCpu, releaseMem)
 					}
@@ -312,7 +324,7 @@ func (meca *MecaExecutor) Execute(ctx context.Context, imageId string, rsrc Reso
 					break
 				} else if retryCount > 10 {
 					// init failed, release resources
-					meca.rm.Release(float64(rsrc.CPU), int(rsrc.MEM))
+					meca.rm.Release(float64(taskCfg.Rsrc.CPU), int(taskCfg.Rsrc.MEM))
 					break
 				}
 				retryCount++
@@ -324,6 +336,6 @@ func (meca *MecaExecutor) Execute(ctx context.Context, imageId string, rsrc Reso
 	if err != nil {
 		return nil, err
 	}
-	log.Printf("task %v (CPU: %d core, MEM %dMB) added: %v ", imageId, rsrc.CPU, rsrc.MEM, h.task)
+	log.Printf("task with config %v added: %v ", taskCfg, h.task)
 	return h.task.Execute(ctx, input)
 }

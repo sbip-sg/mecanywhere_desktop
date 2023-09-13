@@ -39,14 +39,16 @@ type DockerTask struct {
 	containerId string
 	vIP         string
 	resource    ResourceLimit
+	runtime     string
 	cli         *client.Client
 }
 
-func NewDockerTask(id string, rsrc ResourceLimit, cli *client.Client) *DockerTask {
+func NewDockerTask(taskId string, cfg TaskConfig, cli *client.Client) *DockerTask {
 	return &DockerTask{
-		imageId:  id,
-		taskId:   GetTaskId(id, rsrc),
-		resource: rsrc,
+		imageId:  cfg.ImageId,
+		taskId:   taskId,
+		runtime:  cfg.Runtime,
+		resource: cfg.Rsrc,
 		cli:      cli,
 	}
 }
@@ -121,7 +123,7 @@ func (t *DockerTask) Init(ctx context.Context, _ string, _ int) error {
 		NanoCPUs: t.resource.CPU * 1000000000,
 		Memory:   t.resource.MEM << 10 << 10,
 	}
-	resp, err := t.cli.ContainerCreate(ctx, &container.Config{Image: t.imageId}, &container.HostConfig{Resources: resources}, networkConfig, nil, containerName)
+	resp, err := t.cli.ContainerCreate(ctx, &container.Config{Image: t.imageId}, &container.HostConfig{Resources: resources, Runtime: t.runtime}, networkConfig, nil, containerName)
 	if err != nil {
 		return err
 	}
@@ -188,8 +190,8 @@ func NewDockerTaskFactory(cli *client.Client) *DockerTaskFactory {
 	}
 }
 
-func (f *DockerTaskFactory) Build(imageId string, resource ResourceLimit) (Task, error) {
-	return NewDockerTask(imageId, resource, f.cli), nil
+func (f *DockerTaskFactory) Build(taskId string, cfg TaskConfig) (Task, error) {
+	return NewDockerTask(taskId, cfg, f.cli), nil
 }
 
 func newDockerMecaExecutor(cfg MecaExecutorConfig) *MecaExecutor {
@@ -197,11 +199,16 @@ func newDockerMecaExecutor(cfg MecaExecutorConfig) *MecaExecutor {
 	if err != nil {
 		return nil
 	}
+	runtimes := make(map[string]string, 1)
+	if len(cfg.MicroVMRuntime) > 0 {
+		runtimes[TaskTypeMicroVM] = cfg.MicroVMRuntime
+	}
 	return &MecaExecutor{
-		timeout: cfg.Timeout,
-		tracker: newTaskTracker(),
-		rm:      NewResourceManager(cfg.Cpu, cfg.Mem),
-		repo:    NewLocalDockerRepo(cli),
-		fac:     NewDockerTaskFactory(cli),
+		timeout:  cfg.Timeout,
+		tracker:  newTaskTracker(),
+		rm:       NewResourceManager(cfg.Cpu, cfg.Mem),
+		repo:     NewLocalDockerRepo(cli),
+		fac:      NewDockerTaskFactory(cli),
+		runtimes: runtimes,
 	}
 }

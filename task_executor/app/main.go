@@ -20,6 +20,7 @@ var (
 type Request struct {
 	ID       string                 `json:"id"`
 	Resource executor.ResourceLimit `json:"resource"`
+	Runtime  string                 `json:"runtime"` // refer to TaskType in task.go
 	Input    string                 `json:"input"`
 }
 
@@ -29,7 +30,7 @@ type Response struct {
 }
 
 func startTerminationHdl(executor *executor.MecaExecutor) {
-	interruptChn := make(chan os.Signal)
+	interruptChn := make(chan os.Signal, 3)
 	signal.Notify(interruptChn, os.Interrupt, syscall.SIGTERM)
 	go func() {
 		<-interruptChn
@@ -69,7 +70,8 @@ func main() {
 			return
 		}
 		var ret Response
-		if resp, err := mecaExecutor.Execute(c, req.ID, req.Resource, []byte(req.Input)); err != nil {
+		taskCfg := executor.NewTaskConfig(req.ID, req.Runtime, req.Resource)
+		if resp, err := mecaExecutor.Execute(c, taskCfg, []byte(req.Input)); err != nil {
 			ret.Success = false
 			ret.Msg = err.Error()
 		} else {

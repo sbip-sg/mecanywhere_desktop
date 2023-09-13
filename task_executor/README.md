@@ -54,11 +54,17 @@ curl http://localhost:2591 -X POST -H "Content-Type: application/json" -d '{"id"
 Retrieve stats
 
 ```sh
-curl http://172.18.0.255:259/stats -X POST
+curl http://172.18.0.255:2591/stats -X POST
 ```
 
 Provide resource limit for the task
 
 ```sh
-curl http://172.18.0.255:259 -X POST -H "Content-Type: application/json" -d '{"id": "hugy718/goserver:v2", "resource": {"cpu":2, "mem":256}, "input": "{\"name\": \"sbip\"}"}'
+curl http://172.18.0.255:2591 -X POST -H "Content-Type: application/json" -d '{"id": "hugy718/goserver:v2", "resource": {"cpu":2, "mem":256}, "input": "{\"name\": \"sbip\"}"}'
+```
+
+Pick the microVM runtime if the host has it.
+
+```sh
+curl http://172.18.0.255:2591 -X POST -H "Content-Type: application/json" -d '{"id": "hugy718/sample:v1","runtime": "microVM", "resource": {"cpu":1, "mem":128}, "input": "{\"name\": \"sbip\"}"}'
 ```
