@@ -5,6 +5,28 @@ import (
 	"fmt"
 )
 
+const (
+	TaskTypeMicroVM   = "microVM"
+	TaskTypeContainer = "container"
+)
+
+type TaskConfig struct {
+	ImageId string        `json:"imageid"`
+	Runtime string        `json:"runtime"`
+	Rsrc    ResourceLimit `json:"resource_limit"`
+}
+
+func (c TaskConfig) String() string {
+	return fmt.Sprintf("image: %s runtime: %s (CPU: %d core, MEM %dMB)", c.ImageId, c.Runtime, c.Rsrc.CPU, c.Rsrc.MEM)
+}
+
+func NewTaskConfig(id, rt string, rsrc ResourceLimit) TaskConfig {
+	if (rt == TaskTypeMicroVM) || (rt == TaskTypeContainer) {
+		return TaskConfig{id, rt, rsrc}
+	}
+	return TaskConfig{ImageId: id, Rsrc: rsrc}
+}
+
 type ResourceLimit struct {
 	CPU int64 `json:"cpu"` // core
 	MEM int64 `json:"mem"` // MB
@@ -22,8 +44,11 @@ func (l ResourceLimit) String() string {
 	return fmt.Sprintf("c%d-m%d", l.CPU, l.MEM)
 }
 
-func GetTaskId(imageId string, rsrc ResourceLimit) string {
-	return fmt.Sprintf("%s_%v", imageId, rsrc)
+func GetTaskId(cfg TaskConfig) string {
+	if len(cfg.Runtime) == 0 {
+		return fmt.Sprintf("%s_%v", cfg.ImageId, cfg.Rsrc)
+	}
+	return fmt.Sprintf("%s_%s_%v", cfg.ImageId, cfg.Runtime, cfg.Rsrc)
 }
 
 type Task interface {
@@ -35,6 +60,6 @@ type Task interface {
 }
 
 type TaskFactory interface {
-	// a task is specified by its id and the amount of resource intended to use
-	Build(taskId string, resource ResourceLimit) (Task, error)
+	// a task is specified by its id, the runtime and the amount of resource intended to use
+	Build(taskId string, cfg TaskConfig) (Task, error)
 }

@@ -18,8 +18,9 @@ var (
 )
 
 type Request struct {
-	ID       string                 `json:"id"`
+	ID       string                 `json:"id" binding:"required"`
 	Resource executor.ResourceLimit `json:"resource"`
+	Runtime  string                 `json:"runtime"` // refer to TaskType in task.go
 	Input    string                 `json:"input"`
 }
 
@@ -29,7 +30,7 @@ type Response struct {
 }
 
 func startTerminationHdl(executor *executor.MecaExecutor) {
-	interruptChn := make(chan os.Signal)
+	interruptChn := make(chan os.Signal, 3)
 	signal.Notify(interruptChn, os.Interrupt, syscall.SIGTERM)
 	go func() {
 		<-interruptChn
@@ -66,10 +67,12 @@ func main() {
 	meca_exec := func(c *gin.Context) {
 		var req Request
 		if err := c.BindJSON(&req); err != nil {
+			c.IndentedJSON(http.StatusBadRequest, "Bad execution request")
 			return
 		}
 		var ret Response
-		if resp, err := mecaExecutor.Execute(c, req.ID, req.Resource, []byte(req.Input)); err != nil {
+		taskCfg := executor.NewTaskConfig(req.ID, req.Runtime, req.Resource)
+		if resp, err := mecaExecutor.Execute(c, taskCfg, []byte(req.Input)); err != nil {
 			ret.Success = false
 			ret.Msg = err.Error()
 		} else {
@@ -104,15 +107,35 @@ func main() {
 		}
 	}
 
+	meca_update := func(c *gin.Context) {
+		var req executor.MecaExecutorConfigReq
+		if err := c.BindJSON(&req); err != nil {
+			c.IndentedJSON(http.StatusBadRequest, "Bad reconfiguration request")
+			return
+		}
+
+		var ret Response
+		if msg, err := mecaExecutor.UpdateConfig(req); err != nil {
+			ret.Success = false
+			ret.Msg = err.Error()
+		} else {
+			ret.Success = true
+			ret.Msg = msg
+		}
+		c.IndentedJSON(http.StatusOK, ret)
+	}
+
 	router := gin.Default()
 	router.POST("/", meca_exec)
 	router.POST("/stop", meca_stop)
 	router.POST("/pause", meca_pause)
 	router.POST("/unpause", meca_unpause)
-	router.POST("/stats", meca_stats)
+	router.GET("/stats", meca_stats)
 	router.GET("/health", func(c *gin.Context) {
 		c.JSON(http.StatusOK, gin.H{"status": "ok"})
 	})
+	router.POST("/update-config", meca_update)
+
 	router.Run(":2591")
 }
 

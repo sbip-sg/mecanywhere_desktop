@@ -1,0 +1,7 @@
+# now only support docker
+type: "docker"
+# timeout in minutes
+timeout: 1
+cpu: 2
+mem: 2048
+microVM_runtime: kata
