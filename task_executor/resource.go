@@ -2,6 +2,7 @@ package executor
 
 import (
 	"errors"
+	"fmt"
 	"log"
 	"sync/atomic"
 	"time"
@@ -137,6 +138,7 @@ func (rs *ResourceStats) IsEmpty() bool {
 type ResourceManager interface {
 	Start() bool
 	Stop()
+	UpdateConfig(cpu float64, mem int) string
 	Reserve(cpu float64, mem int) error
 	Release(cpu float64, mem int) error
 	Stats() ResourceStats
@@ -192,6 +194,16 @@ func (m *resourceManager) Start() bool {
 
 func (m *resourceManager) Stop() {
 	m.monitor.Stop()
+}
+
+// external synchronization to update is needed, during which resource shall be freed and Reserve, Release and Stats shall not be called.
+func (m *resourceManager) UpdateConfig(totalCPU float64, totalMem int) string {
+	m.totalCPUCfg = totalCPU
+	m.totalMEMCfg = totalMem
+	m.adjustResourceConfig()
+	msg := fmt.Sprintf("resource manager updated with cpu %f core, mem %d MB", float64(m.taskTotalCPU)/10, m.taskTotalMEM)
+	log.Println(msg)
+	return msg
 }
 
 func (m *resourceManager) Reserve(cpu float64, mem int) error {

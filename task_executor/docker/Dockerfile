@@ -24,5 +24,9 @@ WORKDIR /app
 # Expose a port if your application listens on a specific port
 EXPOSE 8080
 
+RUN apk add --no-cache tini
+# Tini is now available at /sbin/tini
+ENTRYPOINT ["/sbin/tini", "--"]
+
 # Run the Go application when the container starts
-CMD ./app -config ./meca_executor.yaml
+CMD ["./app", "-config", "./meca_executor.yaml"]
