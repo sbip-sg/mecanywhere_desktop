@@ -19,6 +19,10 @@ const CustomTypography = ({ children }) => {
 
 const CustomListHeader = () => {
   const theme = useTheme();
+  const firstColumnWidth = 4;
+  const secondColumnWidth = 3;
+  const thirdColumnWidth = 2.5;
+  const fourthColumnWidth = 2.4;
   return (
     <Card
       id="billing-list-header"
@@ -37,16 +41,36 @@ const CustomListHeader = () => {
         }}
       >
         <Grid container alignItems="center" sx={{ paddingRight: '3.5rem' }}>
-          <Grid item container xs={3} sx={{ justifyContent: 'start' }}>
+          <Grid
+            item
+            container
+            xs={firstColumnWidth}
+            sx={{ justifyContent: 'start' }}
+          >
             <CustomTypography>Date</CustomTypography>
           </Grid>
-          <Grid item container xs={3} sx={{ justifyContent: 'start' }}>
+          <Grid
+            item
+            container
+            xs={secondColumnWidth}
+            sx={{ justifyContent: 'start' }}
+          >
             <CustomTypography>Status</CustomTypography>
           </Grid>
-          <Grid item container xs={3} sx={{ justifyContent: 'start' }}>
+          <Grid
+            item
+            container
+            xs={thirdColumnWidth}
+            sx={{ justifyContent: 'start' }}
+          >
             <CustomTypography>Resource Consumed</CustomTypography>
           </Grid>
-          <Grid item container xs={3} sx={{ justifyContent: 'start' }}>
+          <Grid
+            item
+            container
+            xs={fourthColumnWidth}
+            sx={{ justifyContent: 'start' }}
+          >
             <CustomTypography>Amount</CustomTypography>
           </Grid>
         </Grid>

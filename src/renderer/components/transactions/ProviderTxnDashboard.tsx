@@ -37,7 +37,7 @@ const ProviderTxnDashboard = () => {
           variant="h1"
           style={{ fontSize: '20px', margin: '1.5rem 0 0 0' }}
         >
-          Usage Overview
+          User's Usage Overview
         </Typography>
       </Box>
       <motion.div

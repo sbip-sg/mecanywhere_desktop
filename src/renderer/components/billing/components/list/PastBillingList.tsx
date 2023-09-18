@@ -7,7 +7,6 @@ import CustomListItem from './CustomListItem';
 
 const PastBillingList = () => {
   const theme = useTheme();
-
   return (
     <Box display="flex" flexDirection="column">
       <CustomListHeader />

@@ -44,9 +44,9 @@ const Login = () => {
         if (userIsAuthenticated) {
           actions.setAuthenticated(true);
           if (isProvider) {
-            navigate('/providerdashboard');
+            navigate('/providertxndashboard');
           } else {
-            navigate('/clientdashboard');
+            navigate('/hosttxndashboard');
           }
         } else {
           setErrorMessage('Wrong password');

@@ -115,7 +115,7 @@ const CaptionTypography = ({ children }) => {
         fontSize: '14px',
         letterSpacing: `0.1em`,
         fontWeight: '600',
-        padding: '0.1rem 0.7rem 0.1rem 0.7rem',
+        padding: '0.1rem 0rem 0.1rem 0rem',
         alignItems: 'center',
       }}
     >
@@ -131,9 +131,10 @@ const DetailTypography = ({ children }) => {
       style={{
         color: theme.palette.offWhite.main,
         fontSize: '16px',
-        padding: '0.1rem 0.7rem 0.1rem 0.7rem',
+        padding: '0.1rem 0rem 0.1rem 0rem',
         alignItems: 'center',
-        overflowWrap: 'break-word',
+        wordWrap: 'break-word',
+        width: '100%',
       }}
     >
       {children}
@@ -141,15 +142,15 @@ const DetailTypography = ({ children }) => {
   );
 };
 
-const FirstColumnGrid = ({ item }) => {
+const FirstColumnGrid = ({ item, columnWidth }) => {
   return (
     <Grid
       item
-      xs={3.9}
+      xs={columnWidth}
       container
       sx={{
         borderRadius: '10px',
-        padding: '1rem',
+        padding: '0rem 3rem 0rem 0.5rem',
       }}
     >
       <Grid item container xs={12}>
@@ -168,15 +169,15 @@ const FirstColumnGrid = ({ item }) => {
   );
 };
 
-const SecondColumnGrid = ({ item }) => {
+const SecondColumnGrid = ({ item, columnWidth }) => {
   return (
     <Grid
       item
       container
-      xs={2.5}
+      xs={columnWidth}
       sx={{
         borderRadius: '10px',
-        padding: '1rem',
+        // padding: '1rem',
       }}
     >
       <Grid item container xs={12}>
@@ -195,15 +196,15 @@ const SecondColumnGrid = ({ item }) => {
   );
 };
 
-const ThirdColumnGrid = ({ item }) => {
+const ThirdColumnGrid = ({ item, columnWidth }) => {
   return (
     <Grid
       item
       container
-      xs={2.5}
+      xs={columnWidth}
       sx={{
         borderRadius: '10px',
-        padding: '1rem',
+        // padding: '1rem',
       }}
     >
       <Grid item container xs={12}>
@@ -222,22 +223,96 @@ const ThirdColumnGrid = ({ item }) => {
   );
 };
 
-const FourthColumnGrid = ({ item }) => {
+const FourthColumnGrid = ({ item, columnWidth }) => {
+  const theme = useTheme();
   return (
     <Grid
       item
       container
-      xs={3}
+      xs={columnWidth}
       sx={{
         borderRadius: '10px',
-        padding: '1rem',
+        padding: '0rem 0rem 0rem 1rem',
       }}
     >
       <Grid item container xs={12}>
-        <CaptionTypography>Amount</CaptionTypography>
+        <Typography
+          style={{
+            color: theme.palette.violet.main,
+            fontSize: '14px',
+            letterSpacing: `0.1em`,
+            fontWeight: '600',
+            padding: '0.1rem 0rem 0.1rem 0rem',
+            alignItems: 'center',
+          }}
+        >
+          Amount
+        </Typography>
       </Grid>
       <Grid item container xs={12}>
-        <DetailTypography>{item.amount}</DetailTypography>
+        <Typography
+          style={{
+            color: theme.palette.offWhite.main,
+            fontSize: '32px',
+            padding: '0.1rem 0rem 0.1rem 0rem',
+            alignItems: 'right',
+            textAlign: 'end',
+            wordWrap: 'break-word',
+            width: '100%',
+          }}
+        >
+          {item.amount}
+        </Typography>
+      </Grid>
+    </Grid>
+  );
+};
+
+const CustomHeader = ({
+  isExpanded,
+  item,
+  firstColumnWidth,
+  secondColumnWidth,
+  thirdColumnWidth,
+  fourthColumnWidth,
+}) => {
+  return (
+    <Grid container alignItems="center">
+      <Grid
+        item
+        container
+        xs={firstColumnWidth}
+        sx={{ justifyContent: 'start', paddingLeft: '2rem' }}
+      >
+        <CustomTypography isExpanded={isExpanded}>{item.date}</CustomTypography>
+      </Grid>
+      <Grid
+        item
+        container
+        xs={secondColumnWidth}
+        sx={{ justifyContent: 'start', paddingLeft: '2rem' }}
+      >
+        <CustomStatus isExpanded={isExpanded}>{item.status}</CustomStatus>
+      </Grid>
+      <Grid
+        item
+        container
+        xs={thirdColumnWidth}
+        sx={{ justifyContent: 'start', paddingLeft: '2rem' }}
+      >
+        <CustomTypography isExpanded={isExpanded}>
+          {item.total_resource_consumed}
+        </CustomTypography>
+      </Grid>
+      <Grid
+        item
+        container
+        xs={fourthColumnWidth}
+        sx={{ justifyContent: 'start', paddingLeft: '2rem' }}
+      >
+        <CustomTypography isExpanded={isExpanded}>
+          {item.amount}
+        </CustomTypography>
       </Grid>
     </Grid>
   );
@@ -246,6 +321,10 @@ const FourthColumnGrid = ({ item }) => {
 const CustomListItem = ({ item }) => {
   const [isExpanded, setIsExpanded] = useState(false);
   const theme = useTheme();
+  const firstColumnWidth = 4;
+  const secondColumnWidth = 3;
+  const thirdColumnWidth = 2.5;
+  const fourthColumnWidth = 2.4;
   return (
     <Accordion
       expanded={isExpanded}
@@ -263,7 +342,7 @@ const CustomListItem = ({ item }) => {
                 ? theme.palette.cerulean.main
                 : theme.palette.mediumBlack.main,
               borderRadius: '5px',
-              height: '1.3rem',
+              height: '1.8rem',
               width: '1.8rem',
               display: 'flex',
               justifyContent: 'center',
@@ -274,54 +353,22 @@ const CustomListItem = ({ item }) => {
           </Box>
         }
       >
-        <Grid container alignItems="center">
-          <Grid
-            item
-            container
-            xs={3}
-            sx={{ justifyContent: 'start', paddingLeft: '2rem' }}
-          >
-            <CustomTypography isExpanded={isExpanded}>
-              {item.date}
-            </CustomTypography>
-          </Grid>
-          <Grid
-            item
-            container
-            xs={3}
-            sx={{ justifyContent: 'start', paddingLeft: '2rem' }}
-          >
-            <CustomStatus isExpanded={isExpanded}>{item.status}</CustomStatus>
-          </Grid>
-          <Grid
-            item
-            container
-            xs={3}
-            sx={{ justifyContent: 'start', paddingLeft: '2rem' }}
-          >
-            <CustomTypography isExpanded={isExpanded}>
-              {item.total_resource_consumed}
-            </CustomTypography>
-          </Grid>
-          <Grid
-            item
-            container
-            xs={3}
-            sx={{ justifyContent: 'start', paddingLeft: '2rem' }}
-          >
-            <CustomTypography isExpanded={isExpanded}>
-              {item.amount}
-            </CustomTypography>
-          </Grid>
-        </Grid>
+        <CustomHeader
+          isExpanded={isExpanded}
+          item={item}
+          firstColumnWidth={firstColumnWidth}
+          secondColumnWidth={secondColumnWidth}
+          thirdColumnWidth={thirdColumnWidth + 0.05}
+          fourthColumnWidth={fourthColumnWidth - 0.05}
+        />
       </AccordionSummary>
       <AccordionDetails>
         <Grid container>
-          <FirstColumnGrid item={item} />
-          <SecondColumnGrid item={item} />
-          <ThirdColumnGrid item={item} />
+          <FirstColumnGrid item={item} columnWidth={firstColumnWidth} />
+          <SecondColumnGrid item={item} columnWidth={secondColumnWidth} />
+          <ThirdColumnGrid item={item} columnWidth={thirdColumnWidth} />
           <Divider orientation="vertical" flexItem color="white" />
-          <FourthColumnGrid item={item} />
+          <FourthColumnGrid item={item} columnWidth={fourthColumnWidth - 0.1} />
         </Grid>
       </AccordionDetails>
     </Accordion>

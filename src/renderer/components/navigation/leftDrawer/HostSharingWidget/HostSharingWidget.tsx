@@ -1,14 +1,13 @@
-import { Box, Typography, Button, Grid, Stack } from '@mui/material';
-import { useState, useEffect } from 'react';
+import { Box } from '@mui/material';
+import { useState } from 'react';
 import { useTheme } from '@emotion/react';
 import CircularProgress from '@mui/material/CircularProgress';
 import { styled } from '@mui/material/styles';
-import { motion, AnimatePresence } from 'framer-motion';
 import {
   handleRegisterHost,
   handleDeregisterHost,
 } from 'renderer/utils/handleRegistration';
-import Transitions from '../../transitions/Transition';
+import Transitions from '../../../transitions/Transition';
 import PreSharingEnabledComponent from './PreSharingEnabledComponent';
 import PostSharingEnabledComponent from './PostSharingEnabledComponent';
 
@@ -22,14 +21,14 @@ const HostSharingWidget = () => {
     setIsLoading(true);
 
     console.log('handleEnableResourceSharing');
-    // await handleRegisterHost();
+    await handleRegisterHost();
     await new Promise((resolve) => setTimeout(resolve, 1000));
     setResourceSharingEnabled(true);
     setIsLoading(false);
   };
   const handleDisableResourceSharing = async () => {
     setIsLoading(true);
-    // await handleDeregisterHost();
+    await handleDeregisterHost();
     await new Promise((resolve) => setTimeout(resolve, 1000));
     console.log('handleDisableResourceSharing');
     setResourceSharingEnabled(false);
