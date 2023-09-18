@@ -1,8 +1,8 @@
 const amqp = require('amqplib');
 const { ipcRenderer } = require('electron');
 const protobuf = require('protobufjs');
-const { postTaskExecution } = require('./executor_api');
 const { struct } = require('pb-util');
+const { postTaskExecution } = require('./executor_api');
 
 const MQ_URL = process.env.MQ_URL || 'amqp://localhost:5672';
 
@@ -16,7 +16,9 @@ const TaskResult = protobuf
 
 const parseTaskFromProto = (content) => {
   const task = Task.decode(content);
-  task.resource = struct.decode(task.resource);
+  if (task.resource != null) {
+    task.resource = struct.decode(task.resource);
+  }
   const typeError = Task.verify(task);
 
   if (typeError) {
@@ -83,14 +85,16 @@ class Consumer {
         task.id,
         task.containerRef,
         task.content,
-        // task.resource
+        // task.resource,
+        // task.runtime
       );
 
       let result = '';
       result = await postTaskExecution(
         task.containerRef,
         task.content,
-        task.resource
+        task.resource,
+        task.runtime
       );
 
       ipcRenderer.send('job-results-received', task.id, result);

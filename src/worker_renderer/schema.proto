@@ -7,6 +7,7 @@ message Task {
   string containerRef = 2;
   string content = 3;
   google.protobuf.Struct resource = 4;
+  string runtime = 5;
 }
 
 message TaskResult {

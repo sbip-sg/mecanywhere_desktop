@@ -1,7 +1,7 @@
 const TASK_EXECUTOR_URL =
   process.env.TASK_EXECUTOR_URL || 'http://localhost:2591';
 
-async function postTaskExecution(containerRef, input, resource) {
+async function postTaskExecution(containerRef, input, resource, runtime) {
   const requestOptions = {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
@@ -9,6 +9,7 @@ async function postTaskExecution(containerRef, input, resource) {
       id: containerRef,
       input,
       resource,
+      runtime,
     }),
   };
   const msg = await fetch(TASK_EXECUTOR_URL, requestOptions)
