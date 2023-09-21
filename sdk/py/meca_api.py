@@ -1,4 +1,5 @@
 import json
+from typing import Callable
 
 import requests
 
@@ -6,28 +7,104 @@ global_did = None
 access_token = None
 auth_header = None
 
-async def initiateConnection(did, vc):
+# TODO: change to signed vc
+async def initiateConnection(did: str, vc: str) -> None:
   global global_did, access_token, auth_header
   global_did = did
-  access_token, access_token_type, refresh_token, refresh_token_type = requests.post(
-    'http://localhost:7000/registration/register_client',
-    json = { 'did': did, 'vc': vc }
-  )
+  vc_obj = json.loads(vc)
+  try:
+    r = requests.post(
+      'http://localhost:7000/registration/register_client',
+      json = { 'did': did, 'credential': vc_obj }
+    )
+    r.raise_for_status()
+  except Exception as e:
+    raise SystemExit(e)
+  access_token, access_token_type, refresh_token, refresh_token_type = r.json().values()
   auth_header = {
     'Authorization': f'{access_token_type} {access_token}'
   }
 
-async def offload(containerRef, data, callback):
+async def offload_task_and_get_result(
+    task_id: str,
+    containerRef: str,
+    data: str,
+    callback: Callable[[str], None],
+    resource: dict = None,
+    runtime: str = None
+  ) -> str:
   print('Offloading task...', containerRef, data)
-  requests.post(
-    'http://localhost:7000/offload_to_host',
-    json = { 'did': global_did, 'container_reference': containerRef, 'content': data },
-    headers = auth_header
-  )
+  payload = {
+    'did': global_did,
+    'task_id': task_id,
+    'container_reference': containerRef,
+    'content': data
+  }
+  if resource:
+    payload['resource'] = resource
+  if runtime:
+    payload['runtime'] = runtime
+  try:
+    r = requests.post(
+      'http://localhost:7000/offloading/offload_task_and_get_result',
+      json = payload,
+      headers = auth_header
+    )
+    r.raise_for_status()
+  except Exception as e:
+    raise SystemExit(e)
+  status, response, error, task_id = r.json().values()
+  print("Received in test:", task_id, status, response, error)
+  callback(task_id, status, response, error)
+
+async def offload_task(
+    task_id: str,
+    containerRef: str,
+    data: str,
+    callback: Callable[[str], None],
+    resource: dict = None,
+    runtime: str = None
+  ) -> str:
+  print('Offloading task...', containerRef, data)
+  payload = {
+    'did': global_did,
+    'task_id': task_id,
+    'container_reference': containerRef,
+    'content': data
+  }
+  if resource:
+    payload['resource'] = resource
+  if runtime:
+    payload['runtime'] = runtime
+  try:
+    r = requests.post(
+      'http://localhost:7000/offloading/offload_task',
+      json = payload,
+      headers = auth_header
+    )
+    r.raise_for_status()
+  except Exception as e:
+    raise SystemExit(e)
+  status, response, error, task_id = r.json().values()
+  print("Offload response:", task_id, status, response, error)
+  callback(task_id, status, response, error)
+
+async def poll_result(corr_id: str):
+  print('Polling result...', corr_id)
+  try:
+    r = requests.post(
+      'http://localhost:7000/offloading/poll_result',
+      json = { 'did': global_did, 'correlation_id': corr_id },
+      headers = auth_header
+    )
+    r.raise_for_status()
+  except Exception as e:
+    raise SystemExit(e)
+  return r.json().values()
 
 async def disconnect():
   print('Disconnecting...')
-  requests.post(
+  return requests.post(
     'http://localhost:7000/registration/deregister_client',
     json = { 'did': global_did },
     headers = auth_header
