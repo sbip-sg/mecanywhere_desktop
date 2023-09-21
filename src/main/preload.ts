@@ -69,6 +69,8 @@ const electronHandler = {
   startConsumer: (queueName: string) =>
     ipcRenderer.send('start-consumer', queueName),
   // to host
+  stopConsumer: (queueName: string) =>
+    ipcRenderer.send('stop-consumer', queueName),
   onSubscribeJobs: (callback: (...args: any[]) => void) => {
     subscribe('job-received', callback);
   },

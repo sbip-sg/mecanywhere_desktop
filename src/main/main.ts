@@ -163,6 +163,13 @@ ipcMain.on('start-consumer', async (event, queueName) => {
   workerWindow.webContents.send('start-consumer', queueName);
 });
 
+ipcMain.on('stop-consumer', async (event, queueName) => {
+  if (!workerWindow) {
+    throw new Error('"workerWindow" is not defined');
+  }
+  workerWindow.webContents.send('stop-consumer', queueName);
+});
+
 if (process.env.NODE_ENV === 'production') {
   const sourceMapSupport = require('source-map-support');
   sourceMapSupport.install();

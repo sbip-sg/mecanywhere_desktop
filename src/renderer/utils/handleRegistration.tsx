@@ -60,6 +60,7 @@ export const handleDeregisterHost = async () => {
   const response = await deregisterHost(accessToken, did);
   if (response && response.ok) {
     actions.setHostAccessToken('');
+    window.electron.stopConsumer(did);
   } else {
     throw new Error('Deregistration failed');
   }

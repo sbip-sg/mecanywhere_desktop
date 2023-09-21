@@ -74,6 +74,7 @@ class Consumer {
 
     this.close = async function close() {
       await connection.close();
+      console.log(' [con] Connection closed');
       delete Consumer.openQueues[queueName];
     };
 
@@ -106,4 +107,11 @@ class Consumer {
 ipcRenderer.on('start-consumer', async (event, queueName) => {
   const consumer = new Consumer(queueName);
   await consumer.startConsumer();
+});
+
+ipcRenderer.on('stop-consumer', async (event, queueName) => {
+  const consumer = Consumer.openQueues[queueName];
+  if (consumer) {
+    await consumer.close();
+  }
 });
