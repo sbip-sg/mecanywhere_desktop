@@ -48,7 +48,7 @@ class Consumer {
     this.startConsumer = async function startConsumer() {
       connection = await amqp.connect(MQ_URL);
       channel = await connection.createChannel();
-      const callbackQueue = await channel.assertQueue(queueName, {
+      await channel.assertQueue(queueName, {
         durable: true,
         expires: 1000 * 60 * 30,
       });
@@ -73,6 +73,7 @@ class Consumer {
     };
 
     this.close = async function close() {
+      await channel.close();
       await connection.close();
       console.log(' [con] Connection closed');
       delete Consumer.openQueues[queueName];
