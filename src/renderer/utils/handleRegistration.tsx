@@ -1,28 +1,9 @@
 import actions from '../redux/actionCreators';
 import {
-  registerUser,
-  deregisterUser,
   registerHost,
   deregisterHost,
-  assignHost,
 } from '../services/RegistrationServices';
 import reduxStore from '../redux/store';
-
-//TODO move assignhost
-export const handleRegisterClient = async () => {
-  const credential = JSON.parse(window.electron.store.get('credential'));
-  const did = window.electron.store.get('did');
-  if (credential && did) {
-    const response = await registerUser(did, credential);
-    const { access_token } = response;
-
-    window.electron.startPublisher();
-    actions.setCredential(credential);
-    actions.setUserAccessToken(access_token);
-  } else {
-    throw new Error('Credential not found');
-  }
-};
 
 export const handleRegisterHost = async () => {
   const credential = JSON.parse(window.electron.store.get('credential'));
@@ -39,18 +20,6 @@ export const handleRegisterHost = async () => {
     }
   } else {
     throw new Error('Credential not found');
-  }
-};
-
-export const handleDeregisterClient = async () => {
-  const did = window.electron.store.get('did');
-  const accessToken = reduxStore.getState().accountUser.userAccessToken;
-  const response = await deregisterUser(accessToken, did);
-  if (response && response.ok) {
-    actions.setUserAccessToken('');
-    window.electron.stopPublisher();
-  } else {
-    throw new Error('Deregistration failed');
   }
 };
 

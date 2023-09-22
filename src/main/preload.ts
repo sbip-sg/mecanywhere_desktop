@@ -49,22 +49,6 @@ const electronHandler = {
 
   // TODO: extract channel names
 
-  // from client
-  publishJob: (id: string, containerRef: string, content: string) =>
-    ipcRenderer.invoke('publish-job', id, containerRef, content),
-  startPublisher: () => ipcRenderer.send('start-publisher'),
-  stopPublisher: () => ipcRenderer.send('stop-publisher'),
-  clientRegistered: (status: boolean) => ipcRenderer.send('client-registered', status),
-  // to client
-  onRegisterClient: (callback: (...args: any[]) => void) => {
-    subscribe('register-client', callback);
-  },
-  onOffloadJob: (callback: (...args: any[]) => void) => {
-    subscribe('offload-job', callback);
-  },
-  onDeregisterClient: (callback: (...args: any[]) => void) => {
-    subscribe('deregister-client', callback);
-  },
   // from host
   startConsumer: (queueName: string) =>
     ipcRenderer.send('start-consumer', queueName),
@@ -74,7 +58,6 @@ const electronHandler = {
   onSubscribeJobs: (callback: (...args: any[]) => void) => {
     subscribe('job-received', callback);
   },
-  // to client and host
   onSubscribeJobResults: (callback: (...args: any[]) => void) => {
     subscribe('job-results-received', callback);
   },

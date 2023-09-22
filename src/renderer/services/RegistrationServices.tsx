@@ -80,27 +80,6 @@ export async function heartbeat(token: string, did: string) {
   }
 }
 
-export async function assignHost(token: string, did: string) {
-  try {
-    const response = await fetch(`${url}/assign_host`, {
-      method: 'POST',
-      headers: {
-        'content-type': 'application/json',
-        Authorization: `Bearer ${token}`,
-      },
-      body: JSON.stringify({ did }),
-    });
-    if (!response.ok) {
-      throw new Error(`Failed to assign host: ${response.statusText}`);
-    }
-    const res = await response.json();
-    console.log(res);
-    return res;
-  } catch (error) {
-    console.error('There was a problem with the fetch operation:', error);
-  }
-}
-
 export async function registerHost(did: string, credential: object) {
   try {
     const response = await fetch(`${url}/registration/register_host`, {
@@ -125,44 +104,6 @@ export async function registerHost(did: string, credential: object) {
 export async function deregisterHost(token: string, did: string) {
   try {
     const response = await fetch(`${url}/registration/deregister_host`, {
-      method: 'POST',
-      headers: {
-        'content-type': 'application/json',
-        Authorization: `Bearer ${token}`,
-      },
-      body: JSON.stringify({ did }),
-    });
-    if (!response.ok) {
-      throw new Error('Network response not ok');
-    }
-    return response;
-  } catch (error) {
-    console.error('There was a problem with the fetch operation:', error);
-  }
-}
-
-export async function registerUser(did: string, credential: object) {
-  try {
-    const response = await fetch(`${url}/registration/register_client`, {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify({ did, credential }),
-    });
-    if (!response.ok) {
-      throw new Error('Network response not ok');
-    }
-    const res = await response.json();
-    return res;
-  } catch (error) {
-    console.error('There was a problem with the fetch operation:', error);
-  }
-}
-
-export async function deregisterUser(token: string, did: string) {
-  try {
-    const response = await fetch(`${url}/registration/deregister_client`, {
       method: 'POST',
       headers: {
         'content-type': 'application/json',
