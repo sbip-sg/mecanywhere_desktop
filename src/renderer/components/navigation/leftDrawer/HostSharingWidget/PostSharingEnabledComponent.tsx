@@ -53,7 +53,6 @@ const PostSharingEnabledComponent = ({
   isLoading,
   setIsLoading,
 }) => {
-  const [isPaused, setIsPaused] = useState(false);
   const theme = useTheme();
   const [resourcesLog, setResourcesLog] = useState<ResourcesLog>({
     total_cpu: 8,
@@ -65,22 +64,7 @@ const PostSharingEnabledComponent = ({
     task_used_cpu: 0,
     task_used_mem: 0,
   });
-  const handleClickPauseButton = async () => {
-    setIsLoading(true);
-    if (isPaused) {
-      console.log('unpauseExecutor');
-      // await new Promise((resolve) => setTimeout(resolve, 1000));
-      const response = await unpauseExecutor();
-      // console.log("unpauseExecutor response: ", response)
-    } else {
-      console.log('pauseExecutor');
-      await new Promise((resolve) => setTimeout(resolve, 1000));
-      // const response = await pauseExecutor();
-      // console.log("pauseExecutor response: ", response)
-    }
-    setIsLoading(false);
-    setIsPaused(!isPaused);
-  };
+
   useEffect(() => {
     const interval = setInterval(async () => {
       const fetchResource = async () => {
@@ -163,42 +147,12 @@ const PostSharingEnabledComponent = ({
         item
         sx={{ justifyContent: 'center', padding: '2rem 1.5rem 2rem 1.5rem' }}
       >
-        <Grid container item xs={3.8}>
-          <Button
-            onClick={handleClickPauseButton}
-            sx={{
-              width: '100%',
-              padding: '0.7rem 0.7rem 0.7rem 0.5rem',
-              color: isPaused
-                ? 'black'
-                : isLoading
-                ? theme.palette.cerulean.main
-                : theme.palette.offWhite.main,
-              backgroundColor: isPaused
-                ? theme.palette.mintGreen.main
-                : isLoading
-                ? theme.palette.darkBlack.main
-                : '#6933FE',
-            }}
-          >
-            {!isPaused && <PauseIcon style={{ fontSize: '18px' }} />}
-            <Typography
-              variant="h3"
-              fontSize="13px"
-              textAlign="center"
-              paddingTop="0.2rem"
-              paddingLeft="0.1rem"
-            >
-              {isPaused ? 'Resume' : 'Pause'}
-            </Typography>
-          </Button>
-        </Grid>
-        <Grid container item xs={8.2} sx={{ padding: '0 0 0 0.7rem' }}>
+        <Grid container item xs={12} sx={{ padding: '0 0 0 0rem' }}>
           <Button
             onClick={handleDisableResourceSharing}
             sx={{
               width: '100%',
-              padding: '0.7rem',
+              padding: '0.6rem',
               color: isLoading ? theme.palette.cerulean.main : 'inherit',
               backgroundColor: isLoading
                 ? theme.palette.darkBlack.main
@@ -208,7 +162,7 @@ const PostSharingEnabledComponent = ({
             <Typography
               variant="h3"
               style={{
-                fontSize: '12px',
+                fontSize: '15px',
                 textAlign: 'center',
                 // letterSpacing: '0.05em',
               }}

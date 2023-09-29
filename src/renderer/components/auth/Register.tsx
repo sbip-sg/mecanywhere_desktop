@@ -32,7 +32,7 @@ const Register = () => {
       try {
         formActions.resetForm();
         const { password } = values;
-        // await handleAccountRegistration(password);
+        await handleAccountRegistration(password);
         navigate('/roleselection');
       } catch (error) {
         setErrorMessage(String(error));

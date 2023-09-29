@@ -3,7 +3,7 @@ import Box from '@mui/material/Box';
 import { Typography, Stack } from '@mui/material';
 import { motion } from 'framer-motion';
 import Datagrid from './table/Datagrid';
-import { InternalDataEntry } from './table/dataTypes';
+import { InternalDataEntry } from '../common/dataTypes';
 import CustomLineChart from './linechart/CustomLineChart';
 import { InternalPropConfigList } from './propConfig';
 import mockProviderData from '../../../../assets/mockProviderData.json';

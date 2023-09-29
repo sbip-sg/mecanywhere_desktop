@@ -6,8 +6,14 @@ import {
   addDummyHistory,
 } from '../../services/TransactionServices';
 import reduxStore from '../../redux/store';
+import { useState, useEffect } from 'react';
 
 const TestApi = () => {
+  const [accessToken, setAccessToken] = useState('');
+  const [responseBody, setResponseBody] = useState('');
+  const [error, setError] = useState(null);
+  const [a, setA] = useState(null);
+
   const taskInfo = {
     task_type: 'client',
     did: window.electron.store.get('did'),
@@ -25,6 +31,7 @@ const TestApi = () => {
     const did = window.electron.store.get('did');
     const publicKey = window.electron.store.get('publicKey');
     const accessToken = reduxStore.getState().accountUser.hostAccessToken;
+    // setAccessToken(accessToken);
     console.log('credential', credential);
     console.log('did', did);
     console.log('publicKey', publicKey);
@@ -38,9 +45,21 @@ const TestApi = () => {
   };
 
   const handleFindDidHistory = async () => {
-    const accessToken = reduxStore.getState().accountUser.hostAccessToken;
-    const response = await findDidHistory(accessToken, did);
-    console.log('response', response);
+    try {
+      setError(null); // Clear any previous errors
+      const accessToken = reduxStore.getState().accountUser.hostAccessToken;
+      setAccessToken(accessToken);
+      const response = await findDidHistory(accessToken, did);
+      setA(response?.status);
+      if (!response.ok) {
+        throw Error(`HTTP error! Status: ${response.status}`);
+      }
+
+      const responseBodya = await response.json();
+      setResponseBody(responseBodya);
+    } catch (error) {
+      setError(error.message); // Set error message to state
+    }
   };
 
   const handleFindPoHistory = async () => {
@@ -55,6 +74,10 @@ const TestApi = () => {
       <Button onClick={handleRecordTask}>handleRecordTask</Button>
       <Button onClick={handleFindDidHistory}>handleFindDidHistory</Button>
       <Button onClick={handleFindPoHistory}>handleFindPoHistory</Button>
+      <div>{accessToken}</div>
+      <div>{responseBody[0] ? responseBody[0].session_id : 'hello'}</div>
+      <div>{error ? `Error: ${error}` : 'No Errors'}</div>
+      <div>{a ? { a } : 'No AErrors'}</div>
     </>
   );
 };

@@ -5,7 +5,7 @@ import Table from '@mui/material/Table';
 import TableContainer from '@mui/material/TableContainer';
 import { useTheme } from '@emotion/react';
 import { useNavigate } from 'react-router-dom';
-import { InternalDataEntry, ExternalDataEntry } from './dataTypes';
+import { InternalDataEntry, ExternalDataEntry } from '../../common/dataTypes';
 import { PropConfig } from '../propConfig';
 import { Order, stableSort, getComparator } from './comparatorUtils';
 import CustomTableHead from './CustomTableHead';

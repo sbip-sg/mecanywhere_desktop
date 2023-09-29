@@ -6,7 +6,7 @@ import { visuallyHidden } from '@mui/utils';
 import StyledTableCell from './StyledTableCell';
 import StyledTableRow from './StyledTableRow';
 import { Order } from './comparatorUtils';
-import { InternalDataEntry, ExternalDataEntry } from './dataTypes';
+import { InternalDataEntry, ExternalDataEntry } from '../../common/dataTypes';
 import { PropConfig } from '../propConfig';
 
 interface CustomTableHeadProps {

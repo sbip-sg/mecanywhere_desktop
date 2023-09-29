@@ -3,17 +3,62 @@ import Box from '@mui/material/Box';
 import { Typography, Stack } from '@mui/material';
 import { motion } from 'framer-motion';
 import Datagrid from './table/Datagrid';
-import { ExternalDataEntry } from './table/dataTypes';
+import { ExternalDataEntry } from '../common/dataTypes';
 import CustomLineChart from './linechart/CustomLineChart';
 import { ExternalPropConfigList } from './propConfig';
-import mockUserData from '../../../../assets/mockUserData.json';
+// import mockUserData from '../../../../assets/mockUserData.json';
+import { registerHost } from '../../services/RegistrationServices';
+import actions from '../../redux/actionCreators';
+import { findDidHistory } from '../../services/TransactionServices';
+// const log = require('electron-log');
+// import log from 'electron-log/main';
+import log from 'electron-log/renderer';
+log.info('Log from the renderer process1');
 
 const HostTxnDashboard = () => {
   const [data, setData] = useState<ExternalDataEntry[]>([]);
   const [isTableExpanded, setIsTableExpanded] = useState(false);
+  log.info('Hello, log');
+
   useEffect(() => {
-    setData(mockUserData);
+    const credential = JSON.parse(window.electron.store.get('credential'));
+    const did = window.electron.store.get('did');
+    log.info('credential', credential);
+    log.info('did', did);
+    const getAccessToken = async () => {
+      if (credential && did) {
+        actions.setCredential(credential);
+        try {
+          const accessTokenResponse = await registerHost(did, credential);
+          const { access_token } = accessTokenResponse;
+          log.info('access_token', access_token);
+          actions.setHostAccessToken(access_token);
+          const didHistoryResponse = await findDidHistory(access_token, did);
+          log.info('didHistoryResponse', didHistoryResponse);
+
+          if (didHistoryResponse) {
+            const responseBody = await didHistoryResponse.json();
+            console.log('response body', responseBody);
+            setData(responseBody);
+            log.info('responseBody', responseBody);
+          }
+        } catch (error) {
+          console.error('Error during registerHost:', error);
+          log.info('error', error);
+
+          // Handle error appropriately
+        }
+      }
+    };
+
+    getAccessToken();
+    // setData(mockUserData);
   }, []);
+
+  useEffect(() => {
+    console.log('data', data);
+    // log.info('data', data);
+  }, [data]);
 
   return (
     <Stack

@@ -10,17 +10,55 @@ import {
 import Transitions from '../../../transitions/Transition';
 import PreSharingEnabledComponent from './PreSharingEnabledComponent';
 import PostSharingEnabledComponent from './PostSharingEnabledComponent';
+import {
+  pauseExecutor,
+  unpauseExecutor,
+  updateConfig,
+} from 'renderer/services/ExecutorServices';
 
 const HostSharingWidget = () => {
   const theme = useTheme();
   const [isLoading, setIsLoading] = useState(false);
+  let initialExecutorSettings = {
+    option: 'low',
+    cpu_cores: 1,
+    memory_mb: 2048,
+  };
+  const initialIsExecutorSettingsSaved =
+    window.electron.store.get('isExecutorSettingsSaved') === 'true';
+  if (window.electron.store.get('isExecutorSettingsSaved') === null) {
+    window.electron.store.set('isExecutorSettingsSaved', 'true');
+  }
+  if (window.electron.store.get('executorSettings') === null) {
+    window.electron.store.set('executorSettings', initialExecutorSettings);
+  }
+  if (window.electron.store.get('isExecutorSettingsSaved') === 'true') {
+    initialExecutorSettings = JSON.parse(
+      window.electron.store.get('executorSettings')
+    );
+  }
+
+  const [isExecutorSettingsSaved, setIsExecutorSettingsSaved] = useState(
+    initialIsExecutorSettingsSaved
+  );
+  const [executorSettings, setExecutorSettings] = useState(
+    initialExecutorSettings
+  );
 
   const [resourceSharingEnabled, setResourceSharingEnabled] =
     useState<Boolean>(false);
+
   const handleEnableResourceSharing = async () => {
     setIsLoading(true);
+    const configToUpdate = {
+      timeout: 2,
+      cpu: executorSettings.cpu_cores,
+      mem: executorSettings.memory_mb,
+      microVM_runtime: 'kata',
+    };
 
-    console.log('handleEnableResourceSharing');
+    const updateConfigResponse = await updateConfig(configToUpdate);
+    console.log('updateConfigResponse', updateConfigResponse);
     await handleRegisterHost();
     await new Promise((resolve) => setTimeout(resolve, 1000));
     setResourceSharingEnabled(true);
@@ -87,6 +125,10 @@ const HostSharingWidget = () => {
           <PreSharingEnabledComponent
             handleEnableResourceSharing={handleEnableResourceSharing}
             isLoading={isLoading}
+            isExecutorSettingsSaved={isExecutorSettingsSaved}
+            setIsExecutorSettingsSaved={setIsExecutorSettingsSaved}
+            executorSettings={executorSettings}
+            setExecutorSettings={setExecutorSettings}
           />
         ) : (
           <PostSharingEnabledComponent
