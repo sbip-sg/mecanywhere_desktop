@@ -9,9 +9,15 @@
  * `./src/main.js` using webpack. This gives us some performance wins.
  */
 import path from 'path';
-import { app, BrowserWindow, shell, ipcMain, safeStorage, IpcMainEvent } from 'electron';
+import {
+  app,
+  BrowserWindow,
+  shell,
+  ipcMain,
+  safeStorage,
+  IpcMainEvent,
+} from 'electron';
 import { autoUpdater } from 'electron-updater';
-import log from 'electron-log';
 import { performance } from 'perf_hooks';
 import MenuBuilder from './menu';
 import { resolveHtmlPath } from './util';
@@ -19,7 +25,12 @@ import { resolveHtmlPath } from './util';
 const Store = require('electron-store');
 const io = require('socket.io')();
 const { shell } = require('electron');
+import log from 'electron-log/main';
 
+// Optional, initialize the logger for any renderer process
+log.initialize({ preload: true });
+
+log.info('Log from the main process');
 const start = performance.now();
 
 const store = new Store();
@@ -50,22 +61,33 @@ function showLoginWindow() {
   }
 }
 ipcMain.handle('openLinkPlease', () => {
-  shell.openExternal("http://localhost:3000/");
-})
+  shell.openExternal('http://localhost:3000/');
+});
 
 ipcMain.on('message:loginShow', (event) => {
-  console.log("showLoginWindowpre")
+  console.log('showLoginWindowpre');
   showLoginWindow();
-  console.log("showLoginWindowpost")
+  console.log('showLoginWindowpost');
 });
 
 ipcMain.on('electron-store-get', async (event, key) => {
-  const encryptedKey = store.get(key);
-  // help correct the line below
-  const decryptedKey = safeStorage.decryptString(
-    Buffer.from(encryptedKey, 'latin1')
-  );
-  event.returnValue = decryptedKey;
+  try {
+    const encryptedKey = store.get(key);
+
+    if (encryptedKey !== undefined) {
+      const decryptedKey = safeStorage.decryptString(
+        Buffer.from(encryptedKey, 'latin1')
+      );
+      event.returnValue = decryptedKey;
+    } else {
+      // Handle the case when the key is undefined (not found)
+      event.returnValue = null; // Or another appropriate default value
+    }
+  } catch (error) {
+    // Handle any errors that may occur during the decryption process
+    console.error('Error while getting value:', error);
+    event.returnValue = null; // Or another appropriate default value
+  }
 });
 
 ipcMain.on('electron-store-set', async (event, key, val) => {

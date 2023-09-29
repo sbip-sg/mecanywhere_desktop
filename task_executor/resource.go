@@ -84,7 +84,7 @@ func (m *resourceMonitor) Start() bool {
 					m.lastmemUsed.Store((ms.Used >> 10) / (ms.Total >> 20))
 				}
 
-				log.Printf("[Resource monitor] cpu: %.2f%%, mem %.2f%%", float64(m.lastCPUUsed.Load())/10, float64(m.lastmemUsed.Load())/10)
+				// log.Printf("[Resource monitor] cpu: %.2f%%, mem %.2f%%", float64(m.lastCPUUsed.Load())/10, float64(m.lastmemUsed.Load())/10)
 			}
 		}
 	}()

@@ -20,10 +20,15 @@ import ToggleButton from '@mui/material/ToggleButton';
 import ToggleButtonGroup from '@mui/material/ToggleButtonGroup';
 import { useTheme } from '@emotion/react';
 import { IconButton } from '@mui/material';
-import { ExternalDataEntry } from '../table/dataTypes';
+import { ExternalDataEntry } from '../../common/dataTypes';
 import { styled } from '@mui/material/styles';
 import CustomTooltip from './CustomTooltip';
 
+// import log from 'electron-log/main';
+
+// Optional, initialize the logger for any renderer process
+import log from 'electron-log/renderer';
+log.info('Log from the renderer process');
 interface GroupedData {
   month: string;
   resource_consumed: number;
@@ -99,6 +104,8 @@ const CustomLineChart: React.FC<CustomLineChartProps> = ({
     }
     return true;
   });
+  
+  // log.info('filteredData', filteredData);
 
   const groupedDataObject = filteredData.reduce((acc, entry) => {
     const entryDate = new Date(entry.session_start_datetime * 1000);

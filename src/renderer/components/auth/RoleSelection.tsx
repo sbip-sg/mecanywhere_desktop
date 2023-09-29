@@ -89,7 +89,7 @@ const RoleSelection = () => {
                     }}
                   />
                 }
-                label="HOST / CLIENT"
+                label="HOST"
               />
               <Typography
                 fontSize="16px"
@@ -99,10 +99,7 @@ const RoleSelection = () => {
                 }}
               >
                 Select this role if you are intending to use this application as
-                an edge device host which shares compute resources or a client
-                which develops apps which intend to consume said resources. You
-                are able to switch freely between host / client roles once
-                registered.
+                an edge device host which shares compute resources.
               </Typography>
             </Box>
             <Box

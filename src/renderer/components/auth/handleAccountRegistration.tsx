@@ -18,6 +18,7 @@ const handleAccountRegistration = async (password: string) => {
       const { did, credential } = await createAccount({
         publicKey: uint8ArrayToDecimal(publicKey),
       });
+      console.log('did, credential', did, credential);
       if (!credential.result) {
         throw new Error(`error${credential.errorMessage}`);
       }
@@ -35,6 +36,15 @@ const handleAccountRegistration = async (password: string) => {
       window.electron.store.set(
         'credential',
         JSON.stringify({ credential: credential.result })
+      );
+      window.electron.store.set('isExecutorSettingsSaved', 'true');
+      window.electron.store.set(
+        'executorSettings',
+        JSON.stringify({
+          option: 'low',
+          cpu_cores: 1,
+          memory_mb: 2048,
+        })
       );
     } catch (createAccountError) {
       throw createAccountError;

@@ -15,16 +15,13 @@ import Profile from './components/profile/Profile';
 import AppView from './components/appview/AppView';
 import NavigationLayoutTransitionWrapper from './components/navigation/NavigationLayoutTransitionWrapper';
 import { RootState } from './redux/store';
-import ClientTxnDashboard from './components/transactions/ClientTxnDashboard';
+import TestApi from './components/transactions/TestApi';
 import HostTxnDashboard from './components/transactions/HostTxnDashboard';
 import ProviderTxnDashboard from './components/transactions/ProviderTxnDashboard';
-import ClientBillingDashboard from './components/billing/dashboard/ClientBillingDashboard';
 import HostBillingDashboard from './components/billing/dashboard/HostBillingDashboard';
 import ProviderBillingDashboard from './components/billing/dashboard/ProviderBillingDashboard';
-import ClientBillingHistory from './components/billing/history/ClientBillingHistory';
 import HostBillingHistory from './components/billing/history/HostBillingHistory';
 import ProviderBillingHistory from './components/billing/history/ProviderBillingHistory';
-import ClientPayment from './components/misc/ClientPayment';
 import HostWithdrawal from './components/misc/HostWithdrawal';
 import TransactionDetails from './components/transactions/TransactionDetails';
 import RoleSelection from './components/auth/RoleSelection';
@@ -105,14 +102,6 @@ const Animated = () => {
           }
         />
         <Route
-          path="/clienttxndashboard"
-          element={
-            <Transitions>
-              <ClientTxnDashboard />
-            </Transitions>
-          }
-        />
-        <Route
           path="/hosttxndashboard"
           element={
             <Transitions>
@@ -129,14 +118,6 @@ const Animated = () => {
           }
         />
         <Route
-          path="/clientbillingdashboard"
-          element={
-            <Transitions>
-              <ClientBillingDashboard />
-            </Transitions>
-          }
-        />
-        <Route
           path="/hostbillingdashboard"
           element={
             <Transitions>
@@ -149,14 +130,6 @@ const Animated = () => {
           element={
             <Transitions>
               <ProviderBillingDashboard />
-            </Transitions>
-          }
-        />
-        <Route
-          path="/clientbillinghistory"
-          element={
-            <Transitions>
-              <ClientBillingHistory />
             </Transitions>
           }
         />
@@ -181,14 +154,6 @@ const Animated = () => {
           element={
             <Transitions>
               <AppView />
-            </Transitions>
-          }
-        />
-        <Route
-          path="/clientpayment"
-          element={
-            <Transitions>
-              <ClientPayment />
             </Transitions>
           }
         />
@@ -232,6 +197,14 @@ const Animated = () => {
             </Transitions>
           }
         />
+        <Route
+          path="/testapi"
+          element={
+            <Transitions>
+              <TestApi />
+            </Transitions>
+          }
+        />
       </Route>
     </Routes>
   );
@@ -249,4 +222,4 @@ export default function App() {
       </NavigationLayoutTransitionWrapper>
     </Router>
   );
-};
+}

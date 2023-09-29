@@ -2,11 +2,11 @@
  * Base webpack config used across other specific configs
  */
 
+import dotenv from 'dotenv';
 import webpack from 'webpack';
 import TsconfigPathsPlugins from 'tsconfig-paths-webpack-plugin';
 import webpackPaths from './webpack.paths';
 import { dependencies as externals } from '../../release/app/package.json';
-import dotenv from "dotenv";
 
 const configuration: webpack.Configuration = {
   externals: [...Object.keys(externals || {})],
@@ -47,8 +47,14 @@ const configuration: webpack.Configuration = {
     extensions: ['.js', '.jsx', '.json', '.ts', '.tsx'],
     modules: [webpackPaths.srcPath, 'node_modules'],
     fallback: {
-      "fs": false,
-      "path": false,
+      fs: false,
+      path: false,
+      querystring: require.resolve('querystring-es3'),
+      os: require.resolve('os-browserify/browser'),
+      util: require.resolve('util/'),
+      http: require.resolve('stream-http'),
+      https: require.resolve('https-browserify'),
+      url: require.resolve('url/'),
     },
     // There is no need to add aliases here, the paths in tsconfig get mirrored
     plugins: [new TsconfigPathsPlugins()],
