@@ -28,7 +28,6 @@ import RoleSelection from './components/auth/RoleSelection';
 import UserManagement from './components/parentOrganization/UserManagement';
 import ProviderPayment from './components/payment/ProviderPayment';
 import Settings from './components/settings/Settings';
-import useClientHooks from './components/client/useClientHooks';
 import useHeartbeatHook from './components/host/useHeartbeatHook';
 
 const PrivateRoutes = () => {
@@ -212,18 +211,7 @@ const Animated = () => {
 };
 
 export default function App() {
-  const isClient = useSelector(
-    (state: RootState) => state.accountUser.userAccessToken !== ''
-  );
-  const isHost = useSelector(
-    (state: RootState) => state.accountUser.hostAccessToken !== ''
-  );
-  const hostAccessToken = useSelector(
-    (state: RootState) => state.accountUser.hostAccessToken
-  );
-  const did = window.electron.store.get('did');
-  useClientHooks(isClient);
-  useHeartbeatHook(isHost, hostAccessToken, did);
+  useHeartbeatHook();
 
   return (
     <Router>

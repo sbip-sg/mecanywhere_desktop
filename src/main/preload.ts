@@ -47,31 +47,17 @@ const electronHandler = {
     // Other method you want to add like has(), reset(), etc.
   },
 
-  // from client
-  publishJob: (id: string, content: string) =>
-    ipcRenderer.invoke('publish-job', id, content),
-  startPublisher: (queueName: string, containerRef: string) =>
-    ipcRenderer.send('start-publisher', queueName, containerRef),
-  stopPublisher: () => ipcRenderer.send('stop-publisher'),
-  clientRegistered: (status: boolean) => ipcRenderer.send('client-registered', status),
-  // to client
-  onRegisterClient: (callback: (...args: any[]) => void) => {
-    subscribe('register-client', callback);
-  },
-  onOffloadJob: (callback: (...args: any[]) => void) => {
-    subscribe('offload-job', callback);
-  },
-  onDeregisterClient: (callback: (...args: any[]) => void) => {
-    subscribe('deregister-client', callback);
-  },
+  // TODO: extract channel names
+
   // from host
   startConsumer: (queueName: string) =>
     ipcRenderer.send('start-consumer', queueName),
   // to host
+  stopConsumer: (queueName: string) =>
+    ipcRenderer.send('stop-consumer', queueName),
   onSubscribeJobs: (callback: (...args: any[]) => void) => {
     subscribe('job-received', callback);
   },
-  // to client and host
   onSubscribeJobResults: (callback: (...args: any[]) => void) => {
     subscribe('job-results-received', callback);
   },
