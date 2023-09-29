@@ -124,6 +124,7 @@
     "formik": "^2.2.9",
     "framer-motion": "^10.12.12",
     "js-sha3": "^0.8.0",
+    "pb-util": "^1.0.3",
     "protobufjs": "^7.2.3",
     "react": "^18.2.0",
     "react-datepicker": "^4.16.0",

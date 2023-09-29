@@ -15,6 +15,10 @@
 
 ### Test
 
+Start desktop app, docker daemon, executor and build dockerized task with
+```
+docker build -t test-offload -f containerized_example/Dockerfile.example containerized_example
+```
 Start virtual env, install requirements and run test-offload.py.
 
 ```

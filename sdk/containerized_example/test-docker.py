@@ -4,7 +4,6 @@ import multiprocessing
 from flask import Flask, request
 
 app = Flask(__name__)
-print("meca-init-done")
 
 @app.route('/', methods=['POST'])
 def entry_point():
@@ -69,3 +68,5 @@ def distributed_knn(point, dataset, k, num_processes):
     overall_neighbors = [index for index, _ in distances[:k]]
 
     return overall_neighbors
+
+print("meca-init-done")

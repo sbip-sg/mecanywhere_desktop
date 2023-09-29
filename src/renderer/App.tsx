@@ -26,13 +26,11 @@ import HostBillingHistory from './components/billing/history/HostBillingHistory'
 import ProviderBillingHistory from './components/billing/history/ProviderBillingHistory';
 import ClientPayment from './components/misc/ClientPayment';
 import HostWithdrawal from './components/misc/HostWithdrawal';
-import UserDashboard from './components/misc/UserDashboard';
 import TransactionDetails from './components/transactions/TransactionDetails';
 import RoleSelection from './components/auth/RoleSelection';
 import UserManagement from './components/parentOrganization/UserManagement';
 import ProviderPayment from './components/payment/ProviderPayment';
 import Settings from './components/settings/Settings';
-import useClientHooks from './components/client/useClientHooks';
 import useHeartbeatHook from './components/host/useHeartbeatHook';
 
 const PrivateRoutes = () => {
@@ -203,14 +201,6 @@ const Animated = () => {
           }
         />
         <Route
-          path="/userjobsubmission"
-          element={
-            <Transitions>
-              <UserDashboard />
-            </Transitions>
-          }
-        />
-        <Route
           path="/details/:sessionId"
           element={
             <Transitions>
@@ -248,18 +238,7 @@ const Animated = () => {
 };
 
 export default function App() {
-  const isClient = useSelector(
-    (state: RootState) => state.accountUser.userAccessToken !== ''
-  );
-  const isHost = useSelector(
-    (state: RootState) => state.accountUser.hostAccessToken !== ''
-  );
-  const hostAccessToken = useSelector(
-    (state: RootState) => state.accountUser.hostAccessToken
-  );
-  const did = window.electron.store.get('did');
-  useClientHooks(isClient);
-  useHeartbeatHook(isHost, hostAccessToken, did);
+  useHeartbeatHook();
 
   return (
     <Router>

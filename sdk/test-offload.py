@@ -2,6 +2,8 @@ import asyncio
 import json
 from py import meca_api
 import torch
+import os
+from dotenv import load_dotenv
 
 def euclidean_distance(a, b):
     return torch.sqrt(torch.sum((a - b) ** 2))
@@ -24,31 +26,34 @@ async def distributed_knn(input_data, dataset, k, num_processes):
 
     result_list = []
 
-    def callback_on_receive(id, result):
-        result_list.extend(json.loads(result))
-        print("Received:", result)
+    def callback_on_receive(id, status, response, err):
+        print("Received in test:", id, status, response, err)
+        if status == 0:
+          raise Exception(err)
+        try:
+          result = json.loads(response)
+        except:
+          print("Error parsing response:", response)
+          raise SystemExit()
+        result_list.extend(result)
 
-    def callback_on_offload(err, result):
-        if err:
-            print('Offload error:', err)
-        else:
-            print('Callbacked:', result)
-
-    await meca_api.initiateConnection(containerRef='jyume/meca:0.0.4', callbackOnReceive=callback_on_receive)
+    await meca_api.initiateConnection(os.getenv('DID'), os.getenv('VC'))
 
     for i in range(num_processes):
         start_index = i * chunk_size
         end_index = (i + 1) * chunk_size if i < num_processes - 1 else num_data_points
         sliced_dataset = dataset[start_index:end_index].clone().detach()
 
-        await meca_api.offload({
+        await meca_api.offload_task_and_get_result(
+          str(i),
+          'jyume/meca:0.0.5',
+          json.dumps({
             "dataset": sliced_dataset.tolist(),
             "point": input_data.tolist(),
             "k": k,
             "num_processes": num_processes
-        }, callback_on_offload)
-
-    await meca_api.join()
+          }),
+          callback=callback_on_receive)
 
     # ====================  ====================
 
@@ -60,6 +65,8 @@ async def distributed_knn(input_data, dataset, k, num_processes):
 
 # Example usage:
 async def main():
+    load_dotenv()
+
     dataset = torch.Tensor([
         [1, 2],
         [3, 4],
@@ -87,3 +94,4 @@ if __name__ == '__main__':
       asyncio.run(main())
     except KeyboardInterrupt:
       print("Program closed by user.")
+      asyncio.run(meca_api.disconnect())
