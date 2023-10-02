@@ -26,8 +26,8 @@ const CustomTooltip = ({
           {label}
         </Box>
         <Box>
-          {payload.map((pld: any) => (
-            <Box>
+          {payload.map((pld: any, index: number) => (
+            <Box key={index}>
               <Box
                 sx={{
                   color: theme.palette.violet.main,

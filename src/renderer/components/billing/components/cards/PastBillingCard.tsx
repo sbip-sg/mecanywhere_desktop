@@ -13,7 +13,7 @@ import {
   Tooltip,
 } from 'recharts';
 import { ExternalBillingDataEntry } from '../table/dataTypes';
-import { ExternalDataEntry } from '../../../common/dataTypes';
+import { ExternalDataEntry } from '../../../../utils/dataTypes';
 import { useEffect, useState } from 'react';
 
 interface GroupedData {

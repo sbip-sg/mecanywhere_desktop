@@ -3,7 +3,7 @@ import mockUserBillingData from '../../../../../assets/mockUserBillingData.json'
 import CurrentBillingCard from '../components/cards/CurrentBillingCard';
 import PastBillingCard from '../components/cards/PastBillingCard';
 import PastBillingList from '../components/list/PastBillingList';
-import { ExternalDataEntry } from '../../common/dataTypes';
+import { ExternalDataEntry } from '../../../utils/dataTypes';
 import { useState, useEffect } from 'react';
 import { registerHost } from '../../../services/RegistrationServices';
 import actions from '../../../redux/actionCreators';

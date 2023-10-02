@@ -1,28 +1,27 @@
 import TableRow, { tableRowClasses } from '@mui/material/TableRow';
 import { styled } from '@mui/material/styles';
 
-interface StyledTableRowProps {
+interface StyledTableRowProps extends React.ComponentPropsWithoutRef<'tr'> {
   maxRowHeight: number;
 }
 
-const StyledTableRow = styled(TableRow)<StyledTableRowProps>(
-  ({ theme, maxRowHeight }) => ({
-    '&:last-child td, &:last-child th': {
-      // hide last border
-      border: 0,
+const StyledTableRow = styled(TableRow, {
+  shouldForwardProp: (prop) => prop !== 'maxRowHeight',
+})<StyledTableRowProps>(({ theme, maxRowHeight }) => ({
+  '&:last-child td, &:last-child th': {
+    border: 0,
+  },
+  hover: {
+    '&:hover': {
+      backgroundColor: 'green !important',
     },
-    hover: {
-      '&:hover': {
-        backgroundColor: 'green !important',
-      },
-    },
-    '& td': {
-      cursor: 'pointer',
-    },
-    [`&.${tableRowClasses.root}`]: {
-      height: `${maxRowHeight}px`,
-    },
-  })
-);
+  },
+  '& td': {
+    cursor: 'pointer',
+  },
+  [`&.${tableRowClasses.root}`]: {
+    height: `${maxRowHeight}px`,
+  },
+}));
 
 export default StyledTableRow;

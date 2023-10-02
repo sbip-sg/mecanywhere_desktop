@@ -12,23 +12,20 @@ import Register from './components/auth/Register';
 import Login from './components/auth/Login';
 import Mnemonics from './components/auth/Mnemonics';
 import Profile from './components/profile/Profile';
-import AppView from './components/appview/AppView';
 import NavigationLayoutTransitionWrapper from './components/navigation/NavigationLayoutTransitionWrapper';
 import { RootState } from './redux/store';
-import TestApi from './components/transactions/TestApi';
 import HostTxnDashboard from './components/transactions/HostTxnDashboard';
 import ProviderTxnDashboard from './components/transactions/ProviderTxnDashboard';
 import HostBillingDashboard from './components/billing/dashboard/HostBillingDashboard';
 import ProviderBillingDashboard from './components/billing/dashboard/ProviderBillingDashboard';
-import HostBillingHistory from './components/billing/history/HostBillingHistory';
-import ProviderBillingHistory from './components/billing/history/ProviderBillingHistory';
 import HostWithdrawal from './components/misc/HostWithdrawal';
 import TransactionDetails from './components/transactions/TransactionDetails';
 import RoleSelection from './components/auth/RoleSelection';
 import UserManagement from './components/parentOrganization/UserManagement';
 import ProviderPayment from './components/payment/ProviderPayment';
 import Settings from './components/settings/Settings';
-import useHeartbeatHook from './components/host/useHeartbeatHook';
+import useHeartbeatHook from './utils/useHeartbeatHook';
+import useHandleAppExitHook from './utils/useHandleAppExitHook';
 
 const PrivateRoutes = () => {
   const authenticated = useSelector(
@@ -134,30 +131,6 @@ const Animated = () => {
           }
         />
         <Route
-          path="/hostbillinghistory"
-          element={
-            <Transitions>
-              <HostBillingHistory />
-            </Transitions>
-          }
-        />
-        <Route
-          path="/providerbillinghistory"
-          element={
-            <Transitions>
-              <ProviderBillingHistory />
-            </Transitions>
-          }
-        />
-        <Route
-          path="/appview"
-          element={
-            <Transitions>
-              <AppView />
-            </Transitions>
-          }
-        />
-        <Route
           path="/hostpayment"
           element={
             <Transitions>
@@ -197,22 +170,14 @@ const Animated = () => {
             </Transitions>
           }
         />
-        <Route
-          path="/testapi"
-          element={
-            <Transitions>
-              <TestApi />
-            </Transitions>
-          }
-        />
       </Route>
     </Routes>
   );
 };
 
-export default function App() {
+const App = () => {
   useHeartbeatHook();
-
+  useHandleAppExitHook();
   return (
     <Router>
       <NavigationLayoutTransitionWrapper>
@@ -222,4 +187,6 @@ export default function App() {
       </NavigationLayoutTransitionWrapper>
     </Router>
   );
-}
+};
+
+export default App;

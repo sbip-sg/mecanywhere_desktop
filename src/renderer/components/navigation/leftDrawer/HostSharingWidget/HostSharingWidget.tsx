@@ -11,8 +11,6 @@ import Transitions from '../../../transitions/Transition';
 import PreSharingEnabledComponent from './PreSharingEnabledComponent';
 import PostSharingEnabledComponent from './PostSharingEnabledComponent';
 import {
-  pauseExecutor,
-  unpauseExecutor,
   updateConfig,
 } from 'renderer/services/ExecutorServices';
 
@@ -68,7 +66,7 @@ const HostSharingWidget = () => {
     setIsLoading(true);
     await handleDeregisterHost();
     await new Promise((resolve) => setTimeout(resolve, 1000));
-    console.log('handleDisableResourceSharing');
+    // console.log('handleDisableResourceSharing');
     setResourceSharingEnabled(false);
     setIsLoading(false);
   };

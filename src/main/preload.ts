@@ -11,32 +11,12 @@ const subscribe = (channel: string, func: (...args: any[]) => void) => {
 };
 
 const electronHandler = {
-  // ipcRenderer: {
-  //   sendMessage(channel: Channels, args: unknown[]) {
-  //     ipcRenderer.send(channel, args);
-  //   },
-  //   on(channel: Channels, func: (...args: unknown[]) => void) {
-  //     const subscription = (_event: IpcRendererEvent, ...args: unknown[]) =>
-  //       func(...args);
-  //     ipcRenderer.on(channel, subscription);
-
-  //     return () => {
-  //       ipcRenderer.removeListener(channel, subscription);
-  //     };
-  //   },
-  //   once(channel: Channels, func: (...args: unknown[]) => void) {
-  //     ipcRenderer.once(channel, (_event, ...args) => func(...args));
-  //   },
-  // },
-  // process.once("loaded", () => {
-  //   contextBridge.exposeInMainWorld('electronAPI', {
   openLinkPlease: () => ipcRenderer.invoke('openLinkPlease'),
   //   })
   // });
   openWindow: () => {
-      ipcRenderer.send('message:loginShow');
-    },
-    // Other method you want to add like has(), reset(), etc.
+    ipcRenderer.send('message:loginShow');
+  },
   store: {
     get(key) {
       return ipcRenderer.sendSync('electron-store-get', key);
@@ -44,7 +24,16 @@ const electronHandler = {
     set(property, val) {
       ipcRenderer.send('electron-store-set', property, val);
     },
-    // Other method you want to add like has(), reset(), etc.
+  },
+
+  // A method to send 'app-close-confirmed' from renderer to main process.
+  confirmAppClose: () => {
+    ipcRenderer.send('app-close-confirmed');
+  },
+
+  // A method to subscribe to 'app-close-initiated' from main process in renderer process.
+  onAppCloseInitiated: (callback: (...args: any[]) => void) => {
+    subscribe('app-close-initiated', callback);
   },
 
   // TODO: extract channel names

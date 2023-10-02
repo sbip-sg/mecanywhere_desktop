@@ -20,7 +20,7 @@ import ToggleButton from '@mui/material/ToggleButton';
 import ToggleButtonGroup from '@mui/material/ToggleButtonGroup';
 import { useTheme } from '@emotion/react';
 import { IconButton } from '@mui/material';
-import { ExternalDataEntry } from '../../common/dataTypes';
+import { ExternalDataEntry } from '../../../utils/dataTypes';
 import { styled } from '@mui/material/styles';
 import CustomTooltip from './CustomTooltip';
 

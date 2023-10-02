@@ -46,17 +46,6 @@ const HostTab = () => {
         </ListItemButton>
       </List>
       <Divider />
-      <List disablePadding component="li">
-        <ListItemButton onClick={() => navigate('/testapi')} key="testapi">
-          <PaidIcon sx={{ marginRight: listItemSpacing }} />
-          <Typography
-            margin={`${listTopBottomMargin} 0 ${listTopBottomMargin} 0`}
-          >
-            TestAPI
-          </Typography>
-        </ListItemButton>
-      </List>
-      <Divider />
     </>
   );
 };

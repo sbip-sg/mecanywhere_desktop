@@ -24,13 +24,13 @@ import { resolveHtmlPath } from './util';
 
 const Store = require('electron-store');
 const io = require('socket.io')();
-const { shell } = require('electron');
 import log from 'electron-log/main';
 
-// Optional, initialize the logger for any renderer process
-log.initialize({ preload: true });
+process.env['ELECTRON_DISABLE_SECURITY_WARNINGS'] = 'true';
 
-log.info('Log from the main process');
+log.initialize({ preload: true });
+// log.info('Log from the main process');
+
 const start = performance.now();
 
 const store = new Store();
@@ -123,6 +123,13 @@ ipcMain.on('stop-consumer', async (event, queueName) => {
   workerWindow.webContents.send('stop-consumer', queueName);
 });
 
+ipcMain.on('app-close-confirmed', () => { // Listens for the renderer process to confirm the app can be closed.
+  if (!mainWindow) {
+    throw new Error('"mainWindow" is not defined');
+  }
+  mainWindow.destroy(); // Actually closes the app.
+});
+
 if (process.env.NODE_ENV === 'production') {
   const sourceMapSupport = require('source-map-support');
   sourceMapSupport.install();
@@ -208,6 +215,11 @@ const createWindow = async () => {
     } else {
       mainWindow.show();
     }
+  });
+  
+  mainWindow.on('close', (e) => {
+    e.preventDefault(); // Prevents the window from closing immediately.
+    mainWindow?.webContents.send('app-close-initiated'); // Sends message to renderer process.
   });
 
   mainWindow.on('closed', () => {
