@@ -7,6 +7,8 @@ global_did = None
 access_token = None
 auth_header = None
 
+DISCOVERY_URL = 'http://sbip-g2.d2.comp.nus.edu.sg:11000/fn-discovery'
+
 # TODO: change to signed vc
 async def initiateConnection(did: str, vc: str) -> None:
   global global_did, access_token, auth_header
@@ -14,7 +16,7 @@ async def initiateConnection(did: str, vc: str) -> None:
   vc_obj = json.loads(vc)
   try:
     r = requests.post(
-      'http://localhost:7000/registration/register_client',
+      f'{DISCOVERY_URL}/registration/register_client',
       json = { 'did': did, 'credential': vc_obj }
     )
     r.raise_for_status()
@@ -46,7 +48,7 @@ async def offload_task_and_get_result(
     payload['runtime'] = runtime
   try:
     r = requests.post(
-      'http://localhost:7000/offloading/offload_task_and_get_result',
+      f'{DISCOVERY_URL}/offloading/offload_task_and_get_result',
       json = payload,
       headers = auth_header
     )
@@ -78,7 +80,7 @@ async def offload_task(
     payload['runtime'] = runtime
   try:
     r = requests.post(
-      'http://localhost:7000/offloading/offload_task',
+      f'{DISCOVERY_URL}/offloading/offload_task',
       json = payload,
       headers = auth_header
     )
@@ -93,7 +95,7 @@ async def poll_result(corr_id: str):
   print('Polling result...', corr_id)
   try:
     r = requests.post(
-      'http://localhost:7000/offloading/poll_result',
+      f'{DISCOVERY_URL}/offloading/poll_result',
       json = { 'did': global_did, 'correlation_id': corr_id },
       headers = auth_header
     )
@@ -105,7 +107,7 @@ async def poll_result(corr_id: str):
 async def disconnect():
   print('Disconnecting...')
   return requests.post(
-    'http://localhost:7000/registration/deregister_client',
+    f'{DISCOVERY_URL}/registration/deregister_client',
     json = { 'did': global_did },
     headers = auth_header
   )
