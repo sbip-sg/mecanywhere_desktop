@@ -8,7 +8,7 @@ import asyncio
 
 task_corr_ids = dict()
 results = dict()
-NUMBER_OF_TASKS = 10
+NUMBER_OF_TASKS = 1
 
 def callback_on_receive(id, status, response, err):
     if status == 0:
@@ -28,14 +28,18 @@ async def main():
       callback=callback_on_receive
     )
 
-  for corr_id, task_id in task_corr_ids.items():
-    status, response, error, task_id = await meca_api.poll_result(corr_id)
-    if status == 1:
-      results[task_id] = response
-      print("Received result for task", task_id, ":", response)
-    else:
-      print(error, "for task: ", task_id, "corr_id:", corr_id)
-      break
+  tried = 0
+  while tried <= 1 and len(results) < NUMBER_OF_TASKS:
+    for corr_id, task_id in task_corr_ids.items():
+      status, response, error, task_id = await meca_api.poll_result(corr_id)
+      if status == 1:
+        results[task_id] = response
+        print("Received result for task", task_id, ":", response)
+      else:
+        print(error, "for task: ", task_id, "corr_id:", corr_id)
+        tried += 1
+        time.sleep(2)
+        break
 
   print("All results received:", results)
   print("Result count:", len(results))
