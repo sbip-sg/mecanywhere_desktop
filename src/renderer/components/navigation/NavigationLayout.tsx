@@ -9,7 +9,7 @@ import { MenuComponent } from './menu';
 const NavigationLayout = ({ children }: { children: ReactNode }) => {
   return (
     <Box sx={{ height: '100%' }} id="outermost-nav-container">
-      {useSelector((state: RootState) => state.accountUser.authenticated) ? (
+      {useSelector((state: RootState) => state.userReducer.authenticated) ? (
         <Box sx={{ display: 'flex', height: '100%' }} id="outer-nav-container">
           <CssBaseline />
           <MenuComponent />

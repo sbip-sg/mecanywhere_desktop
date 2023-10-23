@@ -1,10 +1,9 @@
+import { useState, useEffect } from 'react';
 import { Grid, Typography, Box } from '@mui/material';
-import mockUserBillingData from '../../../../../assets/mockUserBillingData.json';
 import CurrentBillingCard from '../components/cards/CurrentBillingCard';
 import PastBillingCard from '../components/cards/PastBillingCard';
 import PastBillingList from '../components/list/PastBillingList';
 import { ExternalDataEntry } from '../../../utils/dataTypes';
-import { useState, useEffect } from 'react';
 import { registerHost } from '../../../services/RegistrationServices';
 import actions from '../../../redux/actionCreators';
 import { findDidHistory } from '../../../services/TransactionServices';
@@ -17,11 +16,10 @@ const HostBillingDashboard = () => {
     const did = window.electron.store.get('did');
     const getAccessToken = async () => {
       if (credential && did) {
-        actions.setCredential(credential);
         try {
           const accessTokenResponse = await registerHost(did, credential);
           const { access_token } = accessTokenResponse;
-          actions.setHostAccessToken(access_token);
+          actions.setAccessToken(access_token);
           const didHistoryResponse = await findDidHistory(access_token, did);
           if (didHistoryResponse) {
             const responseBody = await didHistoryResponse.json();
@@ -30,15 +28,12 @@ const HostBillingDashboard = () => {
           }
         } catch (error) {
           console.error('Error during registerHost:', error);
-          // Handle error appropriately
         }
       }
     };
 
     getAccessToken();
-    // setData(mockUserData);
   }, []);
-
 
   return (
     <Box

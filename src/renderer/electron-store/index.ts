@@ -6,6 +6,7 @@ const deleteAccount = () => {
   window.electron.store.set('privateKey', '');
   window.electron.store.set('did', '');
   window.electron.store.set('credential', '');
+  window.electron.store.set('role', '');
 };
 
 export default deleteAccount;

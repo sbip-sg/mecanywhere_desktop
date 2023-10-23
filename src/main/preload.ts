@@ -1,6 +1,7 @@
 // Disable no-unused-vars, broken for spread args
 /* eslint no-unused-vars: off */
 import { contextBridge, ipcRenderer, IpcRendererEvent } from 'electron';
+// import log from 'electron-log/main';
 
 // export type Channels = 'ipc-example';
 
@@ -26,18 +27,21 @@ const electronHandler = {
     },
   },
 
-  // A method to send 'app-close-confirmed' from renderer to main process.
+  onAppCloseInitiated: (callback: (...args: any[]) => void) => {
+    subscribe('app-close-initiated', callback);
+  },
   confirmAppClose: () => {
     ipcRenderer.send('app-close-confirmed');
   },
 
-  // A method to subscribe to 'app-close-initiated' from main process in renderer process.
-  onAppCloseInitiated: (callback: (...args: any[]) => void) => {
-    subscribe('app-close-initiated', callback);
+  onAppReloadInitiated: (callback: (...args: any[]) => void) => {
+    subscribe('app-reload-initiated', callback);
+  },
+  confirmAppReload: () => {
+    ipcRenderer.send('app-reload-confirmed');
   },
 
   // TODO: extract channel names
-
   // from host
   startConsumer: (queueName: string) =>
     ipcRenderer.send('start-consumer', queueName),

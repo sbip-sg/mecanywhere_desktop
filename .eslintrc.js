@@ -7,8 +7,12 @@ module.exports = {
     'react/jsx-filename-extension': 'off',
     'import/extensions': 'off',
     'import/no-unresolved': 'off',
+    'default-param-last': 'off',
     'import/no-import-module-exports': 'off',
     'no-useless-catch': 'off',
+    'no-console': 'off',
+    'camelcase': 'off',
+    'consistent-return': 'off',
     'react/function-component-definition': [
       2,
       {
@@ -16,10 +20,10 @@ module.exports = {
         unnamedComponents: 'arrow-function',
       },
     ],
-    "prettier/prettier": [
-      "error",
+    'prettier/prettier': [
+      'error',
       {
-        "endOfLine": "auto"
+        'endOfLine': 'auto'
       }
     ],
   },

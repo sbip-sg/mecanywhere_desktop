@@ -16,7 +16,7 @@ const Payment = () => {
   };
   const handleRegisterMetamaskAccount = async () => {
     console.log('handleRegisterMetamaskAccount');
-    const accessToken = reduxStore.getState().accountUser.userAccessToken;
+    const { accessToken } = reduxStore.getState().userReducer;
     console.log('accessToken', accessToken);
     const did = window.electron.store.get('did');
     console.log('account', metamaskAccount);

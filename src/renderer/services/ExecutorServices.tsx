@@ -9,9 +9,7 @@ export async function stopExecutor() {
       },
     });
     if (!response.ok) {
-      throw new Error(
-        `Failed to stop executor: ${response.statusText}`
-      );
+      throw new Error(`Failed to stop executor: ${response.statusText}`);
     }
     const res = await response.json();
     return res;
@@ -31,8 +29,7 @@ export async function unpauseExecutor() {
     if (!response.ok) {
       throw new Error(`Failed to unpause executor: ${response.statusText}`);
     }
-    const res = await response.json();
-    return res;
+    return true;
   } catch (error) {
     console.error('There was a problem with the fetch operation:', error);
   }
@@ -49,14 +46,13 @@ export async function pauseExecutor() {
     if (!response.ok) {
       throw new Error(`Failed to pause executor: ${response.statusText}`);
     }
-    const res = await response.json();
-    return res;
+    return true;
   } catch (error) {
     console.error('There was a problem with the fetch operation:', error);
   }
 }
 
-export async function updateConfig(config) {
+export async function updateConfig(config: any) {
   try {
     const response = await fetch(`${url}/update-config`, {
       method: 'POST',

@@ -9,6 +9,7 @@ import {
   ResponsiveContainer,
 } from 'recharts';
 import React, { useState, useEffect } from 'react';
+import { styled } from '@mui/material/styles';
 import 'react-datepicker/dist/react-datepicker.css';
 import DatePicker from 'react-datepicker';
 import Box from '@mui/material/Box';
@@ -21,14 +22,9 @@ import ToggleButtonGroup from '@mui/material/ToggleButtonGroup';
 import { useTheme } from '@emotion/react';
 import { IconButton } from '@mui/material';
 import { ExternalDataEntry } from '../../../utils/dataTypes';
-import { styled } from '@mui/material/styles';
 import CustomTooltip from './CustomTooltip';
-
-// import log from 'electron-log/main';
-
-// Optional, initialize the logger for any renderer process
 import log from 'electron-log/renderer';
-log.info('Log from the renderer process');
+
 interface GroupedData {
   month: string;
   resource_consumed: number;
@@ -104,7 +100,7 @@ const CustomLineChart: React.FC<CustomLineChartProps> = ({
     }
     return true;
   });
-  
+
   // log.info('filteredData', filteredData);
 
   const groupedDataObject = filteredData.reduce((acc, entry) => {

@@ -1,24 +1,14 @@
 import { combineReducers } from 'redux';
 import { Job, JobResult } from 'renderer/utils/jobs';
 
-export interface AccountUserState {
-  publicKey: string;
-  did: string;
+interface UserState {
   authenticated: boolean;
-  userAccessToken: string;
-  hostAccessToken: string;
+  accessToken: string;
 }
 
-export const initialAccountUserState: AccountUserState = {
-  publicKey: '',
-  did: '',
+const initialUserState: UserState = {
   authenticated: false,
-  userAccessToken: '',
-  hostAccessToken: '',
-};
-
-export const initialProviderState = {
-  isProvider: false,
+  accessToken: '',
 };
 
 interface JobsState {
@@ -43,50 +33,32 @@ export const transactionDetailsReducer = (state = {}, action: any) => {
   }
 };
 
-export const isProviderReducer = (
-  state = initialProviderState,
-  action: any
-) => {
+export const roleReducer = (state = {}, action: any) => {
   switch (action.type) {
-    case 'setIsProvider':
+    case 'setRole':
       return {
         ...state,
-        isProvider: action.payload,
+        role: action.payload,
       };
     default:
       return state;
   }
 };
 
-export const accountUserReducer = (
-  state: AccountUserState = initialAccountUserState,
-  action: any
-): AccountUserState => {
+export const userReducer = (
+  state: UserState = initialUserState,
+  action: any,
+): UserState => {
   switch (action.type) {
-    case 'setPublicKey':
-      return {
-        ...state,
-        publicKey: action.payload,
-      };
-    case 'setDID':
-      return {
-        ...state,
-        did: action.payload,
-      };
     case 'setAuthenticated':
       return {
         ...state,
         authenticated: action.payload,
       };
-    case 'setUserAccessToken':
+    case 'setAccessToken':
       return {
         ...state,
-        userAccessToken: action.payload,
-      };
-    case 'setHostAccessToken':
-      return {
-        ...state,
-        hostAccessToken: action.payload,
+        accessToken: action.payload,
       };
     default:
       return state;
@@ -132,10 +104,10 @@ const jobsReducer = (
 };
 
 const reducers = combineReducers({
-  accountUser: accountUserReducer,
   jobs: jobsReducer,
-  isProvider: isProviderReducer,
-  transactionDetails: transactionDetailsReducer,
+  roleReducer: roleReducer,
+  transactionDetailsReducer: transactionDetailsReducer,
+  userReducer: userReducer,
 });
 
 export default reducers;

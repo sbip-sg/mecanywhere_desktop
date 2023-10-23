@@ -11,13 +11,15 @@ export const handleRegisterHost = async () => {
   const credential = JSON.parse(window.electron.store.get('credential'));
   const did = window.electron.store.get('did');
   if (credential && did) {
-    console.log(credential, did);
-    actions.setCredential(credential);
+    console.log('credential, did', credential, did);
     const response = await registerHost(did, credential);
     const { access_token } = response;
-    actions.setHostAccessToken(access_token);
+    console.log('access_token', access_token);
+    actions.setAccessToken(access_token);
     const unpauseResponse = await unpauseExecutor();
-    console.log(unpauseResponse);
+    if (!unpauseResponse) {
+      console.error('Unpause failed.');
+    }
     if (response) {
       window.electron.startConsumer(did);
     } else {
@@ -30,12 +32,15 @@ export const handleRegisterHost = async () => {
 
 export const handleDeregisterHost = async () => {
   const did = window.electron.store.get('did');
-  const accessToken = reduxStore.getState().accountUser.hostAccessToken;
+  const { accessToken } = reduxStore.getState().userReducer;
   const pauseResponse = await pauseExecutor();
-  console.log('pauseResponse from disabling sharing', pauseResponse);
+  if (!pauseResponse) {
+    console.error('Pause failed.');
+  }
+  log.info('in deregister');
   const response = await deregisterHost(accessToken, did);
   if (response && response.ok) {
-    actions.setHostAccessToken('');
+    actions.setAccessToken('');
     window.electron.stopConsumer(did);
     log.info('successfully deregistered');
   } else {

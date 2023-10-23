@@ -55,7 +55,8 @@ const TransactionDetails: React.FC = () => {
   // const { sessionId } = params;
   const theme = useTheme();
   const navigate = useNavigate();
-  const data = reduxStore.getState().transactionDetails.transactionDetails;
+  const data = reduxStore.getState().transactionDetailsReducer.transactionDetails;
+  console.log("transaction", data)
   if (!data) {
     return <div>Loading...</div>;
   }

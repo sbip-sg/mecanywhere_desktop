@@ -65,9 +65,7 @@ ipcMain.handle('openLinkPlease', () => {
 });
 
 ipcMain.on('message:loginShow', (event) => {
-  console.log('showLoginWindowpre');
   showLoginWindow();
-  console.log('showLoginWindowpost');
 });
 
 ipcMain.on('electron-store-get', async (event, key) => {
@@ -123,11 +121,18 @@ ipcMain.on('stop-consumer', async (event, queueName) => {
   workerWindow.webContents.send('stop-consumer', queueName);
 });
 
-ipcMain.on('app-close-confirmed', () => { // Listens for the renderer process to confirm the app can be closed.
+ipcMain.on('app-close-confirmed', () => {
   if (!mainWindow) {
     throw new Error('"mainWindow" is not defined');
   }
-  mainWindow.destroy(); // Actually closes the app.
+  mainWindow.destroy();
+});
+
+ipcMain.on('app-reload-confirmed', () => {
+  if (!mainWindow) {
+    throw new Error('"mainWindow" is not defined');
+  }
+  mainWindow.reload();
 });
 
 if (process.env.NODE_ENV === 'production') {
@@ -157,11 +162,7 @@ const installExtensions = async () => {
 
 const createWindow = async () => {
   if (isDebug) {
-    const debug1 = performance.now() - start;
-    console.log(`debug1 ${debug1} ms`);
     await installExtensions();
-    const debug2 = performance.now() - start;
-    console.log(`debug2 ${debug2} ms`);
   }
 
   const RESOURCES_PATH = app.isPackaged
@@ -184,7 +185,6 @@ const createWindow = async () => {
       webSecurity: false,
     },
   });
-  console.log('mainWindow', mainWindow);
 
   mainWindow.loadURL(resolveHtmlPath('index.html'));
 
@@ -216,38 +216,26 @@ const createWindow = async () => {
       mainWindow.show();
     }
   });
-  
-  mainWindow.on('close', (e) => {
-    e.preventDefault(); // Prevents the window from closing immediately.
-    mainWindow?.webContents.send('app-close-initiated'); // Sends message to renderer process.
-  });
 
+  mainWindow.on('close', (e) => {
+    log.info('mainWindow close');
+    e.preventDefault();
+    mainWindow?.webContents.send('app-close-initiated');
+  });
   mainWindow.on('closed', () => {
+    log.info('mainWindow closed');
     mainWindow = null;
   });
-
+  mainWindow.webContents.on('will-navigate', (event) => {
+    log.info('mainWindow did-start-navigation');
+    event.preventDefault();
+    mainWindow?.webContents.send('app-reload-initiated');
+  });
   const menuBuilder = new MenuBuilder(mainWindow);
   menuBuilder.buildMenu();
 
-  // Open urls in the user's browser
-  // mainWindow.webContents.setWindowOpenHandler((edata) => {
-  //   shell.openExternal(edata.url);
-  //   return { action: 'deny' };
-  // });
-
-  // Remove this if your app does not use auto updates
-  // eslint-disable-next-line
   new AppUpdater();
 };
-
-/**
- * Add event listeners...
- */
-// function showLoginWindow() {
-//   // window.loadURL('https://www.your-site.com/login')
-//   mainWindow.loadFile('login.html') // For testing purposes only
-//       .then(() => { mainWindow.show(); })
-// }
 
 app.on('window-all-closed', () => {
   // Respect the OSX convention of having the application in memory even

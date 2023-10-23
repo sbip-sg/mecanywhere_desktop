@@ -61,6 +61,20 @@ const ProviderTab = () => {
         </ListItemButton>
       </List>
       <Divider />
+      <List disablePadding component="li">
+        <ListItemButton
+          onClick={() => navigate('/hosttxndashboard')}
+          key="switch_view_to_host"
+        >
+          <PaidIcon sx={{ marginRight: listItemSpacing }} />
+          <Typography
+            margin={`${listTopBottomMargin} 0 ${listTopBottomMargin} 0`}
+          >
+            Switch To Host View (Test)
+          </Typography>
+        </ListItemButton>
+      </List>
+      <Divider />
     </>
   );
 };

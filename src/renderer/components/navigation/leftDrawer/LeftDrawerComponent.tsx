@@ -3,13 +3,13 @@ import Drawer from '@mui/material/Drawer';
 import Toolbar from '@mui/material/Toolbar';
 import { useNavigate } from 'react-router-dom';
 import { useTheme } from '@emotion/react';
-import { useSelector } from 'react-redux';
-import { RootState } from '../../../redux/store';
 import ProviderTab from './ProviderTab';
 import HostTab from './HostTab';
 
 const LeftDrawerComponent = () => {
   const theme = useTheme();
+  const role = window.electron.store.get('role');
+
   return (
     <Drawer
       id="left-drawer"
@@ -32,11 +32,9 @@ const LeftDrawerComponent = () => {
       <Toolbar sx={{ backgroundColor: 'red' }} />
       <Box id="drawerlist-wrapper" sx={{ height: '100%', overflow: 'auto' }}>
         <Box id="drawerlist-wrapper" sx={{ height: '100%', overflow: 'auto' }}>
-          {useSelector((state: RootState) => state.isProvider.isProvider) ? (
-            <ProviderTab />
-          ) : (
-            <HostTab />
-          )}
+          {role === 'host' && <HostTab />}
+          {role === 'provider' && <ProviderTab />}
+          {/* {role === 'client' && <ClientTab />} */}
         </Box>
       </Box>
     </Drawer>

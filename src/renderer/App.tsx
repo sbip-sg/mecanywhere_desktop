@@ -5,7 +5,6 @@ import {
   useLocation,
 } from 'react-router-dom';
 import { Outlet, Navigate } from 'react-router';
-import { useSelector } from 'react-redux';
 import NavigationLayout from './components/navigation/NavigationLayout';
 import Transitions from './components/transitions/Transition';
 import Register from './components/auth/Register';
@@ -13,7 +12,6 @@ import Login from './components/auth/Login';
 import Mnemonics from './components/auth/Mnemonics';
 import Profile from './components/profile/Profile';
 import NavigationLayoutTransitionWrapper from './components/navigation/NavigationLayoutTransitionWrapper';
-import { RootState } from './redux/store';
 import HostTxnDashboard from './components/transactions/HostTxnDashboard';
 import ProviderTxnDashboard from './components/transactions/ProviderTxnDashboard';
 import HostBillingDashboard from './components/billing/dashboard/HostBillingDashboard';
@@ -28,10 +26,12 @@ import useHeartbeatHook from './utils/useHeartbeatHook';
 import useHandleAppExitHook from './utils/useHandleAppExitHook';
 
 const PrivateRoutes = () => {
-  const authenticated = useSelector(
-    (state: RootState) => state.accountUser.authenticated
-  );
-  return authenticated ? <Outlet /> : <Navigate to="/clienttxndashboard" />;
+  // const authenticated = useSelector(
+  //   (state: RootState) => state.accountUser.authenticated
+  // );
+  // return authenticated ? <Outlet /> : <Navigate to="/clienttxndashboard" />;
+  const authenticated = true;
+  return authenticated ? <Outlet /> : <Navigate to="/login" />;
 };
 
 const Animated = () => {

@@ -80,7 +80,7 @@ export async function addDummyHistory(token: string, did: string) {
     if (!response.ok) {
       throw new Error('Network response not ok');
     }
-    return response;
+    return true;
   } catch (error) {
     console.error('There was a problem with the fetch operation:', error);
   }

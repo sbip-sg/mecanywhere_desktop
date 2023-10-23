@@ -16,11 +16,24 @@ import logoTest from '../../../../assets/logo-test.png';
 import Transitions from '../transitions/Transition';
 import FormSchema from '../../utils/FormSchema';
 import handleLogin from './handleLogin';
-import { RootState } from '../../redux/store';
+// import { RootState } from '../../redux/store';
 
 interface FormValues {
   password: string;
 }
+
+const getMessageByRole = (role: String) => {
+  switch (role) {
+    case 'host':
+      return 'You have previously registered as a host on this device. Please log in to continue.';
+    case 'provider':
+      return 'You have previously registered as a provider on this device. Please log in to continue.';
+    case 'client':
+      return 'You have previously registered as a client on this device. Please log in to continue.';
+    default:
+      return 'It appears you have yet to set up MECAnywhere on this device. To get started, please proceed with the registration.';
+  }
+};
 
 const Login = () => {
   const [isLoading, setIsLoading] = useState(false);
@@ -30,9 +43,12 @@ const Login = () => {
   const handleCloseErrorDialog = () => {
     setErrorDialogOpen(false);
   };
-  const isProvider = useSelector(
-    (state: RootState) => state.isProvider.isProvider
-  );
+  // const isProvider = useSelector(
+  //   (state: RootState) => state.isProvider.isProvider
+  // );
+
+  const role = window.electron.store.get('role');
+  console.log("role", role)
   const handleSubmit = useCallback(
     async (values: FormValues, formActions: FormikHelpers<FormValues>) => {
       setIsLoading(true);
@@ -43,10 +59,12 @@ const Login = () => {
         const userIsAuthenticated = true;
         if (userIsAuthenticated) {
           actions.setAuthenticated(true);
-          if (isProvider) {
+          if (role === 'host') {
+            navigate('/hosttxndashboard');
+          } else if (role === 'provider') {
             navigate('/providertxndashboard');
           } else {
-            navigate('/hosttxndashboard');
+            console.error('invalid role');
           }
         } else {
           setErrorMessage('Wrong password');
@@ -58,7 +76,7 @@ const Login = () => {
       }
       setIsLoading(false);
     },
-    [isProvider, navigate]
+    [role, navigate]
   );
 
   return isLoading ? (
@@ -114,9 +132,7 @@ const Login = () => {
                 textAlign="center"
                 marginTop="0.5rem"
               >
-                {useSelector((state: RootState) => state.isProvider.isProvider)
-                  ? 'You have previously registered as a parent organization on this device. Please log in to continue.'
-                  : 'You have previously registered as a client/host on this device. Please log in to continue.'}
+                {getMessageByRole(window.electron.store.get('role'))}
               </Typography>
               <Stack
                 sx={{ pt: 4 }}

@@ -7,23 +7,27 @@ import RadioGroup from '@mui/material/RadioGroup';
 import FormControlLabel from '@mui/material/FormControlLabel';
 import FormControl from '@mui/material/FormControl';
 import FormLabel from '@mui/material/FormLabel';
-import actions from '../../redux/actionCreators';
+// import actions from '../../redux/actionCreators';
 
 const RoleSelection = () => {
   const navigate = useNavigate();
   const theme = useTheme();
-  const [selectedRole, setSelectedRole] = useState('host/client');
+  const [selectedRole, setSelectedRole] = useState('host');
   const handleOnClick = () => {
     navigate('/mnemonics');
   };
   useEffect(() => {
-    if (selectedRole === 'host/client') {
-      actions.setIsProvider(false);
+    if (selectedRole === 'host') {
+      window.electron.store.set('role', 'host');
+      // actions.setIsProvider(false);
+    } else if (selectedRole === 'provider') {
+      window.electron.store.set('role', 'provider');
+      // actions.setIsProvider(true);
     } else {
-      actions.setIsProvider(true);
+      console.error("no role selected!")
     }
-    // console.log("what do you want redux selected () ")
   }, [selectedRole]);
+
   return (
     <Grid container sx={{ height: '92vh' }}>
       <Grid
@@ -65,7 +69,7 @@ const RoleSelection = () => {
             Select a role below:
           </FormLabel>
           <RadioGroup
-            defaultValue="host/client"
+            defaultValue="host"
             name="radio-buttons-group"
             onChange={(event) => setSelectedRole(event.target.value)}
           >
@@ -78,7 +82,7 @@ const RoleSelection = () => {
               }}
             >
               <FormControlLabel
-                value="host/client"
+                value="host"
                 control={
                   <Radio
                     sx={{
@@ -136,7 +140,7 @@ const RoleSelection = () => {
               >
                 Select this if you are intending to use this application as the
                 parent organization or provider which manages end users which
-                may be the aforementioned host / client roles. If you wish to
+                may be the aforementioned host roles. If you wish to
                 use this application as some other roles in the future, keep in
                 mind that you will need to overwrite the existing data on this
                 device before you can register for those new roles.
