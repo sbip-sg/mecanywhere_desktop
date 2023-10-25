@@ -16,11 +16,9 @@ import HostTxnDashboard from './components/transactions/HostTxnDashboard';
 import ProviderTxnDashboard from './components/transactions/ProviderTxnDashboard';
 import HostBillingDashboard from './components/billing/dashboard/HostBillingDashboard';
 import ProviderBillingDashboard from './components/billing/dashboard/ProviderBillingDashboard';
-import HostWithdrawal from './components/misc/HostWithdrawal';
 import TransactionDetails from './components/transactions/TransactionDetails';
 import RoleSelection from './components/auth/RoleSelection';
-import UserManagement from './components/parentOrganization/UserManagement';
-import ProviderPayment from './components/payment/ProviderPayment';
+import UserManagement from './components/userManagement/UserManagement';
 import Settings from './components/settings/Settings';
 import useHeartbeatHook from './utils/useHeartbeatHook';
 import useHandleAppExitHook from './utils/useHandleAppExitHook';
@@ -131,14 +129,6 @@ const Animated = () => {
           }
         />
         <Route
-          path="/hostpayment"
-          element={
-            <Transitions>
-              <HostWithdrawal />
-            </Transitions>
-          }
-        />
-        <Route
           path="/details/:sessionId"
           element={
             <Transitions>
@@ -151,14 +141,6 @@ const Animated = () => {
           element={
             <Transitions>
               <UserManagement />
-            </Transitions>
-          }
-        />
-        <Route
-          path="/providerpayment"
-          element={
-            <Transitions>
-              <ProviderPayment />
             </Transitions>
           }
         />

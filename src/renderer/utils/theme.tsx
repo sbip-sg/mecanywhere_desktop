@@ -1,46 +1,97 @@
-import * as React from 'react';
-import Button, { ButtonPropsColorOverrides } from '@mui/material/Button';
 import {
   createTheme,
   PaletteColorOptions,
-  ThemeProvider,
   ThemeOptions,
 } from '@mui/material/styles';
-import { create } from 'domain';
 
-declare module '@mui/material/styles' {
-  interface CustomPalette {
-    magenta: PaletteColorOptions;
-    purple: PaletteColorOptions;
-    cerulean: PaletteColorOptions;
-    violet: PaletteColorOptions;
-    lightPurple: PaletteColorOptions;
-    lightBlack: PaletteColorOptions;
-    mediumBlack: PaletteColorOptions;
-    darkBlack: PaletteColorOptions;
-    offWhite: PaletteColorOptions;
-    mintGreen: PaletteColorOptions;
-    deepCerulean: PaletteColorOptions;
-  }
-  interface Palette extends CustomPalette {}
-  interface PaletteOptions extends CustomPalette {}
-}
+// declare module '@mui/material/styles' {
+//   interface CustomPalette {
+//     magenta: PaletteColorOptions;
+//     purple: PaletteColorOptions;
+//     cerulean: PaletteColorOptions;
+//     violet: PaletteColorOptions;
+//     lightPurple: PaletteColorOptions;
+//     lightBlack: PaletteColorOptions;
+//     mediumBlack: PaletteColorOptions;
+//     darkBlack: PaletteColorOptions;
+//     offWhite: PaletteColorOptions;
+//     mintGreen: PaletteColorOptions;
+//     deepCerulean: PaletteColorOptions;
+//   }
+// }
 
 const createColor = (mainColor: string) =>
   createTheme().palette.augmentColor({ color: { main: mainColor } });
 
-  // const cerulean = '#' + '7f97d8'; previous cerulean
-const cerulean = '#' + '829CFF';
-const deepCerulean = '#' + '6485FF';
-const lightPurple = '#' + '6D697D';
-const lightBlack = '#' + '292733';
-const mediumBlack = '#' + '202028';
-const darkBlack = '#' + '18191C';
-const mintGreen = '#' + '35D4C7';
-const offWhite = '#' + 'F7F7F7';
-// const lightBlue =
+// const cerulean = '#7f97d8'; previous cerulean
+const cerulean = '#829CFF';
+const deepCerulean = '#6485FF';
+const lightPurple = '#6D697D';
+const lightBlack = '#292733';
+const mediumBlack = '#202028';
+const darkBlack = '#18191C';
+const mintGreen = '#35D4C7';
+const offWhite = '#F7F7F7';
+const violet = '#BC00A3';
 
 const themeOptions: ThemeOptions = {
+  palette: {
+    // background: {
+    //   default: mediumBlack,
+    // },
+    cerulean: {
+      main: cerulean,
+    },
+    deepCerulean: {
+      main: deepCerulean,
+    },
+    violet: {
+      main: violet,
+    },
+    lightPurple: {
+      main: lightPurple,
+    },
+    lightBlack: {
+      main: lightBlack,
+    },
+    mediumBlack: {
+      main: mediumBlack,
+    },
+    darkBlack: {
+      main: darkBlack,
+    },
+    mintGreen: {
+      main: mintGreen,
+    },
+    offWhite: {
+      main: offWhite
+    },
+    // cerulean: createColor(cerulean),
+    // deepCerulean: createColor(deepCerulean),
+    // violet: createColor('#BC00A3'),
+    // lightPurple: createColor(lightPurple),
+    // lightBlack: createColor(lightBlack),
+    // mediumBlack: createColor(mediumBlack),
+    // darkBlack: createColor(darkBlack),
+    // mintGreen: createColor(mintGreen),
+    // offWhite: createColor(offWhite),
+    primary: {
+      light: lightBlack,
+      main: mediumBlack,
+      dark: darkBlack,
+      contrastText: `#FFFFFF`,
+    },
+    secondary: {
+      light: `#F51474`, // magenta
+      main: `#f9f9f9`,
+      dark: `#C5BDBA`,
+      contrastText: `#790EFC`, // purple
+    },
+    text: {
+      primary: offWhite,
+      secondary: lightPurple,
+    },
+  },
   components: {
     MuiCssBaseline: {
       styleOverrides: {
@@ -124,40 +175,6 @@ const themeOptions: ThemeOptions = {
           fontSize: '1rem',
         },
       },
-    },
-  },
-  palette: {
-    background: {
-      default: mediumBlack,
-    },
-    magenta: createColor('#F51474'),
-    purple: createColor('#790EFC'),
-    cerulean: createColor(cerulean),
-    deepCerulean: createColor(deepCerulean),
-    violet: createColor('#BC00A3'),
-    lightPurple: createColor(lightPurple),
-    lightBlack: createColor(lightBlack),
-    mediumBlack: createColor(mediumBlack),
-    darkBlack: createColor(darkBlack),
-    mintGreen: createColor(mintGreen),
-    offWhite: createColor(offWhite),
-    primary: {
-      light: lightBlack,
-      main: mediumBlack,
-      dark: darkBlack,
-      contrastText: `#FFFFFF`,
-    },
-    secondary: {
-      light: `#F51474`, // magenta
-      main: `#f9f9f9`,
-      dark: `#C5BDBA`,
-      contrastText: `#790EFC`, // purple
-    },
-    text: {
-      primary: offWhite,
-      secondary: lightPurple,
-      // disabled: styles.ttt,
-      // hint: styles.tttt,
     },
   },
   typography: {

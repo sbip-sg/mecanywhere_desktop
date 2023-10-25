@@ -7,12 +7,10 @@ import {
   handleRegisterHost,
   handleDeregisterHost,
 } from 'renderer/utils/handleRegistration';
+import { updateConfig } from 'renderer/services/ExecutorServices';
 import Transitions from '../../../transitions/Transition';
 import PreSharingEnabledComponent from './PreSharingEnabledComponent';
 import PostSharingEnabledComponent from './PostSharingEnabledComponent';
-import {
-  updateConfig,
-} from 'renderer/services/ExecutorServices';
 
 const HostSharingWidget = () => {
   const theme = useTheme();
@@ -54,19 +52,16 @@ const HostSharingWidget = () => {
       mem: executorSettings.memory_mb,
       microVM_runtime: 'kata',
     };
-
     const updateConfigResponse = await updateConfig(configToUpdate);
-    console.log('updateConfigResponse', updateConfigResponse);
     await handleRegisterHost();
-    await new Promise((resolve) => setTimeout(resolve, 1000));
+    await new Promise((resolve) => setTimeout(resolve, 1000)); // remove in production; solely for visualization of loading icon
     setResourceSharingEnabled(true);
     setIsLoading(false);
   };
   const handleDisableResourceSharing = async () => {
     setIsLoading(true);
     await handleDeregisterHost();
-    await new Promise((resolve) => setTimeout(resolve, 1000));
-    // console.log('handleDisableResourceSharing');
+    await new Promise((resolve) => setTimeout(resolve, 1000)); // remove in production; solely for visualization of loading icon
     setResourceSharingEnabled(false);
     setIsLoading(false);
   };

@@ -6,6 +6,7 @@ import Divider from '@mui/material/Divider';
 import ListItemButton from '@mui/material/ListItemButton';
 import { useNavigate } from 'react-router-dom';
 import SupervisorAccountIcon from '@mui/icons-material/SupervisorAccount';
+import actions from '../../../redux/actionCreators';
 
 const ProviderTab = () => {
   const navigate = useNavigate();
@@ -23,6 +24,20 @@ const ProviderTab = () => {
             margin={`${listTopBottomMargin} 0 ${listTopBottomMargin} 0`}
           >
             Dashboard
+          </Typography>
+        </ListItemButton>
+      </List>
+      <Divider />
+      <List disablePadding component="li">
+        <ListItemButton
+          onClick={() => navigate('/providerbillingdashboard')}
+          key="billing"
+        >
+          <PaidIcon sx={{ marginRight: listItemSpacing }} />
+          <Typography
+            margin={`${listTopBottomMargin} 0 ${listTopBottomMargin} 0`}
+          >
+            Billing
           </Typography>
         </ListItemButton>
       </List>
@@ -49,21 +64,10 @@ const ProviderTab = () => {
       <Divider />
       <List disablePadding component="li">
         <ListItemButton
-          onClick={() => navigate('/providerpayment')}
-          key="billing"
-        >
-          <PaidIcon sx={{ marginRight: listItemSpacing }} />
-          <Typography
-            margin={`${listTopBottomMargin} 0 ${listTopBottomMargin} 0`}
-          >
-            Settle Payment
-          </Typography>
-        </ListItemButton>
-      </List>
-      <Divider />
-      <List disablePadding component="li">
-        <ListItemButton
-          onClick={() => navigate('/hosttxndashboard')}
+          onClick={() => {
+            navigate('/hosttxndashboard');
+            actions.setRole('host');
+          }}
           key="switch_view_to_host"
         >
           <PaidIcon sx={{ marginRight: listItemSpacing }} />

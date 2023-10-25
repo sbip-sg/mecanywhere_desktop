@@ -7,6 +7,7 @@ import ListItemButton from '@mui/material/ListItemButton';
 import { useNavigate } from 'react-router-dom';
 import { useTheme } from '@emotion/react';
 import HostSharingWidget from './HostSharingWidget/HostSharingWidget';
+import actions from '../../../redux/actionCreators';
 
 const HostTab = () => {
   const theme = useTheme();
@@ -48,7 +49,11 @@ const HostTab = () => {
       <Divider />
       <List disablePadding component="li">
         <ListItemButton
-          onClick={() => navigate('/providertxndashboard')}
+          onClick={() => {
+            console.log("aaaa")
+            navigate('/providertxndashboard');
+            actions.setRole('provider');
+          }}
           key="switch_view_to_provider"
         >
           <PaidIcon sx={{ marginRight: listItemSpacing }} />

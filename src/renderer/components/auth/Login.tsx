@@ -7,8 +7,6 @@ import CircularProgress from '@mui/material/CircularProgress';
 import { useState, useCallback } from 'react';
 import { Formik, Form, FormikHelpers } from 'formik';
 import { useNavigate } from 'react-router-dom';
-import { useTheme } from '@emotion/react';
-import { useSelector } from 'react-redux';
 import ErrorDialog from '../../utils/ErrorDialogue';
 import TextFieldWrapper from '../../utils/TextField';
 import actions from '../../redux/actionCreators';
@@ -16,7 +14,6 @@ import logoTest from '../../../../assets/logo-test.png';
 import Transitions from '../transitions/Transition';
 import FormSchema from '../../utils/FormSchema';
 import handleLogin from './handleLogin';
-// import { RootState } from '../../redux/store';
 
 interface FormValues {
   password: string;
@@ -48,7 +45,7 @@ const Login = () => {
   // );
 
   const role = window.electron.store.get('role');
-  console.log("role", role)
+  console.log('role', role);
   const handleSubmit = useCallback(
     async (values: FormValues, formActions: FormikHelpers<FormValues>) => {
       setIsLoading(true);

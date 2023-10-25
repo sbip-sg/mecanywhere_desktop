@@ -11,6 +11,14 @@ const initialUserState: UserState = {
   accessToken: '',
 };
 
+interface RoleState {
+  role: string;
+}
+
+const initialRoleState: RoleState = {
+  role: '',
+};
+
 interface JobsState {
   jobs: Job[];
   jobResults: JobResult[];
@@ -33,7 +41,10 @@ export const transactionDetailsReducer = (state = {}, action: any) => {
   }
 };
 
-export const roleReducer = (state = {}, action: any) => {
+export const roleReducer = (
+  state: RoleState = initialRoleState,
+  action: any
+) => {
   switch (action.type) {
     case 'setRole':
       return {
@@ -47,7 +58,7 @@ export const roleReducer = (state = {}, action: any) => {
 
 export const userReducer = (
   state: UserState = initialUserState,
-  action: any,
+  action: any
 ): UserState => {
   switch (action.type) {
     case 'setAuthenticated':
