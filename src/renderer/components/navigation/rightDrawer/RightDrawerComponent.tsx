@@ -20,6 +20,7 @@ import { useTheme } from '@mui/material/styles';
 import { useNavigate } from 'react-router-dom';
 import Avatar from '../menu/Avatar';
 import actions from '../../../redux/actionCreators';
+import deleteAccount from 'renderer/electron-store';
 
 // import ExitToAppIcon from '@mui/icons-material/ExitToApp';
 
@@ -155,6 +156,23 @@ const RightDrawerComponent: React.FC<RightDrawerComponentProps> = ({
                 <LogoutIcon style={{ fontSize: 28, color: 'white' }} />
               </ListItemIcon>
               <CustomListItemText text="Sign Out" />
+            </ListItemButton>
+          </ListItem>
+          <ListItem
+            key="Delete Account (Dev)"
+            disablePadding
+            sx={{ marginLeft: '0.5rem' }}
+          >
+            <ListItemButton
+              onClick={() => {
+                deleteAccount();
+                handleSignOut();
+              }}
+            >
+              <ListItemIcon>
+                <LogoutIcon style={{ fontSize: 28, color: 'white' }} />
+              </ListItemIcon>
+              <CustomListItemText text="Delete Account (Dev)" />
             </ListItemButton>
           </ListItem>
           {/* <ListItem key={"Exit App"} disablePadding>

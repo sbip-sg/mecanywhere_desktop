@@ -8,6 +8,7 @@ import { useNavigate } from 'react-router-dom';
 import { useTheme } from '@emotion/react';
 import HostSharingWidget from './HostSharingWidget/HostSharingWidget';
 import actions from '../../../redux/actionCreators';
+import deleteAccount from 'renderer/electron-store';
 
 const HostTab = () => {
   const theme = useTheme();
@@ -50,8 +51,8 @@ const HostTab = () => {
       <List disablePadding component="li">
         <ListItemButton
           onClick={() => {
-            console.log("aaaa")
             navigate('/providertxndashboard');
+            // deleteAccount();
             actions.setRole('provider');
           }}
           key="switch_view_to_provider"
@@ -60,7 +61,7 @@ const HostTab = () => {
           <Typography
             margin={`${listTopBottomMargin} 0 ${listTopBottomMargin} 0`}
           >
-            Switch To Provider View (Test)
+            Switch To Provider View (Dev)
           </Typography>
         </ListItemButton>
       </List>

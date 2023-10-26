@@ -173,7 +173,7 @@ const HostTxnDashboard = () => {
             />
           </motion.div>
         )}
-        {data.length > 0 && (
+        {hasData && (
           <motion.div
             id="table-motion-div"
             style={{

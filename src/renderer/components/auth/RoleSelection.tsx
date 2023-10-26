@@ -7,7 +7,7 @@ import RadioGroup from '@mui/material/RadioGroup';
 import FormControlLabel from '@mui/material/FormControlLabel';
 import FormControl from '@mui/material/FormControl';
 import FormLabel from '@mui/material/FormLabel';
-// import actions from '../../redux/actionCreators';
+import actions from '../../redux/actionCreators';
 
 const RoleSelection = () => {
   const navigate = useNavigate();
@@ -19,12 +19,14 @@ const RoleSelection = () => {
   useEffect(() => {
     if (selectedRole === 'host') {
       window.electron.store.set('role', 'host');
+      actions.setRole('host');
       // actions.setIsProvider(false);
     } else if (selectedRole === 'provider') {
       window.electron.store.set('role', 'provider');
+      actions.setRole('provider');
       // actions.setIsProvider(true);
     } else {
-      console.error("no role selected!")
+      console.error('no role selected!');
     }
   }, [selectedRole]);
 
@@ -118,7 +120,7 @@ const RoleSelection = () => {
               }}
             >
               <FormControlLabel
-                value="parentOrganization"
+                value="provider"
                 control={
                   <Radio
                     sx={{
@@ -129,7 +131,7 @@ const RoleSelection = () => {
                     }}
                   />
                 }
-                label="PARENT ORGANIZATION"
+                label="PROVIDER"
               />
               <Typography
                 fontSize="16px"
@@ -140,10 +142,10 @@ const RoleSelection = () => {
               >
                 Select this if you are intending to use this application as the
                 parent organization or provider which manages end users which
-                may be the aforementioned host roles. If you wish to
-                use this application as some other roles in the future, keep in
-                mind that you will need to overwrite the existing data on this
-                device before you can register for those new roles.
+                may be the aforementioned host roles. If you wish to use this
+                application as some other roles in the future, keep in mind that
+                you will need to overwrite the existing data on this device
+                before you can register for those new roles.
               </Typography>
             </Box>
           </RadioGroup>
@@ -155,8 +157,6 @@ const RoleSelection = () => {
         xs={12}
         sx={{ justifyContent: 'center', alignItems: 'top' }}
       >
-        {/* <Box sx={{display:'flex', justifyContent: "center", alignItems: 'top'}}> */}
-
         <Button onClick={handleOnClick} sx={{ height: '60%' }}>
           Continue
         </Button>
@@ -168,7 +168,6 @@ const RoleSelection = () => {
         >
           Back
         </Button>
-        {/* </Box> */}
       </Grid>
     </Grid>
   );

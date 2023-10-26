@@ -1,4 +1,4 @@
-import { Grid, Typography, Card, CardContent } from '@mui/material';
+import { Grid, Typography, Card, CardContent, Button } from '@mui/material';
 import { useTheme } from '@emotion/react';
 
 const CurrentBillingCard = () => {
@@ -24,7 +24,7 @@ const CurrentBillingCard = () => {
               variant="h5"
               component="div"
               textAlign="end"
-              style={{ color: theme.palette.mintGreen.main, fontSize: "40px" }}
+              style={{ color: theme.palette.mintGreen.main, fontSize: '40px' }}
             >
               103.12 SGD
             </Typography>
@@ -48,9 +48,28 @@ const CurrentBillingCard = () => {
               textAlign="end"
               width="90%"
             >
-              Your provider will deposit the earnings into your registered bank
-              account.
+              The outstanding amount you currently owe.
             </Typography>
+          </Grid>
+          <Grid
+            xs={12}
+            sx={{
+              display: 'flex',
+              justifyContent: 'end',
+              alignItems: 'center',
+            }}
+          >
+            <Button sx={{ padding: '0.5rem 1rem 0.5rem 1rem', backgroundColor: theme.palette.violet.main }}>
+              <Typography
+                // variant="body1"
+                fontWeight="600"
+                fontSize="16px"
+                textAlign="end"
+                width="100%"
+              >
+                Settle Payment
+              </Typography>
+            </Button>
           </Grid>
         </Grid>
       </CardContent>

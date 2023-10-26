@@ -7,6 +7,7 @@ import ListItemButton from '@mui/material/ListItemButton';
 import { useNavigate } from 'react-router-dom';
 import SupervisorAccountIcon from '@mui/icons-material/SupervisorAccount';
 import actions from '../../../redux/actionCreators';
+import deleteAccount from 'renderer/electron-store';
 
 const ProviderTab = () => {
   const navigate = useNavigate();
@@ -66,6 +67,7 @@ const ProviderTab = () => {
         <ListItemButton
           onClick={() => {
             navigate('/hosttxndashboard');
+            // deleteAccount();
             actions.setRole('host');
           }}
           key="switch_view_to_host"
@@ -74,7 +76,7 @@ const ProviderTab = () => {
           <Typography
             margin={`${listTopBottomMargin} 0 ${listTopBottomMargin} 0`}
           >
-            Switch To Host View (Test)
+            Switch To Host View (Dev)
           </Typography>
         </ListItemButton>
       </List>

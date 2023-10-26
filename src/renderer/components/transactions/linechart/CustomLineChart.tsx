@@ -23,6 +23,8 @@ import { useTheme } from '@emotion/react';
 import { IconButton } from '@mui/material';
 import { ExternalDataEntry } from '../../../utils/dataTypes';
 import CustomTooltip from './CustomTooltip';
+import { useSelector } from 'react-redux';
+
 import log from 'electron-log/renderer';
 
 interface GroupedData {
@@ -120,7 +122,34 @@ const CustomLineChart: React.FC<CustomLineChartProps> = ({
     acc[groupKey].resource_consumed += Number(entry.resource_consumed);
     return acc;
   }, {} as { [key: string]: GroupedData });
-  const groupedData: GroupedData[] = Object.values(groupedDataObject);
+  var groupedData: GroupedData[] = Object.values(groupedDataObject);
+  const halfLength = Math.ceil(groupedData.length / 2);
+  const topHalf = groupedData.slice(0, halfLength);
+  const bottomHalf = groupedData.slice(halfLength);
+
+  const swappedData = [...bottomHalf, ...topHalf].map((entry) => ({
+    month: entry.month,
+    fake_resource_consumed: entry.resource_consumed,
+  }));
+
+  groupedData.forEach((entry, index) => {
+    entry.fake_resource_consumed = swappedData[index].fake_resource_consumed;
+  });
+  const thirtyPercentLength = Math.floor(groupedData.length * 0.3);
+  const first30Percent = groupedData.slice(0, thirtyPercentLength);
+  const remaining70Percent = groupedData.slice(thirtyPercentLength);
+
+  const doubleFakeData = [...remaining70Percent, ...first30Percent].map(
+    (entry) => ({
+      month: entry.month,
+      double_fake_resource_consumed: entry.resource_consumed,
+    })
+  );
+
+  groupedData.forEach((entry, index) => {
+    entry.double_fake_resource_consumed =
+      doubleFakeData[index].double_fake_resource_consumed;
+  });
   const [anchorEl, setAnchorEl] = React.useState<HTMLButtonElement | null>(
     null
   );
@@ -306,12 +335,33 @@ const CustomLineChart: React.FC<CustomLineChartProps> = ({
               />
             </YAxis>
             <Tooltip content={<CustomTooltip />} />
-            <Line
-              type="monotone"
-              dataKey="resource_consumed"
-              stroke={theme.palette.violet.main}
-              strokeWidth={3}
-            />
+            {useSelector((state: RootState) => state.roleReducer.role) ===
+              'host' && (
+              <Line
+                type="monotone"
+                dataKey="resource_consumed"
+                stroke={theme.palette.violet.main}
+                strokeWidth={3}
+              />
+            )}
+            {useSelector((state: RootState) => state.roleReducer.role) ===
+              'provider' && (
+              <Line
+                type="monotone"
+                dataKey="fake_resource_consumed"
+                stroke={theme.palette.violet.main}
+                strokeWidth={3}
+              />
+            )}
+            {useSelector((state: RootState) => state.roleReducer.role) ===
+              'provider' && (
+              <Line
+                type="monotone"
+                dataKey="double_fake_resource_consumed"
+                stroke={theme.palette.mintGreen.main} // A different color, you can change this
+                strokeWidth={3}
+              />
+            )}
           </LineChart>
         </ResponsiveContainer>
       </Box>
