@@ -31,7 +31,10 @@ async def main():
   tried = 0
   while tried <= 1 and len(results) < NUMBER_OF_TASKS:
     for corr_id, task_id in task_corr_ids.items():
-      status, response, error, task_id = await meca_api.poll_result(corr_id)
+      api_response = await meca_api.poll_result(corr_id)
+      status = api_response['status']
+      response = api_response['response']
+      error = api_response['error']
       if status == 1:
         results[task_id] = response
         print("Received result for task", task_id, ":", response)

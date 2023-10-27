@@ -47,6 +47,7 @@ class Consumer {
 
     this.startConsumer = async function startConsumer() {
       connection = await amqp.connect(MQ_URL);
+      console.log(' [con] Connected to ', MQ_URL);
       channel = await connection.createChannel();
       await channel.assertQueue(queueName, {
         durable: true,
@@ -72,16 +73,23 @@ class Consumer {
       });
     };
 
-    this.close = async function close() {
-      await channel.close();
-      await connection.close();
+    this.close = function close() {
+      if (channel != null) {
+        channel.close();
+        channel = null;
+      }
+      if (connection != null) {
+        connection.close();
+        connection = null;
+      }
       console.log(' [con] Connection closed');
       delete Consumer.openQueues[queueName];
     };
 
     this.handleMsgContent = async function handleMsgContent(content) {
-      const task = parseTaskFromProto(content);
+      const transactionStartDatetime = new Date().getTime();
 
+      const task = parseTaskFromProto(content);
       ipcRenderer.send(
         'job-received',
         task.id,
@@ -99,8 +107,13 @@ class Consumer {
         task.runtime
       );
 
-      ipcRenderer.send('job-results-received', task.id, result);
-      return { id: task.id, content: result };
+      const transactionEndDatetime = new Date().getTime();
+      const duration = transactionEndDatetime - transactionStartDatetime;
+      const reply = { id: task.id, content: result, resourceConsumed: 0.1, transactionStartDatetime, transactionEndDatetime, duration };
+
+      console.log(` [con] Result: ${JSON.stringify(reply)}`);
+
+      return reply;
     };
   }
 }
