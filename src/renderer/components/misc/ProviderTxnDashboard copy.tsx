@@ -2,10 +2,10 @@ import { useEffect, useState } from 'react';
 import Box from '@mui/material/Box';
 import { Typography, Stack } from '@mui/material';
 import { motion } from 'framer-motion';
-import Datagrid from './table/Datagrid';
+import Datagrid from '../transactions/table/Datagrid';
 import { InternalDataEntry } from '../../utils/dataTypes';
-import CustomLineChart from './linechart/CustomLineChart';
-import { InternalPropConfigList } from './propConfig';
+import CustomLineChart from '../transactions/linechart/CustomLineChart';
+import { InternalPropConfigList } from '../transactions/propConfig';
 import mockProviderData from '../../../../assets/mockProviderData.json';
 
 const ProviderTxnDashboard = () => {

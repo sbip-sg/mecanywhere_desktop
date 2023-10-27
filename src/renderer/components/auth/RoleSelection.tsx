@@ -1,6 +1,6 @@
 import { Grid, Box, Typography, Button } from '@mui/material';
 import { useState, useEffect } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useLocation } from 'react-router-dom';
 import { useTheme } from '@emotion/react';
 import Radio from '@mui/material/Radio';
 import RadioGroup from '@mui/material/RadioGroup';
@@ -8,12 +8,16 @@ import FormControlLabel from '@mui/material/FormControlLabel';
 import FormControl from '@mui/material/FormControl';
 import FormLabel from '@mui/material/FormLabel';
 import actions from '../../redux/actionCreators';
+import handleAccountRegistration from './handleAccountRegistration';
 
 const RoleSelection = () => {
   const navigate = useNavigate();
+  const location = useLocation();
+  const password = location.state?.password;
   const theme = useTheme();
   const [selectedRole, setSelectedRole] = useState('host');
-  const handleOnClick = () => {
+  const handleOnClick = async () => {
+    await handleAccountRegistration(password);
     navigate('/mnemonics');
   };
   useEffect(() => {

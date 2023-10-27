@@ -38,6 +38,7 @@ export async function findDidHistory(token: string, did: string) {
       },
       body: JSON.stringify({ did }),
     });
+    console.log("respoonse", response, response.status)
     if (!response.ok) {
       throw new Error('Network response not ok');
     }

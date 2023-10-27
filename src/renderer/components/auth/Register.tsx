@@ -32,8 +32,8 @@ const Register = () => {
       try {
         formActions.resetForm();
         const { password } = values;
-        await handleAccountRegistration(password);
-        navigate('/roleselection');
+        // await handleAccountRegistration(password);
+        navigate('/roleselection', { state: { password } });
       } catch (error) {
         setErrorMessage(String(error));
         setErrorDialogOpen(true);

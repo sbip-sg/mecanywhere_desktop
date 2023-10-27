@@ -20,8 +20,8 @@ import {
 //   }
 // }
 
-const createColor = (mainColor: string) =>
-  createTheme().palette.augmentColor({ color: { main: mainColor } });
+// const createColor = (mainColor: string) =>
+//   createTheme().palette.augmentColor({ color: { main: mainColor } });
 
 // const cerulean = '#7f97d8'; previous cerulean
 const cerulean = '#829CFF';

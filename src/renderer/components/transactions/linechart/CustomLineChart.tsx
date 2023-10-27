@@ -24,7 +24,7 @@ import { IconButton } from '@mui/material';
 import { ExternalDataEntry } from '../../../utils/dataTypes';
 import CustomTooltip from './CustomTooltip';
 import { useSelector } from 'react-redux';
-
+import RefreshIcon from '@mui/icons-material/Refresh';
 import log from 'electron-log/renderer';
 
 interface GroupedData {
@@ -35,6 +35,7 @@ interface GroupedData {
 interface CustomLineChartProps {
   yAxisLabel: string;
   data: ExternalDataEntry[];
+  handleRefresh: () => void;
 }
 
 const StyledDatePicker = styled(DatePicker)(({ theme }) => ({
@@ -52,6 +53,7 @@ const StyledDatePicker = styled(DatePicker)(({ theme }) => ({
 const CustomLineChart: React.FC<CustomLineChartProps> = ({
   data,
   yAxisLabel,
+  handleRefresh,
 }) => {
   const [groupBy, setGroupBy] = useState<string>('month'); // Default grouping by month
   const [startDate, setStartDate] = useState<Date | null>(null);
@@ -190,6 +192,9 @@ const CustomLineChart: React.FC<CustomLineChartProps> = ({
         }}
       >
         <Box id="widget-wrapper" sx={{ ml: 'auto' }}>
+          <IconButton size="small" onClick={handleRefresh}>
+            <RefreshIcon fontSize="small" sx={{ color: 'red' }} />
+          </IconButton>
           <IconButton size="small" onClick={handleClick}>
             <CalendarMonthIcon fontSize="small" sx={{ color: 'white' }} />
           </IconButton>

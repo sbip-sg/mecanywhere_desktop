@@ -11,6 +11,8 @@ DISCOVERY_URL = 'http://sbip-g2.d2.comp.nus.edu.sg:11000/fn-discovery'
 
 # TODO: change to signed vc
 async def initiateConnection(did: str, vc: str) -> None:
+  print("did", did)
+  print("vc", vc)
   global global_did, access_token, auth_header
   global_did = did
   vc_obj = json.loads(vc)
@@ -23,6 +25,7 @@ async def initiateConnection(did: str, vc: str) -> None:
   except Exception as e:
     raise SystemExit(e)
   access_token, access_token_type, refresh_token, refresh_token_type = r.json().values()
+  print("access_token", access_token)
   auth_header = {
     'Authorization': f'{access_token_type} {access_token}'
   }

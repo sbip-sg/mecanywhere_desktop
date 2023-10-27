@@ -12,9 +12,26 @@ const handleAccountRegistration = async (password: string) => {
     if (typeof keyPair === 'undefined') {
       throw new Error('Key pair generation failed.');
     }
-
+    console.log('keypair', keyPair);
     const { mnemonic, publicKey, privateKey, publicKeyCompressed } = keyPair;
+    // let did;
+    // let credential;
     try {
+      // if (window.electron.store.get('role') === 'provider') {
+      // const publicKeyProvider =
+      //   '9162489900438906348702968436157779450275819589845486784832046751964054847774610311218195072132906483269992698213206439837565459982787113366244600208153925';
+      //   const result = await createAccount({
+      //     publicKey: publicKeyProvider,
+      //   });
+      //   did = result.did;
+      //   credential = result.credential;
+      // } else {
+      //   const result = await createAccount({
+      //     publicKey: uint8ArrayToDecimal(publicKey),
+      //   });
+      //   did = result.did;
+      //   credential = result.credential;
+      // }
       const { did, credential } = await createAccount({
         publicKey: uint8ArrayToDecimal(publicKey),
       });
@@ -22,7 +39,7 @@ const handleAccountRegistration = async (password: string) => {
       if (!credential.result) {
         throw new Error(`error${credential.errorMessage}`);
       }
-      window.electron.store.set('mnemonic', mnemonic);
+      window.electron.store.set('mnemonic', mnemonic); // need to save mnemonic?
       window.electron.store.set(
         'publicKeyCompressed',
         utf8ToHex(publicKeyCompressed)
