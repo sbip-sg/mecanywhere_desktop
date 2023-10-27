@@ -13,4 +13,8 @@ message Task {
 message TaskResult {
   string id = 1;
   string content = 2;
+  float resource_consumed = 3;
+  int32 transaction_start_datetime = 4;
+  int32 transaction_end_datetime = 5;
+  int32 duration = 6;
 }

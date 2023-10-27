@@ -7,7 +7,8 @@ global_did = None
 access_token = None
 auth_header = None
 
-DISCOVERY_URL = 'http://sbip-g2.d2.comp.nus.edu.sg:11000/fn-discovery'
+DISCOVERY_URL = 'http://localhost:7000'
+# DISCOVERY_URL = 'http://sbip-g2.d2.comp.nus.edu.sg:11000/fn-discovery'
 
 # TODO: change to signed vc
 async def initiateConnection(did: str, vc: str) -> None:
@@ -87,7 +88,11 @@ async def offload_task(
     r.raise_for_status()
   except Exception as e:
     raise SystemExit(e)
-  status, response, error, task_id = r.json().values()
+  jsonR = r.json()
+  status = jsonR['status']
+  response = jsonR['response']
+  error = jsonR['error']
+  task_id = jsonR['task_id']
   print("Offload response:", task_id, status, response, error)
   callback(task_id, status, response, error)
 
@@ -102,7 +107,7 @@ async def poll_result(corr_id: str):
     r.raise_for_status()
   except Exception as e:
     raise SystemExit(e)
-  return r.json().values()
+  return r.json()
 
 async def disconnect():
   print('Disconnecting...')
