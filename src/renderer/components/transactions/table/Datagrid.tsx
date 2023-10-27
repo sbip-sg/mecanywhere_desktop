@@ -40,7 +40,7 @@ const Datagrid: React.FC<DatagridProps> = ({
   const [order, setOrder] = useState<Order>('asc');
   const [orderBy, setOrderBy] = useState<
     keyof InternalDataEntry | keyof ExternalDataEntry
-  >('session_start_datetime');
+  >('transaction_start_datetime');
   const [page, setPage] = useState(0);
   const [tableOverflow, setTableOverflow] = useState(true);
   const [rowsPerPage, setRowsPerPage] = useState(expandedRowPerPage);
@@ -48,12 +48,12 @@ const Datagrid: React.FC<DatagridProps> = ({
   const [maxTableHeight, setMaxTableHeight] = useState(
     maxRowHeight * (unexpandedRowPerPage + 1) + unexpandedRowPerPage - 1
   );
-  const handleTableRowClick = (sessionId: string) => {
-    const sessionDetails = data.find((entry) => entry.session_id === sessionId);
-    // navigate(`/details/${sessionId}`);
-    if (sessionDetails) {
-      actions.setTransactionDetails(sessionDetails);
-      navigate(`/details/${sessionId}`);
+  const handleTableRowClick = (transactionId: string) => {
+    const transactionDetails = data.find((entry) => entry.transaction_id === transactionId);
+    // navigate(`/details/${transactionId}`);
+    if (transactionDetails) {
+      actions.setTransactionDetails(transactionDetails);
+      navigate(`/details/${transactionId}`);
     } else {
       console.error('entry doesnt exist');
     }

@@ -30,8 +30,8 @@ const CustomTableBody: React.FC<
       {visibleRows.map((data) => {
         return (
           <StyledTableRow
-            onClick={() => handleTableRowClick(data.session_id)}
-            key={data.session_id}
+            onClick={() => handleTableRowClick(data.transaction_id)}
+            key={data.transaction_id}
             maxRowHeight={maxRowHeight}
           >
             {propConfigList.map((config) => (

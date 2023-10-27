@@ -30,6 +30,12 @@ const TxnDashboard: React.FC<TxnDashboardProps> = ({ appRole }) => {
   const [isTableExpanded, setIsTableExpanded] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
 
+  const preprocessData = (preData: any): ExternalDataEntry[] => {
+    console.log("preData", preData)
+    const processedData = preData;
+    return processedData;
+  };
+
   const handleRefresh = async () => {
     setIsLoading(true);
     const { accessToken } = reduxStore.getState().userReducer;
@@ -46,7 +52,8 @@ const TxnDashboard: React.FC<TxnDashboardProps> = ({ appRole }) => {
         if (responseBody.length > 0) {
           setHasData(true);
         }
-        setData(responseBody);
+        const processedData = preprocessData(responseBody)
+        setData(processedData);
         setIsLoading(false);
       }
     } else {
@@ -69,7 +76,9 @@ const TxnDashboard: React.FC<TxnDashboardProps> = ({ appRole }) => {
         if (responseBody.length > 0) {
           setHasData(true);
         }
-        setData(responseBody);
+        // setData(responseBody);
+        const processedData = preprocessData(responseBody)
+        setData(processedData);
         setIsLoading(false);
       }
     } else {

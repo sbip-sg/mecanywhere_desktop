@@ -9,9 +9,9 @@ export interface PropConfig<T> {
 
 export const InternalPropConfigList: PropConfig<InternalDataEntry>[] = [
   {
-    property: 'session_id',
-    renderer: (data: InternalDataEntry) => `${data.session_id.slice(0, 10)}...`,
-    label: 'Session ID',
+    property: 'transaction_id',
+    renderer: (data: InternalDataEntry) => `${data.transaction_id.slice(0, 10)}...`,
+    label: 'transaction ID',
   },
   {
     property: 'did',
@@ -30,16 +30,16 @@ export const InternalPropConfigList: PropConfig<InternalDataEntry>[] = [
     label: 'Resource Consumed, CC',
   },
   {
-    property: 'session_start_datetime',
+    property: 'transaction_start_datetime',
     renderer: (data: InternalDataEntry) =>
-      convertEpochToStandardTimeWithDate(data.session_start_datetime),
-    label: 'Session Start Datetime',
+      convertEpochToStandardTimeWithDate(data.transaction_start_datetime),
+    label: 'transaction Start Datetime',
   },
   {
-    property: 'session_end_datetime',
+    property: 'transaction_end_datetime',
     renderer: (data: InternalDataEntry) =>
-      convertEpochToStandardTimeWithDate(data.session_end_datetime),
-    label: 'Session End Datetime',
+      convertEpochToStandardTimeWithDate(data.transaction_end_datetime),
+    label: 'transaction End Datetime',
   },
   {
     property: 'task',
@@ -75,9 +75,10 @@ export const InternalPropConfigList: PropConfig<InternalDataEntry>[] = [
 
 export const ExternalPropConfigList: PropConfig<ExternalDataEntry>[] = [
   {
-    property: 'session_id',
-    renderer: (data: ExternalDataEntry) => `${data.session_id.slice(0, 10)}...`,
-    label: 'Session ID',
+    property: 'transaction_id',
+    // renderer: (data: ExternalDataEntry) => `${data.transaction_id.slice(0, 10)}...`,
+    renderer: (data: ExternalDataEntry) => `${data.transaction_id.slice(0, 10)}...`,
+    label: 'transaction ID',
   },
   {
     property: 'resource_consumed',
@@ -85,16 +86,16 @@ export const ExternalPropConfigList: PropConfig<ExternalDataEntry>[] = [
     label: 'Resource Consumed (CC)',
   },
   {
-    property: 'session_start_datetime',
+    property: 'transaction_start_datetime',
     renderer: (data: ExternalDataEntry) =>
-      convertEpochToStandardTimeWithDate(data.session_start_datetime),
-    label: 'Session Start Datetime',
+      convertEpochToStandardTimeWithDate(data.transaction_start_datetime),
+    label: 'transaction Start Datetime',
   },
   {
-    property: 'session_end_datetime',
+    property: 'transaction_end_datetime',
     renderer: (data: ExternalDataEntry) =>
-      convertEpochToStandardTimeWithDate(data.session_end_datetime),
-    label: 'Session End Datetime',
+      convertEpochToStandardTimeWithDate(data.transaction_end_datetime),
+    label: 'transaction End Datetime',
   },
   {
     property: 'task',

@@ -72,7 +72,7 @@ const CustomLineChart: React.FC<CustomLineChartProps> = ({
   useEffect(() => {
     if (data.length !== 0) {
       const dateObjects = data.map(
-        (entry) => new Date(entry.session_start_datetime * 1000)
+        (entry) => new Date(entry.transaction_start_datetime * 1000)
       );
       const initialMinDate = dateObjects.reduce((min, date) =>
         date < min ? date : min
@@ -99,7 +99,7 @@ const CustomLineChart: React.FC<CustomLineChartProps> = ({
 
   const filteredData = data.filter((entry) => {
     if (startDate && endDate) {
-      const entryDate = new Date(entry.session_start_datetime * 1000);
+      const entryDate = new Date(entry.transaction_start_datetime * 1000);
       return entryDate >= startDate && entryDate <= endDate;
     }
     return true;
@@ -108,7 +108,7 @@ const CustomLineChart: React.FC<CustomLineChartProps> = ({
   // log.info('filteredData', filteredData);
 
   const groupedDataObject = filteredData.reduce((acc, entry) => {
-    const entryDate = new Date(entry.session_start_datetime * 1000);
+    const entryDate = new Date(entry.transaction_start_datetime * 1000);
     let groupKey;
 
     if (groupBy === 'day') {
