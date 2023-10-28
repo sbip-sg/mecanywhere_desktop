@@ -38,7 +38,6 @@ export async function findDidHistory(token: string, did: string) {
       },
       body: JSON.stringify({ did }),
     });
-    console.log("respoonse", response, response.status)
     if (!response.ok) {
       throw new Error('Network response not ok');
     }
@@ -66,7 +65,6 @@ export async function findPoHistory(token: string, did: string) {
     console.error('There was a problem with the fetch operation:', error);
   }
 }
-
 
 export async function addDummyHistory(token: string, did: string) {
   try {

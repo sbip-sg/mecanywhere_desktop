@@ -47,8 +47,8 @@ const MenuComponent = () => {
         >
           <img
             src={logoTest}
-            width="10%"
-            height="10%"
+            width="8%"
+            height="8%"
             style={{ margin: '0 0.5rem 0 0' }}
           />
           <Typography

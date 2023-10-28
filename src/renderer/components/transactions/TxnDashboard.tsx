@@ -9,7 +9,7 @@ import reduxStore from 'renderer/redux/store';
 import RefreshIcon from '@mui/icons-material/Refresh';
 import CustomLineChart from './linechart/CustomLineChart';
 import actions from '../../redux/actionCreators';
-import { ExternalDataEntry } from '../../utils/dataTypes';
+import { ExternalDataEntry, InternalDataEntry } from '../../utils/dataTypes';
 import { ExternalPropConfigList } from './propConfig';
 import { registerHost } from '../../services/RegistrationServices';
 import Datagrid from './table/Datagrid';
@@ -23,6 +23,34 @@ interface TxnDashboardProps {
   appRole: string;
 }
 
+function getRandomCpu(): number {
+  return Math.floor(Math.random() * 4) + 1; // Random number between 1 and 4
+}
+
+function getRandomMemory(): number {
+  const min = 1024 / 256;
+  const max = 8192 / 256;
+  const randomMultiple = Math.floor(Math.random() * (max - min + 1) + min);
+  return randomMultiple * 256;
+}
+
+const generateRandomDID = () => {
+  const randomHex = (Math.random() * Math.pow(2, 64))
+    .toString(16)
+    .padStart(40, '0');
+  return 'did:meca:0x' + randomHex;
+};
+
+const generateProviderDID = () => {
+  const providerDidArray = [
+    'did:meca:0x52c328ef8b382b1d71cc262b868d803a137ab8d8',
+    'did:meca:0xada873405e83c30a208ae3e50ee06c60569e8a18',
+    'did:meca:0x40f219cf9170792562e22b297c73b5dff8177995',
+  ];
+  const randomIndex = Math.floor(Math.random() * providerDidArray.length);
+  return providerDidArray[randomIndex];
+};
+
 const TxnDashboard: React.FC<TxnDashboardProps> = ({ appRole }) => {
   const theme = useTheme();
   const [data, setData] = useState<ExternalDataEntry[]>([]);
@@ -30,29 +58,70 @@ const TxnDashboard: React.FC<TxnDashboardProps> = ({ appRole }) => {
   const [isTableExpanded, setIsTableExpanded] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
 
-  const preprocessData = (preData: any): ExternalDataEntry[] => {
-    console.log("preData", preData)
-    const processedData = preData;
+  const preprocessDataForProvider = (
+    preprocessedData: ExternalDataEntry[]
+  ): InternalDataEntry[] => {
+    const specificDID = 'did:meca:0x52c328ef8b382b1d71cc262b868d803a137ab8d8';
+    const processedData = preprocessedData.map((entry) => {
+      const hostPoDid = generateProviderDID();
+      let clientPoDid;
+      if (hostPoDid === specificDID) {
+        clientPoDid = generateProviderDID();
+      } else {
+        clientPoDid = specificDID;
+      }
+      return {
+        ...entry,
+        resource_cpu: getRandomCpu(),
+        resource_memory: getRandomMemory(),
+        host_did: generateRandomDID(),
+        client_did: generateRandomDID(),
+        host_po_did: hostPoDid,
+        client_po_did: clientPoDid,
+      };
+    });
+    return processedData;
+  };
+
+  const preprocessDataForUser = (
+    preprocessedData: ExternalDataEntry[]
+  ): ExternalDataEntry[] => {
+    const processedData = preprocessedData.map((entry) => {
+      return {
+        ...entry,
+        resource_cpu: getRandomCpu(),
+        resource_memory: getRandomMemory(),
+      };
+    });
+    return processedData;
+  };
+
+  const preprocessData = (
+    preprocessedData: ExternalDataEntry[] | InternalDataEntry[]
+  ) => {
+    let processedData;
+    console.log('preprocessedData, ', preprocessedData);
+    if (appRole === 'provider') {
+      processedData = preprocessDataForProvider(preprocessedData);
+    } else {
+      processedData = preprocessDataForUser(preprocessedData);
+    }
+    console.log('processedData, ', processedData);
     return processedData;
   };
 
   const handleRefresh = async () => {
     setIsLoading(true);
     const { accessToken } = reduxStore.getState().userReducer;
-    console.log('accessToken', accessToken);
     const did = window.electron.store.get('did');
-    console.log('did', did);
-
-    // const did = 'did:meca:0x52c328ef8b382b1d71cc262b868d803a137ab8d8'
     if (accessToken && did) {
       const didHistoryResponse = await findDidHistory(accessToken, did);
       if (didHistoryResponse) {
         const responseBody = await didHistoryResponse.json();
-        console.log('responseBody', responseBody);
         if (responseBody.length > 0) {
           setHasData(true);
         }
-        const processedData = preprocessData(responseBody)
+        const processedData = preprocessData(responseBody);
         setData(processedData);
         setIsLoading(false);
       }
@@ -76,8 +145,7 @@ const TxnDashboard: React.FC<TxnDashboardProps> = ({ appRole }) => {
         if (responseBody.length > 0) {
           setHasData(true);
         }
-        // setData(responseBody);
-        const processedData = preprocessData(responseBody)
+        const processedData = preprocessData(responseBody);
         setData(processedData);
         setIsLoading(false);
       }
@@ -89,8 +157,6 @@ const TxnDashboard: React.FC<TxnDashboardProps> = ({ appRole }) => {
   useEffect(() => {
     const credential = JSON.parse(window.electron.store.get('credential'));
     const did = window.electron.store.get('did');
-    console.log('credential', window.electron.store.get('credential'));
-    console.log('did', did);
     const getAccessToken = async () => {
       setIsLoading(true);
       await new Promise((resolve) => setTimeout(resolve, 500));
@@ -98,8 +164,6 @@ const TxnDashboard: React.FC<TxnDashboardProps> = ({ appRole }) => {
         try {
           const accessTokenResponse = await registerHost(did, credential);
           const { access_token } = accessTokenResponse;
-          console.log('accessToken', access_token);
-
           actions.setAccessToken(access_token);
           const didHistoryResponse = await findDidHistory(access_token, did);
           if (didHistoryResponse) {
@@ -107,7 +171,8 @@ const TxnDashboard: React.FC<TxnDashboardProps> = ({ appRole }) => {
             if (responseBody.length > 0) {
               setHasData(true);
             }
-            setData(responseBody);
+            const processedData = preprocessData(responseBody);
+            setData(processedData);
             setIsLoading(false);
           }
         } catch (error) {
