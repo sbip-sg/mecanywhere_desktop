@@ -172,6 +172,7 @@ const TxnDashboard: React.FC<TxnDashboardProps> = ({ appRole }) => {
               setHasData(true);
             }
             const processedData = preprocessData(responseBody);
+            console.log("processsed", processedData)
             setData(processedData);
             setIsLoading(false);
           }

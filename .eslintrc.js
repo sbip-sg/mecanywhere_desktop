@@ -13,6 +13,7 @@ module.exports = {
     'no-console': 'off',
     'camelcase': 'off',
     'consistent-return': 'off',
+    "no-unused-vars": ["error", { "argsIgnorePattern": "^_" }],
     'react/function-component-definition': [
       2,
       {

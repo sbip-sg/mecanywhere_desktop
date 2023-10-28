@@ -1,3 +1,4 @@
+// import log from 'electron-log/renderer';
 import {
   LineChart,
   Label,
@@ -9,28 +10,26 @@ import {
   ResponsiveContainer,
 } from 'recharts';
 import React, { useState, useEffect } from 'react';
-import { styled } from '@mui/material/styles';
-import 'react-datepicker/dist/react-datepicker.css';
-import DatePicker from 'react-datepicker';
-import Box from '@mui/material/Box';
-import Backdrop from '@mui/material/Backdrop';
-import Popover from '@mui/material/Popover';
-import Typography from '@mui/material/Typography';
-import CalendarMonthIcon from '@mui/icons-material/CalendarMonth';
-import ToggleButton from '@mui/material/ToggleButton';
-import ToggleButtonGroup from '@mui/material/ToggleButtonGroup';
 import { useTheme } from '@emotion/react';
 import { IconButton } from '@mui/material';
-import { ExternalDataEntry } from '../../../utils/dataTypes';
-import CustomTooltip from './CustomTooltip';
-import { useSelector } from 'react-redux';
+import Box from '@mui/material/Box';
+import Backdrop from '@mui/material/Backdrop';
+import CalendarMonthIcon from '@mui/icons-material/CalendarMonth';
 import RefreshIcon from '@mui/icons-material/Refresh';
-import log from 'electron-log/renderer';
+import QueryStatsIcon from '@mui/icons-material/QueryStats';
+import CustomTooltip from './CustomTooltip';
+import DatePickerPopover from './DatePickerPopover';
+import DataKeySelectorPopover from './DataKeySelectorPopover';
+import { ExternalDataEntry } from '../../../utils/dataTypes';
 
-interface GroupedData {
+type GroupedData = {
   month: string;
-  resource_consumed: number;
-}
+  resource_cpu: number;
+  resource_memory: number;
+  duration: number;
+  network_reliability: number;
+  price: number;
+};
 
 interface CustomLineChartProps {
   yAxisLabel: string;
@@ -38,138 +37,98 @@ interface CustomLineChartProps {
   handleRefresh: () => void;
 }
 
-const StyledDatePicker = styled(DatePicker)(({ theme }) => ({
-  backgroundColor: theme.palette.darkBlack.main,
-  color: theme.palette.violet.main,
-  border: '0px',
-  borderRadius: '2px',
-  padding: '0.3rem',
-  width: '15rem',
-  fontSize: '14px',
-  fontWeight: '600',
-  textAlign: 'center',
-}));
-
 const CustomLineChart: React.FC<CustomLineChartProps> = ({
   data,
   yAxisLabel,
   handleRefresh,
 }) => {
-  const [groupBy, setGroupBy] = useState<string>('month'); // Default grouping by month
+  const theme = useTheme();
+  const [groupBy, setGroupBy] = useState<string>('month');
+  const [dataKey, setDataKey] = useState<string>('resource_memory');
   const [startDate, setStartDate] = useState<Date | null>(null);
   const [endDate, setEndDate] = useState<Date | null>(null);
-  const [startMinDate, setStartMinDate] = useState<Date | null>(null);
-  const [startMaxDate, setStartMaxDate] = useState<Date | null>(null);
-  const [endMinDate, setEndMinDate] = useState<Date | null>(null);
-  const [endMaxDate, setEndMaxDate] = useState<Date | null>(null);
-  const theme = useTheme();
-  const groupingOptions = [
-    { label: 'Day', value: 'day' },
-    { label: 'Week', value: 'week' },
-    { label: 'Month', value: 'month' },
-  ];
+  const [dateObjects, setDateObjects] = useState<Date[] | null>(null);
+  const [selectedRoles, setSelectedRoles] = useState(['client', 'host']);
+  const [datePickerAnchorEl, setDatePickerAnchorEl] =
+    React.useState<HTMLButtonElement | null>(null);
+  const [dataKeySelectorAnchorEl, setDataKeySelectorAnchorEl] =
+    React.useState<HTMLButtonElement | null>(null);
+
+  const handleOpenDatePicker = (event: React.MouseEvent<HTMLButtonElement>) => {
+    setDatePickerAnchorEl(event.currentTarget);
+  };
+
+  const handleOpenDataKeySelector = (
+    event: React.MouseEvent<HTMLButtonElement>
+  ) => {
+    setDataKeySelectorAnchorEl(event.currentTarget);
+  };
 
   useEffect(() => {
-    if (data.length !== 0) {
-      const dateObjects = data.map(
-        (entry) => new Date(entry.transaction_start_datetime * 1000)
-      );
-      const initialMinDate = dateObjects.reduce((min, date) =>
-        date < min ? date : min
-      );
-      const initialMaxDate = dateObjects.reduce((max, date) =>
-        date > max ? date : max
-      );
-      setStartMinDate(initialMinDate);
-      setEndMinDate(initialMinDate);
-      setStartMaxDate(initialMaxDate);
-      setEndMaxDate(initialMaxDate);
-    }
+    setDateObjects(
+      data.map((entry) => new Date(entry.transaction_start_datetime * 1000))
+    );
   }, [data]);
 
-  const handleChangeStartDate = (date: Date) => {
-    setStartDate(date);
-    setEndMinDate(date);
-  };
-
-  const handleChangeEndDate = (date: Date) => {
-    setEndDate(date);
-    setStartMaxDate(date);
-  };
-
-  const filteredData = data.filter((entry) => {
+  const dataFilteredByDate = data.filter((entry) => {
     if (startDate && endDate) {
       const entryDate = new Date(entry.transaction_start_datetime * 1000);
       return entryDate >= startDate && entryDate <= endDate;
     }
     return true;
   });
+  const groupedDataAccumulator = dataFilteredByDate.reduce(
+    (accumulator, entry) => {
+      const entryDate = new Date(entry.transaction_start_datetime * 1000);
+      let groupKey;
 
-  // log.info('filteredData', filteredData);
+      if (groupBy === 'day') {
+        groupKey = entryDate.toLocaleDateString();
+      } else if (groupBy === 'week') {
+        const weekStartDate = new Date(entryDate);
+        weekStartDate.setDate(entryDate.getDate() - entryDate.getDay());
+        groupKey = weekStartDate.toLocaleDateString();
+      } else {
+        groupKey = entryDate.toLocaleString('default', { month: 'long' });
+      }
 
-  const groupedDataObject = filteredData.reduce((acc, entry) => {
-    const entryDate = new Date(entry.transaction_start_datetime * 1000);
-    let groupKey;
+      accumulator[groupKey] = accumulator[groupKey] || {
+        month: groupKey,
+        resource_cpu: 0,
+        resource_memory: 0,
+        duration: 0,
+        network_reliability: 0,
+        price: 0,
+        count: 0,
+      };
 
-    if (groupBy === 'day') {
-      groupKey = entryDate.toLocaleDateString();
-    } else if (groupBy === 'week') {
-      const weekStartDate = new Date(entryDate);
-      weekStartDate.setDate(entryDate.getDate() - entryDate.getDay());
-      groupKey = weekStartDate.toLocaleDateString();
-    } else {
-      groupKey = entryDate.toLocaleString('default', { month: 'long' });
-    }
-    acc[groupKey] = acc[groupKey] || { month: groupKey, resource_consumed: 0 };
-    acc[groupKey].resource_consumed += Number(entry.resource_consumed);
-    return acc;
-  }, {} as { [key: string]: GroupedData });
-  var groupedData: GroupedData[] = Object.values(groupedDataObject);
-  const halfLength = Math.ceil(groupedData.length / 2);
-  const topHalf = groupedData.slice(0, halfLength);
-  const bottomHalf = groupedData.slice(halfLength);
+      accumulator[groupKey].resource_cpu += Number(entry.resource_cpu);
+      accumulator[groupKey].resource_memory += Number(entry.resource_memory);
+      accumulator[groupKey].duration += Number(entry.duration);
+      accumulator[groupKey].network_reliability += Number(
+        entry.network_reliability
+      );
+      accumulator[groupKey].price += Number(entry.price);
+      accumulator[groupKey].count += 1; // Increase the count for this groupKey
 
-  const swappedData = [...bottomHalf, ...topHalf].map((entry) => ({
-    month: entry.month,
-    fake_resource_consumed: entry.resource_consumed,
-  }));
-
-  groupedData.forEach((entry, index) => {
-    entry.fake_resource_consumed = swappedData[index].fake_resource_consumed;
-  });
-  const thirtyPercentLength = Math.floor(groupedData.length * 0.3);
-  const first30Percent = groupedData.slice(0, thirtyPercentLength);
-  const remaining70Percent = groupedData.slice(thirtyPercentLength);
-
-  const doubleFakeData = [...remaining70Percent, ...first30Percent].map(
-    (entry) => ({
-      month: entry.month,
-      double_fake_resource_consumed: entry.resource_consumed,
-    })
+      return accumulator;
+    },
+    {} as { [key: string]: GroupedData & { count: number } }
   );
 
-  groupedData.forEach((entry, index) => {
-    entry.double_fake_resource_consumed =
-      doubleFakeData[index].double_fake_resource_consumed;
-  });
-  const [anchorEl, setAnchorEl] = React.useState<HTMLButtonElement | null>(
-    null
-  );
-  const handleClick = (event: React.MouseEvent<HTMLButtonElement>) => {
-    setAnchorEl(event.currentTarget);
-  };
-  const open = Boolean(anchorEl);
-  const handleClose = () => {
-    setAnchorEl(null);
-  };
-  const handleChangeGroupby = (
-    event: React.MouseEvent<HTMLElement>,
-    newGroupBy: string | null
-  ) => {
-    if (newGroupBy !== null) {
-      setGroupBy(newGroupBy);
+  const groupedData: GroupedData[] = Object.values(groupedDataAccumulator).map(
+    (group) => {
+      return {
+        ...group,
+        resource_cpu: group.resource_cpu / group.count,
+        resource_memory: group.resource_memory / group.count,
+        avg_duration: group.duration / group.count,
+        network_reliability: group.network_reliability / group.count,
+      };
     }
-  };
+  );
+  console.log('grouped_data', groupedData);
+
   return (
     <Box
       id="line-chart-wrapper"
@@ -193,127 +152,42 @@ const CustomLineChart: React.FC<CustomLineChartProps> = ({
       >
         <Box id="widget-wrapper" sx={{ ml: 'auto' }}>
           <IconButton size="small" onClick={handleRefresh}>
-            <RefreshIcon fontSize="small" sx={{ color: 'red' }} />
+            <RefreshIcon fontSize="small" sx={{ color: 'white' }} />
           </IconButton>
-          <IconButton size="small" onClick={handleClick}>
+          <IconButton size="small" onClick={handleOpenDataKeySelector}>
+            <QueryStatsIcon fontSize="small" sx={{ color: 'white' }} />
+          </IconButton>
+          <IconButton size="small" onClick={handleOpenDatePicker}>
             <CalendarMonthIcon fontSize="small" sx={{ color: 'white' }} />
           </IconButton>
           <Backdrop
-            sx={{ color: '#fff', zIndex: (theme) => theme.zIndex.drawer + 1 }}
-            open={open}
+            sx={{ color: '#fff', zIndex: theme.zIndex.drawer + 1 }}
+            open={Boolean(datePickerAnchorEl)}
           >
-            <Popover
-              open={open}
-              anchorEl={anchorEl}
-              onClose={handleClose}
-              anchorOrigin={{
-                vertical: 'bottom',
-                horizontal: -260,
-              }}
-              sx={{
-                '.MuiPaper-root': {
-                  borderRadius: '10px',
-                  backgroundColor: theme.palette.mediumBlack.main,
-                },
-              }}
-            >
-              <Box
-                sx={{
-                  width: '18rem',
-                  backgroundColor: theme.palette.mediumBlack.main,
-                  boxShadow: 24,
-                  padding: '1.5rem',
-                }}
-              >
-                <Typography
-                  id="transition-modal-title"
-                  style={{
-                    fontSize: '14px',
-                    letterSpacing: '0.2em',
-                    margin: '0.5rem 0 0.1rem 0.2rem',
-                    fontWeight: '500',
-                  }}
-                >
-                  GROUP BY
-                </Typography>
-                <ToggleButtonGroup
-                  sx={{
-                    color: theme.palette.cerulean.main,
-                    backgroundColor: theme.palette.mediumBlack.main,
-                  }}
-                  value={groupBy}
-                  exclusive
-                  onChange={handleChangeGroupby}
-                >
-                  {groupingOptions.map((option) => (
-                    <ToggleButton
-                      sx={{
-                        minWidth: '5rem',
-                        padding: '0.2rem 0.5rem 0.2rem 0.5rem',
-                        fontSize: '14px',
-                        fontWeight: '600',
-                        color: theme.palette.mintGreen.main,
-                        backgroundColor: theme.palette.darkBlack.main,
-                        '&.Mui-selected': {
-                          color: theme.palette.darkBlack.main,
-                          backgroundColor: theme.palette.violet.main,
-                          fontSize: '14px',
-                          fontWeight: '600',
-                        },
-                      }}
-                      key={option.value}
-                      value={option.value}
-                    >
-                      {option.label}
-                    </ToggleButton>
-                  ))}
-                </ToggleButtonGroup>
-                <Typography
-                  id="transition-modal-title"
-                  style={{
-                    fontSize: '14px',
-                    letterSpacing: '0.2em',
-                    margin: '0.5rem 0 0.1rem 0.2rem',
-                    fontWeight: '500',
-                  }}
-                >
-                  START DATE
-                </Typography>
-                <StyledDatePicker
-                  popperProps={{ strategy: 'fixed' }}
-                  selected={startDate}
-                  onChange={handleChangeStartDate}
-                  selectsStart
-                  startDate={startDate}
-                  endDate={endDate}
-                  placeholderText="Start Date"
-                  minDate={startMinDate}
-                  maxDate={startMaxDate}
-                />
-                <Typography
-                  id="transition-modal-title"
-                  style={{
-                    fontSize: '14px',
-                    letterSpacing: '0.2em',
-                    margin: '0.5rem 0 0.1rem 0.2rem',
-                    fontWeight: '500',
-                  }}
-                >
-                  END DATE
-                </Typography>
-                <StyledDatePicker
-                  popperProps={{ strategy: 'fixed' }}
-                  selected={endDate}
-                  onChange={handleChangeEndDate}
-                  selectsEnd
-                  startDate={startDate}
-                  endDate={endDate}
-                  placeholderText="End Date"
-                  minDate={endMinDate}
-                  maxDate={endMaxDate}
-                />
-              </Box>
-            </Popover>
+            <DatePickerPopover
+              dateObjects={dateObjects}
+              anchorEl={datePickerAnchorEl}
+              groupBy={groupBy}
+              setGroupBy={setGroupBy}
+              setAnchorEl={setDatePickerAnchorEl}
+              setStartDate={setStartDate}
+              setEndDate={setEndDate}
+              startDate={startDate}
+              endDate={endDate}
+            />
+          </Backdrop>
+          <Backdrop
+            sx={{ color: '#fff', zIndex: theme.zIndex.drawer + 1 }}
+            open={Boolean(dataKeySelectorAnchorEl)}
+          >
+            <DataKeySelectorPopover
+              anchorEl={dataKeySelectorAnchorEl}
+              setAnchorEl={setDataKeySelectorAnchorEl}
+              datakey={dataKey}
+              setDatakey={setDataKey}
+              selectedRoles={selectedRoles}
+              setSelectedRoles={setSelectedRoles}
+            />
           </Backdrop>
         </Box>
       </Box>
@@ -340,7 +214,51 @@ const CustomLineChart: React.FC<CustomLineChartProps> = ({
               />
             </YAxis>
             <Tooltip content={<CustomTooltip />} />
-            {useSelector((state: RootState) => state.roleReducer.role) ===
+            <Line
+              type="monotone"
+              dataKey={dataKey}
+              stroke={theme.palette.violet.main}
+              strokeWidth={3}
+              animationDuration={500}
+            />
+          </LineChart>
+        </ResponsiveContainer>
+      </Box>
+    </Box>
+  );
+};
+
+export default CustomLineChart;
+
+// const halfLength = Math.ceil(groupedData.length / 2);
+// const topHalf = groupedData.slice(0, halfLength);
+// const bottomHalf = groupedData.slice(halfLength);
+
+// const swappedData = [...bottomHalf, ...topHalf].map((entry) => ({
+//   month: entry.month,
+//   fake_resource_consumed: entry.resource_consumed,
+// }));
+
+// groupedData.forEach((entry, index) => {
+//   entry.fake_resource_consumed = swappedData[index].fake_resource_consumed;
+// });
+// const thirtyPercentLength = Math.floor(groupedData.length * 0.3);
+// const first30Percent = groupedData.slice(0, thirtyPercentLength);
+// const remaining70Percent = groupedData.slice(thirtyPercentLength);
+
+// const doubleFakeData = [...remaining70Percent, ...first30Percent].map(
+//   (entry) => ({
+//     month: entry.month,
+//     double_fake_resource_consumed: entry.resource_consumed,
+//   })
+// );
+
+// groupedData.forEach((entry, index) => {
+//   entry.double_fake_resource_consumed =
+//     doubleFakeData[index].double_fake_resource_consumed;
+// });
+{
+  /* {useSelector((state: RootState) => state.roleReducer.role) ===
               'host' && (
               <Line
                 type="monotone"
@@ -366,12 +284,5 @@ const CustomLineChart: React.FC<CustomLineChartProps> = ({
                 stroke={theme.palette.mintGreen.main} // A different color, you can change this
                 strokeWidth={3}
               />
-            )}
-          </LineChart>
-        </ResponsiveContainer>
-      </Box>
-    </Box>
-  );
-};
-
-export default CustomLineChart;
+            )} */
+}
