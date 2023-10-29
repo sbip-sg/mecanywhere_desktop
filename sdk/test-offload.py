@@ -45,14 +45,18 @@ async def distributed_knn(input_data, dataset, k, num_processes):
         sliced_dataset = dataset[start_index:end_index].clone().detach()
 
         await meca_api.offload_task_and_get_result(
-          str(i),
-          'jyume/meca:0.0.5',
-          json.dumps({
+          task_id=str(i),
+          container_ref='jyume/meca:0.0.6',
+          data=json.dumps({
             "dataset": sliced_dataset.tolist(),
             "point": input_data.tolist(),
             "k": k,
             "num_processes": num_processes
           }),
+          resource={
+             "cpu": 1,
+             "memory": 256
+          },
           callback=callback_on_receive)
 
     # ====================  ====================
