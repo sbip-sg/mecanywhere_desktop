@@ -25,12 +25,17 @@ async def main():
       str(i),
       'sampleserver:latest',
       "{\"name\": \"meca dev " + str(i) + "\"}",
-      callback=callback_on_receive
+      callback=callback_on_receive,
+      resource={
+        "cpu": 1,
+        "memory": 256
+      },
     )
 
   tried = 0
   while tried <= 1 and len(results) < NUMBER_OF_TASKS:
     for corr_id, task_id in task_corr_ids.items():
+      time.sleep(2)
       api_response = await meca_api.poll_result(corr_id)
       status = api_response['status']
       response = api_response['response']
@@ -41,7 +46,6 @@ async def main():
       else:
         print(error, "for task: ", task_id, "corr_id:", corr_id)
         tried += 1
-        time.sleep(2)
         break
 
   print("All results received:", results)

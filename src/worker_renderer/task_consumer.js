@@ -107,9 +107,14 @@ class Consumer {
         task.runtime
       );
 
+      let resourceConsumed = 0.1;
+      if (task.resource != null) {
+        resourceConsumed = task.resource.cpu * task.resource.memory;
+      }
+      console.log(` [con] Resource consumed: ${resourceConsumed}`);
       const transactionEndDatetime = new Date().getTime();
       const duration = transactionEndDatetime - transactionStartDatetime;
-      const reply = { id: task.id, content: result, resourceConsumed: 0.1, transactionStartDatetime, transactionEndDatetime, duration };
+      const reply = { id: task.id, content: result, resourceConsumed, transactionStartDatetime, transactionEndDatetime, duration };
 
       console.log(` [con] Result: ${JSON.stringify(reply)}`);
 

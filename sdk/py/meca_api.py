@@ -33,23 +33,23 @@ async def initiateConnection(did: str, vc: str) -> None:
 
 async def offload_task_and_get_result(
     task_id: str,
-    containerRef: str,
+    container_ref: str,
     data: str,
     callback: Callable[[str], None],
-    resource: dict = None,
+    resource: str = None,
     runtime: str = None
   ) -> str:
-  print('Offloading task...', containerRef, data)
   payload = {
     'did': global_did,
     'task_id': task_id,
-    'container_reference': containerRef,
+    'container_reference': container_ref,
     'content': data
   }
   if resource:
     payload['resource'] = resource
   if runtime:
     payload['runtime'] = runtime
+  print('Offloading task... ', payload)
   try:
     r = requests.post(
       f'{DISCOVERY_URL}/offloading/offload_task_and_get_result',
@@ -59,29 +59,33 @@ async def offload_task_and_get_result(
     r.raise_for_status()
   except Exception as e:
     raise SystemExit(e)
-  status, response, error, task_id = r.json().values()
+  jsonR = r.json()
+  status = jsonR['status']
+  response = jsonR['response']
+  error = jsonR['error']
+  task_id = jsonR['task_id']
   print("Received in test:", task_id, status, response, error)
   callback(task_id, status, response, error)
 
 async def offload_task(
     task_id: str,
-    containerRef: str,
+    container_ref: str,
     data: str,
     callback: Callable[[str], None],
     resource: dict = None,
     runtime: str = None
   ) -> str:
-  print('Offloading task...', containerRef, data)
   payload = {
     'did': global_did,
     'task_id': task_id,
-    'container_reference': containerRef,
+    'container_reference': container_ref,
     'content': data
   }
   if resource:
     payload['resource'] = resource
   if runtime:
     payload['runtime'] = runtime
+  print('Offloading task... ', payload)
   try:
     r = requests.post(
       f'{DISCOVERY_URL}/offloading/offload_task',
