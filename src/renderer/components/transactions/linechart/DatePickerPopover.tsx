@@ -55,6 +55,9 @@ const DatePickerPopover: React.FC<DatePickerPopoverProps> = ({
   const [startMaxDate, setStartMaxDate] = useState<Date | null>(null);
   const [endMinDate, setEndMinDate] = useState<Date | null>(null);
   const [endMaxDate, setEndMaxDate] = useState<Date | null>(null);
+  const handleClose = () => {
+    setAnchorEl(null);
+  };
   const handleChangeGroupby = (
     event: React.MouseEvent<HTMLElement>,
     newGroupBy: string | null
@@ -62,9 +65,7 @@ const DatePickerPopover: React.FC<DatePickerPopoverProps> = ({
     if (newGroupBy !== null) {
       setGroupBy(newGroupBy);
     }
-  };
-  const handleClose = () => {
-    setAnchorEl(null);
+    handleClose();
   };
   const handleChangeStartDate = (date: Date) => {
     setStartDate(date);

@@ -11,10 +11,12 @@ import CustomLineChart from './linechart/CustomLineChart';
 import actions from '../../redux/actionCreators';
 import { ExternalDataEntry, InternalDataEntry } from '../../utils/dataTypes';
 import { ExternalPropConfigList } from './propConfig';
-import { registerHost } from '../../services/RegistrationServices';
+import { registerClient } from '../../services/RegistrationServices';
 import Datagrid from './table/Datagrid';
 import {
   addDummyHistory,
+  addHostDummyHistory,
+  findHostHistory,
   findDidHistory,
 } from '../../services/TransactionServices';
 import Transitions from '../transitions/Transition';
@@ -24,7 +26,7 @@ interface TxnDashboardProps {
 }
 
 function getRandomCpu(): number {
-  return Math.floor(Math.random() * 4) + 1; // Random number between 1 and 4
+  return Math.floor(Math.random() * 4) + 1;
 }
 
 function getRandomMemory(): number {
@@ -41,9 +43,9 @@ const generateRandomDID = () => {
   return 'did:meca:0x' + randomHex;
 };
 
-const generateProviderDID = () => {
+const generateProviderDID = (ownDid: string) => {
   const providerDidArray = [
-    'did:meca:0x52c328ef8b382b1d71cc262b868d803a137ab8d8',
+    ownDid,
     'did:meca:0xada873405e83c30a208ae3e50ee06c60569e8a18',
     'did:meca:0x40f219cf9170792562e22b297c73b5dff8177995',
   ];
@@ -61,14 +63,21 @@ const TxnDashboard: React.FC<TxnDashboardProps> = ({ appRole }) => {
   const preprocessDataForProvider = (
     preprocessedData: ExternalDataEntry[]
   ): InternalDataEntry[] => {
-    const specificDID = 'did:meca:0x52c328ef8b382b1d71cc262b868d803a137ab8d8';
+    const ownDid = window.electron.store.get('did');
     const processedData = preprocessedData.map((entry) => {
-      const hostPoDid = generateProviderDID();
+      const hostPoDid = generateProviderDID(ownDid);
       let clientPoDid;
-      if (hostPoDid === specificDID) {
-        clientPoDid = generateProviderDID();
+      let is_host;
+      let is_client;
+      if (hostPoDid === ownDid) {
+        is_host = true;
+        clientPoDid = generateProviderDID(ownDid);
+        if (clientPoDid === ownDid) {
+          is_client = true;
+        }
       } else {
-        clientPoDid = specificDID;
+        clientPoDid = ownDid;
+        is_client = true;
       }
       return {
         ...entry,
@@ -78,6 +87,8 @@ const TxnDashboard: React.FC<TxnDashboardProps> = ({ appRole }) => {
         client_did: generateRandomDID(),
         host_po_did: hostPoDid,
         client_po_did: clientPoDid,
+        is_client,
+        is_host,
       };
     });
     return processedData;
@@ -115,12 +126,13 @@ const TxnDashboard: React.FC<TxnDashboardProps> = ({ appRole }) => {
     const { accessToken } = reduxStore.getState().userReducer;
     const did = window.electron.store.get('did');
     if (accessToken && did) {
-      const didHistoryResponse = await findDidHistory(accessToken, did);
+      const didHistoryResponse = await findHostHistory(accessToken, did);
       if (didHistoryResponse) {
         const responseBody = await didHistoryResponse.json();
         if (responseBody.length > 0) {
           setHasData(true);
         }
+        console.log("responsebody", responseBody)
         const processedData = preprocessData(responseBody);
         setData(processedData);
         setIsLoading(false);
@@ -135,11 +147,12 @@ const TxnDashboard: React.FC<TxnDashboardProps> = ({ appRole }) => {
     const { accessToken } = reduxStore.getState().userReducer;
     const did = window.electron.store.get('did');
     if (accessToken && did) {
-      const addDummyHistoryResponse = await addDummyHistory(accessToken, did);
+      const addDummyHistoryResponse = await addHostDummyHistory(accessToken, did);
       if (!addDummyHistoryResponse) {
         console.error('Invalid dummy history response');
       }
       const didHistoryResponse = await findDidHistory(accessToken, did);
+      // const didHistoryResponse = await findHostHistory(accessToken, did);
       if (didHistoryResponse) {
         const responseBody = await didHistoryResponse.json();
         if (responseBody.length > 0) {
@@ -162,22 +175,22 @@ const TxnDashboard: React.FC<TxnDashboardProps> = ({ appRole }) => {
       await new Promise((resolve) => setTimeout(resolve, 500));
       if (credential && did) {
         try {
-          const accessTokenResponse = await registerHost(did, credential);
+          const accessTokenResponse = await registerClient(did, credential);
           const { access_token } = accessTokenResponse;
           actions.setAccessToken(access_token);
-          const didHistoryResponse = await findDidHistory(access_token, did);
+          const didHistoryResponse = await findHostHistory(access_token, did);
           if (didHistoryResponse) {
             const responseBody = await didHistoryResponse.json();
             if (responseBody.length > 0) {
               setHasData(true);
             }
             const processedData = preprocessData(responseBody);
-            console.log("processsed", processedData)
+            console.log('processsed', processedData);
             setData(processedData);
             setIsLoading(false);
           }
         } catch (error) {
-          console.error('Error during registerHost:', error);
+          console.error('Error during registerClient:', error);
         }
       }
     };
@@ -213,7 +226,7 @@ const TxnDashboard: React.FC<TxnDashboardProps> = ({ appRole }) => {
             width: '90%',
             display: 'flex',
             justifyContent: 'left',
-            alignItems: 'end',
+            alignItems: 'center',
             padding: '0 0 0 2%',
           }}
         >
@@ -287,6 +300,7 @@ const TxnDashboard: React.FC<TxnDashboardProps> = ({ appRole }) => {
               data={data}
               yAxisLabel="Resource Utilized per Month"
               handleRefresh={handleRefresh}
+              appRole={appRole}
             />
           </motion.div>
         )}

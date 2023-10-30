@@ -5,14 +5,16 @@ import Typography from '@mui/material/Typography';
 import ToggleButton from '@mui/material/ToggleButton';
 import ToggleButtonGroup from '@mui/material/ToggleButtonGroup';
 import { useTheme } from '@emotion/react';
+import { useSelector } from 'react-redux';
+import { RootState } from 'renderer/redux/store';
 
 interface DatakeySelectorPopoverProps {
   anchorEl: HTMLElement | null;
   setAnchorEl: React.Dispatch<React.SetStateAction<HTMLButtonElement | null>>;
   datakey: string;
   setDatakey: React.Dispatch<React.SetStateAction<string>>;
-  selectedRoles: string[];
-  setSelectedRoles: React.Dispatch<React.SetStateAction<string[]>>;
+  selectedRole: string;
+  setSelectedRole: React.Dispatch<React.SetStateAction<string>>;
 }
 
 const datakeyOptions = [
@@ -27,6 +29,7 @@ const datakeyOptions = [
 const roleOptions = [
   { label: 'Client', value: 'client' },
   { label: 'Host', value: 'host' },
+  { label: 'Both', value: 'both' },
 ];
 
 const DatakeySelectorPopover: React.FC<DatakeySelectorPopoverProps> = ({
@@ -34,14 +37,14 @@ const DatakeySelectorPopover: React.FC<DatakeySelectorPopoverProps> = ({
   setAnchorEl,
   datakey,
   setDatakey,
-  selectedRoles,
-  setSelectedRoles,
+  selectedRole,
+  setSelectedRole,
 }) => {
   const theme = useTheme();
 
   useEffect(() => {
-    console.log('selectedRoles', selectedRoles);
-  }, [selectedRoles]);
+    console.log('selectedRoles', selectedRole);
+  }, [selectedRole]);
 
   const handleClose = () => {
     setAnchorEl(null);
@@ -49,11 +52,13 @@ const DatakeySelectorPopover: React.FC<DatakeySelectorPopoverProps> = ({
 
   const handleChangeRole = (
     event: React.MouseEvent<HTMLElement>,
-    newRoles: string[]
+    newRole: string | null
   ) => {
-    if (newRoles.length !== 0) {
-      setSelectedRoles(newRoles);
+    if (newRole !== null) {
+      console.log('newrole', newRole);
+      setSelectedRole(newRole);
     }
+    handleClose();
   };
 
   const handleChangeDatakey = (
@@ -63,6 +68,7 @@ const DatakeySelectorPopover: React.FC<DatakeySelectorPopoverProps> = ({
     if (newDatakey !== null) {
       setDatakey(newDatakey);
     }
+    handleClose();
   };
   return (
     <Popover
@@ -88,49 +94,55 @@ const DatakeySelectorPopover: React.FC<DatakeySelectorPopoverProps> = ({
           padding: '1.2rem 2rem 2rem 2rem',
         }}
       >
-        <Typography
-          id="transition-modal-title"
-          style={{
-            fontSize: '15px',
-            letterSpacing: '0.2em',
-            margin: '0.5rem 0 0.5rem 0.2rem',
-            fontWeight: '600',
-          }}
-        >
-          SELECT ROLE
-        </Typography>
-        <ToggleButtonGroup
-          sx={{
-            color: theme.palette.cerulean.main,
-            backgroundColor: theme.palette.mediumBlack.main,
-            width: '100%',
-          }}
-          value={selectedRoles}
-          onChange={handleChangeRole}
-        >
-          {roleOptions.map((option) => (
-            <ToggleButton
-              sx={{
-                minWidth: '5rem',
-                padding: '0.2rem 1rem 0.2rem 1rem',
-                fontSize: '14px',
+        {useSelector((state: RootState) => state.roleReducer.role) ===
+          'provider' && (
+          <>
+            <Typography
+              id="transition-modal-title"
+              style={{
+                fontSize: '15px',
+                letterSpacing: '0.2em',
+                margin: '0.5rem 0 0.5rem 0.2rem',
                 fontWeight: '600',
-                color: theme.palette.mintGreen.main,
-                backgroundColor: theme.palette.darkBlack.main,
-                '&.Mui-selected': {
-                  color: theme.palette.darkBlack.main,
-                  backgroundColor: theme.palette.deepCerulean.main,
-                  fontSize: '14px',
-                  fontWeight: '600',
-                },
               }}
-              key={option.value}
-              value={option.value}
             >
-              {option.label}
-            </ToggleButton>
-          ))}
-        </ToggleButtonGroup>
+              SELECT ROLE
+            </Typography>
+            <ToggleButtonGroup
+              sx={{
+                color: theme.palette.cerulean.main,
+                backgroundColor: theme.palette.mediumBlack.main,
+                width: '100%',
+              }}
+              value={selectedRole}
+              onChange={handleChangeRole}
+              exclusive
+            >
+              {roleOptions.map((option) => (
+                <ToggleButton
+                  sx={{
+                    minWidth: '5rem',
+                    padding: '0.2rem 1rem 0.2rem 1rem',
+                    fontSize: '14px',
+                    fontWeight: '600',
+                    color: theme.palette.offWhite.main,
+                    backgroundColor: theme.palette.darkBlack.main,
+                    '&.Mui-selected': {
+                      color: theme.palette.darkBlack.main,
+                      backgroundColor: theme.palette.mintGreen.main,
+                      fontSize: '14px',
+                      fontWeight: '600',
+                    },
+                  }}
+                  key={option.value}
+                  value={option.value}
+                >
+                  {option.label}
+                </ToggleButton>
+              ))}
+            </ToggleButtonGroup>
+          </>
+        )}
         <Typography
           id="transition-modal-title"
           style={{
@@ -160,11 +172,11 @@ const DatakeySelectorPopover: React.FC<DatakeySelectorPopoverProps> = ({
                 padding: '0.2rem 1rem 0.2rem 1rem',
                 fontSize: '12px',
                 fontWeight: '600',
-                color: theme.palette.mintGreen.main,
+                color: theme.palette.offWhite.main,
                 backgroundColor: theme.palette.darkBlack.main,
                 '&.Mui-selected': {
                   color: theme.palette.darkBlack.main,
-                  backgroundColor: theme.palette.violet.main,
+                  backgroundColor: theme.palette.mintGreen.main,
                   fontSize: '12px',
                   fontWeight: '600',
                 },

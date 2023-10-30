@@ -42,21 +42,25 @@ const PastBillingCard: React.FC<PastBillingCardProps> = ({ data }) => {
   useEffect(() => {
     const today = new Date();
     // Filtering data to get entries of the last 6 months including the current month
-    const sixMonthsData = data.filter(entry => {
+    const sixMonthsData = data.filter((entry) => {
       // Convert the timestamp to milliseconds before creating Date object
       const entryDate = new Date(entry.session_start_datetime * 1000);
-      const monthDifference = today.getMonth() - entryDate.getMonth() +
-        (12 * (today.getFullYear() - entryDate.getFullYear()));
+      const monthDifference =
+        today.getMonth() -
+        entryDate.getMonth() +
+        12 * (today.getFullYear() - entryDate.getFullYear());
       return monthDifference < 6;
     });
-  
+
     // Sorting data in ascending order of session_start_datetime
-    sixMonthsData.sort((a, b) => a.session_start_datetime - b.session_start_datetime);
-  
+    sixMonthsData.sort(
+      (a, b) => a.session_start_datetime - b.session_start_datetime
+    );
+
     const grouped = sixMonthsData.reduce((acc, entry) => {
       const entryDate = new Date(entry.session_start_datetime * 1000);
       const month = entryDate.toLocaleString('default', { month: 'long' });
-  
+
       if (!acc[month]) {
         acc[month] = {
           month,
@@ -68,24 +72,24 @@ const PastBillingCard: React.FC<PastBillingCardProps> = ({ data }) => {
           average_network_reliability: 0,
         };
       }
-  
+
       acc[month].number_of_sessions += 1;
       acc[month].total_resource_consumed += entry.resource_consumed;
       acc[month].total_usage_hours += entry.duration;
       acc[month].total_tasks_run += 1; // assuming one task per entry
       acc[month].billing_amount += entry.price;
       acc[month].average_network_reliability += entry.network_reliability;
-  
+
       return acc;
     }, {} as { [key: string]: GroupedDataEntry });
-  
-    const groupedArray = Object.values(grouped).map(entry => {
+
+    const groupedArray = Object.values(grouped).map((entry) => {
       entry.average_network_reliability /= entry.number_of_sessions;
       return entry;
     });
-  
+
     setGroupedData(groupedArray);
-    console.log("groupedArray", groupedArray)
+    console.log('groupedArray', groupedArray);
   }, [data]);
 
   // const groupedData: GroupedData[] = data.slice(-6).map((entry) => {

@@ -47,6 +47,25 @@ export async function findDidHistory(token: string, did: string) {
   }
 }
 
+export async function findHostHistory(token: string, did: string) {
+  try {
+    const response = await fetch(`${transactionUrl}/find_host_history`, {
+      method: 'POST',
+      headers: {
+        'content-type': 'application/json',
+        Authorization: `Bearer ${token}`,
+      },
+      body: JSON.stringify({ did }),
+    });
+    if (!response.ok) {
+      throw new Error('Network response not ok');
+    }
+    return response;
+  } catch (error) {
+    console.error('There was a problem with the fetch operation:', error);
+  }
+}
+
 export async function findPoHistory(token: string, did: string) {
   try {
     const response = await fetch(`${transactionUrl}/find_po_history`, {
@@ -66,9 +85,30 @@ export async function findPoHistory(token: string, did: string) {
   }
 }
 
+
 export async function addDummyHistory(token: string, did: string) {
   try {
     const response = await fetch(`${transactionUrl}/add_dummy_history`, {
+      method: 'POST',
+      headers: {
+        'content-type': 'application/json',
+        Authorization: `Bearer ${token}`,
+      },
+      body: JSON.stringify({ did }),
+    });
+    if (!response.ok) {
+      throw new Error('Network response not ok');
+    }
+    return true;
+  } catch (error) {
+    console.error('There was a problem with the fetch operation:', error);
+  }
+}
+
+
+export async function addHostDummyHistory(token: string, did: string) {
+  try {
+    const response = await fetch(`${transactionUrl}/add_host_dummy_history`, {
       method: 'POST',
       headers: {
         'content-type': 'application/json',

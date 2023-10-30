@@ -52,7 +52,7 @@ function limitDecimalPlaces(number, decimalPlaces) {
 
 const TransactionDetails: React.FC = () => {
   // const params = useParams();
-  // const { sessionId } = params;
+  // const { TransactionId } = params;
   const theme = useTheme();
   const navigate = useNavigate();
   const data = reduxStore.getState().transactionDetailsReducer.transactionDetails;
@@ -89,8 +89,8 @@ const TransactionDetails: React.FC = () => {
         <Typography variant="h1" fontSize="20px">
           TRANSACTION #
         </Typography>
-        <Typography color={theme.palette.cerulean.main} fontSize="20px">
-          {data.session_id}
+        <Typography color={theme.palette.violet.main} fontSize="20px">
+          {data.transaction_id}
         </Typography>
       </Grid>
       <Grid
@@ -108,29 +108,30 @@ const TransactionDetails: React.FC = () => {
         }}
       >
         <Grid item xs={4.5} sx={{}}>
-          <TitleTypography title="Session ID:" />
+          <TitleTypography title="Transaction ID:" />
           <TitleTypography title="DID:" />
-          <TitleTypography title="Issuer DID:" />
-          <TitleTypography title="Session Start Datetime:" />
-          <TitleTypography title="Session End Datetime:" />
+          {/* <TitleTypography title="Issuer DID:" /> */}
+          <TitleTypography title="Transaction Start Datetime:" />
+          <TitleTypography title="Transaction End Datetime:" />
           <TitleTypography title="Duration:" />
           <TitleTypography title="Network Reliability:" />
           <TitleTypography title="Task:" />
-          <TitleTypography title="Role (Client/Host):" />
-          <TitleTypography title="Resource Consumed/Provided:" />
+          {/* <TitleTypography title="Role (Client/Host):" /> */}
+          <TitleTypography title="Memory Utilized (MB):" />
+          <TitleTypography title="CPU Utilized (cores):" />
           <TitleTypography title="Usage Charge/Earned:" />
         </Grid>
         <Grid item xs={7.5}>
-          <DataTypography data={data.session_id} />
-          <DataTypography data={data.did} />
-          <DataTypography data={data.provider_did} />
+          <DataTypography data={data.transaction_id} />
+          <DataTypography data={window.electron.store.get('did')} />
+          {/* <DataTypography data={data.provider_did} /> */}
           <DataTypography
             data={convertEpochToStandardTimeWithDate(
-              data.session_start_datetime
+              data.transaction_start_datetime
             )}
           />
           <DataTypography
-            data={convertEpochToStandardTimeWithDate(data.session_end_datetime)}
+            data={convertEpochToStandardTimeWithDate(data.transaction_end_datetime)}
           />
           <DataTypography
             data={`${limitDecimalPlaces(data.duration / 60 / 60, 2)} hours`}
@@ -141,9 +142,12 @@ const TransactionDetails: React.FC = () => {
               2
             )} %`}
           />
-          <DataTypography data={data.task} />
-          <DataTypography data={data.is_host ? 'Host' : 'Client'} />
-          <DataTypography
+          <DataTypography data={data.task_name} />
+          <DataTypography data={data.resource_memory} />
+          <DataTypography data={data.resource_cpu} />
+          <DataTypography data={data.price} />
+          {/* <DataTypography data={data.is_host ? 'Host' : 'Client'} /> */}
+          {/* <DataTypography
             data={`${limitDecimalPlaces(
               data.resource_consumed * 10,
               2
@@ -154,7 +158,7 @@ const TransactionDetails: React.FC = () => {
               data.resource_consumed * 3 * 0.4334,
               2
             )} SGD`}
-          />
+          /> */}
         </Grid>
       </Grid>
     </Grid>

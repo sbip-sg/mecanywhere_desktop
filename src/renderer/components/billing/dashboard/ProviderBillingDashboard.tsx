@@ -4,9 +4,9 @@ import CurrentBillingCard from '../components/cards/CurrentBillingCard';
 import PastBillingCard from '../components/cards/PastBillingCard';
 import PastBillingList from '../components/list/PastBillingList';
 import { ExternalDataEntry } from '../../../utils/dataTypes';
-import { registerHost } from '../../../services/RegistrationServices';
+import { registerClient } from '../../../services/RegistrationServices';
 import actions from '../../../redux/actionCreators';
-import { findDidHistory } from '../../../services/TransactionServices';
+import { findHostHistory } from '../../../services/TransactionServices';
 
 const ProviderBillingDashboard = () => {
   const [data, setData] = useState<ExternalDataEntry[]>([]);
@@ -17,17 +17,17 @@ const ProviderBillingDashboard = () => {
     const getAccessToken = async () => {
       if (credential && did) {
         try {
-          const accessTokenResponse = await registerHost(did, credential);
+          const accessTokenResponse = await registerClient(did, credential);
           const { access_token } = accessTokenResponse;
           actions.setAccessToken(access_token);
-          const didHistoryResponse = await findDidHistory(access_token, did);
+          const didHistoryResponse = await findHostHistory(access_token, did);
           if (didHistoryResponse) {
             const responseBody = await didHistoryResponse.json();
             console.log('response body', responseBody);
             setData(responseBody);
           }
         } catch (error) {
-          console.error('Error during registerHost:', error);
+          console.error('Error during registerClient:', error);
         }
       }
     };

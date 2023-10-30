@@ -101,6 +101,27 @@ export async function registerHost(did: string, credential: object) {
   }
 }
 
+export async function registerClient(did: string, credential: object) {
+  try {
+    const response = await fetch(`${url}/registration/register_client`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({ did, credential }),
+    });
+
+    if (!response.ok) {
+      throw new Error('Network response not ok');
+    }
+
+    const res = await response.json();
+    return res;
+  } catch (error) {
+    console.error('There was a problem with the fetch operation:', error);
+  }
+}
+
 export async function deregisterHost(token: string, did: string) {
   try {
     const response = await fetch(`${url}/registration/deregister_host`, {

@@ -158,7 +158,7 @@ const Animated = () => {
 };
 
 const App = () => {
-  useHeartbeatHook();
+  // useHeartbeatHook();
   useHandleAppExitHook();
   return (
     <Router>

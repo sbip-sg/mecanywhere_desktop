@@ -78,30 +78,35 @@ export const ExternalPropConfigList: PropConfig<ExternalDataEntry>[] = [
     property: 'transaction_id',
     // renderer: (data: ExternalDataEntry) => `${data.transaction_id.slice(0, 10)}...`,
     renderer: (data: ExternalDataEntry) => `${data.transaction_id.slice(0, 10)}...`,
-    label: 'transaction ID',
+    label: 'Transaction ID',
   },
   {
-    property: 'resource_consumed',
+    property: 'resource_memory',
     renderer: (data: ExternalDataEntry) => data.resource_consumed.toString(),
-    label: 'Resource Consumed (CC)',
+    label: 'Memory Utilized (MB)',
+  },
+  {
+    property: 'resource_cpu',
+    renderer: (data: ExternalDataEntry) => data.resource_consumed.toString(),
+    label: 'CPU Utilized (cores)',
   },
   {
     property: 'transaction_start_datetime',
     renderer: (data: ExternalDataEntry) =>
       convertEpochToStandardTimeWithDate(data.transaction_start_datetime),
-    label: 'transaction Start Datetime',
+    label: 'Start Datetime',
   },
   {
     property: 'transaction_end_datetime',
     renderer: (data: ExternalDataEntry) =>
       convertEpochToStandardTimeWithDate(data.transaction_end_datetime),
-    label: 'transaction End Datetime',
+    label: 'End Datetime',
   },
-  {
-    property: 'task',
-    renderer: (data: ExternalDataEntry) => data.task,
-    label: 'Task',
-  },
+  // {
+  //   property: 'task',
+  //   renderer: (data: ExternalDataEntry) => data.task,
+  //   label: 'Task',
+  // },
   {
     property: 'duration',
     renderer: (data: ExternalDataEntry) => data.duration,
