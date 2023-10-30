@@ -1,3 +1,4 @@
+const log = require('electron-log/renderer');
 const amqp = require('amqplib');
 const { ipcRenderer } = require('electron');
 const protobuf = require('protobufjs');
@@ -28,6 +29,7 @@ const parseTaskFromProto = (content) => {
     return { id, content: typeError.toString() };
   }
   console.log(` [con] Received: ${JSON.stringify(task)}`);
+  log.info(` [con] Received: ${JSON.stringify(task)}`)
 
   return task;
 };
@@ -48,12 +50,14 @@ class Consumer {
     this.startConsumer = async function startConsumer() {
       connection = await amqp.connect(MQ_URL);
       console.log(' [con] Connected to ', MQ_URL);
+      log.info(' [con] Connected to ', MQ_URL)
       channel = await connection.createChannel();
       await channel.assertQueue(queueName, {
         durable: true,
         expires: 1000 * 60 * 30,
       });
       console.log(' [con] Awaiting RPC requests');
+      log.info(' [con] Awaiting RPC requests')
 
       channel.consume(queueName, async (msg) => {
         const { correlationId } = msg.properties;
@@ -83,6 +87,8 @@ class Consumer {
         connection = null;
       }
       console.log(' [con] Connection closed');
+      log.info(' [con] Connection closed')
+
       delete Consumer.openQueues[queueName];
     };
 
@@ -112,11 +118,14 @@ class Consumer {
         resourceConsumed = task.resource.cpu * task.resource.memory;
       }
       console.log(` [con] Resource consumed: ${resourceConsumed}`);
+      log.info(` [con] Resource consumed: ${resourceConsumed}`)
+
       const transactionEndDatetime = Math.floor(new Date().getTime() / 1000)
       const duration = transactionEndDatetime - transactionStartDatetime;
       const reply = { id: task.id, content: result, resourceConsumed, transactionStartDatetime, transactionEndDatetime, duration };
 
       console.log(` [con] Result: ${JSON.stringify(reply)}`);
+      log.info(` [con] Result: ${JSON.stringify(reply)}`)
 
       return reply;
     };

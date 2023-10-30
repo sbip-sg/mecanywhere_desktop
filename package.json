@@ -227,10 +227,11 @@
     "crypto": false
   },
   "build": {
-    "productName": "ElectronReact",
-    "appId": "org.erb.ElectronReact",
+    "productName": "MECAnywhere",
+    "appId": "org.erb.MECAnywhere",
     "asar": true,
     "asarUnpack": "**\\*.{node,dll}",
+    "icon": "assets/logo-test.png",
     "files": [
       "dist",
       "node_modules",
