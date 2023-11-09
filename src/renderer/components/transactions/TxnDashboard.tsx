@@ -11,13 +11,11 @@ import CustomLineChart from './linechart/CustomLineChart';
 import actions from '../../redux/actionCreators';
 import { ExternalDataEntry, InternalDataEntry } from '../../utils/dataTypes';
 import { ExternalPropConfigList } from './propConfig';
-import { registerClient } from '../../services/RegistrationServices';
+import { authenticate } from '../../services/RegistrationServices';
 import Datagrid from './table/Datagrid';
 import {
-  addDummyHistory,
   addHostDummyHistory,
   findHostHistory,
-  findDidHistory,
 } from '../../services/TransactionServices';
 import Transitions from '../transitions/Transition';
 
@@ -97,11 +95,15 @@ const TxnDashboard: React.FC<TxnDashboardProps> = ({ appRole }) => {
   const preprocessDataForUser = (
     preprocessedData: ExternalDataEntry[]
   ): ExternalDataEntry[] => {
+    const executorSettings = JSON.parse(
+      window.electron.store.get('executorSettings')
+    )
+    console.log("executorSettings", executorSettings)
     const processedData = preprocessedData.map((entry) => {
       return {
         ...entry,
-        resource_cpu: getRandomCpu(),
-        resource_memory: getRandomMemory(),
+        resource_cpu: executorSettings.cpu_cores,
+        resource_memory: executorSettings.memory_mb,
       };
     });
     return processedData;
@@ -151,8 +153,8 @@ const TxnDashboard: React.FC<TxnDashboardProps> = ({ appRole }) => {
       if (!addDummyHistoryResponse) {
         console.error('Invalid dummy history response');
       }
-      const didHistoryResponse = await findDidHistory(accessToken, did);
-      // const didHistoryResponse = await findHostHistory(accessToken, did);
+      // const didHistoryResponse = await findDidHistory(accessToken, did);
+      const didHistoryResponse = await findHostHistory(accessToken, did);
       if (didHistoryResponse) {
         const responseBody = await didHistoryResponse.json();
         if (responseBody.length > 0) {
@@ -175,17 +177,14 @@ const TxnDashboard: React.FC<TxnDashboardProps> = ({ appRole }) => {
       await new Promise((resolve) => setTimeout(resolve, 500));
       if (credential && did) {
         try {
-          const accessTokenResponse = await registerClient(did, credential);
-          const { access_token } = accessTokenResponse;
-          actions.setAccessToken(access_token);
-          const didHistoryResponse = await findHostHistory(access_token, did);
+          const { accessToken } = reduxStore.getState().userReducer;
+          const didHistoryResponse = await findHostHistory(accessToken, did);
           if (didHistoryResponse) {
             const responseBody = await didHistoryResponse.json();
             if (responseBody.length > 0) {
               setHasData(true);
             }
             const processedData = preprocessData(responseBody);
-            console.log('processsed', processedData);
             setData(processedData);
             setIsLoading(false);
           }

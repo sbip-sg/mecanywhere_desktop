@@ -4,7 +4,7 @@ import CurrentBillingCard from '../components/cards/CurrentBillingCard';
 import PastBillingCard from '../components/cards/PastBillingCard';
 import PastBillingList from '../components/list/PastBillingList';
 import { ExternalDataEntry } from '../../../utils/dataTypes';
-import { registerClient } from '../../../services/RegistrationServices';
+import { registerClient, authenticate } from '../../../services/RegistrationServices';
 import actions from '../../../redux/actionCreators';
 import { findHostHistory } from '../../../services/TransactionServices';
 
@@ -17,7 +17,7 @@ const ProviderBillingDashboard = () => {
     const getAccessToken = async () => {
       if (credential && did) {
         try {
-          const accessTokenResponse = await registerClient(did, credential);
+          const accessTokenResponse = await authenticate(did, credential);
           const { access_token } = accessTokenResponse;
           actions.setAccessToken(access_token);
           const didHistoryResponse = await findHostHistory(access_token, did);

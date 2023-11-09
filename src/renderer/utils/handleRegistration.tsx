@@ -8,19 +8,15 @@ import { registerHost, deregisterHost } from '../services/RegistrationServices';
 import reduxStore from '../redux/store';
 
 export const handleRegisterHost = async () => {
-  const credential = JSON.parse(window.electron.store.get('credential'));
   const did = window.electron.store.get('did');
-  if (credential && did) {
-    console.log('credential, did', credential, did);
-    const response = await registerHost(did, credential);
-    const { access_token } = response;
-    console.log('access_token', access_token);
-    actions.setAccessToken(access_token);
-    const unpauseResponse = await unpauseExecutor();
-    if (!unpauseResponse) {
-      console.error('Unpause failed.');
-    }
+  const { accessToken } = reduxStore.getState().userReducer;
+  if (did && accessToken) {
+    const response = await registerHost(accessToken, did);
     if (response) {
+      const unpauseResponse = await unpauseExecutor();
+      if (!unpauseResponse) {
+        console.error('Unpause failed.');
+      }
       window.electron.startConsumer(did);
     } else {
       throw new Error('Host registration failed');
@@ -39,7 +35,7 @@ export const handleDeregisterHost = async () => {
   }
   log.info('in deregister');
   const response = await deregisterHost(accessToken, did);
-  if (response && response.ok) {
+  if (response) {
     actions.setAccessToken('');
     window.electron.stopConsumer(did);
     log.info('successfully deregistered');
