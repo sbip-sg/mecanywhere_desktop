@@ -269,57 +269,7 @@ const CustomLineChart: React.FC<CustomLineChartProps> = ({
     console.log('host_grouped_data', groupedData);
   }
   console.log('grouped_data', groupedData);
-  // const groupedDataAccumulator = dataFilteredByRoleAndDate.reduce(
-  //   (accumulator, entry) => {
-  //     const entryDate = new Date(entry.transaction_start_datetime * 1000);
-  //     let groupKey;
 
-  //     if (groupBy === 'day') {
-  //       groupKey = entryDate.toLocaleDateString();
-  //     } else if (groupBy === 'week') {
-  //       const weekStartDate = new Date(entryDate);
-  //       weekStartDate.setDate(entryDate.getDate() - entryDate.getDay());
-  //       groupKey = weekStartDate.toLocaleDateString();
-  //     } else {
-  //       groupKey = entryDate.toLocaleString('default', { month: 'long' });
-  //     }
-
-  //     accumulator[groupKey] = accumulator[groupKey] || {
-  //       date: groupKey,
-  //       resource_cpu: 0,
-  //       resource_memory: 0,
-  //       duration: 0,
-  //       network_reliability: 0,
-  //       price: 0,
-  //       count: 0,
-  //     };
-
-  //     accumulator[groupKey].resource_cpu += Number(entry.resource_cpu);
-  //     accumulator[groupKey].resource_memory += Number(entry.resource_memory);
-  //     accumulator[groupKey].duration += Number(entry.duration);
-  //     accumulator[groupKey].network_reliability += Number(
-  //       entry.network_reliability
-  //     );
-  //     accumulator[groupKey].price += Number(entry.price);
-  //     accumulator[groupKey].count += 1;
-
-  //     return accumulator;
-  //   },
-  //   {} as { [key: string]: GroupedData & { count: number } }
-  // );
-
-  // const groupedData: GroupedData[] = Object.values(groupedDataAccumulator).map(
-  //   (group) => {
-  //     return {
-  //       ...group,
-  //       resource_cpu: group.resource_cpu / group.count,
-  //       resource_memory: group.resource_memory / group.count,
-  //       avg_duration: group.duration / group.count,
-  //       network_reliability: group.network_reliability / group.count,
-  //     };
-  //   }
-  // );
-  // console.log('host_grouped_data', groupedData);
   const sortedGroupedData: GroupedData[] = groupedData.sort((a, b) => {
     const dateA = new Date(Date.parse(a.date));
     const dateB = new Date(Date.parse(b.date));
@@ -349,7 +299,7 @@ const CustomLineChart: React.FC<CustomLineChartProps> = ({
           padding: '0 1rem 0 1rem',
         }}
       >
-        <Box id="widget-wrapper" sx={{ ml: 'auto', padding: '1.5rem 0 0 0' }}>
+        <Box id="widget-wrapper" sx={{ ml: 'auto', padding: '1.2rem 0 0 0' }}>
           <IconButton size="small" onClick={handleRefresh}>
             <RefreshIcon fontSize="small" sx={{ color: 'white' }} />
           </IconButton>

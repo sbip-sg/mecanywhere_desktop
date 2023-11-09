@@ -40,10 +40,6 @@ const Login = () => {
   const handleCloseErrorDialog = () => {
     setErrorDialogOpen(false);
   };
-  // const isProvider = useSelector(
-  //   (state: RootState) => state.isProvider.isProvider
-  // );
-
   const role = window.electron.store.get('role');
   console.log('role', role);
   const handleSubmit = useCallback(
@@ -52,8 +48,7 @@ const Login = () => {
       try {
         formActions.resetForm();
         const { password } = values;
-        // const userIsAuthenticated = await handleLogin(password);
-        const userIsAuthenticated = true;
+        const userIsAuthenticated = await handleLogin(password);
         if (userIsAuthenticated) {
           actions.setAuthenticated(true);
           if (role === 'host') {

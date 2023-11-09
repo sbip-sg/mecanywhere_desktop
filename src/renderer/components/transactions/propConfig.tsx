@@ -82,12 +82,12 @@ export const ExternalPropConfigList: PropConfig<ExternalDataEntry>[] = [
   },
   {
     property: 'resource_memory',
-    renderer: (data: ExternalDataEntry) => data.resource_consumed.toString(),
+    renderer: (data: ExternalDataEntry) => data.resource_memory.toString(),
     label: 'Memory Utilized (MB)',
   },
   {
     property: 'resource_cpu',
-    renderer: (data: ExternalDataEntry) => data.resource_consumed.toString(),
+    renderer: (data: ExternalDataEntry) => data.resource_cpu.toString(),
     label: 'CPU Utilized (cores)',
   },
   {
