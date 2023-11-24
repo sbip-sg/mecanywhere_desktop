@@ -2,8 +2,7 @@
 /* eslint no-unused-vars: off */
 import { contextBridge, ipcRenderer, IpcRendererEvent } from 'electron';
 // import log from 'electron-log/main';
-
-// export type Channels = 'ipc-example';
+import Channels from '../common/channels';
 
 const subscribe = (channel: string, func: (...args: any[]) => void) => {
   const subscription = (_event: IpcRendererEvent, ...args: any[]) =>
@@ -12,47 +11,44 @@ const subscribe = (channel: string, func: (...args: any[]) => void) => {
 };
 
 const electronHandler = {
-  openLinkPlease: () => ipcRenderer.invoke('openLinkPlease'),
-  //   })
-  // });
+  openLinkPlease: () => ipcRenderer.invoke(Channels.OPEN_LINK_PLEASE),
   openWindow: () => {
-    ipcRenderer.send('message:loginShow');
+    ipcRenderer.send(Channels.OPEN_WINDOW);
   },
   store: {
     get(key) {
-      return ipcRenderer.sendSync('electron-store-get', key);
+      return ipcRenderer.sendSync(Channels.STORE_GET, key);
     },
     set(property, val) {
-      ipcRenderer.send('electron-store-set', property, val);
+      ipcRenderer.send(Channels.STORE_SET, property, val);
     },
   },
 
   onAppCloseInitiated: (callback: (...args: any[]) => void) => {
-    subscribe('app-close-initiated', callback);
+    subscribe(Channels.APP_CLOSE_INITIATED, callback);
   },
   confirmAppClose: () => {
-    ipcRenderer.send('app-close-confirmed');
+    ipcRenderer.send(Channels.APP_CLOSE_CONFIRMED);
   },
 
   onAppReloadInitiated: (callback: (...args: any[]) => void) => {
-    subscribe('app-reload-initiated', callback);
+    subscribe(Channels.APP_RELOAD_INITIATED, callback);
   },
   confirmAppReload: () => {
-    ipcRenderer.send('app-reload-confirmed');
+    ipcRenderer.send(Channels.APP_RELOAD_CONFIRMED);
   },
 
-  // TODO: extract channel names
   // from host
   startConsumer: (queueName: string) =>
-    ipcRenderer.send('start-consumer', queueName),
+    ipcRenderer.send(Channels.START_CONSUMER, queueName),
   // to host
   stopConsumer: (queueName: string) =>
-    ipcRenderer.send('stop-consumer', queueName),
+    ipcRenderer.send(Channels.STOP_CONSUMER, queueName),
   onSubscribeJobs: (callback: (...args: any[]) => void) => {
-    subscribe('job-received', callback);
+    subscribe(Channels.JOB_RECEIVED, callback);
   },
   onSubscribeJobResults: (callback: (...args: any[]) => void) => {
-    subscribe('job-results-received', callback);
+    subscribe(Channels.JOB_RESULTS_RECEIVED, callback);
   },
 
   removeListener: (channel: string, func: (...args: any[]) => void) => {

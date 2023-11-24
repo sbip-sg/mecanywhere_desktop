@@ -21,6 +21,7 @@ import { autoUpdater } from 'electron-updater';
 import { performance } from 'perf_hooks';
 import MenuBuilder from './menu';
 import { resolveHtmlPath } from './util';
+import Channels from '../common/channels';
 
 const Store = require('electron-store');
 const io = require('socket.io')();
@@ -32,6 +33,8 @@ log.initialize({ preload: true });
 // log.info('Log from the main process');
 
 const start = performance.now();
+
+const SDK_SOCKET_PORT = process.env.SDK_SOCKET_PORT || 3001;
 
 const store = new Store();
 
@@ -60,15 +63,15 @@ function showLoginWindow() {
     //   });
   }
 }
-ipcMain.handle('openLinkPlease', () => {
+ipcMain.handle(Channels.OPEN_LINK_PLEASE, () => {
   shell.openExternal('http://localhost:3000/');
 });
 
-ipcMain.on('message:loginShow', (event) => {
+ipcMain.on(Channels.OPEN_WINDOW, (event) => {
   showLoginWindow();
 });
 
-ipcMain.on('electron-store-get', async (event, key) => {
+ipcMain.on(Channels.STORE_GET, async (event, key) => {
   try {
     const encryptedKey = store.get(key);
 
@@ -88,47 +91,47 @@ ipcMain.on('electron-store-get', async (event, key) => {
   }
 });
 
-ipcMain.on('electron-store-set', async (event, key, val) => {
+ipcMain.on(Channels.STORE_SET, async (event, key, val) => {
   const buffer = safeStorage.encryptString(val);
   store.set(key, buffer.toString('latin1'));
 });
 
-ipcMain.on('job-results-received', async (event, id, result) => {
+ipcMain.on(Channels.JOB_RESULTS_RECEIVED, async (event, id, result) => {
   if (!mainWindow) {
     throw new Error('"mainWindow" is not defined');
   }
-  mainWindow.webContents.send('job-results-received', id, result);
+  mainWindow.webContents.send(Channels.JOB_RESULTS_RECEIVED, id, result);
 });
 
-ipcMain.on('job-received', async (event, id, result) => {
+ipcMain.on(Channels.JOB_RECEIVED, async (event, id, result) => {
   if (!mainWindow) {
     throw new Error('"mainWindow" is not defined');
   }
-  mainWindow.webContents.send('job-received', id, result);
+  mainWindow.webContents.send(Channels.JOB_RECEIVED, id, result);
 });
 
-ipcMain.on('start-consumer', async (event, queueName) => {
+ipcMain.on(Channels.START_CONSUMER, async (event, queueName) => {
   if (!workerWindow) {
     throw new Error('"workerWindow" is not defined');
   }
-  workerWindow.webContents.send('start-consumer', queueName);
+  workerWindow.webContents.send(Channels.START_CONSUMER, queueName);
 });
 
-ipcMain.on('stop-consumer', async (event, queueName) => {
+ipcMain.on(Channels.STOP_CONSUMER, async (event, queueName) => {
   if (!workerWindow) {
     throw new Error('"workerWindow" is not defined');
   }
-  workerWindow.webContents.send('stop-consumer', queueName);
+  workerWindow.webContents.send(Channels.STOP_CONSUMER, queueName);
 });
 
-ipcMain.on('app-close-confirmed', () => {
+ipcMain.on(Channels.APP_CLOSE_CONFIRMED, () => {
   if (!mainWindow) {
     throw new Error('"mainWindow" is not defined');
   }
   mainWindow.destroy();
 });
 
-ipcMain.on('app-reload-confirmed', () => {
+ipcMain.on(Channels.APP_RELOAD_CONFIRMED, () => {
   if (!mainWindow) {
     throw new Error('"mainWindow" is not defined');
   }
