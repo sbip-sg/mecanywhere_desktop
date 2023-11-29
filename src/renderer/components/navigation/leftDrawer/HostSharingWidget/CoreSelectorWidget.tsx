@@ -34,11 +34,12 @@ const CoreSelectorWidget = ({ executorSettings, setExecutorSettings }) => {
   return (
     <Grid container item xs={12} sx={{ justifyContent: 'space-between' }}>
       <Typography
-        style={{
+        sx={{
           height: '100%',
           fontSize: '15px',
           display: 'flex',
           alignItems: 'center',
+          color: 'text.primary',
         }}
       >
         CPU cores
@@ -47,7 +48,7 @@ const CoreSelectorWidget = ({ executorSettings, setExecutorSettings }) => {
         <Button
           disabled
           sx={{
-            color: `${theme.palette.offWhite.main} !important`,
+            color: `${'text.primary'} !important`,
             fontWeight: '600',
           }}
         >
@@ -58,13 +59,17 @@ const CoreSelectorWidget = ({ executorSettings, setExecutorSettings }) => {
             onClick={incrementCore}
             sx={{ padding: '0.1rem 0.1rem 0rem 0.1rem' }}
           >
-            <KeyboardArrowUpIcon sx={{ fontSize: '20px', color: 'white' }} />
+            <KeyboardArrowUpIcon
+              sx={{ fontSize: '20px', color: 'text.primary' }}
+            />
           </IconButton>
           <IconButton
             onClick={decrementCore}
             sx={{ padding: '0rem 0.1rem 0.1rem 0.1rem' }}
           >
-            <KeyboardArrowDownIcon sx={{ fontSize: '20px', color: 'white' }} />
+            <KeyboardArrowDownIcon
+              sx={{ fontSize: '20px', color: 'text.primary' }}
+            />
           </IconButton>
         </Stack>
       </ButtonGroup>

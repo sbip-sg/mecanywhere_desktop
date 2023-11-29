@@ -9,11 +9,13 @@ const StyledTableCell = styled(({ addRightPadding, ...otherProps }) => (
   <TableCell {...otherProps} />
 ))<StyledTableCellProps>(({ theme, addRightPadding }) => ({
   [`&.${tableCellClasses.head}`]: {
-    backgroundColor: theme.palette.mediumBlack.main,
-    color: theme.palette.cerulean.main,
+    backgroundColor: 'customBackground.main',
+    color: 'primary.main',
     textAlign: 'right',
     fontSize: '14px',
-    padding: '0',
+    fontWeight: 600,
+    whiteSpace: 'nowrap',
+    padding: '0 0.3rem',
     '&:last-child': {
       padding: addRightPadding ? '0rem 1rem 0rem 0rem' : '0rem 0rem 0rem 0rem',
     },
@@ -21,11 +23,12 @@ const StyledTableCell = styled(({ addRightPadding, ...otherProps }) => (
   [`&.${tableCellClasses.body}`]: {
     fontSize: '14px',
     textAlign: 'right',
-    padding: '0',
+    padding: '0 0.3rem',
+    whiteSpace: 'nowrap',
     '&:last-child': {
       padding: addRightPadding ? '0rem 1rem 0rem 0rem' : '0rem 0rem 0rem 0rem',
     },
-    borderColor: theme.palette.lightPurple.main,
+    borderColor: 'text.secondary',
   },
 }));
 

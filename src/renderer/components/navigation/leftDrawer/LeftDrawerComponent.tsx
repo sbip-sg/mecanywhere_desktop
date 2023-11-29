@@ -25,8 +25,8 @@ const LeftDrawerComponent = () => {
       variant="permanent"
       PaperProps={{
         sx: {
-          backgroundColor: theme.palette.lightBlack.main,
-          color: 'white',
+          backgroundColor: 'customBackground.light',
+          color: 'text.primary',
         },
       }}
       sx={{

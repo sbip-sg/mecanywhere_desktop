@@ -22,8 +22,8 @@ interface DatePickerPopoverProps {
 }
 
 const StyledDatePicker = styled(DatePicker)(({ theme }) => ({
-  backgroundColor: theme.palette.darkBlack.main,
-  color: theme.palette.violet.main,
+  backgroundColor: 'customBackground.dark',
+  color: 'secondary.contrastText',
   border: '0px',
   borderRadius: '2px',
   padding: '0.3rem',
@@ -102,14 +102,14 @@ const DatePickerPopover: React.FC<DatePickerPopoverProps> = ({
       sx={{
         '.MuiPaper-root': {
           borderRadius: '10px',
-          backgroundColor: theme.palette.mediumBlack.main,
+          backgroundColor: 'customBackground.main',
         },
       }}
     >
       <Box
         sx={{
           width: '18rem',
-          backgroundColor: theme.palette.mediumBlack.main,
+          backgroundColor: 'customBackground.main',
           boxShadow: 24,
           padding: '1.5rem',
         }}
@@ -127,8 +127,8 @@ const DatePickerPopover: React.FC<DatePickerPopoverProps> = ({
         </Typography>
         <ToggleButtonGroup
           sx={{
-            color: theme.palette.cerulean.main,
-            backgroundColor: theme.palette.mediumBlack.main,
+            color: 'primary.main',
+            backgroundColor: 'customBackground.main',
           }}
           value={groupBy}
           exclusive
@@ -141,11 +141,11 @@ const DatePickerPopover: React.FC<DatePickerPopoverProps> = ({
                 padding: '0.2rem 0.5rem 0.2rem 0.5rem',
                 fontSize: '14px',
                 fontWeight: '600',
-                color: theme.palette.mintGreen.main,
-                backgroundColor: theme.palette.darkBlack.main,
+                color: 'secondary.main',
+                backgroundColor: 'customBackground.dark',
                 '&.Mui-selected': {
-                  color: theme.palette.darkBlack.main,
-                  backgroundColor: theme.palette.violet.main,
+                  color: 'customBackground.dark',
+                  backgroundColor: 'secondary.contrastText',
                   fontSize: '14px',
                   fontWeight: '600',
                 },

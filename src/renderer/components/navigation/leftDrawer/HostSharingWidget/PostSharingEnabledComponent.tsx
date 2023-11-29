@@ -91,7 +91,7 @@ const PostSharingEnabledComponent = ({
             justifyContent: 'center',
             alignItems: 'center',
             padding: '0.7rem 0 0.7rem 0',
-            color: theme.palette.cerulean.main,
+            color: 'primary.main',
           }}
         >
           <WifiTetheringIcon
@@ -153,10 +153,10 @@ const PostSharingEnabledComponent = ({
             sx={{
               width: '100%',
               padding: '0.6rem',
-              color: isLoading ? theme.palette.cerulean.main : 'inherit',
+              color: isLoading ? 'primary.main' : 'inherit',
               backgroundColor: isLoading
-                ? theme.palette.darkBlack.main
-                : theme.palette.violet.main,
+                ? 'customBackground.dark'
+                : 'secondary.contrastText',
             }}
           >
             <Typography

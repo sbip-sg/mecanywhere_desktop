@@ -3,7 +3,7 @@ import { useEffect, useState, useMemo } from 'react';
 import Box from '@mui/material/Box';
 import Table from '@mui/material/Table';
 import TableContainer from '@mui/material/TableContainer';
-import { useTheme } from '@emotion/react';
+import actions from 'renderer/redux/actionCreators';
 import { useNavigate } from 'react-router-dom';
 import { InternalDataEntry, ExternalDataEntry } from '../../../utils/dataTypes';
 import { PropConfig } from '../propConfig';
@@ -12,10 +12,7 @@ import CustomTableHead from './CustomTableHead';
 import CustomTableBody from './CustomTableBody';
 import CustomTablePagination from './CustomTablePagination';
 import CustomToolbar from './CustomToolbar';
-import actions from 'renderer/redux/actionCreators';
-import { RootState } from 'renderer/redux/store';
-import reduxStore from 'renderer/redux/store';
-
+import { maxRowHeight, expandedRowPerPage } from './TableParams';
 
 interface DatagridProps {
   data: InternalDataEntry[] | ExternalDataEntry[];
@@ -32,10 +29,6 @@ const Datagrid: React.FC<DatagridProps> = ({
   setIsTableExpanded,
   propConfigList,
 }) => {
-  const unexpandedRowPerPage = 5;
-  const expandedRowPerPage = 25;
-  const maxRowHeight = 30; // px
-  const theme = useTheme();
   const navigate = useNavigate();
   const [order, setOrder] = useState<Order>('asc');
   const [orderBy, setOrderBy] = useState<
@@ -45,12 +38,12 @@ const Datagrid: React.FC<DatagridProps> = ({
   const [tableOverflow, setTableOverflow] = useState(true);
   const [rowsPerPage, setRowsPerPage] = useState(expandedRowPerPage);
   const [addRightPadding, setAddRightPadding] = useState(true);
-  const [maxTableHeight, setMaxTableHeight] = useState(
-    maxRowHeight * (unexpandedRowPerPage + 1) + unexpandedRowPerPage - 1
-  );
+  const maxTableHeight =
+    maxRowHeight * (expandedRowPerPage + 1) + expandedRowPerPage - 1;
   const handleTableRowClick = (transactionId: string) => {
-    const transactionDetails = data.find((entry) => entry.transaction_id === transactionId);
-    // navigate(`/details/${transactionId}`);
+    const transactionDetails = data.find(
+      (entry) => entry.transaction_id === transactionId
+    );
     if (transactionDetails) {
       actions.setTransactionDetails(transactionDetails);
       navigate(`/details/${transactionId}`);
@@ -93,13 +86,7 @@ const Datagrid: React.FC<DatagridProps> = ({
     if (isTableExpanded) {
       setTableOverflow(true);
       setAddRightPadding(false);
-      setMaxTableHeight(
-        maxRowHeight * (expandedRowPerPage + 1) + expandedRowPerPage - 1
-      );
     } else {
-      setMaxTableHeight(
-        maxRowHeight * (expandedRowPerPage + 1) + expandedRowPerPage - 1
-      );
       setTableOverflow(false);
       setAddRightPadding(true);
     }
@@ -121,7 +108,7 @@ const Datagrid: React.FC<DatagridProps> = ({
       <CustomToolbar
         isTableExpanded={isTableExpanded}
         setIsTableExpanded={setIsTableExpanded}
-        backgroundColor={theme.palette.lightBlack.main}
+        backgroundColor="customBackground.light"
       />
       <TableContainer
         id="tablecontainer"
@@ -163,7 +150,7 @@ const Datagrid: React.FC<DatagridProps> = ({
         page={page}
         onPageChange={handleChangePage}
         onRowsPerPageChange={handleChangeRowsPerPage}
-        backgroundColor={theme.palette.mediumBlack.main}
+        backgroundColor="customBackground.main"
       />
     </Box>
   );

@@ -1,5 +1,6 @@
 import React from 'react';
 import TablePagination from '@mui/material/TablePagination';
+import { tablePaginationMinHeight } from './TableParams';
 
 interface CustomTablePaginationProps {
   totalRows: number;
@@ -35,10 +36,10 @@ const CustomTablePagination: React.FC<CustomTablePaginationProps> = ({
       sx={{
         backgroundColor,
         borderRadius: '0 0 0.5em 0.5em',
-        minHeight: '52px',
-        '.MuiTablePagination-toolbar': {
-          maxHeight: '50px',
-        },
+        minHeight: `${tablePaginationMinHeight}px`,
+        // '.MuiTablePagination-toolbar': {
+        //   maxHeight: '50px',
+        // }, // forgot whats the purpose
         '.MuiTablePagination-displayedRows': {
           display: 'none',
         },

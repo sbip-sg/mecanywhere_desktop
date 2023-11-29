@@ -12,13 +12,12 @@ import {
 import React, { useState, useEffect } from 'react';
 import { useTheme } from '@emotion/react';
 import { IconButton } from '@mui/material';
-import { useSelector } from 'react-redux';
 import Box from '@mui/material/Box';
 import Backdrop from '@mui/material/Backdrop';
 import CalendarMonthIcon from '@mui/icons-material/CalendarMonth';
 import RefreshIcon from '@mui/icons-material/Refresh';
 import QueryStatsIcon from '@mui/icons-material/QueryStats';
-import { RootState } from 'renderer/redux/store';
+import AddIcon from '@mui/icons-material/Add';
 import CustomTooltip from './CustomTooltip';
 import DatePickerPopover from './DatePickerPopover';
 import DataKeySelectorPopover from './DataKeySelectorPopover';
@@ -37,6 +36,7 @@ interface CustomLineChartProps {
   yAxisLabel: string;
   data: ExternalDataEntry[];
   handleRefresh: () => void;
+  handleAddDummyData: () => void;
   appRole: string;
 }
 
@@ -50,12 +50,12 @@ const filterByDate = (entries, startDate, endDate) => {
   });
 };
 
-const filterByRole = (entries, selectedRole) => {
+const filterByRole = (entries, selectedRole, selfDid) => {
   return entries.filter((entry) => {
-    if (selectedRole === 'client' && entry.is_client) {
+    if (selectedRole === 'client' && entry.po_did === selfDid) {
       return true;
     }
-    if (selectedRole === 'host' && entry.is_host) {
+    if (selectedRole === 'host' && entry.host_po_did === selfDid) {
       return true;
     }
     if (selectedRole === 'both') {
@@ -65,12 +65,95 @@ const filterByRole = (entries, selectedRole) => {
   });
 };
 
+function getGroupKey(entryDate, groupBy) {
+  if (groupBy === 'day') {
+    return entryDate.toLocaleDateString();
+  }
+  if (groupBy === 'week') {
+    const weekStartDate = new Date(entryDate);
+    weekStartDate.setDate(entryDate.getDate() - entryDate.getDay());
+    return weekStartDate.toLocaleDateString();
+  }
+  return `${entryDate.toLocaleString('default', {
+    month: 'long',
+  })} ${entryDate.getFullYear()}`;
+}
+
+function initializeAccumulator(groupKey, isProvider) {
+  if (isProvider) {
+    return {
+      date: groupKey,
+      client_resource_cpu: 0,
+      client_resource_memory: 0,
+      client_duration: 0,
+      client_network_reliability: 0,
+      client_price: 0,
+      client_count: 0,
+      host_resource_cpu: 0,
+      host_resource_memory: 0,
+      host_duration: 0,
+      host_network_reliability: 0,
+      host_price: 0,
+      host_count: 0,
+    };
+  }
+  return {
+    date: groupKey,
+    resource_cpu: 0,
+    resource_memory: 0,
+    duration: 0,
+    network_reliability: 0,
+    price: 0,
+    count: 0,
+  };
+}
+
+function updateAccumulator(accumulator, entry, groupKey, isProvider, selfDid) {
+  if (isProvider) {
+    if (entry.po_did === selfDid) {
+      accumulator[groupKey].client_count += 1;
+      accumulator[groupKey].client_resource_cpu += Number(entry.resource_cpu);
+      accumulator[groupKey].client_resource_memory += Number(
+        entry.resource_memory
+      );
+      accumulator[groupKey].client_duration += Number(entry.duration);
+      accumulator[groupKey].client_network_reliability += Number(
+        entry.network_reliability
+      );
+      accumulator[groupKey].client_price += Number(entry.price);
+    } else if (entry.host_po_did === selfDid) {
+      accumulator[groupKey].host_count += 1;
+      accumulator[groupKey].host_resource_cpu += Number(entry.resource_cpu);
+      accumulator[groupKey].host_resource_memory += Number(
+        entry.resource_memory
+      );
+      accumulator[groupKey].host_duration += Number(entry.duration);
+      accumulator[groupKey].host_network_reliability += Number(
+        entry.network_reliability
+      );
+      accumulator[groupKey].host_price += Number(entry.price);
+    }
+  } else {
+    accumulator[groupKey].count += 1;
+    accumulator[groupKey].resource_cpu += Number(entry.resource_cpu);
+    accumulator[groupKey].resource_memory += Number(entry.resource_memory);
+    accumulator[groupKey].duration += Number(entry.duration);
+    accumulator[groupKey].network_reliability += Number(
+      entry.network_reliability
+    );
+    accumulator[groupKey].price += Number(entry.price);
+  }
+  return accumulator;
+}
+
 const CustomLineChart: React.FC<CustomLineChartProps> = ({
   data,
   yAxisLabel,
   handleRefresh,
+  handleAddDummyData,
   appRole,
 }) => {
+  const selfDid = window.electron.store.get('did');
   const theme = useTheme();
   const [groupBy, setGroupBy] = useState<string>('month');
   const [dataKey, setDataKey] = useState<string>('resource_memory');
@@ -100,175 +183,40 @@ const CustomLineChart: React.FC<CustomLineChartProps> = ({
   }, [data]);
 
   const dataFilteredByDate = filterByDate(data, startDate, endDate);
+
   const dataFilteredByRoleAndDate = filterByRole(
     dataFilteredByDate,
-    selectedRole
+    selectedRole,
+    selfDid
   );
-  console.log('dataFilteredByDate', dataFilteredByDate);
-  console.log('dataFilteredByRoleAndDate', dataFilteredByRoleAndDate);
 
-  let groupedDataAccumulator;
-  let groupedData: GroupedData[];
+  const groupedDataAccumulator = dataFilteredByRoleAndDate.reduce(
+    (accumulator, entry) => {
+      const entryDate = new Date(entry.transaction_start_datetime * 1000);
+      const groupKey = getGroupKey(entryDate, groupBy);
+      accumulator[groupKey] =
+        accumulator[groupKey] ||
+        initializeAccumulator(groupKey, appRole === 'provider');
+      return updateAccumulator(
+        accumulator,
+        entry,
+        groupKey,
+        appRole === 'provider',
+        selfDid
+      );
+    },
+    {} as { [key: string]: GroupedData & { count: number } }
+  );
 
-  if (appRole === 'provider') {
-    groupedDataAccumulator = dataFilteredByRoleAndDate.reduce(
-      (accumulator, entry) => {
-        const entryDate = new Date(entry.transaction_start_datetime * 1000);
-        let groupKey;
-
-        if (groupBy === 'day') {
-          groupKey = entryDate.toLocaleDateString();
-        } else if (groupBy === 'week') {
-          const weekStartDate = new Date(entryDate);
-          weekStartDate.setDate(entryDate.getDate() - entryDate.getDay());
-          groupKey = weekStartDate.toLocaleDateString();
-        } else {
-          groupKey = `${entryDate.toLocaleString('default', {
-            month: 'long',
-          })} ${entryDate.getFullYear()}`;
-        }
-
-        accumulator[groupKey] = accumulator[groupKey] || {
-          date: groupKey,
-          client_resource_cpu: 0,
-          host_resource_cpu: 0,
-          client_resource_memory: 0,
-          host_resource_memory: 0,
-          client_duration: 0,
-          host_duration: 0,
-          client_network_reliability: 0,
-          host_network_reliability: 0,
-          client_price: 0,
-          host_price: 0,
-          client_count: 0,
-          host_count: 0,
-        };
-        // console.log('entry', entry);
-        if (entry.is_client) {
-          accumulator[groupKey].client_resource_cpu += Number(
-            entry.resource_cpu
-          );
-          accumulator[groupKey].client_resource_memory += Number(
-            entry.resource_memory
-          );
-          accumulator[groupKey].client_duration += Number(entry.duration);
-          accumulator[groupKey].client_network_reliability += Number(
-            entry.network_reliability
-          );
-          accumulator[groupKey].client_price += Number(entry.price);
-          accumulator[groupKey].client_count += 1;
-        } else if (entry.is_host) {
-          accumulator[groupKey].host_resource_cpu += Number(entry.resource_cpu);
-          accumulator[groupKey].host_resource_memory += Number(
-            entry.resource_memory
-          );
-          accumulator[groupKey].host_duration += Number(entry.duration);
-          accumulator[groupKey].host_network_reliability += Number(
-            entry.network_reliability
-          );
-          accumulator[groupKey].host_price += Number(entry.price);
-          accumulator[groupKey].host_count += 1;
-        }
-
-        return accumulator;
-      },
-      {} as {
-        [key: string]: GroupedData & {
-          client_count: number;
-          host_count: number;
-        };
-      }
-    );
-
-    console.log('groupedDataAccumulator', groupedDataAccumulator);
-    groupedData = Object.values(groupedDataAccumulator).map((group) => {
-      return {
-        ...group,
-        client_resource_cpu:
-          group.client_count > 0
-            ? group.client_resource_cpu / group.client_count
-            : 0,
-        host_resource_cpu:
-          group.host_count > 0 ? group.host_resource_cpu / group.host_count : 0,
-        client_resource_memory:
-          group.client_count > 0
-            ? group.client_resource_memory / group.client_count
-            : 0,
-        host_resource_memory:
-          group.host_count > 0
-            ? group.host_resource_memory / group.host_count
-            : 0,
-        client_avg_duration:
-          group.client_count > 0
-            ? group.client_duration / group.client_count
-            : 0,
-        host_avg_duration:
-          group.host_count > 0 ? group.host_duration / group.host_count : 0,
-        client_network_reliability:
-          group.client_count > 0
-            ? group.client_network_reliability / group.client_count
-            : 0,
-        host_network_reliability:
-          group.host_count > 0
-            ? group.host_network_reliability / group.host_count
-            : 0,
-      };
-    });
-    console.log('provider_grouped_data', groupedData);
-  } else {
-    groupedDataAccumulator = dataFilteredByRoleAndDate.reduce(
-      (accumulator, entry) => {
-        const entryDate = new Date(entry.transaction_start_datetime * 1000);
-        let groupKey;
-
-        if (groupBy === 'day') {
-          groupKey = entryDate.toLocaleDateString();
-        } else if (groupBy === 'week') {
-          const weekStartDate = new Date(entryDate);
-          weekStartDate.setDate(entryDate.getDate() - entryDate.getDay());
-          groupKey = weekStartDate.toLocaleDateString();
-        } else {
-          groupKey = `${entryDate.toLocaleString('default', {
-            month: 'long',
-          })} ${entryDate.getFullYear()}`;
-        }
-
-        accumulator[groupKey] = accumulator[groupKey] || {
-          date: groupKey,
-          resource_cpu: 0,
-          resource_memory: 0,
-          duration: 0,
-          network_reliability: 0,
-          price: 0,
-          count: 0,
-        };
-
-        accumulator[groupKey].resource_cpu += Number(entry.resource_cpu);
-        accumulator[groupKey].resource_memory += Number(entry.resource_memory);
-        accumulator[groupKey].duration += Number(entry.duration);
-        accumulator[groupKey].network_reliability += Number(
-          entry.network_reliability
-        );
-        accumulator[groupKey].price += Number(entry.price);
-        accumulator[groupKey].count += 1;
-
-        return accumulator;
-      },
-      {} as { [key: string]: GroupedData & { count: number } }
-    );
-
-    groupedData = Object.values(groupedDataAccumulator).map((group) => {
-      return {
-        ...group,
-        resource_cpu: group.resource_cpu / group.count,
-        resource_memory: group.resource_memory / group.count,
-        avg_duration: group.duration / group.count,
-        network_reliability: group.network_reliability / group.count,
-      };
-    });
-    console.log('host_grouped_data', groupedData);
-  }
-  console.log('grouped_data', groupedData);
+  const groupedData = Object.values(groupedDataAccumulator).map((group) => {
+    return {
+      ...group,
+      resource_cpu: group.resource_cpu / group.count,
+      resource_memory: group.resource_memory / group.count,
+      avg_duration: group.duration / group.count,
+      network_reliability: group.network_reliability / group.count,
+    };
+  });
 
   const sortedGroupedData: GroupedData[] = groupedData.sort((a, b) => {
     const dateA = new Date(Date.parse(a.date));
@@ -276,8 +224,8 @@ const CustomLineChart: React.FC<CustomLineChartProps> = ({
     return dateA.getTime() - dateB.getTime();
   });
 
-  console.log('sortedGroupedDataxxx', sortedGroupedData);
-
+  // console.log('groupedDataAccumulator', groupedDataAccumulator);
+  // console.log('grouped_data', groupedData);
   return (
     <Box
       id="line-chart-wrapper"
@@ -300,14 +248,20 @@ const CustomLineChart: React.FC<CustomLineChartProps> = ({
         }}
       >
         <Box id="widget-wrapper" sx={{ ml: 'auto', padding: '1.2rem 0 0 0' }}>
+          <IconButton size="small" onClick={handleAddDummyData}>
+            <AddIcon fontSize="small" sx={{ color: 'text.primary' }} />
+          </IconButton>
           <IconButton size="small" onClick={handleRefresh}>
-            <RefreshIcon fontSize="small" sx={{ color: 'white' }} />
+            <RefreshIcon fontSize="small" sx={{ color: 'text.primary' }} />
           </IconButton>
           <IconButton size="small" onClick={handleOpenDataKeySelector}>
-            <QueryStatsIcon fontSize="small" sx={{ color: 'white' }} />
+            <QueryStatsIcon fontSize="small" sx={{ color: 'text.primary' }} />
           </IconButton>
           <IconButton size="small" onClick={handleOpenDatePicker}>
-            <CalendarMonthIcon fontSize="small" sx={{ color: 'white' }} />
+            <CalendarMonthIcon
+              fontSize="small"
+              sx={{ color: 'text.primary' }}
+            />
           </IconButton>
           <Backdrop
             sx={{ color: '#fff', zIndex: theme.zIndex.drawer + 1 }}
@@ -368,7 +322,7 @@ const CustomLineChart: React.FC<CustomLineChartProps> = ({
               <Line
                 type="monotone"
                 dataKey={dataKey}
-                stroke={theme.palette.violet.main}
+                stroke={theme.palette.secondary.contrastText}
                 strokeWidth={3}
                 animationDuration={500}
               />
@@ -380,7 +334,7 @@ const CustomLineChart: React.FC<CustomLineChartProps> = ({
                   <Line
                     type="monotone"
                     dataKey={`client_${dataKey}`}
-                    stroke={theme.palette.mintGreen.main}
+                    stroke={theme.palette.secondary.main}
                     strokeWidth={3}
                     animationDuration={500}
                   />
@@ -389,7 +343,7 @@ const CustomLineChart: React.FC<CustomLineChartProps> = ({
                   <Line
                     type="monotone"
                     dataKey={`host_${dataKey}`}
-                    stroke={theme.palette.violet.main}
+                    stroke={theme.palette.secondary.contrastText}
                     strokeWidth={3}
                     animationDuration={500}
                   />
@@ -398,101 +352,9 @@ const CustomLineChart: React.FC<CustomLineChartProps> = ({
             )}
           </LineChart>
         </ResponsiveContainer>
-        {/* <ResponsiveContainer width="100%" height="90%">
-          <LineChart data={sortedGroupedData} margin={{ top: 0 }}>
-            <CartesianGrid strokeDasharray="3 3" />
-            <XAxis dataKey="date" tick={{ fontSize: 12 }} />
-            <YAxis tick={{ fontSize: 12 }}>
-              <Label
-                value={yAxisLabel}
-                position="insideLeft"
-                angle={-90}
-                style={{ textAnchor: 'middle', fontSize: 16 }}
-              />
-            </YAxis>
-            <Tooltip content={<CustomTooltip />} />
-            {useSelector((state: RootState) => state.roleReducer.role) !==
-              'provider' && (
-              <Line
-                type="monotone"
-                dataKey={dataKey} // replace as dataKey + host (in future +client) (you also need to combine two sets of data and rename the datakeys with each of client and host)
-                stroke={theme.palette.violet.main}
-                strokeWidth={3}
-                animationDuration={500}
-              />
-            )}
-            {useSelector((state: RootState) => state.roleReducer.role) ===
-              'provider' && (
-              <Line
-                type="monotone"
-                dataKey={dataKey} // replace as dataKey + role
-                stroke={theme.palette.violet.main}
-                strokeWidth={3}
-                animationDuration={500}
-              />
-            )}
-          </LineChart>
-        </ResponsiveContainer> */}
       </Box>
     </Box>
   );
 };
 
 export default CustomLineChart;
-
-// const halfLength = Math.ceil(groupedData.length / 2);
-// const topHalf = groupedData.slice(0, halfLength);
-// const bottomHalf = groupedData.slice(halfLength);
-
-// const swappedData = [...bottomHalf, ...topHalf].map((entry) => ({
-//   month: entry.month,
-//   fake_resource_consumed: entry.resource_consumed,
-// }));
-
-// groupedData.forEach((entry, index) => {
-//   entry.fake_resource_consumed = swappedData[index].fake_resource_consumed;
-// });
-// const thirtyPercentLength = Math.floor(groupedData.length * 0.3);
-// const first30Percent = groupedData.slice(0, thirtyPercentLength);
-// const remaining70Percent = groupedData.slice(thirtyPercentLength);
-
-// const doubleFakeData = [...remaining70Percent, ...first30Percent].map(
-//   (entry) => ({
-//     month: entry.month,
-//     double_fake_resource_consumed: entry.resource_consumed,
-//   })
-// );
-
-// groupedData.forEach((entry, index) => {
-//   entry.double_fake_resource_consumed =
-//     doubleFakeData[index].double_fake_resource_consumed;
-// });
-{
-  /* {useSelector((state: RootState) => state.roleReducer.role) ===
-              'host' && (
-              <Line
-                type="monotone"
-                dataKey="resource_consumed"
-                stroke={theme.palette.violet.main}
-                strokeWidth={3}
-              />
-            )}
-            {useSelector((state: RootState) => state.roleReducer.role) ===
-              'provider' && (
-              <Line
-                type="monotone"
-                dataKey="fake_resource_consumed"
-                stroke={theme.palette.violet.main}
-                strokeWidth={3}
-              />
-            )}
-            {useSelector((state: RootState) => state.roleReducer.role) ===
-              'provider' && (
-              <Line
-                type="monotone"
-                dataKey="double_fake_resource_consumed"
-                stroke={theme.palette.mintGreen.main} // A different color, you can change this
-                strokeWidth={3}
-              />
-            )} */
-}

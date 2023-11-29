@@ -82,14 +82,14 @@ const DatakeySelectorPopover: React.FC<DatakeySelectorPopoverProps> = ({
       sx={{
         '.MuiPaper-root': {
           borderRadius: '10px',
-          backgroundColor: theme.palette.mediumBlack.main,
+          backgroundColor: 'customBackground.main',
         },
       }}
     >
       <Box
         sx={{
           width: '20rem',
-          backgroundColor: theme.palette.mediumBlack.main,
+          backgroundColor: 'customBackground.main',
           boxShadow: 24,
           padding: '1.2rem 2rem 2rem 2rem',
         }}
@@ -110,8 +110,8 @@ const DatakeySelectorPopover: React.FC<DatakeySelectorPopoverProps> = ({
             </Typography>
             <ToggleButtonGroup
               sx={{
-                color: theme.palette.cerulean.main,
-                backgroundColor: theme.palette.mediumBlack.main,
+                color: 'primary.main',
+                backgroundColor: 'customBackground.main',
                 width: '100%',
               }}
               value={selectedRole}
@@ -125,11 +125,11 @@ const DatakeySelectorPopover: React.FC<DatakeySelectorPopoverProps> = ({
                     padding: '0.2rem 1rem 0.2rem 1rem',
                     fontSize: '14px',
                     fontWeight: '600',
-                    color: theme.palette.offWhite.main,
-                    backgroundColor: theme.palette.darkBlack.main,
+                    color: 'text.primary',
+                    backgroundColor: 'customBackground.dark',
                     '&.Mui-selected': {
-                      color: theme.palette.darkBlack.main,
-                      backgroundColor: theme.palette.mintGreen.main,
+                      color: 'customBackground.dark',
+                      backgroundColor: 'secondary.main',
                       fontSize: '14px',
                       fontWeight: '600',
                     },
@@ -156,8 +156,8 @@ const DatakeySelectorPopover: React.FC<DatakeySelectorPopoverProps> = ({
         </Typography>
         <ToggleButtonGroup
           sx={{
-            color: theme.palette.cerulean.main,
-            backgroundColor: theme.palette.mediumBlack.main,
+            color: 'primary.main',
+            backgroundColor: 'customBackground.main',
             width: '100%',
           }}
           value={datakey}
@@ -172,11 +172,11 @@ const DatakeySelectorPopover: React.FC<DatakeySelectorPopoverProps> = ({
                 padding: '0.2rem 1rem 0.2rem 1rem',
                 fontSize: '12px',
                 fontWeight: '600',
-                color: theme.palette.offWhite.main,
-                backgroundColor: theme.palette.darkBlack.main,
+                color: 'text.primary',
+                backgroundColor: 'customBackground.dark',
                 '&.Mui-selected': {
-                  color: theme.palette.darkBlack.main,
-                  backgroundColor: theme.palette.mintGreen.main,
+                  color: 'customBackground.dark',
+                  backgroundColor: 'secondary.main',
                   fontSize: '12px',
                   fontWeight: '600',
                 },

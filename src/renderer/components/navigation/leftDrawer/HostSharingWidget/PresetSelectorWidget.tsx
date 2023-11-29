@@ -52,6 +52,7 @@ const PresetSelectorWidget = ({
         fontSize="16px"
         textAlign="start"
         padding="3rem 1.5rem 1rem 1.5rem"
+        color="textPrimary"
       >
         Resource Allocation:
       </Typography>
@@ -63,10 +64,10 @@ const PresetSelectorWidget = ({
             fontSize: '14px',
 
             '& .MuiOutlinedInput-notchedOutline': {
-              borderColor: theme.palette.lightPurple.main,
+              borderColor: 'text.secondary',
             },
             '& .MuiSvgIcon-root': {
-              color: 'white',
+              color: 'text.primary',
             },
           }}
           fullWidth
@@ -74,7 +75,7 @@ const PresetSelectorWidget = ({
           MenuProps={{
             PaperProps: {
               sx: {
-                bgcolor: theme.palette.mediumBlack.main,
+                bgcolor: 'customBackground.main',
                 '& .MuiMenuItem-root': {
                   padding: 2,
                   fontSize: '14px',

@@ -91,7 +91,7 @@ const HostSharingWidget = () => {
           <Transitions duration={1}>
             <CircularProgress
               style={{
-                color: theme.palette.mintGreen.main,
+                color: 'secondary.main',
                 position: 'absolute',
                 width: '2.5rem',
                 height: '2.5rem',
