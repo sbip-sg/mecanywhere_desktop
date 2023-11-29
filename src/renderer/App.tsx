@@ -22,6 +22,7 @@ import UserManagement from './components/userManagement/UserManagement';
 import Settings from './components/settings/Settings';
 import useHeartbeatHook from './utils/useHeartbeatHook';
 import useHandleAppExitHook from './utils/useHandleAppExitHook';
+import useClientHooks from './utils/useClientHooks';
 
 const PrivateRoutes = () => {
   // const authenticated = useSelector(
@@ -160,6 +161,7 @@ const Animated = () => {
 const App = () => {
   // useHeartbeatHook();
   useHandleAppExitHook();
+  useClientHooks();
   return (
     <Router>
       <NavigationLayoutTransitionWrapper>

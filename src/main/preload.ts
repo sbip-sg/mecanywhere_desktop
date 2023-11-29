@@ -47,9 +47,37 @@ const electronHandler = {
   onSubscribeJobs: (callback: (...args: any[]) => void) => {
     subscribe(Channels.JOB_RECEIVED, callback);
   },
+  jobResultsReceived: (
+    status: Number,
+    response: String,
+    error: String,
+    taskId: String,
+    transactionId: String
+  ) =>
+    ipcRenderer.send(
+      Channels.JOB_RESULTS_RECEIVED,
+      status,
+      response,
+      error,
+      taskId,
+      transactionId
+    ),
   onSubscribeJobResults: (callback: (...args: any[]) => void) => {
     subscribe(Channels.JOB_RESULTS_RECEIVED, callback);
   },
+  // to client
+  onRegisterClient: (callback: (...args: any[]) => void) => {
+    subscribe(Channels.REGISTER_CLIENT, callback);
+  },
+  onOffloadJob: (callback: (...args: any[]) => void) => {
+    subscribe(Channels.OFFLOAD_JOB, callback);
+  },
+  onDeregisterClient: (callback: (...args: any[]) => void) => {
+    subscribe(Channels.DEREGISTER_CLIENT, callback);
+  },
+  // from client
+  clientRegistered: (status: boolean) =>
+    ipcRenderer.send(Channels.CLIENT_REGISTERED, status),
 
   removeListener: (channel: string, func: (...args: any[]) => void) => {
     ipcRenderer.removeListener(channel, func);

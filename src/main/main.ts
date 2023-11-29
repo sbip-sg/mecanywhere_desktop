@@ -49,6 +49,63 @@ class AppUpdater {
 let mainWindow: BrowserWindow | null = null;
 let workerWindow: BrowserWindow | null = null;
 
+const appdev_server = io.listen(SDK_SOCKET_PORT);
+appdev_server.on('connection', (socket) => {
+  console.log('A user connected');
+
+  async function onClientRegistered(event: IpcMainEvent, registered: boolean) {
+    console.log('Client registered: ', registered);
+    socket.emit('registered', registered);
+  }
+  ipcMain.on(Channels.CLIENT_REGISTERED, onClientRegistered)
+
+  async function onJobResultsReceived(
+    event: IpcMainEvent,
+    status: Number,
+    response: String,
+    error: String,
+    taskId: String,
+    transactionId: String
+  ) {
+    console.log('Sending job results to client... ', status, response, error, taskId, transactionId)
+    socket.emit('job_results_received', status, response, error, taskId, transactionId);
+  }
+  ipcMain.on(Channels.JOB_RESULTS_RECEIVED, onJobResultsReceived)
+
+  socket.on('offload', async (jobJson: string) => {
+    console.log('Received job...', jobJson);
+    try {
+      if (!mainWindow) {
+        throw new Error('"mainWindow" is not defined');
+      }
+      mainWindow.webContents.send(Channels.OFFLOAD_JOB, jobJson);
+      socket.emit('offloaded', null, 'success');
+    } catch (error) {
+      socket.emit('offloaded', error, null);
+    }
+  });
+
+  socket.on('disconnect', () => {
+    console.log('A user disconnected');
+    if (!mainWindow) {
+      throw new Error('"mainWindow" is not defined');
+    }
+    mainWindow.webContents.send(Channels.DEREGISTER_CLIENT);
+
+    ipcMain.removeAllListeners(Channels.CLIENT_REGISTERED);
+    ipcMain.removeListener(Channels.JOB_RESULTS_RECEIVED, onJobResultsReceived);
+  });
+
+  try {
+    if (!mainWindow) {
+      throw new Error('"mainWindow" is not defined');
+    }
+    mainWindow.webContents.send(Channels.REGISTER_CLIENT);
+  } catch (error) {
+    console.log(error);
+  }
+});
+
 function showLoginWindow() {
   // window.loadURL('https://www.your-site.com/login')
   if (mainWindow) {

@@ -1,71 +1,48 @@
 import json
+import asyncio
+import socketio
 from typing import Callable
 
-import requests
+sio = socketio.AsyncClient()
 
-global_did = None
-access_token = None
-auth_header = None
+registered_event = asyncio.Event()
+task_events = []
 
-DISCOVERY_URL = 'http://localhost:7000'
-# DISCOVERY_URL = 'http://sbip-g2.d2.comp.nus.edu.sg:11000/fn-discovery'
+@sio.event
+async def connect():
+    print('Connected to the Socket.IO server')
 
-# TODO: change to signed vc
-async def initiateConnection(did: str, vc: str) -> None:
-  print("did", did)
-  print("vc", vc)
-  global global_did, access_token, auth_header
-  global_did = did
-  vc_obj = json.loads(vc)
+@sio.event
+async def connect_error(info):
+    print('Failed to connect to server:', info)
+
+@sio.event
+async def disconnect():
+    print('Disconnected from the Socket.IO server')
+    await sio.emit('disconnect')
+
+@sio.on('registered')
+async def on_registered(registered):
+    print('Registered with server: ', registered)
+    if not registered:
+        print('Failed to register with server')
+        return
+    registered_event.set()
+
+async def initiate_connection(timeout=10):
+  server_url = 'http://localhost:3001'
   try:
-    r = requests.post(
-      f'{DISCOVERY_URL}/registration/register_client',
-      json = { 'did': did, 'credential': vc_obj }
-    )
-    r.raise_for_status()
+    await sio.connect(server_url)
   except Exception as e:
-    raise SystemExit(e)
-  access_token, access_token_type, refresh_token, refresh_token_type = r.json().values()
-  print("access_token", access_token)
-  auth_header = {
-    'Authorization': f'{access_token_type} {access_token}'
-  }
-
-async def offload_task_and_get_result(
-    task_id: str,
-    container_ref: str,
-    data: str,
-    callback: Callable[[str], None],
-    resource: str = None,
-    runtime: str = None
-  ) -> str:
-  payload = {
-    'did': global_did,
-    'task_id': task_id,
-    'container_reference': container_ref,
-    'content': data
-  }
-  if resource:
-    payload['resource'] = resource
-  if runtime:
-    payload['runtime'] = runtime
-  print('Offloading task... ', payload)
+    print("Exception: ", e)
+    await sio.disconnect()
+    raise e
   try:
-    r = requests.post(
-      f'{DISCOVERY_URL}/offloading/offload_task_and_get_result',
-      json = payload,
-      headers = auth_header
-    )
-    r.raise_for_status()
-  except Exception as e:
-    raise SystemExit(e)
-  jsonR = r.json()
-  status = jsonR['status']
-  response = jsonR['response']
-  error = jsonR['error']
-  task_id = jsonR['task_id']
-  print("Received in test:", task_id, status, response, error)
-  callback(task_id, status, response, error)
+    await asyncio.wait_for(registered_event.wait(), timeout=timeout)
+  except asyncio.TimeoutError:
+    print('Connection timed out')
+    await sio.disconnect()
+    raise Exception('Connection timed out')
 
 async def offload_task(
     task_id: str,
@@ -75,8 +52,8 @@ async def offload_task(
     resource: dict = None,
     runtime: str = None
   ) -> str:
+  print('Offloading task...', container_ref, data)
   payload = {
-    'did': global_did,
     'task_id': task_id,
     'container_reference': container_ref,
     'content': data
@@ -85,41 +62,49 @@ async def offload_task(
     payload['resource'] = resource
   if runtime:
     payload['runtime'] = runtime
-  print('Offloading task... ', payload)
-  try:
-    r = requests.post(
-      f'{DISCOVERY_URL}/offloading/offload_task',
-      json = payload,
-      headers = auth_header
-    )
-    r.raise_for_status()
-  except Exception as e:
-    raise SystemExit(e)
-  jsonR = r.json()
-  status = jsonR['status']
-  response = jsonR['response']
-  error = jsonR['error']
-  task_id = jsonR['task_id']
-  print("Offload response:", task_id, status, response, error)
-  callback(task_id, status, response, error)
 
-async def poll_result(corr_id: str):
-  print('Polling result...', corr_id)
+  ###
+  @sio.on('job_results_received')
+  async def on_job_results_received(status, response, error, task_id, transaction_id):
+      print('Received result:', response, 'for job:', task_id)
+      if status == 0:
+        print('Error:', error)
+      callback(task_id, status, response, error, transaction_id)
+      task_events.pop(0).set()
+      # sio.off('job_results_received')
+  ###
+
+  offloaded_event = asyncio.Event()
+  @sio.on('offloaded')
+  async def on_offload(err, result):
+    print('Offloaded')
+  #   callback(err, result)
+    offloaded_event.set()
+    # sio.off('offloaded')
+
+  input_json = json.dumps(payload)
   try:
-    r = requests.post(
-      f'{DISCOVERY_URL}/offloading/poll_result',
-      json = { 'did': global_did, 'correlation_id': corr_id },
-      headers = auth_header
-    )
-    r.raise_for_status()
+    await sio.emit('offload', input_json)
+    await offloaded_event.wait()
+    task_events.append(asyncio.Event())
   except Exception as e:
-    raise SystemExit(e)
-  return r.json()
+    print("Exception: ", e)
+    await sio.disconnect()
 
 async def disconnect():
-  print('Disconnecting...')
-  return requests.post(
-    f'{DISCOVERY_URL}/registration/deregister_client',
-    json = { 'did': global_did },
-    headers = auth_header
-  )
+  if sio.connected:
+    await sio.disconnect()
+
+async def _wait_for_all_tasks(task_timeout=5):
+  task_events_copy = task_events.copy()
+  for task_event in task_events_copy:
+    try:
+      await asyncio.wait_for(task_event.wait(), timeout=task_timeout)
+    except asyncio.TimeoutError:
+      print('A task timed out')
+
+async def join(task_timeout=5, join_timeout=10):
+  try:
+    await asyncio.wait_for(_wait_for_all_tasks(task_timeout), timeout=join_timeout)
+  except asyncio.TimeoutError:
+    print('Join timed out')
