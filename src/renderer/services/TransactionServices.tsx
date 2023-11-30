@@ -85,17 +85,32 @@ export async function findPoHistory(token: string, did: string) {
   }
 }
 
-
-export async function addDummyHistory(token: string, did: string) {
+export async function addDummyHistory(
+  token,
+  {
+    client_did = null,
+    client_po_did = null,
+    host_did = null,
+    host_po_did = null,
+  } = {}
+) {
   try {
+    const body = JSON.stringify({
+      client_did,
+      client_po_did,
+      host_did,
+      host_po_did,
+    });
+
     const response = await fetch(`${transactionUrl}/add_dummy_history`, {
       method: 'POST',
       headers: {
         'content-type': 'application/json',
         Authorization: `Bearer ${token}`,
       },
-      body: JSON.stringify({ did }),
+      body,
     });
+
     if (!response.ok) {
       throw new Error('Network response not ok');
     }
@@ -104,7 +119,24 @@ export async function addDummyHistory(token: string, did: string) {
     console.error('There was a problem with the fetch operation:', error);
   }
 }
-
+// export async function addDummyHistory(token: string, did: string) {
+//   try {
+//     const response = await fetch(`${transactionUrl}/add_dummy_history`, {
+//       method: 'POST',
+//       headers: {
+//         'content-type': 'application/json',
+//         Authorization: `Bearer ${token}`,
+//       },
+//       body: JSON.stringify({ did }),
+//     });
+//     if (!response.ok) {
+//       throw new Error('Network response not ok');
+//     }
+//     return true;
+//   } catch (error) {
+//     console.error('There was a problem with the fetch operation:', error);
+//   }
+// }
 
 export async function addHostDummyHistory(token: string, did: string) {
   try {

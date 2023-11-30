@@ -16,13 +16,13 @@ const CustomTooltip = ({
     return (
       <Box
         sx={{
-          backgroundColor: theme.palette.lightBlack.main,
+          backgroundColor: 'customBackground.light',
           padding: '1rem 1rem 1rem 1rem',
           borderRadius: '7px',
           minWidth: 150,
         }}
       >
-        <Box sx={{ color: theme.palette.mintGreen.main, fontSize: '20px' }}>
+        <Box sx={{ color: 'secondary.main', fontSize: '20px' }}>
           {label}
         </Box>
         <Box>
@@ -30,7 +30,7 @@ const CustomTooltip = ({
             <Box key={index}>
               <Box
                 sx={{
-                  color: theme.palette.violet.main,
+                  color: 'secondary.contrastText',
                   textAlign: 'right',
                   fontSize: '18px',
                 }}
@@ -39,7 +39,7 @@ const CustomTooltip = ({
               </Box>
               <Box
                 sx={{
-                  color: theme.palette.lightPurple.main,
+                  color: 'text.secondary',
                   textAlign: 'right',
                   fontSize: '14px',
                 }}

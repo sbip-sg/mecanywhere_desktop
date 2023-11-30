@@ -51,7 +51,7 @@ const CustomTableHead = (props: CustomTableHeadProps) => {
             <TableSortLabel
               sx={{
                 '&.Mui-active': {
-                  color: 'white',
+                  color: 'text.primary',
                 },
               }}
               hideSortIcon

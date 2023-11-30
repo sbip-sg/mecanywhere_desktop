@@ -11,6 +11,14 @@ const initialUserState: UserState = {
   accessToken: '',
 };
 
+interface ThemeState {
+  color: string;
+}
+
+const initialThemeState: ThemeState = {
+  color: 'light',
+};
+
 interface RoleState {
   role: string;
 }
@@ -76,6 +84,21 @@ export const userReducer = (
   }
 };
 
+export const themeReducer = (
+  state: ThemeState = initialThemeState,
+  action: any
+): ThemeState => {
+  switch (action.type) {
+    case 'setColor':
+      return {
+        ...state,
+        color: action.payload,
+      };
+    default:
+      return state;
+  }
+};
+
 const jobsReducer = (
   state: JobsState = initialJobsState,
   action: any
@@ -119,6 +142,7 @@ const reducers = combineReducers({
   roleReducer: roleReducer,
   transactionDetailsReducer: transactionDetailsReducer,
   userReducer: userReducer,
+  themeReducer: themeReducer,
 });
 
 export default reducers;

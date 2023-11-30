@@ -27,14 +27,16 @@ const MemorySelectorSlider = ({ executorSettings, setExecutorSettings }) => {
           justifyContent: 'space-between',
         }}
       >
-        <Typography style={{ height: '100%', fontSize: '15px' }}>
+        <Typography
+          sx={{ height: '100%', fontSize: '15px', color: 'text.primary' }}
+        >
           Memory (MB)
         </Typography>
         <Typography
-          style={{
+          sx={{
             height: '100%',
             fontSize: '15px',
-            color: theme.palette.offWhite.main,
+            color: 'text.primary',
             fontWeight: '600',
           }}
         >
@@ -53,7 +55,7 @@ const MemorySelectorSlider = ({ executorSettings, setExecutorSettings }) => {
           marks={sliderMarks}
           sx={{
             '& .MuiSlider-thumb': {
-              color: theme.palette.cerulean.main,
+              color: 'primary.main',
             },
             '& .MuiSlider-mark': {
               color: 'transparent',
@@ -61,10 +63,10 @@ const MemorySelectorSlider = ({ executorSettings, setExecutorSettings }) => {
             },
 
             '& .MuiSlider-rail': {
-              color: theme.palette.lightPurple.main,
+              color: 'text.secondary',
             },
             '& .MuiSlider-track': {
-              color: theme.palette.deepCerulean.main,
+              color: 'primary.dark',
             },
             '& .MuiSlider-valueLabel': {
               display: 'none',
@@ -72,7 +74,7 @@ const MemorySelectorSlider = ({ executorSettings, setExecutorSettings }) => {
             '& .MuiSlider-markLabel': {
               fontSize: '12px',
               top: '25px',
-              color: theme.palette.lightPurple.main,
+              color: 'text.secondary',
             },
             '& .MuiSlider-markLabel[data-index="0"]': {
               transform: 'none',

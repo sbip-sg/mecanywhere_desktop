@@ -17,7 +17,7 @@ const TitleTypography: FC<TitleTypographyProps> = ({ title }) => {
   const theme = useTheme();
   return (
     <Typography
-      color={theme.palette.cerulean.main}
+      color='primary.main'
       letterSpacing="0.05em"
       fontSize="16px"
       sx={{ margin: '1rem 1rem 1rem 1rem' }}
@@ -89,7 +89,7 @@ const TransactionDetails: React.FC = () => {
         <Typography variant="h1" fontSize="20px">
           TRANSACTION #
         </Typography>
-        <Typography color={theme.palette.violet.main} fontSize="20px">
+        <Typography color='secondary.contrastText' fontSize="20px">
           {data.transaction_id}
         </Typography>
       </Grid>
@@ -102,7 +102,7 @@ const TransactionDetails: React.FC = () => {
           justifyContent: 'center',
           alignItems: 'top',
           margin: '0 1rem 1.5rem 1.5rem',
-          backgroundColor: theme.palette.mediumBlack.main,
+          backgroundColor: 'customBackground.main',
           borderRadius: '12px',
           padding: '1rem 0.5rem 0.5rem 0.5rem',
         }}

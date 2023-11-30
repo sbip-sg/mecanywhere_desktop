@@ -87,7 +87,7 @@ const Register = () => {
               <Typography
                 variant="h5"
                 py={2}
-                color={theme.palette.cerulean.main}
+                color="primary.main"
                 marginTop="1rem"
               >
                 CREATE ACCOUNT

@@ -37,6 +37,11 @@ const setRole: ActionCreator<AnyAction> = (payload: any) => ({
   payload,
 });
 
+const setColor: ActionCreator<AnyAction> = (payload: any) => ({
+  type: 'setColor',
+  payload,
+});
+
 const setTransactionDetails: ActionCreator<AnyAction> = (payload: any) => ({
   type: 'setTransactionDetails',
   payload,
@@ -51,6 +56,7 @@ const boundToDoActions = bindActionCreators(
     addJobResults,
     setJobResults,
     setRole,
+    setColor,
     setTransactionDetails,
   },
   reduxStore.dispatch

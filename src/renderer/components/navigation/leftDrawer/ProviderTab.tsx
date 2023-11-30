@@ -20,9 +20,12 @@ const ProviderTab = () => {
           onClick={() => navigate('/providertxndashboard')}
           key="dashboard"
         >
-          <DashboardIcon sx={{ marginRight: listItemSpacing }} />
+          <DashboardIcon
+            sx={{ marginRight: listItemSpacing, color: 'text.primary' }}
+          />
           <Typography
             margin={`${listTopBottomMargin} 0 ${listTopBottomMargin} 0`}
+            sx={{ color: 'text.primary' }}
           >
             Dashboard
           </Typography>
@@ -34,9 +37,12 @@ const ProviderTab = () => {
           onClick={() => navigate('/providerbillingdashboard')}
           key="billing"
         >
-          <PaidIcon sx={{ marginRight: listItemSpacing }} />
+          <PaidIcon
+            sx={{ marginRight: listItemSpacing, color: 'text.primary' }}
+          />
           <Typography
             margin={`${listTopBottomMargin} 0 ${listTopBottomMargin} 0`}
+            sx={{ color: 'text.primary' }}
           >
             Billing
           </Typography>
@@ -54,9 +60,12 @@ const ProviderTab = () => {
           onClick={() => navigate('/usermanagement')}
           key="usermanagement"
         >
-          <SupervisorAccountIcon sx={{ marginRight: listItemSpacing }} />
+          <SupervisorAccountIcon
+            sx={{ marginRight: listItemSpacing, color: 'text.primary' }}
+          />
           <Typography
             margin={`${listTopBottomMargin} 0 ${listTopBottomMargin} 0`}
+            sx={{ color: 'text.primary' }}
           >
             Manage Users
           </Typography>
@@ -72,9 +81,12 @@ const ProviderTab = () => {
           }}
           key="switch_view_to_host"
         >
-          <PaidIcon sx={{ marginRight: listItemSpacing }} />
+          <PaidIcon
+            sx={{ marginRight: listItemSpacing, color: 'text.primary' }}
+          />
           <Typography
             margin={`${listTopBottomMargin} 0 ${listTopBottomMargin} 0`}
+            sx={{ color: 'text.primary' }}
           >
             Switch To Host View (Dev)
           </Typography>

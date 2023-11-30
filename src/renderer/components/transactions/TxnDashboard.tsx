@@ -3,203 +3,136 @@ import Box from '@mui/material/Box';
 import React, { useEffect, useState } from 'react';
 import { Typography, Stack, IconButton } from '@mui/material';
 import { motion } from 'framer-motion';
-import { useTheme } from '@emotion/react';
 import CircularProgress from '@mui/material/CircularProgress';
 import reduxStore from 'renderer/redux/store';
 import RefreshIcon from '@mui/icons-material/Refresh';
+import { scrollbarHeight } from 'renderer/utils/constants';
 import CustomLineChart from './linechart/CustomLineChart';
-import actions from '../../redux/actionCreators';
 import { ExternalDataEntry, InternalDataEntry } from '../../utils/dataTypes';
-import { ExternalPropConfigList } from './propConfig';
-import { authenticate } from '../../services/RegistrationServices';
+import { ExternalPropConfigList, InternalPropConfigList } from './propConfig';
 import Datagrid from './table/Datagrid';
 import {
-  addHostDummyHistory,
+  addDummyHistory,
   findHostHistory,
+  findPoHistory,
 } from '../../services/TransactionServices';
 import Transitions from '../transitions/Transition';
+import {
+  tablePaginationMinHeight,
+  maxRowHeight,
+  toolbarMinHeight,
+  unexpandedRowPerPage,
+} from './table/TableParams';
 
 interface TxnDashboardProps {
   appRole: string;
 }
 
-function getRandomCpu(): number {
-  return Math.floor(Math.random() * 4) + 1;
-}
-
-function getRandomMemory(): number {
-  const min = 1024 / 256;
-  const max = 8192 / 256;
-  const randomMultiple = Math.floor(Math.random() * (max - min + 1) + min);
-  return randomMultiple * 256;
-}
-
-const generateRandomDID = () => {
-  const randomHex = (Math.random() * Math.pow(2, 64))
-    .toString(16)
-    .padStart(40, '0');
-  return 'did:meca:0x' + randomHex;
-};
-
-const generateProviderDID = (ownDid: string) => {
-  const providerDidArray = [
-    ownDid,
-    'did:meca:0xada873405e83c30a208ae3e50ee06c60569e8a18',
-    'did:meca:0x40f219cf9170792562e22b297c73b5dff8177995',
-  ];
-  const randomIndex = Math.floor(Math.random() * providerDidArray.length);
-  return providerDidArray[randomIndex];
-};
-
 const TxnDashboard: React.FC<TxnDashboardProps> = ({ appRole }) => {
-  const theme = useTheme();
+  const did = window.electron.store.get('did');
   const [data, setData] = useState<ExternalDataEntry[]>([]);
   const [hasData, setHasData] = useState(false);
   const [isTableExpanded, setIsTableExpanded] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
-
-  const preprocessDataForProvider = (
-    preprocessedData: ExternalDataEntry[]
-  ): InternalDataEntry[] => {
-    const ownDid = window.electron.store.get('did');
-    const processedData = preprocessedData.map((entry) => {
-      const hostPoDid = generateProviderDID(ownDid);
-      let clientPoDid;
-      let is_host;
-      let is_client;
-      if (hostPoDid === ownDid) {
-        is_host = true;
-        clientPoDid = generateProviderDID(ownDid);
-        if (clientPoDid === ownDid) {
-          is_client = true;
+  const maxTableHeight = maxRowHeight * (unexpandedRowPerPage + 1) - 1;
+  const chartHeightOffset = `${
+    tablePaginationMinHeight +
+    maxTableHeight +
+    toolbarMinHeight +
+    scrollbarHeight -
+    1
+  }px`;
+  const fetchAndSetData = async (accessToken) => {
+    setIsLoading(true);
+    try {
+      const didHistoryResponse = await (appRole === 'provider'
+        ? findPoHistory(accessToken, did)
+        : findHostHistory(accessToken, did));
+      if (didHistoryResponse) {
+        const responseBody = await didHistoryResponse.json();
+        if (responseBody.length > 0) {
+          setHasData(true);
         }
+        setData(responseBody);
       } else {
-        clientPoDid = ownDid;
-        is_client = true;
+        console.error('No response from didHistory');
       }
-      return {
-        ...entry,
-        resource_cpu: getRandomCpu(),
-        resource_memory: getRandomMemory(),
-        host_did: generateRandomDID(),
-        client_did: generateRandomDID(),
-        host_po_did: hostPoDid,
-        client_po_did: clientPoDid,
-        is_client,
-        is_host,
-      };
-    });
-    return processedData;
-  };
-
-  const preprocessDataForUser = (
-    preprocessedData: ExternalDataEntry[]
-  ): ExternalDataEntry[] => {
-    const executorSettings = JSON.parse(
-      window.electron.store.get('executorSettings')
-    )
-    console.log("executorSettings", executorSettings)
-    const processedData = preprocessedData.map((entry) => {
-      return {
-        ...entry,
-        resource_cpu: executorSettings.cpu_cores,
-        resource_memory: executorSettings.memory_mb,
-      };
-    });
-    return processedData;
-  };
-
-  const preprocessData = (
-    preprocessedData: ExternalDataEntry[] | InternalDataEntry[]
-  ) => {
-    let processedData;
-    console.log('preprocessedData, ', preprocessedData);
-    if (appRole === 'provider') {
-      processedData = preprocessDataForProvider(preprocessedData);
-    } else {
-      processedData = preprocessDataForUser(preprocessedData);
+    } catch (error) {
+      console.error('Error fetching data:', error);
+    } finally {
+      setIsLoading(false);
     }
-    console.log('processedData, ', processedData);
-    return processedData;
   };
 
   const handleRefresh = async () => {
-    setIsLoading(true);
     const { accessToken } = reduxStore.getState().userReducer;
-    const did = window.electron.store.get('did');
-    if (accessToken && did) {
-      const didHistoryResponse = await findHostHistory(accessToken, did);
-      if (didHistoryResponse) {
-        const responseBody = await didHistoryResponse.json();
-        if (responseBody.length > 0) {
-          setHasData(true);
-        }
-        console.log("responsebody", responseBody)
-        const processedData = preprocessData(responseBody);
-        setData(processedData);
-        setIsLoading(false);
-      }
+    if (accessToken) {
+      await fetchAndSetData(accessToken);
     } else {
       console.error('Invalid access token or did');
     }
   };
 
-  const handleAddMockData = async () => {
-    setIsLoading(true);
+  const handleAddHostDummyData = async () => {
     const { accessToken } = reduxStore.getState().userReducer;
-    const did = window.electron.store.get('did');
-    if (accessToken && did) {
-      const addDummyHistoryResponse = await addHostDummyHistory(accessToken, did);
+    if (accessToken) {
+      const addDummyHistoryResponse = await addDummyHistory(accessToken, {
+        host_did: did,
+      });
       if (!addDummyHistoryResponse) {
         console.error('Invalid dummy history response');
+        return;
       }
-      // const didHistoryResponse = await findDidHistory(accessToken, did);
-      const didHistoryResponse = await findHostHistory(accessToken, did);
-      if (didHistoryResponse) {
-        const responseBody = await didHistoryResponse.json();
-        if (responseBody.length > 0) {
-          setHasData(true);
-        }
-        const processedData = preprocessData(responseBody);
-        setData(processedData);
-        setIsLoading(false);
-      }
+      await fetchAndSetData(accessToken);
     } else {
       console.error('Invalid access token or did');
     }
+  };
+
+  const handleAddProviderDummyData = async () => {
+    const { accessToken } = reduxStore.getState().userReducer;
+    if (accessToken) {
+      const hostPoResponse = await addDummyHistory(accessToken, {
+        host_po_did: did,
+      });
+      const clientPoResponse = await addDummyHistory(accessToken, {
+        client_po_did: did,
+      });
+      if (!hostPoResponse || !clientPoResponse) {
+        console.error('Invalid dummy history response');
+        return;
+      }
+      await fetchAndSetData(accessToken);
+    } else {
+      console.error('Invalid access token or did');
+    }
+  };
+
+  const handleAddDummyData = async () => {
+    console.log('appRole', appRole);
+    return appRole === 'provider'
+      ? handleAddProviderDummyData()
+      : handleAddHostDummyData();
   };
 
   useEffect(() => {
     const credential = JSON.parse(window.electron.store.get('credential'));
-    const did = window.electron.store.get('did');
-    const getAccessToken = async () => {
-      setIsLoading(true);
-      await new Promise((resolve) => setTimeout(resolve, 500));
-      if (credential && did) {
-        try {
-          const { accessToken } = reduxStore.getState().userReducer;
-          const didHistoryResponse = await findHostHistory(accessToken, did);
-          if (didHistoryResponse) {
-            const responseBody = await didHistoryResponse.json();
-            if (responseBody.length > 0) {
-              setHasData(true);
-            }
-            const processedData = preprocessData(responseBody);
-            setData(processedData);
-            setIsLoading(false);
-          }
-        } catch (error) {
-          console.error('Error during registerClient:', error);
-        }
+    const retrieveData = async () => {
+      // await new Promise((resolve) => setTimeout(resolve, 500));
+      if (credential) {
+        const { accessToken } = reduxStore.getState().userReducer;
+        await fetchAndSetData(accessToken);
+      } else {
+        console.error('Credential or DID is missing');
       }
     };
-    getAccessToken();
+    retrieveData();
   }, []);
 
   return isLoading ? (
     <CircularProgress
       style={{
-        color: theme.palette.mintGreen.main,
+        color: 'secondary.main',
         position: 'absolute',
         width: '4rem',
         height: '4rem',
@@ -254,7 +187,7 @@ const TxnDashboard: React.FC<TxnDashboardProps> = ({ appRole }) => {
           >
             <Box sx={{ display: 'flex' }}>
               <IconButton size="small" onClick={handleRefresh}>
-                <RefreshIcon fontSize="small" sx={{ color: 'white' }} />
+                <RefreshIcon fontSize="small" sx={{ color: 'text.primary' }} />
               </IconButton>
               <Typography
                 style={{
@@ -262,7 +195,7 @@ const TxnDashboard: React.FC<TxnDashboardProps> = ({ appRole }) => {
                   letterSpacing: '0.0em',
                   margin: '0 0 0 0',
                   whiteSpace: 'nowrap',
-                  color: theme.palette.cerulean.main,
+                  color: 'primary.main',
                 }}
               >
                 {appRole === 'host' &&
@@ -272,12 +205,12 @@ const TxnDashboard: React.FC<TxnDashboardProps> = ({ appRole }) => {
               </Typography>
             </Box>
             <Button
-              onClick={handleAddMockData}
+              onClick={handleAddDummyData}
               sx={{
                 margin: '2rem 0 0 0',
               }}
             >
-              Add Mock Data (development)
+              Add Dummy Data (development)
             </Button>
           </Box>
         )}
@@ -285,20 +218,27 @@ const TxnDashboard: React.FC<TxnDashboardProps> = ({ appRole }) => {
           <motion.div
             id="line-chart-motion-div"
             style={{
-              height: isTableExpanded ? '0%' : 'calc(90% - 282px)',
+              height: isTableExpanded
+                ? '0%'
+                : `calc(90% - ${chartHeightOffset})`,
               width: '90%',
               display: 'flex',
               justifyContent: 'center',
               alignContent: 'center',
             }}
-            initial={{ height: 'calc(90% - 282px)' }}
-            animate={{ height: isTableExpanded ? '0%' : 'calc(90% - 282px)' }}
+            initial={{ height: `calc(90% - ${chartHeightOffset})` }}
+            animate={{
+              height: isTableExpanded
+                ? '0%'
+                : `calc(90% - ${chartHeightOffset})`,
+            }}
             transition={{ duration: 0.5, ease: 'easeInOut' }}
           >
             <CustomLineChart
               data={data}
               yAxisLabel="Resource Utilized per Month"
               handleRefresh={handleRefresh}
+              handleAddDummyData={handleAddDummyData}
               appRole={appRole}
             />
           </motion.div>
@@ -307,18 +247,22 @@ const TxnDashboard: React.FC<TxnDashboardProps> = ({ appRole }) => {
           <motion.div
             id="table-motion-div"
             style={{
-              height: isTableExpanded ? '90%' : '282px',
+              height: isTableExpanded ? '90%' : chartHeightOffset,
               width: '90%',
             }}
-            initial={{ height: '282px' }}
-            animate={{ height: isTableExpanded ? '90%' : '282px' }}
+            initial={{ height: chartHeightOffset }}
+            animate={{ height: isTableExpanded ? '90%' : chartHeightOffset }}
             transition={{ duration: 0.5, ease: 'easeInOut' }}
           >
             <Datagrid
               data={data}
               isTableExpanded={isTableExpanded}
               setIsTableExpanded={setIsTableExpanded}
-              propConfigList={ExternalPropConfigList}
+              propConfigList={
+                appRole === 'provider'
+                  ? InternalPropConfigList
+                  : ExternalPropConfigList
+              }
             />
           </motion.div>
         )}

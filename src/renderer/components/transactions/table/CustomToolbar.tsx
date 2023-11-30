@@ -5,6 +5,7 @@ import ExpandLessIcon from '@mui/icons-material/ExpandLess';
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 import IconButton from '@mui/material/IconButton';
 import Tooltip from '@mui/material/Tooltip';
+import { toolbarMinHeight } from './TableParams';
 
 interface CustomToolbarProps {
   isTableExpanded: Boolean;
@@ -25,7 +26,7 @@ const CustomToolbar: React.FC<CustomToolbarProps> = ({
       id="datagrid-toolbar"
       variant="dense"
       sx={{
-        minHeight: '50px',
+        minHeight: `${toolbarMinHeight}px`,
         backgroundColor,
         pl: { sm: 2 },
         pr: { xs: 1, sm: 1 },
@@ -43,9 +44,9 @@ const CustomToolbar: React.FC<CustomToolbarProps> = ({
       <Tooltip title={isTableExpanded ? 'Collapse Table' : 'Expand Table'}>
         <IconButton onClick={handleClickExpandButton}>
           {isTableExpanded ? (
-            <ExpandMoreIcon sx={{ color: 'white' }} />
+            <ExpandMoreIcon sx={{ color: 'text.primary' }} />
           ) : (
-            <ExpandLessIcon sx={{ color: 'white' }} />
+            <ExpandLessIcon sx={{ color: 'text.primary' }} />
           )}
         </IconButton>
       </Tooltip>
