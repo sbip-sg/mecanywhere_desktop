@@ -18,7 +18,7 @@ const CustomTypography = ({ children, isExpanded }) => {
       style={{
         fontSize: '16px',
         padding: '0rem 1rem 0rem 0rem',
-        color: isExpanded ? 'black' : theme.palette.offWhite.main,
+        color: isExpanded ? 'black' : theme.palette.text.primary,
         fontWeight: isExpanded ? '600' : '500',
         alignItems: 'center',
       }}
@@ -31,7 +31,7 @@ const CustomTypography = ({ children, isExpanded }) => {
 const Accordion = styled((props: AccordionProps) => (
   <MuiAccordion disableGutters elevation={0} square {...props} />
 ))(({ theme }) => ({
-  backgroundColor: theme.palette.mediumBlack.main,
+  backgroundColor: theme.palette.customBackground.main,
   '&:not(:last-child)': {
     borderBottom: 0,
   },
@@ -47,12 +47,12 @@ const AccordionSummary = styled((props: AccordionSummaryProps) => (
   borderRadius: '10px',
   flexDirection: 'row',
   '&.Mui-expanded': {
-    backgroundColor: theme.palette.deepCerulean.main,
+    backgroundColor: theme.palette.primary.dark,
     borderBottomRightRadius: '0',
     borderBottomLeftRadius: '0',
   },
   '&:not(.Mui-expanded)': {
-    backgroundColor: theme.palette.lightBlack.main,
+    backgroundColor: theme.palette.customBackground.light,
   },
   '& .MuiAccordionSummary-expandIconWrapper.Mui-expanded': {
     transform: 'rotate(180deg)',
@@ -72,14 +72,14 @@ const CustomStatus = ({ children, isExpanded }) => {
   let statusColor;
   let bgColor;
   if (isExpanded) {
-    statusColor = theme.palette.offWhite.main;
-    bgColor = theme.palette.cerulean.main;
+    statusColor = theme.palette.text.primary;
+    bgColor = 'primary.main';
   } else if (children === 'Pending') {
     statusColor = '#E49B03';
     bgColor = '#FFF5D9';
   } else if (children === 'Completed') {
-    statusColor = theme.palette.darkBlack.main;
-    bgColor = theme.palette.mintGreen.main;
+    statusColor = 'customBackground.dark';
+    bgColor = 'secondary.main';
   } else {
     console.error('Invalid status');
     return <Box sx={{ color: 'red' }}>Invalid status</Box>;
@@ -111,7 +111,7 @@ const CaptionTypography = ({ children }) => {
   return (
     <Typography
       style={{
-        color: theme.palette.violet.main,
+        color: 'secondary.contrastText',
         fontSize: '14px',
         letterSpacing: `0.1em`,
         fontWeight: '600',
@@ -238,7 +238,7 @@ const FourthColumnGrid = ({ item, columnWidth }) => {
       <Grid item container xs={12}>
         <Typography
           style={{
-            color: theme.palette.violet.main,
+            color: 'secondary.contrastText',
             fontSize: '14px',
             letterSpacing: `0.1em`,
             fontWeight: '600',
@@ -339,8 +339,8 @@ const CustomListItem = ({ item }) => {
           <Box
             sx={{
               backgroundColor: isExpanded
-                ? theme.palette.cerulean.main
-                : theme.palette.mediumBlack.main,
+                ? 'primary.main'
+                : 'customBackground.main',
               borderRadius: '5px',
               height: '1.8rem',
               width: '1.8rem',
@@ -349,7 +349,7 @@ const CustomListItem = ({ item }) => {
               alignItems: 'center',
             }}
           >
-            <ExpandMoreIcon sx={{ color: 'white', fontSize: '2rem' }} />
+            <ExpandMoreIcon sx={{ color: 'text.primary', fontSize: '2rem' }} />
           </Box>
         }
       >
@@ -367,7 +367,7 @@ const CustomListItem = ({ item }) => {
           <FirstColumnGrid item={item} columnWidth={firstColumnWidth} />
           <SecondColumnGrid item={item} columnWidth={secondColumnWidth} />
           <ThirdColumnGrid item={item} columnWidth={thirdColumnWidth} />
-          <Divider orientation="vertical" flexItem color="white" />
+          <Divider orientation="vertical" flexItem color="text.primary" />
           <FourthColumnGrid item={item} columnWidth={fourthColumnWidth - 0.1} />
         </Grid>
       </AccordionDetails>

@@ -24,7 +24,7 @@ const MenuComponent = () => {
       sx={{
         zIndex: (theme) => theme.zIndex.drawer + 1,
         height: '64px',
-        backgroundColor: theme.palette.mediumBlack.main,
+        backgroundColor: 'customBackground.main',
       }}
     >
       <RightDrawerComponent
@@ -55,7 +55,7 @@ const MenuComponent = () => {
             variant="h1"
             noWrap
             component="div"
-            sx={{ color: theme.palette.cerulean.main, marginLeft: '0.5rem' }}
+            sx={{ color: 'primary.main', marginLeft: '0.5rem' }}
           >
             MECAnywhere
           </Typography>
@@ -74,7 +74,7 @@ const MenuComponent = () => {
             onClick={toggleRightDrawer(true)}
             sx={{
               pointerEvents: 'auto',
-              backgroundColor: theme.palette.mediumBlack.main,
+              backgroundColor: 'customBackground.main',
             }}
           >
             <Avatar />

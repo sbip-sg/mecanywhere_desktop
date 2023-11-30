@@ -10,24 +10,9 @@ export interface PropConfig<T> {
 export const InternalPropConfigList: PropConfig<InternalDataEntry>[] = [
   {
     property: 'transaction_id',
-    renderer: (data: InternalDataEntry) => `${data.transaction_id.slice(0, 10)}...`,
-    label: 'transaction ID',
-  },
-  {
-    property: 'did',
-    renderer: (data: InternalDataEntry) => `${data.did.slice(0, 10)}...`,
-    label: 'DID',
-  },
-  {
-    property: 'provider_did',
     renderer: (data: InternalDataEntry) =>
-      `${data.provider_did.slice(0, 10)}...`,
-    label: "Provider's DID",
-  },
-  {
-    property: 'resource_consumed',
-    renderer: (data: InternalDataEntry) => data.resource_consumed.toString(),
-    label: 'Resource Consumed, CC',
+      `${data.transaction_id.slice(0, 10)}...`,
+    label: 'transaction ID',
   },
   {
     property: 'transaction_start_datetime',
@@ -42,9 +27,45 @@ export const InternalPropConfigList: PropConfig<InternalDataEntry>[] = [
     label: 'transaction End Datetime',
   },
   {
+    property: 'did',
+    renderer: (data: InternalDataEntry) => `${data.did.slice(0, 10)}...`,
+    label: 'Client DID',
+  },
+  {
+    property: 'host_did',
+    renderer: (data: InternalDataEntry) => `${data.host_did.slice(0, 10)}...`,
+    label: 'Host DID',
+  },
+  {
+    property: 'po_did',
+    renderer: (data: InternalDataEntry) => `${data.po_did.slice(0, 10)}...`,
+    label: 'Provider DID of Client',
+  },
+  {
+    property: 'host_po_did',
+    renderer: (data: InternalDataEntry) =>
+      `${data.host_po_did.slice(0, 10)}...`,
+    label: 'Provider DID of Host',
+  },
+  {
+    property: 'resource_cpu',
+    renderer: (data: InternalDataEntry) => data.resource_cpu,
+    label: 'CPU Utilized (cores)',
+  },
+  {
+    property: 'resource_memory',
+    renderer: (data: ExternalDataEntry) => data.resource_memory.toString(),
+    label: 'Memory Utilized (MB)',
+  },
+  {
+    property: 'price',
+    renderer: (data: InternalDataEntry) => data.price,
+    label: 'Usage Price (SGD)',
+  },
+  {
     property: 'task',
     renderer: (data: InternalDataEntry) => data.task,
-    label: 'Task',
+    label: 'Tasks Ran',
   },
   {
     property: 'duration',
@@ -56,39 +77,14 @@ export const InternalPropConfigList: PropConfig<InternalDataEntry>[] = [
     renderer: (data: InternalDataEntry) => data.network_reliability,
     label: 'Network Reliability, %',
   },
-  // {
-  //     property: 'is_host',
-  //     renderer: (data: InternalDataEntry) => (data.is_host ? 'Yes' : 'No'),
-  //     label: 'Is Host'
-  // },
-  {
-    property: 'task_run',
-    renderer: (data: InternalDataEntry) => data.task_run,
-    label: 'Tasks Ran',
-  },
-  {
-    property: 'usage_charge',
-    renderer: (data: InternalDataEntry) => data.usage_charge,
-    label: 'Usage Charge, SGD',
-  },
 ];
 
 export const ExternalPropConfigList: PropConfig<ExternalDataEntry>[] = [
   {
     property: 'transaction_id',
-    // renderer: (data: ExternalDataEntry) => `${data.transaction_id.slice(0, 10)}...`,
-    renderer: (data: ExternalDataEntry) => `${data.transaction_id.slice(0, 10)}...`,
+    renderer: (data: ExternalDataEntry) =>
+      `${data.transaction_id.slice(0, 10)}...`,
     label: 'Transaction ID',
-  },
-  {
-    property: 'resource_memory',
-    renderer: (data: ExternalDataEntry) => data.resource_memory.toString(),
-    label: 'Memory Utilized (MB)',
-  },
-  {
-    property: 'resource_cpu',
-    renderer: (data: ExternalDataEntry) => data.resource_cpu.toString(),
-    label: 'CPU Utilized (cores)',
   },
   {
     property: 'transaction_start_datetime',
@@ -102,11 +98,21 @@ export const ExternalPropConfigList: PropConfig<ExternalDataEntry>[] = [
       convertEpochToStandardTimeWithDate(data.transaction_end_datetime),
     label: 'End Datetime',
   },
-  // {
-  //   property: 'task',
-  //   renderer: (data: ExternalDataEntry) => data.task,
-  //   label: 'Task',
-  // },
+  {
+    property: 'resource_cpu',
+    renderer: (data: ExternalDataEntry) => data.resource_cpu.toString(),
+    label: 'CPU Utilized (cores)',
+  },
+  {
+    property: 'resource_memory',
+    renderer: (data: ExternalDataEntry) => data.resource_memory.toString(),
+    label: 'Memory Utilized (MB)',
+  },
+  {
+    property: 'task',
+    renderer: (data: ExternalDataEntry) => data.task,
+    label: 'Tasks Ran',
+  },
   {
     property: 'duration',
     renderer: (data: ExternalDataEntry) => data.duration,

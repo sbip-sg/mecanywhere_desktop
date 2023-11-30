@@ -66,9 +66,9 @@ const RoleSelection = () => {
           <FormLabel
             id="demo-radio-buttons-group-label"
             sx={{
-              color: theme.palette.offWhite.main,
+              color: 'text',
               '&.Mui-focused': {
-                color: theme.palette.offWhite.main,
+                color: 'text',
               },
             }}
           >
@@ -81,7 +81,7 @@ const RoleSelection = () => {
           >
             <Box
               sx={{
-                backgroundColor: theme.palette.mediumBlack.main,
+                backgroundColor: 'customBackground.main',
                 borderRadius: '12px',
                 padding: '1rem 1rem 1rem 1rem',
                 margin: '1rem 1rem 0rem 1rem',
@@ -92,9 +92,9 @@ const RoleSelection = () => {
                 control={
                   <Radio
                     sx={{
-                      color: theme.palette.lightPurple.main,
+                      color: 'text.secondary',
                       '&.Mui-checked': {
-                        color: theme.palette.cerulean.main,
+                        color: 'primary.main',
                       },
                     }}
                   />
@@ -105,7 +105,7 @@ const RoleSelection = () => {
                 fontSize="16px"
                 sx={{
                   margin: '0 0.5rem 0 0.5rem',
-                  color: theme.palette.cerulean.main,
+                  color: 'primary.main',
                 }}
               >
                 Select this role if you are intending to use this application as
@@ -114,7 +114,7 @@ const RoleSelection = () => {
             </Box>
             <Box
               sx={{
-                backgroundColor: theme.palette.mediumBlack.main,
+                backgroundColor: 'customBackground.main',
                 borderRadius: '12px',
                 // display: 'flex',
                 // justifyContent: "center",
@@ -128,9 +128,9 @@ const RoleSelection = () => {
                 control={
                   <Radio
                     sx={{
-                      color: theme.palette.lightPurple.main,
+                      color: 'text.secondary',
                       '&.Mui-checked': {
-                        color: theme.palette.cerulean.main,
+                        color: 'primary.main',
                       },
                     }}
                   />
@@ -141,7 +141,7 @@ const RoleSelection = () => {
                 fontSize="16px"
                 sx={{
                   margin: '0 0.5rem 0 0.5rem',
-                  color: theme.palette.cerulean.main,
+                  color: 'primary.main',
                 }}
               >
                 Select this if you are intending to use this application as the

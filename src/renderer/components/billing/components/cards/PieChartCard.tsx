@@ -27,7 +27,7 @@ const PieChartCard = () => {
             sx={{
               minWidth: 220,
               height: 230,
-              backgroundColor: theme.palette.lightBlack.main,
+              backgroundColor: 'customBackground.light',
             }}
           >
             <CardContent
@@ -41,7 +41,7 @@ const PieChartCard = () => {
               <Box sx={{height:"100%"}}>
                 <Typography
                   sx={{ fontSize: 16, marginBottom: '2rem' }}
-                  color={theme.palette.cerulean.main}
+                  color='primary.main'
                   gutterBottom
                   >
                   Usage percent by Tasks

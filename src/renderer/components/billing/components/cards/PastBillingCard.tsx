@@ -112,7 +112,7 @@ const PastBillingCard: React.FC<PastBillingCardProps> = ({ data }) => {
       sx={{
         minWidth: 220,
         height: '100%',
-        backgroundColor: theme.palette.lightBlack.main,
+        backgroundColor: 'customBackground.light',
       }}
     >
       <CardContent sx={{ width: '100%', height: '100%' }}>
@@ -145,7 +145,8 @@ const PastBillingCard: React.FC<PastBillingCardProps> = ({ data }) => {
                   type="monotone"
                   dataKey="total_resource_consumed"
                   barSize={40}
-                  fill={theme.palette.cerulean.main}
+                  // fill={theme.palette.cerulean.main}
+                  fill={theme.palette.primary.main}
                   legendType="rect"
                   name="Total Items"
                 />
@@ -153,7 +154,7 @@ const PastBillingCard: React.FC<PastBillingCardProps> = ({ data }) => {
                   type="linear"
                   strokeLinejoin="round"
                   dataKey="total_resource_consumed"
-                  stroke={theme.palette.violet.main}
+                  stroke={theme.palette.secondary.contrastText}
                   strokeWidth={3}
                 />
               </ComposedChart>

@@ -1,181 +1,83 @@
-import {
-  createTheme,
-  PaletteColorOptions,
-  ThemeOptions,
-} from '@mui/material/styles';
+import { createTheme } from '@mui/material/styles';
+import { PaletteMode } from '@mui/material';
+import '@mui/material/styles/createPalette';
+import { scrollbarHeight, scrollbarWidth } from './constants';
 
-// declare module '@mui/material/styles' {
-//   interface CustomPalette {
-//     magenta: PaletteColorOptions;
-//     purple: PaletteColorOptions;
-//     cerulean: PaletteColorOptions;
-//     violet: PaletteColorOptions;
-//     lightPurple: PaletteColorOptions;
-//     lightBlack: PaletteColorOptions;
-//     mediumBlack: PaletteColorOptions;
-//     darkBlack: PaletteColorOptions;
-//     offWhite: PaletteColorOptions;
-//     mintGreen: PaletteColorOptions;
-//     deepCerulean: PaletteColorOptions;
-//   }
-// }
-
-// const createColor = (mainColor: string) =>
-//   createTheme().palette.augmentColor({ color: { main: mainColor } });
-
-// const cerulean = '#7f97d8'; previous cerulean
+const lightPurple = '#6D697D';
 const cerulean = '#829CFF';
 const deepCerulean = '#6485FF';
-const lightPurple = '#6D697D';
 const lightBlack = '#292733';
 const mediumBlack = '#202028';
 const darkBlack = '#18191C';
 const mintGreen = '#35D4C7';
 const offWhite = '#F7F7F7';
 const violet = '#BC00A3';
+const tintedNavy = '#2c3555';
+const navy = '#3f3f74';
+const darkViolet = '#581845';
+const orange = '#FF5F1F';
+const lightWhite = '#FFFFFF';
+const mediumWhite = '#5B4996';
+const darkWhite = '#F4F4F4';
+const darkThemeSpaceBar1 = '#2b2b2b'; // light
+const darkThemeSpaceBar2 = '#6b6b6b'; // medium
+const darkThemeSpaceBar3 = '#959595'; // dark
+const lightThemeSpaceBar1 = '#f1f1f1'; // light
+const lightThemeSpaceBar2 = '#c1c1c1'; // medium
+const lightThemeSpaceBar3 = '#a8a8a8'; // dark
 
-const themeOptions: ThemeOptions = {
+declare module '@mui/material/styles/createPalette' {
+  export interface PaletteOptions {
+    customBackground: {
+      light: string;
+      main: string;
+      dark: string;
+    };
+  }
+}
+
+export const getDesignTokens = (mode: PaletteMode) => ({
   palette: {
-    // background: {
-    //   default: mediumBlack,
-    // },
-    cerulean: {
-      main: cerulean,
-    },
-    deepCerulean: {
-      main: deepCerulean,
-    },
-    violet: {
-      main: violet,
-    },
-    lightPurple: {
-      main: lightPurple,
-    },
-    lightBlack: {
-      main: lightBlack,
-    },
-    mediumBlack: {
-      main: mediumBlack,
-    },
-    darkBlack: {
-      main: darkBlack,
-    },
-    mintGreen: {
-      main: mintGreen,
-    },
-    offWhite: {
-      main: offWhite
-    },
-    // cerulean: createColor(cerulean),
-    // deepCerulean: createColor(deepCerulean),
-    // violet: createColor('#BC00A3'),
-    // lightPurple: createColor(lightPurple),
-    // lightBlack: createColor(lightBlack),
-    // mediumBlack: createColor(mediumBlack),
-    // darkBlack: createColor(darkBlack),
-    // mintGreen: createColor(mintGreen),
-    // offWhite: createColor(offWhite),
-    primary: {
-      light: lightBlack,
-      main: mediumBlack,
-      dark: darkBlack,
-      contrastText: `#FFFFFF`,
-    },
-    secondary: {
-      light: `#F51474`, // magenta
-      main: `#f9f9f9`,
-      dark: `#C5BDBA`,
-      contrastText: `#790EFC`, // purple
-    },
-    text: {
-      primary: offWhite,
-      secondary: lightPurple,
-    },
-  },
-  components: {
-    MuiCssBaseline: {
-      styleOverrides: {
-        body: {
-          backgroundColor: darkBlack,
-          scrollbarColor: '#6b6b6b #2b2b2b',
-          '&::-webkit-scrollbar, & *::-webkit-scrollbar': {
-            backgroundColor: '#2b2b2b',
-            width: '1rem',
+    mode,
+    ...(mode === 'light'
+      ? {
+          primary: {
+            main: tintedNavy,
+            dark: navy,
           },
-          '&::-webkit-scrollbar-thumb, & *::-webkit-scrollbar-thumb': {
-            borderRadius: 8,
-            backgroundColor: '#6b6b6b',
-            minHeight: 24,
-            border: '3px solid #2b2b2b',
+          secondary: {
+            main: orange,
+            contrastText: darkViolet,
           },
-          '&::-webkit-scrollbar-thumb:focus, & *::-webkit-scrollbar-thumb:focus':
-            {
-              backgroundColor: '#959595',
-            },
-          '&::-webkit-scrollbar-thumb:active, & *::-webkit-scrollbar-thumb:active':
-            {
-              backgroundColor: '#959595',
-            },
-          '&::-webkit-scrollbar-thumb:hover, & *::-webkit-scrollbar-thumb:hover':
-            {
-              backgroundColor: '#959595',
-            },
-          '&::-webkit-scrollbar-corner, & *::-webkit-scrollbar-corner': {
-            backgroundColor: '#2b2b2b',
+          text: {
+            primary: darkBlack,
+            secondary: mediumBlack,
           },
-        },
-      },
-    },
-    MuiButton: {
-      styleOverrides: {
-        root: {
-          color: darkBlack,
-          backgroundColor: cerulean,
-          '&:hover': {
-            color: cerulean,
-            backgroundColor: darkBlack,
+          customBackground: {
+            light: lightWhite,
+            main: mediumWhite,
+            dark: darkWhite,
           },
-        },
-      },
-    },
-    MuiTextField: {
-      styleOverrides: {
-        root: {
-          '& label': {
-            color: cerulean,
+        }
+      : {
+          primary: {
+            main: cerulean,
+            dark: deepCerulean,
           },
-          '& label.Mui-focused': {
-            color: cerulean,
+          secondary: {
+            main: mintGreen,
+            contrastText: violet,
           },
-          '& .MuiInput-underline:after': {
-            borderBottomColor: cerulean,
+          text: {
+            primary: offWhite,
+            secondary: lightPurple,
           },
-          '& .MuiOutlinedInput-root': {
-            '& fieldset': {
-              borderColor: cerulean,
-            },
-            '&:hover fieldset': {
-              borderColor: cerulean,
-              borderWidth: '0.15rem',
-            },
-            '&.Mui-focused fieldset': {
-              borderColor: cerulean,
-            },
+          customBackground: {
+            light: lightBlack,
+            main: mediumBlack,
+            dark: darkBlack,
           },
-          '& .MuiInputBase-root': {
-            color: cerulean,
-          },
-        },
-      },
-    },
-    MuiFormHelperText: {
-      styleOverrides: {
-        root: {
-          textTransform: 'initial',
-          fontSize: '1rem',
-        },
-      },
-    },
+        }),
   },
   typography: {
     fontFamily: [
@@ -212,6 +114,158 @@ const themeOptions: ThemeOptions = {
       letterSpacing: `0.15em`,
     },
   },
-};
+  components: {
+    MuiCssBaseline: {
+      styleOverrides: {
+        body: {
+          backgroundColor: mode === 'light' ? darkWhite : darkBlack,
+          scrollbarColor:
+            mode === 'light'
+              ? `${lightThemeSpaceBar2} ${darkThemeSpaceBar1}`
+              : `${lightThemeSpaceBar2} ${darkThemeSpaceBar1}`,
+          '&::-webkit-scrollbar, & *::-webkit-scrollbar': {
+            backgroundColor:
+              mode === 'light' ? lightThemeSpaceBar1 : darkThemeSpaceBar1,
+            width: `${scrollbarWidth}px`,
+            height: `${scrollbarHeight}px`,
+          },
+          '&::-webkit-scrollbar-thumb, & *::-webkit-scrollbar-thumb': {
+            borderRadius: 8,
+            backgroundColor:
+              mode === 'light' ? lightThemeSpaceBar2 : darkThemeSpaceBar2,
+            minHeight: 24,
+            border: `3px solid ${
+              mode === 'light' ? lightThemeSpaceBar1 : darkThemeSpaceBar1
+            }`,
+          },
+          '&::-webkit-scrollbar-thumb:focus, & *::-webkit-scrollbar-thumb:focus':
+            {
+              backgroundColor:
+                mode === 'light' ? lightThemeSpaceBar3 : darkThemeSpaceBar3,
+            },
+          '&::-webkit-scrollbar-thumb:active, & *::-webkit-scrollbar-thumb:active':
+            {
+              backgroundColor:
+                mode === 'light' ? lightThemeSpaceBar3 : darkThemeSpaceBar3,
+            },
+          '&::-webkit-scrollbar-thumb:hover, & *::-webkit-scrollbar-thumb:hover':
+            {
+              backgroundColor:
+                mode === 'light' ? lightThemeSpaceBar3 : darkThemeSpaceBar3,
+            },
+          '&::-webkit-scrollbar-corner, & *::-webkit-scrollbar-corner': {
+            backgroundColor:
+              mode === 'light' ? lightThemeSpaceBar1 : darkThemeSpaceBar1,
+          },
+        },
+      },
+    },
+    MuiButton: {
+      styleOverrides: {
+        root: {
+          ...(mode === 'light'
+            ? {
+                color: offWhite,
+                backgroundColor: navy,
+                '&:hover': {
+                  color: offWhite,
+                  backgroundColor: darkViolet,
+                },
+              }
+            : {
+                color: darkBlack,
+                backgroundColor: cerulean,
+                '&:hover': {
+                  color: cerulean,
+                  backgroundColor: darkBlack,
+                },
+              }),
+        },
+      },
+    },
+    MuiTextField: {
+      styleOverrides: {
+        root: {
+          '& label': {
+            color: cerulean,
+          },
+          '& label.Mui-focused': {
+            color: cerulean,
+          },
+          '& .MuiInput-underline:after': {
+            borderBottomColor: cerulean,
+          },
+          '& .MuiOutlinedInput-root': {
+            '& fieldset': {
+              borderColor: cerulean,
+            },
+            '&:hover fieldset': {
+              borderColor: cerulean,
+              borderWidth: '0.15rem',
+            },
+            '&.Mui-focused fieldset': {
+              borderColor: cerulean,
+            },
+          },
+          '& .MuiInputBase-root': {
+            color: cerulean,
+          },
+        },
+      },
+    },
+  },
+});
 
-export default createTheme(themeOptions);
+export const createAppTheme = (mode: PaletteMode) =>
+  createTheme(getDesignTokens(mode));
+
+// MuiFormHelperText: {
+//   styleOverrides: {
+//     root: {
+//       textTransform: 'initial',
+//       fontSize: '1rem',
+//     },
+//   },
+// },
+
+// export default createTheme(themeOptions);
+
+// background: {
+//   default: mediumBlack,
+// },
+// cerulean: {
+//   main: cerulean,
+// },
+// deepCerulean: {
+//   main: deepCerulean,
+// },
+// violet: {
+//   main: violet,
+// },
+// lightPurple: {
+//   main: lightPurple,
+// },
+// lightBlack: {
+//   main: lightBlack,
+// },
+// mediumBlack: {
+//   main: mediumBlack,
+// },
+// darkBlack: {
+//   main: darkBlack,
+// },
+// mintGreen: {
+//   main: mintGreen,
+// },
+// offWhite: {
+//   main: offWhite,
+// },
+// cerulean: createColor(cerulean),
+// deepCerulean: createColor(deepCerulean),
+// violet: createColor('#BC00A3'),
+// lightPurple: createColor(lightPurple),
+// lightBlack: createColor(lightBlack),
+// mediumBlack: createColor(mediumBlack),
+// darkBlack: createColor(darkBlack),
+// mintGreen: createColor(mintGreen),
+// offWhite: createColor(offWhite),

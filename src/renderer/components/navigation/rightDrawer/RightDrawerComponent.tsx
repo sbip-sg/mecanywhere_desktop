@@ -21,6 +21,7 @@ import { useNavigate } from 'react-router-dom';
 import Avatar from '../menu/Avatar';
 import actions from '../../../redux/actionCreators';
 import deleteAccount from 'renderer/electron-store';
+import ThemeToggle from '../../settings/ThemeToggle';
 
 // import ExitToAppIcon from '@mui/icons-material/ExitToApp';
 
@@ -58,8 +59,8 @@ const RightDrawerComponent: React.FC<RightDrawerComponentProps> = ({
       sx={{ zIndex: 1500 }}
       PaperProps={{
         sx: {
-          backgroundColor: theme.palette.primary.main,
-          color: 'white',
+          backgroundColor: 'customBackground.main',
+          color: 'text.primary',
         },
       }}
     >
@@ -114,12 +115,12 @@ const RightDrawerComponent: React.FC<RightDrawerComponentProps> = ({
               </Typography>         */}
             </Box>
           </ListItem>
-          <Divider variant="middle" color="white" sx={{ margin: '0.5rem' }} />
-
+          <Divider variant="middle" color="text.primary" sx={{ margin: '0.5rem' }} />
+          <ThemeToggle />
           <ListItem key="Account" disablePadding sx={{ marginLeft: '0.5rem' }}>
             <ListItemButton>
               <ListItemIcon>
-                <ManageAccountsIcon style={{ fontSize: 28, color: 'white' }} />
+                <ManageAccountsIcon style={{ fontSize: 28, color: 'text.primary' }} />
               </ListItemIcon>
               <CustomListItemText text="Account" />
             </ListItemButton>
@@ -127,16 +128,16 @@ const RightDrawerComponent: React.FC<RightDrawerComponentProps> = ({
           <ListItem key="Settings" disablePadding sx={{ marginLeft: '0.5rem' }}>
             <ListItemButton onClick={() => navigate('/settings')}>
               <ListItemIcon>
-                <SettingsIcon style={{ fontSize: 28, color: 'white' }} />
+                <SettingsIcon style={{ fontSize: 28, color: 'text.primary' }} />
               </ListItemIcon>
               <CustomListItemText text="Settings" />
             </ListItemButton>
           </ListItem>
-          <Divider variant="middle" color="white" sx={{ margin: '0.5rem' }} />
+          <Divider variant="middle" color="text.primary" sx={{ margin: '0.5rem' }} />
           <ListItem key="About" disablePadding sx={{ marginLeft: '0.5rem' }}>
             <ListItemButton>
               <ListItemIcon>
-                <InfoIcon style={{ fontSize: 28, color: 'white' }} />
+                <InfoIcon style={{ fontSize: 28, color: 'text.primary' }} />
               </ListItemIcon>
               <CustomListItemText text="About" />
             </ListItemButton>
@@ -144,16 +145,16 @@ const RightDrawerComponent: React.FC<RightDrawerComponentProps> = ({
           <ListItem key="Support" disablePadding sx={{ marginLeft: '0.5rem' }}>
             <ListItemButton>
               <ListItemIcon>
-                <HelpIcon style={{ fontSize: 28, color: 'white' }} />
+                <HelpIcon style={{ fontSize: 28, color: 'text.primary' }} />
               </ListItemIcon>
               <CustomListItemText text="Support" />
             </ListItemButton>
           </ListItem>
-          <Divider variant="middle" color="white" sx={{ margin: '0.5rem' }} />
+          <Divider variant="middle" color="text.primary" sx={{ margin: '0.5rem' }} />
           <ListItem key="Sign Out" disablePadding sx={{ marginLeft: '0.5rem' }}>
             <ListItemButton onClick={handleSignOut}>
               <ListItemIcon>
-                <LogoutIcon style={{ fontSize: 28, color: 'white' }} />
+                <LogoutIcon style={{ fontSize: 28, color: 'text.primary' }} />
               </ListItemIcon>
               <CustomListItemText text="Sign Out" />
             </ListItemButton>
@@ -170,7 +171,7 @@ const RightDrawerComponent: React.FC<RightDrawerComponentProps> = ({
               }}
             >
               <ListItemIcon>
-                <LogoutIcon style={{ fontSize: 28, color: 'white' }} />
+                <LogoutIcon style={{ fontSize: 28, color: 'text.primary' }} />
               </ListItemIcon>
               <CustomListItemText text="Delete Account (Dev)" />
             </ListItemButton>

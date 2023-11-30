@@ -1,6 +1,5 @@
 import { Box, Typography, Button, Grid, Stack } from '@mui/material';
 import { useState, useEffect } from 'react';
-import { useTheme } from '@emotion/react';
 import { motion, AnimatePresence } from 'framer-motion';
 import ErrorOutlineIcon from '@mui/icons-material/ErrorOutline';
 import Checkbox from '@mui/material/Checkbox';
@@ -16,8 +15,6 @@ const PreSharingEnabledComponent = ({
   executorSettings,
   setExecutorSettings,
 }) => {
-  const theme = useTheme();
- 
   const handleCheckboxChange = (event) => {
     setIsExecutorSettingsSaved(event.target.checked);
     window.electron.store.set(
@@ -42,7 +39,7 @@ const PreSharingEnabledComponent = ({
           display: 'flex',
           alignItems: 'center',
           padding: '2rem 0 0 1.5rem',
-          color: theme.palette.cerulean.main,
+          color: 'primary.main',
         }}
       >
         <ErrorOutlineIcon />
@@ -52,7 +49,7 @@ const PreSharingEnabledComponent = ({
           fontSize="14px"
           textAlign="start"
           padding="0rem 0rem 0rem 1rem"
-          style={{ color: theme.palette.cerulean.main, fontWeight: '600' }}
+          style={{ color: 'primary.main', fontWeight: '600' }}
         >
           You are currently have resource sharing disabled.
         </Typography>
@@ -112,7 +109,7 @@ const PreSharingEnabledComponent = ({
           variant="body2"
           fontSize="16px"
           textAlign="start"
-          color={theme.palette.cerulean.main}
+          color="primary.main"
           // padding="3rem 1.5rem 1rem 1.5rem"
         >
           Remember configuration
@@ -120,7 +117,7 @@ const PreSharingEnabledComponent = ({
         <Checkbox
           checked={isExecutorSettingsSaved}
           onChange={handleCheckboxChange}
-          style={{ color: theme.palette.offWhite.main }}
+          style={{ color: 'text.primary' }}
         />
       </Box>
       <Box
@@ -135,12 +132,10 @@ const PreSharingEnabledComponent = ({
           sx={{
             width: '100%',
             padding: '0.6rem',
-            color: isLoading
-              ? theme.palette.cerulean.main
-              : theme.palette.darkBlack.main,
+            color: isLoading ? 'primary.main' : 'customBackground.dark',
             backgroundColor: isLoading
-              ? theme.palette.darkBlack.main
-              : theme.palette.mintGreen.main,
+              ? 'customBackground.dark'
+              : 'secondary.main',
           }}
         >
           <Typography variant="h3" fontSize="15px" textAlign="center">

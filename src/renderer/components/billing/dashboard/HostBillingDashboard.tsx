@@ -4,7 +4,7 @@ import CurrentBillingCard from '../components/cards/CurrentBillingCard';
 import PastBillingCard from '../components/cards/PastBillingCard';
 import PastBillingList from '../components/list/PastBillingList';
 import { ExternalDataEntry } from '../../../utils/dataTypes';
-import { registerClient, authenticate } from '../../../services/RegistrationServices';
+import { authenticate } from '../../../services/RegistrationServices';
 import actions from '../../../redux/actionCreators';
 import { findHostHistory } from '../../../services/TransactionServices';
 

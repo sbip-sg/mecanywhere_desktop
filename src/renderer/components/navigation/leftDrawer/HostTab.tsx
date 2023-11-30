@@ -25,9 +25,12 @@ const HostTab = () => {
           onClick={() => navigate('/hosttxndashboard')}
           key="hosttxn"
         >
-          <DashboardIcon sx={{ marginRight: listItemSpacing }} />
+          <DashboardIcon
+            sx={{ marginRight: listItemSpacing, color: 'text.primary' }}
+          />
           <Typography
             margin={`${listTopBottomMargin} 0 ${listTopBottomMargin} 0`}
+            sx={{ color: 'text.primary' }}
           >
             Dashboard
           </Typography>
@@ -39,9 +42,12 @@ const HostTab = () => {
           onClick={() => navigate('/hostbillingdashboard')}
           key="hostbilling"
         >
-          <PaidIcon sx={{ marginRight: listItemSpacing }} />
+          <PaidIcon
+            sx={{ marginRight: listItemSpacing, color: 'text.primary' }}
+          />
           <Typography
             margin={`${listTopBottomMargin} 0 ${listTopBottomMargin} 0`}
+            sx={{ color: 'text.primary' }}
           >
             Payout
           </Typography>
@@ -57,9 +63,12 @@ const HostTab = () => {
           }}
           key="switch_view_to_provider"
         >
-          <PaidIcon sx={{ marginRight: listItemSpacing }} />
+          <PaidIcon
+            sx={{ marginRight: listItemSpacing, color: 'text.primary' }}
+          />
           <Typography
             margin={`${listTopBottomMargin} 0 ${listTopBottomMargin} 0`}
+            sx={{ color: 'text.primary' }}
           >
             Switch To Provider View (Dev)
           </Typography>

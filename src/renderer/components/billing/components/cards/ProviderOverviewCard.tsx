@@ -9,7 +9,7 @@ const OverviewCard = () => {
       sx={{
         minWidth: 220,
         height: 230,
-        backgroundColor: theme.palette.lightBlack.main,
+        backgroundColor: 'customBackground.light',
       }}
     >
       <CardContent sx={{ width: '100%', height: '100%' }}>
@@ -17,7 +17,7 @@ const OverviewCard = () => {
           <Grid xs={12}>
             <Typography
               sx={{ fontSize: 14, marginBottom: '1rem' }}
-              color={theme.palette.cerulean.main}
+              color='primary.main'
               gutterBottom
             >
               Current Billing Cycle

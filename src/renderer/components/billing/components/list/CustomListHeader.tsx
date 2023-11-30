@@ -9,7 +9,7 @@ const CustomTypography = ({ children }) => {
       style={{
         fontSize: '18px',
         padding: '0rem 0rem 0rem 2rem',
-        color: theme.palette.cerulean.main,
+        color: 'primary.main',
       }}
     >
       {children}
@@ -28,7 +28,7 @@ const CustomListHeader = () => {
       id="billing-list-header"
       sx={{
         marginBottom: 0,
-        backgroundColor: theme.palette.darkBlack.main,
+        backgroundColor: 'customBackground.dark',
         margin: 0,
       }}
     >

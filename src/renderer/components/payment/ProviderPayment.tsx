@@ -49,7 +49,7 @@ const ProviderPayment = () => {
         }}
       >
         <Typography
-          color={theme.palette.cerulean.main}
+          color='primary.main'
           variant="h1"
           style={{ fontSize: '24px', margin: '0rem 0 0 0' }}
         >

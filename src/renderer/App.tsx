@@ -5,6 +5,17 @@ import {
   useLocation,
 } from 'react-router-dom';
 import { Outlet, Navigate } from 'react-router';
+import {
+  ThemeProvider,
+  CssBaseline,
+  createTheme,
+  PaletteMode,
+} from '@mui/material';
+import { StyledEngineProvider } from '@mui/material/styles';
+import { Helmet } from 'react-helmet';
+import { useMemo } from 'react';
+import { useSelector } from 'react-redux';
+import { RootState } from 'renderer/redux/store';
 import NavigationLayout from './components/navigation/NavigationLayout';
 import Transitions from './components/transitions/Transition';
 import Register from './components/auth/Register';
@@ -20,7 +31,8 @@ import TransactionDetails from './components/transactions/TransactionDetails';
 import RoleSelection from './components/auth/RoleSelection';
 import UserManagement from './components/userManagement/UserManagement';
 import Settings from './components/settings/Settings';
-import useHeartbeatHook from './utils/useHeartbeatHook';
+// import useHeartbeatHook from './utils/useHeartbeatHook';
+import { getDesignTokens } from './utils/theme';
 import useHandleAppExitHook from './utils/useHandleAppExitHook';
 
 const PrivateRoutes = () => {
@@ -158,16 +170,31 @@ const Animated = () => {
 };
 
 const App = () => {
+  const mode: PaletteMode = useSelector(
+    (state: RootState) => state.themeReducer.color
+  ) as PaletteMode;
+  const theme = useMemo(() => createTheme(getDesignTokens(mode)), [mode]);
   // useHeartbeatHook();
   useHandleAppExitHook();
   return (
-    <Router>
-      <NavigationLayoutTransitionWrapper>
-        <NavigationLayout>
-          <Animated />
-        </NavigationLayout>
-      </NavigationLayoutTransitionWrapper>
-    </Router>
+    <StyledEngineProvider injectFirst>
+      <ThemeProvider theme={theme}>
+        <CssBaseline />
+        <Helmet>
+          <link
+            rel="stylesheet"
+            href="https://fonts.googleapis.com/css2?family=Nunito+Sans&display=swap"
+          />
+        </Helmet>
+        <Router>
+          <NavigationLayoutTransitionWrapper>
+            <NavigationLayout>
+              <Animated />
+            </NavigationLayout>
+          </NavigationLayoutTransitionWrapper>
+        </Router>
+      </ThemeProvider>
+    </StyledEngineProvider>
   );
 };
 
