@@ -3,25 +3,26 @@ import Toolbar from '@mui/material/Toolbar';
 import Typography from '@mui/material/Typography';
 import Box from '@mui/material/Box';
 import Button from '@mui/material/Button';
-import { useSelector } from 'react-redux';
-import { RootState } from 'renderer/redux/store';
 import { useState } from 'react';
-import Avatar from './Avatar';
 import { RightDrawerComponent } from '../rightDrawer';
 import { ReactComponent as Logo } from '../../../../../assets/LogoColorHorizontal.svg';
+import useThemeTextColor from '../../../utils/useThemeTextColor';
+import AccountCircleIcon from '@mui/icons-material/AccountCircle';
 
 const MenuComponent = () => {
   const [isRightDrawerOpen, setRightDrawerOpen] = useState(false);
   const toggleRightDrawer = (open: boolean) => () => {
     setRightDrawerOpen(open);
   };
+  const textColor = useThemeTextColor();
+
   return (
     <AppBar
       position="fixed"
       sx={{
         zIndex: (theme) => theme.zIndex.drawer + 1,
         height: '64px',
-        backgroundColor: 'customBackground.main',
+        backgroundColor: 'primary.dark',
       }}
     >
       <RightDrawerComponent
@@ -53,11 +54,7 @@ const MenuComponent = () => {
             noWrap
             component="div"
             sx={{
-              color:
-                useSelector((state: RootState) => state.themeReducer.color) ===
-                'light'
-                  ? 'text.secondary'
-                  : 'text.primary',
+              color: textColor,
               marginLeft: '0.5rem',
             }}
           >
@@ -78,10 +75,12 @@ const MenuComponent = () => {
             onClick={toggleRightDrawer(true)}
             sx={{
               pointerEvents: 'auto',
-              backgroundColor: 'customBackground.main',
+              backgroundColor: 'primary.dark',
             }}
           >
-            <Avatar />
+            <AccountCircleIcon style={{ fontSize: '50px' }} />
+
+            {/* <Avatar /> */}
           </Button>
         </Box>
       </Toolbar>

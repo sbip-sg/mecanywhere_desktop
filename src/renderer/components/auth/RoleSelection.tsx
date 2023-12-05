@@ -81,7 +81,7 @@ const RoleSelection = () => {
           >
             <Box
               sx={{
-                backgroundColor: 'customBackground.main',
+                backgroundColor: 'primary.dark',
                 borderRadius: '12px',
                 padding: '1rem 1rem 1rem 1rem',
                 margin: '1rem 1rem 0rem 1rem',
@@ -114,7 +114,7 @@ const RoleSelection = () => {
             </Box>
             <Box
               sx={{
-                backgroundColor: 'customBackground.main',
+                backgroundColor: 'primary.dark',
                 borderRadius: '12px',
                 // display: 'flex',
                 // justifyContent: "center",

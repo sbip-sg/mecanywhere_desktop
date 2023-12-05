@@ -12,14 +12,14 @@ import InfoIcon from '@mui/icons-material/Info';
 import HelpIcon from '@mui/icons-material/Help';
 import SettingsIcon from '@mui/icons-material/Settings';
 import LogoutIcon from '@mui/icons-material/Logout';
-import { useTheme } from '@mui/material/styles';
 import { useNavigate } from 'react-router-dom';
 import deleteAccount from 'renderer/electron-store';
-import Avatar from '../menu/Avatar';
+import AccountCircleIcon from '@mui/icons-material/AccountCircle';
+import { useSelector } from 'react-redux';
+import { RootState } from 'renderer/redux/store';
+import LightModeIcon from '@mui/icons-material/LightMode';
+import DarkModeIcon from '@mui/icons-material/DarkMode';
 import actions from '../../../redux/actionCreators';
-import ThemeToggle from '../../settings/ThemeToggle';
-
-// import ExitToAppIcon from '@mui/icons-material/ExitToApp';
 
 interface RightDrawerComponentProps {
   isOpen: boolean;
@@ -29,7 +29,7 @@ interface RightDrawerComponentProps {
 const CustomListItemText: React.FC<{ text: string }> = ({ text }) => {
   return (
     <ListItemText
-      primaryTypographyProps={{ style: { fontSize: 20 } }}
+      primaryTypographyProps={{ style: { fontSize: '18px' } }}
       primary={text}
     />
   );
@@ -39,14 +39,23 @@ const RightDrawerComponent: React.FC<RightDrawerComponentProps> = ({
   isOpen,
   onClose,
 }) => {
-  const theme = useTheme();
   const navigate = useNavigate();
+  const currentColor = useSelector(
+    (state: RootState) => state.themeReducer.color
+  );
+  const handleModeChange = () => {
+    const newColor = currentColor === 'light' ? 'dark' : 'light';
+    actions.setColor(newColor);
+  };
   const handleSignOut = () => {
     // handleClose();
-    console.log('aaaa');
     actions.setAuthenticated(false);
     navigate('/login');
   };
+  const themeColor = useSelector(
+    (state: RootState) => state.themeReducer.color
+  );
+
   return (
     <Drawer
       anchor="right"
@@ -55,7 +64,7 @@ const RightDrawerComponent: React.FC<RightDrawerComponentProps> = ({
       sx={{ zIndex: 1500 }}
       PaperProps={{
         sx: {
-          backgroundColor: 'customBackground.main',
+          backgroundColor: 'text.secondary',
           color: 'text.primary',
         },
       }}
@@ -71,13 +80,18 @@ const RightDrawerComponent: React.FC<RightDrawerComponentProps> = ({
                 display: 'flex',
                 alignItems: 'center',
                 justifyContent: 'right',
-                margin: '0 1rem 1rem 0.5rem',
+                margin: '1rem 1rem 0rem 0.5rem',
               }}
               onMouseEnter={() => console.log('Hovering over the image')}
             >
-              <Avatar />
+              <AccountCircleIcon style={{ fontSize: '50px' }} />
             </Box>
-            <Typography variant="h5" fontSize="18px" paddingBottom="0.5rem">
+            <Typography
+              variant="h5"
+              fontSize="18px"
+              fontWeight="600"
+              padding="1rem 0rem 0rem 0rem"
+            >
               jeryong@gmail.com
             </Typography>
           </ListItem>
@@ -113,10 +127,10 @@ const RightDrawerComponent: React.FC<RightDrawerComponentProps> = ({
           </ListItem>
           <Divider
             variant="middle"
-            color="text.primary"
+            // color="text.primary"
             sx={{ margin: '0.5rem' }}
           />
-          <ThemeToggle />
+
           <ListItem key="Account" disablePadding sx={{ marginLeft: '0.5rem' }}>
             <ListItemButton>
               <ListItemIcon>
@@ -135,11 +149,32 @@ const RightDrawerComponent: React.FC<RightDrawerComponentProps> = ({
               <CustomListItemText text="Settings" />
             </ListItemButton>
           </ListItem>
-          <Divider
-            variant="middle"
-            color="text.primary"
-            sx={{ margin: '0.5rem' }}
-          />
+          <ListItem key="theme" disablePadding sx={{ marginLeft: '0.5rem' }}>
+            <ListItemButton onClick={handleModeChange}>
+              <ListItemIcon>
+                {currentColor === 'light' ? (
+                  <DarkModeIcon
+                    style={{ fontSize: 28, color: 'text.primary' }}
+                  />
+                ) : (
+                  <LightModeIcon
+                    style={{ fontSize: 28, color: 'text.primary' }}
+                  />
+                )}
+              </ListItemIcon>
+              <CustomListItemText
+                text={themeColor === 'light' ? 'Dark Mode' : 'Light Mode'}
+              />
+            </ListItemButton>
+            {/* <IconButton onClick={handleModeChange}>
+              {currentColor === 'light' ? <DarkModeIcon /> : <LightModeIcon />}
+            </IconButton> */}
+            {/* <ThemeToggle />
+            <Typography style={{ paddingLeft: '1rem', fontSize: '18px' }}>
+              {themeColor === 'light' ? 'Dark Mode' : 'Light Mode'}
+            </Typography> */}
+          </ListItem>
+          <Divider variant="middle" sx={{ margin: '0.5rem' }} />
           <ListItem key="About" disablePadding sx={{ marginLeft: '0.5rem' }}>
             <ListItemButton>
               <ListItemIcon>
@@ -156,11 +191,7 @@ const RightDrawerComponent: React.FC<RightDrawerComponentProps> = ({
               <CustomListItemText text="Support" />
             </ListItemButton>
           </ListItem>
-          <Divider
-            variant="middle"
-            color="text.primary"
-            sx={{ margin: '0.5rem' }}
-          />
+          <Divider variant="middle" sx={{ margin: '0.5rem' }} />
           <ListItem key="Sign Out" disablePadding sx={{ marginLeft: '0.5rem' }}>
             <ListItemButton onClick={handleSignOut}>
               <ListItemIcon>

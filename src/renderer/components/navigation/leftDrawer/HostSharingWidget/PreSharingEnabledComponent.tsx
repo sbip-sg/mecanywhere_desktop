@@ -132,9 +132,9 @@ const PreSharingEnabledComponent = ({
           sx={{
             width: '100%',
             padding: '0.6rem',
-            color: isLoading ? 'primary.main' : 'customBackground.dark',
+            color: isLoading ? 'primary.main' : 'background.paper',
             backgroundColor: isLoading
-              ? 'customBackground.dark'
+              ? 'background.paper'
               : 'secondary.main',
           }}
         >

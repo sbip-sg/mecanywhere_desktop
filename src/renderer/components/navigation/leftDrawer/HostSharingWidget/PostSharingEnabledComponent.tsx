@@ -155,7 +155,7 @@ const PostSharingEnabledComponent = ({
               padding: '0.6rem',
               color: isLoading ? 'primary.main' : 'inherit',
               backgroundColor: isLoading
-                ? 'customBackground.dark'
+                ? 'background.paper'
                 : 'secondary.contrastText',
             }}
           >

@@ -102,7 +102,7 @@ const TransactionDetails: React.FC = () => {
           justifyContent: 'center',
           alignItems: 'top',
           margin: '0 1rem 1.5rem 1.5rem',
-          backgroundColor: 'customBackground.main',
+          backgroundColor: 'primary.dark',
           borderRadius: '12px',
           padding: '1rem 0.5rem 0.5rem 0.5rem',
         }}

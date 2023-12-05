@@ -22,7 +22,7 @@ interface DatePickerPopoverProps {
 }
 
 const StyledDatePicker = styled(DatePicker)(({ theme }) => ({
-  backgroundColor: 'customBackground.dark',
+  backgroundColor: 'background.paper',
   color: 'secondary.contrastText',
   border: '0px',
   borderRadius: '2px',
@@ -102,14 +102,14 @@ const DatePickerPopover: React.FC<DatePickerPopoverProps> = ({
       sx={{
         '.MuiPaper-root': {
           borderRadius: '10px',
-          backgroundColor: 'customBackground.main',
+          backgroundColor: 'background.paper',
         },
       }}
     >
       <Box
         sx={{
           width: '18rem',
-          backgroundColor: 'customBackground.main',
+          backgroundColor: 'background.paper',
           boxShadow: 24,
           padding: '1.5rem',
         }}
@@ -120,7 +120,8 @@ const DatePickerPopover: React.FC<DatePickerPopoverProps> = ({
             fontSize: '14px',
             letterSpacing: '0.2em',
             margin: '0.5rem 0 0.1rem 0.2rem',
-            fontWeight: '500',
+            fontWeight: '600',
+            color: 'text.primary',
           }}
         >
           GROUP BY
@@ -128,7 +129,7 @@ const DatePickerPopover: React.FC<DatePickerPopoverProps> = ({
         <ToggleButtonGroup
           sx={{
             color: 'primary.main',
-            backgroundColor: 'customBackground.main',
+            backgroundColor: 'primary.dark',
           }}
           value={groupBy}
           exclusive
@@ -142,9 +143,9 @@ const DatePickerPopover: React.FC<DatePickerPopoverProps> = ({
                 fontSize: '14px',
                 fontWeight: '600',
                 color: 'secondary.main',
-                backgroundColor: 'customBackground.dark',
+                backgroundColor: 'background.paper',
                 '&.Mui-selected': {
-                  color: 'customBackground.dark',
+                  color: 'background.paper',
                   backgroundColor: 'secondary.contrastText',
                   fontSize: '14px',
                   fontWeight: '600',
@@ -163,7 +164,8 @@ const DatePickerPopover: React.FC<DatePickerPopoverProps> = ({
             fontSize: '14px',
             letterSpacing: '0.2em',
             margin: '0.5rem 0 0.1rem 0.2rem',
-            fontWeight: '500',
+            fontWeight: '600',
+            color: 'text.primary',
           }}
         >
           START DATE
@@ -185,7 +187,8 @@ const DatePickerPopover: React.FC<DatePickerPopoverProps> = ({
             fontSize: '14px',
             letterSpacing: '0.2em',
             margin: '0.5rem 0 0.1rem 0.2rem',
-            fontWeight: '500',
+            fontWeight: '600',
+            color: 'text.primary',
           }}
         >
           END DATE

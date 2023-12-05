@@ -11,7 +11,6 @@ interface CustomTablePaginationProps {
     page: number
   ) => void;
   onRowsPerPageChange: (event: React.ChangeEvent<HTMLInputElement>) => void;
-  backgroundColor: string;
 }
 
 const CustomTablePagination: React.FC<CustomTablePaginationProps> = ({
@@ -20,7 +19,6 @@ const CustomTablePagination: React.FC<CustomTablePaginationProps> = ({
   page,
   onPageChange,
   onRowsPerPageChange,
-  backgroundColor,
 }) => {
   return (
     <TablePagination
@@ -34,7 +32,8 @@ const CustomTablePagination: React.FC<CustomTablePaginationProps> = ({
       onPageChange={onPageChange}
       onRowsPerPageChange={onRowsPerPageChange}
       sx={{
-        backgroundColor,
+        color: 'white',
+        backgroundColor: 'primary.dark',
         borderRadius: '0 0 0.5em 0.5em',
         minHeight: `${tablePaginationMinHeight}px`,
         // '.MuiTablePagination-toolbar': {

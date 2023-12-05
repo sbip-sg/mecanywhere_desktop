@@ -1,15 +1,25 @@
-import { Card, CardContent, Typography, Grid, Box } from '@mui/material';
+import { Card, CardContent, Typography, Grid } from '@mui/material';
 import { useTheme } from '@emotion/react';
+import { useSelector } from 'react-redux';
+import { RootState } from 'renderer/redux/store';
 
-const CustomTypography = ({ children }) => {
-  const theme = useTheme();
+const CustomTypography = ({ children, isAnyAccordionExpanded }) => {
+  const themeColor = useSelector(
+    (state: RootState) => state.themeReducer.color
+  );
 
   return (
     <Typography
       style={{
-        fontSize: '18px',
+        fontSize: '15px',
         padding: '0rem 0rem 0rem 2rem',
-        color: 'primary.main',
+        // color: theme.palette.text.primary,
+        color:
+          themeColor === 'light'
+            ? isAnyAccordionExpanded
+              ? 'black'
+              : 'white'
+            : 'white',
       }}
     >
       {children}
@@ -17,19 +27,21 @@ const CustomTypography = ({ children }) => {
   );
 };
 
-const CustomListHeader = () => {
-  const theme = useTheme();
-  const firstColumnWidth = 4;
-  const secondColumnWidth = 3;
-  const thirdColumnWidth = 2.5;
-  const fourthColumnWidth = 2.4;
+const CustomListHeader = ({ isAnyAccordionExpanded }) => {
+  const firstColumnWidth = 3.9;
+  const secondColumnWidth = 2.8;
+  const thirdColumnWidth = 3;
+  const fourthColumnWidth = 2.3;
   return (
     <Card
       id="billing-list-header"
+      elevation={0}
       sx={{
         marginBottom: 0,
-        backgroundColor: 'customBackground.dark',
-        margin: 0,
+        backgroundColor: isAnyAccordionExpanded
+          ? 'background.default'
+          : 'primary.dark',
+        padding: '1rem 0rem 0.5rem 0rem',
       }}
     >
       <CardContent
@@ -47,7 +59,9 @@ const CustomListHeader = () => {
             xs={firstColumnWidth}
             sx={{ justifyContent: 'start' }}
           >
-            <CustomTypography>Date</CustomTypography>
+            <CustomTypography isAnyAccordionExpanded={isAnyAccordionExpanded}>
+              Date
+            </CustomTypography>
           </Grid>
           <Grid
             item
@@ -55,7 +69,9 @@ const CustomListHeader = () => {
             xs={secondColumnWidth}
             sx={{ justifyContent: 'start' }}
           >
-            <CustomTypography>Status</CustomTypography>
+            <CustomTypography isAnyAccordionExpanded={isAnyAccordionExpanded}>
+              Status
+            </CustomTypography>
           </Grid>
           <Grid
             item
@@ -63,7 +79,7 @@ const CustomListHeader = () => {
             xs={thirdColumnWidth}
             sx={{ justifyContent: 'start' }}
           >
-            <CustomTypography>Resource Consumed</CustomTypography>
+            {/* <CustomTypography>Resource Consumed</CustomTypography> */}
           </Grid>
           <Grid
             item
@@ -71,7 +87,9 @@ const CustomListHeader = () => {
             xs={fourthColumnWidth}
             sx={{ justifyContent: 'start' }}
           >
-            <CustomTypography>Amount</CustomTypography>
+            <CustomTypography isAnyAccordionExpanded={isAnyAccordionExpanded}>
+              Amount
+            </CustomTypography>
           </Grid>
         </Grid>
       </CardContent>
