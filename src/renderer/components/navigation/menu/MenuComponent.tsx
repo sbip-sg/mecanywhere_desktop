@@ -3,21 +3,18 @@ import Toolbar from '@mui/material/Toolbar';
 import Typography from '@mui/material/Typography';
 import Box from '@mui/material/Box';
 import Button from '@mui/material/Button';
-import Menu from '@mui/material/Menu';
-import { MouseEvent, useState } from 'react';
-import { useTheme } from '@emotion/react';
+import { useSelector } from 'react-redux';
+import { RootState } from 'renderer/redux/store';
+import { useState } from 'react';
 import Avatar from './Avatar';
-import logoTest from '../../../../../assets/logo-test.png';
-
 import { RightDrawerComponent } from '../rightDrawer';
-import { DropDownComponent } from '../dropdown';
+import { ReactComponent as Logo } from '../../../../../assets/LogoColorHorizontal.svg';
 
 const MenuComponent = () => {
   const [isRightDrawerOpen, setRightDrawerOpen] = useState(false);
-  const toggleRightDrawer = (open: boolean) => (event: React.MouseEvent) => {
+  const toggleRightDrawer = (open: boolean) => () => {
     setRightDrawerOpen(open);
   };
-  const theme = useTheme();
   return (
     <AppBar
       position="fixed"
@@ -45,17 +42,24 @@ const MenuComponent = () => {
             justifyContent: 'left',
           }}
         >
-          <img
-            src={logoTest}
-            width="8%"
-            height="8%"
-            style={{ margin: '0 0.5rem 0 0' }}
+          <Logo
+            width="20%"
+            height="20%"
+            style={{ cursor: 'pointer', color: 'white' }}
+            // onClick={handleLogoClick}
           />
           <Typography
             variant="h1"
             noWrap
             component="div"
-            sx={{ color: 'primary.main', marginLeft: '0.5rem' }}
+            sx={{
+              color:
+                useSelector((state: RootState) => state.themeReducer.color) ===
+                'light'
+                  ? 'text.secondary'
+                  : 'text.primary',
+              marginLeft: '0.5rem',
+            }}
           >
             MECAnywhere
           </Typography>

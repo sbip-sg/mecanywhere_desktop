@@ -11,6 +11,11 @@ const setAccessToken: ActionCreator<AnyAction> = (payload: string) => ({
   payload,
 });
 
+const setRefreshToken: ActionCreator<AnyAction> = (payload: string) => ({
+  type: 'setRefreshToken',
+  payload,
+});
+
 const addJob: ActionCreator<AnyAction> = (id: string, content: string) => ({
   type: 'addJob',
   id,
@@ -51,6 +56,7 @@ const boundToDoActions = bindActionCreators(
   {
     setAuthenticated,
     setAccessToken,
+    setRefreshToken,
     addJob,
     setJobs,
     addJobResults,

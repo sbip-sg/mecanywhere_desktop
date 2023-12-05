@@ -6,21 +6,17 @@ import ListItemButton from '@mui/material/ListItemButton';
 import ListItemIcon from '@mui/material/ListItemIcon';
 import ListItemText from '@mui/material/ListItemText';
 import Typography from '@mui/material/Typography/Typography';
-import InboxIcon from '@mui/icons-material/MoveToInbox';
-import MailIcon from '@mui/icons-material/Mail';
-import { useState } from 'react';
 import Divider from '@mui/material/Divider/Divider';
 import ManageAccountsIcon from '@mui/icons-material/ManageAccounts';
 import InfoIcon from '@mui/icons-material/Info';
 import HelpIcon from '@mui/icons-material/Help';
 import SettingsIcon from '@mui/icons-material/Settings';
 import LogoutIcon from '@mui/icons-material/Logout';
-import themeOptions from 'renderer/utils/theme';
 import { useTheme } from '@mui/material/styles';
 import { useNavigate } from 'react-router-dom';
+import deleteAccount from 'renderer/electron-store';
 import Avatar from '../menu/Avatar';
 import actions from '../../../redux/actionCreators';
-import deleteAccount from 'renderer/electron-store';
 import ThemeToggle from '../../settings/ThemeToggle';
 
 // import ExitToAppIcon from '@mui/icons-material/ExitToApp';
@@ -115,12 +111,18 @@ const RightDrawerComponent: React.FC<RightDrawerComponentProps> = ({
               </Typography>         */}
             </Box>
           </ListItem>
-          <Divider variant="middle" color="text.primary" sx={{ margin: '0.5rem' }} />
+          <Divider
+            variant="middle"
+            color="text.primary"
+            sx={{ margin: '0.5rem' }}
+          />
           <ThemeToggle />
           <ListItem key="Account" disablePadding sx={{ marginLeft: '0.5rem' }}>
             <ListItemButton>
               <ListItemIcon>
-                <ManageAccountsIcon style={{ fontSize: 28, color: 'text.primary' }} />
+                <ManageAccountsIcon
+                  style={{ fontSize: 28, color: 'text.primary' }}
+                />
               </ListItemIcon>
               <CustomListItemText text="Account" />
             </ListItemButton>
@@ -133,7 +135,11 @@ const RightDrawerComponent: React.FC<RightDrawerComponentProps> = ({
               <CustomListItemText text="Settings" />
             </ListItemButton>
           </ListItem>
-          <Divider variant="middle" color="text.primary" sx={{ margin: '0.5rem' }} />
+          <Divider
+            variant="middle"
+            color="text.primary"
+            sx={{ margin: '0.5rem' }}
+          />
           <ListItem key="About" disablePadding sx={{ marginLeft: '0.5rem' }}>
             <ListItemButton>
               <ListItemIcon>
@@ -150,7 +156,11 @@ const RightDrawerComponent: React.FC<RightDrawerComponentProps> = ({
               <CustomListItemText text="Support" />
             </ListItemButton>
           </ListItem>
-          <Divider variant="middle" color="text.primary" sx={{ margin: '0.5rem' }} />
+          <Divider
+            variant="middle"
+            color="text.primary"
+            sx={{ margin: '0.5rem' }}
+          />
           <ListItem key="Sign Out" disablePadding sx={{ marginLeft: '0.5rem' }}>
             <ListItemButton onClick={handleSignOut}>
               <ListItemIcon>

@@ -6,9 +6,6 @@ import { scrollbarHeight, scrollbarWidth } from './constants';
 const lightPurple = '#6D697D';
 const cerulean = '#829CFF';
 const deepCerulean = '#6485FF';
-const lightBlack = '#292733';
-const mediumBlack = '#202028';
-const darkBlack = '#18191C';
 const mintGreen = '#35D4C7';
 const offWhite = '#F7F7F7';
 const violet = '#BC00A3';
@@ -16,6 +13,9 @@ const tintedNavy = '#2c3555';
 const navy = '#3f3f74';
 const darkViolet = '#581845';
 const orange = '#FF5F1F';
+const lightBlack = '#292733';
+const mediumBlack = '#202028';
+const darkBlack = '#18191C';
 const lightWhite = '#FFFFFF';
 const mediumWhite = '#5B4996';
 const darkWhite = '#F4F4F4';
@@ -46,16 +46,16 @@ export const getDesignTokens = (mode: PaletteMode) => ({
             dark: navy,
           },
           secondary: {
-            main: orange,
-            contrastText: darkViolet,
+            main: mintGreen,
+            contrastText: violet,
           },
           text: {
             primary: darkBlack,
-            secondary: mediumBlack,
+            secondary: lightWhite,
           },
           customBackground: {
             light: lightWhite,
-            main: mediumWhite,
+            main: lightBlack,
             dark: darkWhite,
           },
         }
@@ -70,7 +70,7 @@ export const getDesignTokens = (mode: PaletteMode) => ({
           },
           text: {
             primary: offWhite,
-            secondary: lightPurple,
+            secondary: darkBlack,
           },
           customBackground: {
             light: lightBlack,
@@ -212,6 +212,9 @@ export const getDesignTokens = (mode: PaletteMode) => ({
           },
         },
       },
+    },
+    MuiPaper: {
+      styleOverrides: { root: { backgroundImage: 'unset' } },
     },
   },
 });
