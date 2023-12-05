@@ -42,10 +42,11 @@ const TxnDashboard: React.FC<TxnDashboardProps> = ({ appRole }) => {
     scrollbarHeight -
     1
   }px`;
-  const fetchAndSetData = async (accessToken) => {
+
+  const fetchAndSetData = async (accessToken: string, role: string) => {
     setIsLoading(true);
     try {
-      const didHistoryResponse = await (appRole === 'provider'
+      const didHistoryResponse = await (role === 'provider'
         ? findPoHistory(accessToken, did)
         : findHostHistory(accessToken, did));
       if (didHistoryResponse) {
@@ -67,7 +68,7 @@ const TxnDashboard: React.FC<TxnDashboardProps> = ({ appRole }) => {
   const handleRefresh = async () => {
     const { accessToken } = reduxStore.getState().userReducer;
     if (accessToken) {
-      await fetchAndSetData(accessToken);
+      await fetchAndSetData(accessToken, appRole);
     } else {
       console.error('Invalid access token or did');
     }
@@ -83,7 +84,7 @@ const TxnDashboard: React.FC<TxnDashboardProps> = ({ appRole }) => {
         console.error('Invalid dummy history response');
         return;
       }
-      await fetchAndSetData(accessToken);
+      await fetchAndSetData(accessToken, appRole);
     } else {
       console.error('Invalid access token or did');
     }
@@ -102,15 +103,14 @@ const TxnDashboard: React.FC<TxnDashboardProps> = ({ appRole }) => {
         console.error('Invalid dummy history response');
         return;
       }
-      await fetchAndSetData(accessToken);
+      await fetchAndSetData(accessToken, appRole);
     } else {
       console.error('Invalid access token or did');
     }
   };
 
-  const handleAddDummyData = async () => {
-    console.log('appRole', appRole);
-    return appRole === 'provider'
+  const handleAddDummyData = async (role: string) => {
+    return role === 'provider'
       ? handleAddProviderDummyData()
       : handleAddHostDummyData();
   };
@@ -121,7 +121,7 @@ const TxnDashboard: React.FC<TxnDashboardProps> = ({ appRole }) => {
       // await new Promise((resolve) => setTimeout(resolve, 500));
       if (credential) {
         const { accessToken } = reduxStore.getState().userReducer;
-        await fetchAndSetData(accessToken);
+        await fetchAndSetData(accessToken, appRole);
       } else {
         console.error('Credential or DID is missing');
       }
@@ -205,7 +205,7 @@ const TxnDashboard: React.FC<TxnDashboardProps> = ({ appRole }) => {
               </Typography>
             </Box>
             <Button
-              onClick={handleAddDummyData}
+              onClick={() => handleAddDummyData(appRole)}
               sx={{
                 margin: '2rem 0 0 0',
               }}

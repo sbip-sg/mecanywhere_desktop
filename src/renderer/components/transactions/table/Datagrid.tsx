@@ -108,7 +108,6 @@ const Datagrid: React.FC<DatagridProps> = ({
       <CustomToolbar
         isTableExpanded={isTableExpanded}
         setIsTableExpanded={setIsTableExpanded}
-        backgroundColor="customBackground.light"
       />
       <TableContainer
         id="tablecontainer"
@@ -150,7 +149,7 @@ const Datagrid: React.FC<DatagridProps> = ({
         page={page}
         onPageChange={handleChangePage}
         onRowsPerPageChange={handleChangeRowsPerPage}
-        backgroundColor="customBackground.main"
+        backgroundColor="primary.dark"
       />
     </Box>
   );

@@ -177,7 +177,7 @@ const createWindow = async () => {
     show: false,
     width: 1440,
     height: 900,
-    icon: getAssetPath('logo-m.png'),
+    icon: getAssetPath('mecanywhere-icon.png'),
     webPreferences: {
       preload: app.isPackaged
         ? path.join(__dirname, 'preload.js')

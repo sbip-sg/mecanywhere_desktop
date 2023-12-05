@@ -19,7 +19,7 @@ const SeedPhraseReveal: React.FC<SeedPhraseRevealProps> = ({ seedPhrase }) => {
       maxWidth="25rem"
       display="inline-flex"
       flexWrap="wrap"
-      bgcolor={'customBackground.main'}
+      bgcolor={'primary.dark'}
       p={2}
       borderRadius={1}
     >

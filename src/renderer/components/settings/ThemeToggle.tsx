@@ -1,20 +1,23 @@
-import { Switch } from '@mui/material';
 import { useSelector } from 'react-redux';
 import { RootState } from 'renderer/redux/store';
+import { IconButton } from '@mui/material';
+import LightModeIcon from '@mui/icons-material/LightMode';
+import DarkModeIcon from '@mui/icons-material/DarkMode';
 import actions from '../../redux/actionCreators';
 
 const ThemeToggle = () => {
-  const handleModeChange = (event) => {
-    actions.setColor(event.target.checked ? 'dark' : 'light');
-    console.log('event.target.checked ', event.target.checked);
+  const currentColor = useSelector(
+    (state: RootState) => state.themeReducer.color
+  );
+  const handleModeChange = () => {
+    const newColor = currentColor === 'light' ? 'dark' : 'light';
+    actions.setColor(newColor);
   };
+
   return (
-    <Switch
-      checked={
-        useSelector((state: RootState) => state.themeReducer.color) === 'dark'
-      }
-      onChange={handleModeChange}
-    />
+    <IconButton onClick={handleModeChange}>
+      {currentColor === 'light' ? <DarkModeIcon /> : <LightModeIcon />}
+    </IconButton>
   );
 };
 

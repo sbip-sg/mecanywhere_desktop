@@ -1,10 +1,9 @@
-import React, { useState, useEffect } from 'react';
+import React from 'react';
 import Box from '@mui/material/Box';
 import Popover from '@mui/material/Popover';
 import Typography from '@mui/material/Typography';
 import ToggleButton from '@mui/material/ToggleButton';
 import ToggleButtonGroup from '@mui/material/ToggleButtonGroup';
-import { useTheme } from '@emotion/react';
 import { useSelector } from 'react-redux';
 import { RootState } from 'renderer/redux/store';
 
@@ -18,12 +17,11 @@ interface DatakeySelectorPopoverProps {
 }
 
 const datakeyOptions = [
-  { label: 'Avg. Memory Utilized (MB)', value: 'resource_memory' },
-  { label: 'Avg. CPU Utilized (cores)', value: 'resource_cpu' },
-  { label: 'Avg. Duration', value: 'avg_duration' },
-  { label: 'Total Duration', value: 'duration' },
-  { label: 'Total Price (SGD)', value: 'price' },
-  { label: 'Network Reliability', value: 'network_reliability' },
+  { label: 'Avg. Memory Utilized (MB)', value: 'avg_resource_memory' },
+  { label: 'Avg. CPU Utilized (cores)', value: 'avg_resource_cpu' },
+  { label: 'Total Duration', value: 'total_duration' },
+  { label: 'Total Price (SGD)', value: 'total_price' },
+  { label: 'Avg. Network Reliability', value: 'avg_network_reliability' },
 ];
 
 const roleOptions = [
@@ -40,12 +38,6 @@ const DatakeySelectorPopover: React.FC<DatakeySelectorPopoverProps> = ({
   selectedRole,
   setSelectedRole,
 }) => {
-  const theme = useTheme();
-
-  useEffect(() => {
-    console.log('selectedRoles', selectedRole);
-  }, [selectedRole]);
-
   const handleClose = () => {
     setAnchorEl(null);
   };
@@ -82,14 +74,14 @@ const DatakeySelectorPopover: React.FC<DatakeySelectorPopoverProps> = ({
       sx={{
         '.MuiPaper-root': {
           borderRadius: '10px',
-          backgroundColor: 'customBackground.main',
+          backgroundColor: 'primary.dark',
         },
       }}
     >
       <Box
         sx={{
           width: '20rem',
-          backgroundColor: 'customBackground.main',
+          backgroundColor: 'primary.dark',
           boxShadow: 24,
           padding: '1.2rem 2rem 2rem 2rem',
         }}
@@ -111,7 +103,7 @@ const DatakeySelectorPopover: React.FC<DatakeySelectorPopoverProps> = ({
             <ToggleButtonGroup
               sx={{
                 color: 'primary.main',
-                backgroundColor: 'customBackground.main',
+                backgroundColor: 'primary.dark',
                 width: '100%',
               }}
               value={selectedRole}
@@ -126,9 +118,9 @@ const DatakeySelectorPopover: React.FC<DatakeySelectorPopoverProps> = ({
                     fontSize: '14px',
                     fontWeight: '600',
                     color: 'text.primary',
-                    backgroundColor: 'customBackground.dark',
+                    backgroundColor: 'background.paper',
                     '&.Mui-selected': {
-                      color: 'customBackground.dark',
+                      color: 'background.paper',
                       backgroundColor: 'secondary.main',
                       fontSize: '14px',
                       fontWeight: '600',
@@ -157,7 +149,7 @@ const DatakeySelectorPopover: React.FC<DatakeySelectorPopoverProps> = ({
         <ToggleButtonGroup
           sx={{
             color: 'primary.main',
-            backgroundColor: 'customBackground.main',
+            backgroundColor: 'primary.dark',
             width: '100%',
           }}
           value={datakey}
@@ -173,9 +165,9 @@ const DatakeySelectorPopover: React.FC<DatakeySelectorPopoverProps> = ({
                 fontSize: '12px',
                 fontWeight: '600',
                 color: 'text.primary',
-                backgroundColor: 'customBackground.dark',
+                backgroundColor: 'background.paper',
                 '&.Mui-selected': {
-                  color: 'customBackground.dark',
+                  color: 'background.paper',
                   backgroundColor: 'secondary.main',
                   fontSize: '12px',
                   fontWeight: '600',

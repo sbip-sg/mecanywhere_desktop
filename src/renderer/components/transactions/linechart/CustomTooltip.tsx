@@ -16,7 +16,7 @@ const CustomTooltip = ({
     return (
       <Box
         sx={{
-          backgroundColor: 'customBackground.light',
+          backgroundColor: 'background.default',
           padding: '1rem 1rem 1rem 1rem',
           borderRadius: '7px',
           minWidth: 150,

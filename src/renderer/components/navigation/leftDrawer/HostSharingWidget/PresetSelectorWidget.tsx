@@ -75,7 +75,7 @@ const PresetSelectorWidget = ({
           MenuProps={{
             PaperProps: {
               sx: {
-                bgcolor: 'customBackground.main',
+                bgcolor: 'primary.dark',
                 '& .MuiMenuItem-root': {
                   padding: 2,
                   fontSize: '14px',

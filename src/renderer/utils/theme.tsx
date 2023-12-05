@@ -6,18 +6,18 @@ import { scrollbarHeight, scrollbarWidth } from './constants';
 const lightPurple = '#6D697D';
 const cerulean = '#829CFF';
 const deepCerulean = '#6485FF';
-const lightBlack = '#292733';
-const mediumBlack = '#202028';
-const darkBlack = '#18191C';
 const mintGreen = '#35D4C7';
-const offWhite = '#F7F7F7';
+const offWhite = '#f0f1f2';
 const violet = '#BC00A3';
 const tintedNavy = '#2c3555';
 const navy = '#3f3f74';
 const darkViolet = '#581845';
 const orange = '#FF5F1F';
-const lightWhite = '#FFFFFF';
-const mediumWhite = '#5B4996';
+const lightBlack = '#292733';
+const mediumBlack = '#202028';
+const darkBlack = '#18191C';
+const white = '#FFFFFF';
+const grey = '#2e2f36';
 const darkWhite = '#F4F4F4';
 const darkThemeSpaceBar1 = '#2b2b2b'; // light
 const darkThemeSpaceBar2 = '#6b6b6b'; // medium
@@ -26,15 +26,15 @@ const lightThemeSpaceBar1 = '#f1f1f1'; // light
 const lightThemeSpaceBar2 = '#c1c1c1'; // medium
 const lightThemeSpaceBar3 = '#a8a8a8'; // dark
 
-declare module '@mui/material/styles/createPalette' {
-  export interface PaletteOptions {
-    customBackground: {
-      light: string;
-      main: string;
-      dark: string;
-    };
-  }
-}
+// declare module '@mui/material/styles/createPalette' {
+//   export interface PaletteOptions {
+//     customBackground: {
+//       light: string;
+//       main: string;
+//       dark: string;
+//     };
+//   }
+// }
 
 export const getDesignTokens = (mode: PaletteMode) => ({
   palette: {
@@ -42,27 +42,26 @@ export const getDesignTokens = (mode: PaletteMode) => ({
     ...(mode === 'light'
       ? {
           primary: {
-            main: tintedNavy,
-            dark: navy,
+            main: cerulean,
+            dark: grey,
           },
           secondary: {
-            main: orange,
-            contrastText: darkViolet,
+            main: mintGreen,
+            contrastText: violet,
           },
           text: {
             primary: darkBlack,
-            secondary: mediumBlack,
+            secondary: white,
           },
-          customBackground: {
-            light: lightWhite,
-            main: mediumWhite,
-            dark: darkWhite,
+          background: {
+            default: white,
+            paper: offWhite,
           },
         }
       : {
           primary: {
             main: cerulean,
-            dark: deepCerulean,
+            dark: mediumBlack,
           },
           secondary: {
             main: mintGreen,
@@ -70,12 +69,11 @@ export const getDesignTokens = (mode: PaletteMode) => ({
           },
           text: {
             primary: offWhite,
-            secondary: lightPurple,
+            secondary: darkBlack,
           },
-          customBackground: {
-            light: lightBlack,
-            main: mediumBlack,
-            dark: darkBlack,
+          background: {
+            default: lightBlack,
+            paper: darkBlack,
           },
         }),
   },
@@ -118,7 +116,7 @@ export const getDesignTokens = (mode: PaletteMode) => ({
     MuiCssBaseline: {
       styleOverrides: {
         body: {
-          backgroundColor: mode === 'light' ? darkWhite : darkBlack,
+          backgroundColor: mode === 'light' ? offWhite : darkBlack,
           scrollbarColor:
             mode === 'light'
               ? `${lightThemeSpaceBar2} ${darkThemeSpaceBar1}`
@@ -212,6 +210,9 @@ export const getDesignTokens = (mode: PaletteMode) => ({
           },
         },
       },
+    },
+    MuiPaper: {
+      styleOverrides: { root: { backgroundImage: 'unset' } },
     },
   },
 });

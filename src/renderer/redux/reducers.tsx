@@ -4,11 +4,13 @@ import { Job, JobResult } from 'renderer/utils/jobs';
 interface UserState {
   authenticated: boolean;
   accessToken: string;
+  refreshToken: string;
 }
 
 const initialUserState: UserState = {
   authenticated: false,
   accessToken: '',
+  refreshToken: '',
 };
 
 interface ThemeState {
@@ -78,6 +80,11 @@ export const userReducer = (
       return {
         ...state,
         accessToken: action.payload,
+      };
+    case 'setRefreshToken':
+      return {
+        ...state,
+        refreshToken: action.payload,
       };
     default:
       return state;
