@@ -33,9 +33,9 @@ const Mnemonics = () => {
             account. Write this phrase on a piece of paper and store it in a
             secured place. Memorize this phrase if possible.
           </Typography>
-          <Typography variant="body1">
+          <Typography variant="body1" color="red" fontWeight="600">
             WARNING: Never disclose your backup phrase. Anyone with this phrase
-            can take over your account
+            can take over your account!
           </Typography>
         </Box>
         <SeedPhraseReveal
@@ -47,7 +47,6 @@ const Mnemonics = () => {
           display: 'flex',
           flexDirection: 'row',
           justifyContent: 'center',
-          // flexDirection: 'column',
           alignItems: 'center',
           height: '100%',
           marginTop: '4rem',
@@ -64,7 +63,6 @@ const Mnemonics = () => {
         <Button
           variant="contained"
           color="secondary"
-          // sx={{padding: "0 1rem 0 1rem"}}
           onClick={() => navigate('/roleSelection')}
         >
           Back

@@ -3,17 +3,34 @@ import {
   uint8ArrayToDecimal,
   utf8ToHex,
   encryptWithPassword,
+  generateKeyPair,
 } from '../../utils/cryptoUtils';
 import { createAccount } from '../../services/RegistrationServices';
 
-const handleAccountRegistration = async (password: string) => {
+const handleAccountRegistration = async (
+  password: string,
+  skipRegenerateMnemonics: boolean
+) => {
   try {
-    const keyPair = await generateMnemonicAndKeyPair();
-    if (typeof keyPair === 'undefined') {
+    // const MnemonicAndKeyPair = await generateMnemonicAndKeyPair();
+    // if (typeof MnemonicAndKeyPair === 'undefined') {
+    //   throw new Error('Key pair generation failed.');
+    // }
+    // const { mnemonic, publicKey, privateKey, publicKeyCompressed } =
+    //   MnemonicAndKeyPair;
+
+    var MnemonicAndKeyPair;
+    if (skipRegenerateMnemonics) {
+      const mnemonics = window.electron.store.get('mnemonic');
+      MnemonicAndKeyPair = await generateKeyPair(mnemonics);
+    } else {
+      MnemonicAndKeyPair = await generateMnemonicAndKeyPair();
+    }
+    if (typeof MnemonicAndKeyPair === 'undefined') {
       throw new Error('Key pair generation failed.');
     }
-    console.log('keypair', keyPair);
-    const { mnemonic, publicKey, privateKey, publicKeyCompressed } = keyPair;
+    const { mnemonic, publicKey, privateKey, publicKeyCompressed } =
+      MnemonicAndKeyPair;
     // let did;
     // let credential;
     try {

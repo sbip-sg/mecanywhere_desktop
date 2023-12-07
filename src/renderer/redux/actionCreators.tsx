@@ -47,6 +47,11 @@ const setColor: ActionCreator<AnyAction> = (payload: any) => ({
   payload,
 });
 
+const setImportingAccount: ActionCreator<AnyAction> = (payload: any) => ({
+  type: 'setImportingAccount',
+  payload,
+});
+
 const setTransactionDetails: ActionCreator<AnyAction> = (payload: any) => ({
   type: 'setTransactionDetails',
   payload,
@@ -64,6 +69,7 @@ const boundToDoActions = bindActionCreators(
     setRole,
     setColor,
     setTransactionDetails,
+    setImportingAccount,
   },
   reduxStore.dispatch
 );

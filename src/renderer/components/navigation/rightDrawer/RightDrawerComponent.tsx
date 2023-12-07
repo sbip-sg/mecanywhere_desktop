@@ -20,7 +20,7 @@ import { RootState } from 'renderer/redux/store';
 import LightModeIcon from '@mui/icons-material/LightMode';
 import DarkModeIcon from '@mui/icons-material/DarkMode';
 import actions from '../../../redux/actionCreators';
-
+import KeyIcon from '@mui/icons-material/Key';
 interface RightDrawerComponentProps {
   isOpen: boolean;
   onClose: (event: React.MouseEvent) => void;
@@ -40,6 +40,10 @@ const RightDrawerComponent: React.FC<RightDrawerComponentProps> = ({
   onClose,
 }) => {
   const navigate = useNavigate();
+  const getMnemonics = () => {
+    const mnemonics = window.electron.store.get('mnemonic');
+    console.log('mnemonics', mnemonics);
+  };
   const currentColor = useSelector(
     (state: RootState) => state.themeReducer.color
   );
@@ -55,7 +59,27 @@ const RightDrawerComponent: React.FC<RightDrawerComponentProps> = ({
   const themeColor = useSelector(
     (state: RootState) => state.themeReducer.color
   );
+  // const [dataKeySelectorAnchorEl, setDataKeySelectorAnchorEl] =
+  //   React.useState<HTMLButtonElement | null>(null);
 
+  // const handleOpenDataKeySelector = (
+  //   event: React.MouseEvent<HTMLButtonElement>
+  // ) => {
+  //   setDataKeySelectorAnchorEl(event.currentTarget);
+  // };
+  // <Backdrop
+  //   sx={{ color: '#fff', zIndex: theme.zIndex.drawer + 1 }}
+  //   open={Boolean(dataKeySelectorAnchorEl)}
+  // >
+  //   <DataKeySelectorPopover
+  //     anchorEl={dataKeySelectorAnchorEl}
+  //     setAnchorEl={setDataKeySelectorAnchorEl}
+  //     datakey={dataKey}
+  //     setDatakey={setDataKey}
+  //     selectedRole={selectedRole}
+  //     setSelectedRole={setSelectedRole}
+  //   />
+  // </Backdrop>;
   return (
     <Drawer
       anchor="right"
@@ -166,13 +190,18 @@ const RightDrawerComponent: React.FC<RightDrawerComponentProps> = ({
                 text={themeColor === 'light' ? 'Dark Mode' : 'Light Mode'}
               />
             </ListItemButton>
-            {/* <IconButton onClick={handleModeChange}>
-              {currentColor === 'light' ? <DarkModeIcon /> : <LightModeIcon />}
-            </IconButton> */}
-            {/* <ThemeToggle />
-            <Typography style={{ paddingLeft: '1rem', fontSize: '18px' }}>
-              {themeColor === 'light' ? 'Dark Mode' : 'Light Mode'}
-            </Typography> */}
+          </ListItem>
+          <ListItem
+            key="Export Key"
+            disablePadding
+            sx={{ marginLeft: '0.5rem' }}
+          >
+            <ListItemButton onClick={getMnemonics}>
+              <ListItemIcon>
+                <KeyIcon style={{ fontSize: 28, color: 'text.primary' }} />
+              </ListItemIcon>
+              <CustomListItemText text="Export Key" />
+            </ListItemButton>
           </ListItem>
           <Divider variant="middle" sx={{ margin: '0.5rem' }} />
           <ListItem key="About" disablePadding sx={{ marginLeft: '0.5rem' }}>
