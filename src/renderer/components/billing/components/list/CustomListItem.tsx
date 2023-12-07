@@ -50,6 +50,7 @@ const AccordionSummary = styled((props: AccordionSummaryProps) => (
   padding: '1rem 1.5rem 1rem 0rem',
   borderRadius: '10px',
   flexDirection: 'row',
+
   '&.Mui-expanded': {
     backgroundColor: theme.palette.primary.main,
     borderBottomRightRadius: '0',
@@ -57,6 +58,9 @@ const AccordionSummary = styled((props: AccordionSummaryProps) => (
   },
   '&:not(.Mui-expanded)': {
     backgroundColor: theme.palette.background.default,
+    '&:hover': {
+      backgroundColor: theme.palette.customColor.lightGrey,
+    },
   },
   '& .MuiAccordionSummary-expandIconWrapper.Mui-expanded': {
     transform: 'rotate(180deg)',

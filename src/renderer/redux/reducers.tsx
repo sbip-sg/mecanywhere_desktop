@@ -21,6 +21,14 @@ const initialThemeState: ThemeState = {
   color: 'light',
 };
 
+interface ImportingAccountState {
+  importingAccount: boolean;
+}
+
+const initialImportingAccountState: ImportingAccountState = {
+  importingAccount: false,
+};
+
 interface RoleState {
   role: string;
 }
@@ -106,6 +114,21 @@ export const themeReducer = (
   }
 };
 
+export const importingAccountReducer = (
+  state: ImportingAccountState = initialImportingAccountState,
+  action: any
+): ImportingAccountState => {
+  switch (action.type) {
+    case 'setImportingAccount':
+      return {
+        ...state,
+        importingAccount: action.payload,
+      };
+    default:
+      return state;
+  }
+};
+
 const jobsReducer = (
   state: JobsState = initialJobsState,
   action: any
@@ -150,6 +173,7 @@ const reducers = combineReducers({
   transactionDetailsReducer: transactionDetailsReducer,
   userReducer: userReducer,
   themeReducer: themeReducer,
+  importingAccountReducer: importingAccountReducer,
 });
 
 export default reducers;

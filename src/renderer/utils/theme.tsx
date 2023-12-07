@@ -3,38 +3,29 @@ import { PaletteMode } from '@mui/material';
 import '@mui/material/styles/createPalette';
 import { scrollbarHeight, scrollbarWidth } from './constants';
 
-const lightPurple = '#6D697D';
+// const lightPurple = '#6D697D';
+// const deepCerulean = '#6485FF';
+// const tintedNavy = '#2c3555';
+// const navy = '#3f3f74';
+// const darkWhite = '#F4F4F4';
+// const orange = '#FF5F1F';
 const cerulean = '#829CFF';
-const deepCerulean = '#6485FF';
 const mintGreen = '#35D4C7';
 const offWhite = '#f0f1f2';
 const violet = '#BC00A3';
-const tintedNavy = '#2c3555';
-const navy = '#3f3f74';
 const darkViolet = '#581845';
-const orange = '#FF5F1F';
 const lightBlack = '#292733';
 const mediumBlack = '#202028';
 const darkBlack = '#18191C';
 const white = '#FFFFFF';
 const grey = '#2e2f36';
-const darkWhite = '#F4F4F4';
 const darkThemeSpaceBar1 = '#2b2b2b'; // light
 const darkThemeSpaceBar2 = '#6b6b6b'; // medium
 const darkThemeSpaceBar3 = '#959595'; // dark
 const lightThemeSpaceBar1 = '#f1f1f1'; // light
 const lightThemeSpaceBar2 = '#c1c1c1'; // medium
 const lightThemeSpaceBar3 = '#a8a8a8'; // dark
-
-// declare module '@mui/material/styles/createPalette' {
-//   export interface PaletteOptions {
-//     customBackground: {
-//       light: string;
-//       main: string;
-//       dark: string;
-//     };
-//   }
-// }
+const lightGrey = '#e6e8eb';
 
 export const getDesignTokens = (mode: PaletteMode) => ({
   palette: {
@@ -76,6 +67,10 @@ export const getDesignTokens = (mode: PaletteMode) => ({
             paper: darkBlack,
           },
         }),
+    customColor: {
+      lightGrey,
+      darkViolet,
+    },
   },
   typography: {
     fontFamily: [
@@ -164,7 +159,7 @@ export const getDesignTokens = (mode: PaletteMode) => ({
           ...(mode === 'light'
             ? {
                 color: offWhite,
-                backgroundColor: navy,
+                backgroundColor: grey,
                 '&:hover': {
                   color: offWhite,
                   backgroundColor: darkViolet,
@@ -184,89 +179,76 @@ export const getDesignTokens = (mode: PaletteMode) => ({
     MuiTextField: {
       styleOverrides: {
         root: {
-          '& label': {
-            color: cerulean,
-          },
-          '& label.Mui-focused': {
-            color: cerulean,
-          },
-          '& .MuiInput-underline:after': {
-            borderBottomColor: cerulean,
-          },
-          '& .MuiOutlinedInput-root': {
-            '& fieldset': {
-              borderColor: cerulean,
-            },
-            '&:hover fieldset': {
-              borderColor: cerulean,
-              borderWidth: '0.15rem',
-            },
-            '&.Mui-focused fieldset': {
-              borderColor: cerulean,
-            },
-          },
-          '& .MuiInputBase-root': {
-            color: cerulean,
-          },
+          ...(mode === 'light'
+            ? {
+                '& label': {
+                  color: grey,
+                },
+                '& label.Mui-focused': {
+                  color: grey,
+                },
+                '& .MuiInput-underline:after': {
+                  borderBottomColor: grey,
+                },
+                '& .MuiOutlinedInput-root': {
+                  '& fieldset': {
+                    borderColor: grey,
+                  },
+                  '&:hover fieldset': {
+                    borderColor: cerulean,
+                    borderWidth: '0.15rem',
+                  },
+                  '&.Mui-focused fieldset': {
+                    borderColor: grey,
+                  },
+                  borderRadius: '3px',
+                },
+                '& .MuiInputBase-root': {
+                  color: grey,
+                },
+              }
+            : {
+                '& label': {
+                  color: cerulean,
+                },
+                '& label.Mui-focused': {
+                  color: cerulean,
+                },
+                '& .MuiInput-underline:after': {
+                  borderBottomColor: cerulean,
+                },
+                '& .MuiOutlinedInput-root': {
+                  '& fieldset': {
+                    borderColor: cerulean,
+                  },
+                  '&:hover fieldset': {
+                    borderColor: cerulean,
+                    borderWidth: '0.15rem',
+                  },
+                  '&.Mui-focused fieldset': {
+                    borderColor: cerulean,
+                  },
+                },
+                '& .MuiInputBase-root': {
+                  color: cerulean,
+                },
+              }),
         },
       },
     },
     MuiPaper: {
       styleOverrides: { root: { backgroundImage: 'unset' } },
     },
+    MuiFormHelperText: {
+      styleOverrides: {
+        root: {
+          fontSize: '1rem',
+          // color: "red"
+        },
+      },
+    },
   },
 });
 
 export const createAppTheme = (mode: PaletteMode) =>
   createTheme(getDesignTokens(mode));
-
-// MuiFormHelperText: {
-//   styleOverrides: {
-//     root: {
-//       textTransform: 'initial',
-//       fontSize: '1rem',
-//     },
-//   },
-// },
-
-// export default createTheme(themeOptions);
-
-// background: {
-//   default: mediumBlack,
-// },
-// cerulean: {
-//   main: cerulean,
-// },
-// deepCerulean: {
-//   main: deepCerulean,
-// },
-// violet: {
-//   main: violet,
-// },
-// lightPurple: {
-//   main: lightPurple,
-// },
-// lightBlack: {
-//   main: lightBlack,
-// },
-// mediumBlack: {
-//   main: mediumBlack,
-// },
-// darkBlack: {
-//   main: darkBlack,
-// },
-// mintGreen: {
-//   main: mintGreen,
-// },
-// offWhite: {
-//   main: offWhite,
-// },
-// cerulean: createColor(cerulean),
-// deepCerulean: createColor(deepCerulean),
-// violet: createColor('#BC00A3'),
-// lightPurple: createColor(lightPurple),
-// lightBlack: createColor(lightBlack),
-// mediumBlack: createColor(mediumBlack),
-// darkBlack: createColor(darkBlack),
-// mintGreen: createColor(mintGreen),
-// offWhite: createColor(offWhite),

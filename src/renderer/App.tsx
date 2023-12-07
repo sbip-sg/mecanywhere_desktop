@@ -20,6 +20,7 @@ import NavigationLayout from './components/navigation/NavigationLayout';
 import Transitions from './components/transitions/Transition';
 import Register from './components/auth/Register';
 import Login from './components/auth/Login';
+import ImportSeedPhrase from './components/auth/ImportSeedPhrase';
 import Mnemonics from './components/auth/Mnemonics';
 import Profile from './components/profile/Profile';
 import NavigationLayoutTransitionWrapper from './components/navigation/NavigationLayoutTransitionWrapper';
@@ -96,6 +97,14 @@ const Animated = () => {
         element={
           <Transitions>
             <RoleSelection />
+          </Transitions>
+        }
+      />
+      <Route
+        path="/import-seed-phrase"
+        element={
+          <Transitions>
+            <ImportSeedPhrase />
           </Transitions>
         }
       />

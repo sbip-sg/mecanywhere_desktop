@@ -3,11 +3,11 @@ import Toolbar from '@mui/material/Toolbar';
 import Typography from '@mui/material/Typography';
 import Box from '@mui/material/Box';
 import Button from '@mui/material/Button';
+import AccountCircleIcon from '@mui/icons-material/AccountCircle';
 import { useState } from 'react';
 import { RightDrawerComponent } from '../rightDrawer';
 import { ReactComponent as Logo } from '../../../../../assets/LogoColorHorizontal.svg';
 import useThemeTextColor from '../../../utils/useThemeTextColor';
-import AccountCircleIcon from '@mui/icons-material/AccountCircle';
 
 const MenuComponent = () => {
   const [isRightDrawerOpen, setRightDrawerOpen] = useState(false);
@@ -46,7 +46,7 @@ const MenuComponent = () => {
           <Logo
             width="20%"
             height="20%"
-            style={{ cursor: 'pointer', color: 'white' }}
+            style={{ cursor: 'pointer' }}
             // onClick={handleLogoClick}
           />
           <Typography
