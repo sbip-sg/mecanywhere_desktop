@@ -49,8 +49,8 @@ const useClientHooks = () => {
 
     const offloadJob = async (jobJson: string) => {
       const jobJsonWithDid = `${jobJson.slice(0, -1)},"did":"${did}"}`;
-      const { status, response, error, task_id, transaction_id } =
-        await offloadTask(accessToken, jobJsonWithDid);
+      const reply = await offloadTask(accessToken, jobJsonWithDid);
+      const { status, response, error, task_id, transaction_id } = reply;
 
       window.electron.jobResultsReceived(
         status,

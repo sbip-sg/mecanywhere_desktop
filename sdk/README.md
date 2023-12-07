@@ -2,19 +2,29 @@
 
 ## Python
 
-- async def initiate_connection([timeout]) -> None
-  - timeout: int (optional)
-- async def offload_task(task_id, container_ref, data, callback, resource, runtime) -> str
-  - task_id: str - identifier for the task to correlate with the callback results
-  - container_ref: str - image name for the data to be processed
-  - data: str
-  - callback: Callable[[str], None] - function to be called when the results are received
-  - resource: dict (optional) - resource requirements for the task
-  - runtime: str (optional) - runtime environment for the task
-- async def disconnect() -> None
-- async def join(task_timeout, join_timeout) -> None
-  - task_timeout: int - timeout for each task
-  - join_timeout: int - timeout for all tasks
+#### async def initiate_connection([timeout]) -> None
+    Starts a socket connection to the local MECA desktop app.
+
+    - timeout: int (optional)
+
+#### async def offload_task(task_id, container_ref, data, callback, resource, runtime) -> str
+    Sends a task input to the local MECA desktop app that helps to run the task on a remote MECA host.
+    The task is the containerized application you have uploaded to the container repository that returns some result given the input data.
+
+      - task_id: str - identifier for the task to correlate with the callback results
+      - container_ref: str - image name of the task for the data to be processed
+      - data: str
+      - callback: Callable[[str], None] - function to be called when the results are received
+      - resource: dict (optional) - resource requirements for the task
+      - runtime: str (optional) - runtime environment for the task
+
+#### async def disconnect() -> None
+    Closes the socket connection to the local MECA desktop app.
+#### async def join(task_timeout, join_timeout) -> None
+    Waits for all tasks to finish.
+
+      - task_timeout: int - timeout for each task
+      - join_timeout: int - timeout for all tasks
 
 ### Test
 

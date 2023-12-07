@@ -71,16 +71,16 @@ async def offload_task(
         print('Error:', error)
       callback(task_id, status, response, error, transaction_id)
       task_events.pop(0).set()
-      # sio.off('job_results_received')
   ###
 
   offloaded_event = asyncio.Event()
   @sio.on('offloaded')
   async def on_offload(err, result):
-    print('Offloaded')
-  #   callback(err, result)
+    if err:
+      print('Offload failed', err)
+    else:
+      print('Offloaded', result)
     offloaded_event.set()
-    # sio.off('offloaded')
 
   input_json = json.dumps(payload)
   try:
