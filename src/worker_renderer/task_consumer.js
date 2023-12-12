@@ -19,9 +19,6 @@ const TaskResult = protobuf
 
 const parseTaskFromProto = (content) => {
   const task = Task.decode(content);
-  if (task.resource != null) {
-    task.resource = struct.decode(task.resource);
-  }
   const typeError = Task.verify(task);
 
   if (typeError) {
@@ -64,7 +61,9 @@ class Consumer {
       channel.consume(queueName, async (msg) => {
         const { correlationId } = msg.properties;
         const resultObject = await this.handleMsgContent(msg.content);
-        const serializedResult = TaskResult.encode(resultObject).finish();
+        const serializedResult = TaskResult.encode(
+          TaskResult.fromObject(resultObject)
+        ).finish();
 
         channel.sendToQueue(
           msg.properties.replyTo,
@@ -115,19 +114,18 @@ class Consumer {
         task.runtime
       );
 
-      let resourceConsumed = 0.1;
-      if (task.resource != null) {
-        resourceConsumed = task.resource.cpu * task.resource.memory;
+      if (task.resource == null) {
+        task.resource = { "cpu": 1, "memory": 128 };
       }
-      console.log(` [con] Resource consumed: ${resourceConsumed}`);
-      log.info(` [con] Resource consumed: ${resourceConsumed}`);
+      console.log(` [con] Resource consumed: ${task.resource}`);
+      log.info(` [con] Resource consumed: ${task.resource}`);
 
       const transactionEndDatetime = Math.floor(new Date().getTime() / 1000);
       const duration = transactionEndDatetime - transactionStartDatetime;
       const reply = {
         id: task.id,
         content: result,
-        resourceConsumed,
+        resource: task.resource,
         transactionStartDatetime,
         transactionEndDatetime,
         duration,
