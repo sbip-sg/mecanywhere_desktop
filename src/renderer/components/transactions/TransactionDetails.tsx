@@ -1,4 +1,4 @@
-import { convertEpochToStandardTimeWithDate } from '../../utils/unitConversion';
+import { convertEpochToStandardTimeWithDate } from '../common/unitConversion';
 import { useNavigate } from 'react-router-dom';
 import { FC } from 'react';
 import { Grid, Typography, Box, Button } from '@mui/material';
@@ -17,7 +17,7 @@ const TitleTypography: FC<TitleTypographyProps> = ({ title }) => {
   const theme = useTheme();
   return (
     <Typography
-      color='primary.main'
+      color="primary.main"
       letterSpacing="0.05em"
       fontSize="16px"
       sx={{ margin: '1rem 1rem 1rem 1rem' }}
@@ -55,8 +55,9 @@ const TransactionDetails: React.FC = () => {
   // const { TransactionId } = params;
   const theme = useTheme();
   const navigate = useNavigate();
-  const data = reduxStore.getState().transactionDetailsReducer.transactionDetails;
-  console.log("transaction", data)
+  const data =
+    reduxStore.getState().transactionDetailsReducer.transactionDetails;
+  console.log('transaction', data);
   if (!data) {
     return <div>Loading...</div>;
   }
@@ -70,7 +71,13 @@ const TransactionDetails: React.FC = () => {
       >
         <Button onClick={() => navigate(-1)} sx={{ width: '7rem' }}>
           <ArrowBackIcon style={{ fontSize: '16px', marginRight: '0.5rem' }} />
-          <Typography variant="h3" fontSize="15px" paddingTop="2px">
+          <Typography
+            sx={{
+              fontSize: '15px',
+              paddingTop: '2px',
+              fontWeight: '600',
+            }}
+          >
             BACK
           </Typography>
         </Button>
@@ -89,7 +96,7 @@ const TransactionDetails: React.FC = () => {
         <Typography variant="h1" fontSize="20px">
           TRANSACTION #
         </Typography>
-        <Typography color='secondary.contrastText' fontSize="20px">
+        <Typography color="secondary.contrastText" fontSize="20px">
           {data.transaction_id}
         </Typography>
       </Grid>
@@ -102,7 +109,7 @@ const TransactionDetails: React.FC = () => {
           justifyContent: 'center',
           alignItems: 'top',
           margin: '0 1rem 1.5rem 1.5rem',
-          backgroundColor: 'customBackground.main',
+          backgroundColor: 'primary.dark',
           borderRadius: '12px',
           padding: '1rem 0.5rem 0.5rem 0.5rem',
         }}
@@ -131,7 +138,9 @@ const TransactionDetails: React.FC = () => {
             )}
           />
           <DataTypography
-            data={convertEpochToStandardTimeWithDate(data.transaction_end_datetime)}
+            data={convertEpochToStandardTimeWithDate(
+              data.transaction_end_datetime
+            )}
           />
           <DataTypography
             data={`${limitDecimalPlaces(data.duration / 60 / 60, 2)} hours`}

@@ -28,8 +28,8 @@ const Settings = () => {
       >
         <Typography
           color="primary.main"
-          variant="h1"
-          style={{ fontSize: '24px', margin: '0rem 0 0 0' }}
+          variant="h3"
+          style={{ margin: '0rem 0 0 0' }}
         >
           Settings
         </Typography>

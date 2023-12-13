@@ -1,3 +1,5 @@
+import { handle401Error } from './TokenRefreshServices';
+
 const url = process.env.REGISTRATION_SERVICE_API_URL;
 
 export async function createAccount(data: any): Promise<any> {
@@ -20,7 +22,7 @@ export async function createAccount(data: any): Promise<any> {
   }
 }
 
-export async function heartbeat(token: string, did: string) {
+export async function heartbeat(token: string, did: string, retryCount = 0) {
   try {
     const response = await fetch(`${url}/heartbeat`, {
       method: 'POST',
@@ -31,6 +33,10 @@ export async function heartbeat(token: string, did: string) {
       body: JSON.stringify({ did }),
     });
     if (!response.ok) {
+      if (response.status === 401 && retryCount < 1) {
+        const newToken = await handle401Error();
+        return heartbeat(newToken, did, retryCount + 1);
+      }
       throw new Error('Network response not ok');
     }
     return response.ok;
@@ -52,36 +58,13 @@ export async function authenticate(did: string, credential: object) {
       throw new Error('Network response not ok');
     }
     const res = await response.json();
-    console.log('response', res.refresh_token);
     return res;
   } catch (error) {
     console.error('There was a problem with the fetch operation:', error);
   }
 }
 
-export async function refreshAccess(refreshToken: string) {
-  try {
-    const response = await fetch(`${url}/authentication/authenticate`, {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify({ refreshToken }),
-    });
-    if (!response.ok) {
-      throw new Error('Network response not ok');
-    }
-    const res = await response.json();
-    console.log('response1', res.refresh_token);
-    console.log('response2', res.access_token);
-    return res;
-  } catch (error) {
-    console.error('There was a problem with the fetch operation:', error);
-  }
-}
-
-
-export async function registerHost(token: string, did: string) {
+export async function registerHost(token: string, did: string, retryCount = 0) {
   try {
     const response = await fetch(`${url}/registration/register_host`, {
       method: 'POST',
@@ -91,16 +74,26 @@ export async function registerHost(token: string, did: string) {
       },
       body: JSON.stringify({ did }),
     });
+
     if (!response.ok) {
+      if (response.status === 401 && retryCount < 1) {
+        const newToken = await handle401Error();
+        return registerHost(newToken, did, retryCount + 1);
+      }
       throw new Error('Network response not ok');
     }
+
     return true;
   } catch (error) {
     console.error('There was a problem with the fetch operation:', error);
   }
 }
 
-export async function deregisterHost(token: string, did: string) {
+export async function deregisterHost(
+  token: string,
+  did: string,
+  retryCount = 0
+) {
   try {
     const response = await fetch(`${url}/registration/deregister_host`, {
       method: 'POST',
@@ -111,6 +104,10 @@ export async function deregisterHost(token: string, did: string) {
       body: JSON.stringify({ did }),
     });
     if (!response.ok) {
+      if (response.status === 401 && retryCount < 1) {
+        const newToken = await handle401Error();
+        return deregisterHost(newToken, did, retryCount + 1);
+      }
       throw new Error('Network response not ok');
     }
     return true;

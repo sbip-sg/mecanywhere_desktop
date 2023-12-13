@@ -5,7 +5,7 @@ import Table from '@mui/material/Table';
 import TableContainer from '@mui/material/TableContainer';
 import actions from 'renderer/redux/actionCreators';
 import { useNavigate } from 'react-router-dom';
-import { InternalDataEntry, ExternalDataEntry } from '../../../utils/dataTypes';
+import { InternalDataEntry, ExternalDataEntry } from '../../common/dataTypes';
 import { PropConfig } from '../propConfig';
 import { Order, stableSort, getComparator } from './comparatorUtils';
 import CustomTableHead from './CustomTableHead';
@@ -108,7 +108,6 @@ const Datagrid: React.FC<DatagridProps> = ({
       <CustomToolbar
         isTableExpanded={isTableExpanded}
         setIsTableExpanded={setIsTableExpanded}
-        backgroundColor="customBackground.light"
       />
       <TableContainer
         id="tablecontainer"
@@ -150,7 +149,7 @@ const Datagrid: React.FC<DatagridProps> = ({
         page={page}
         onPageChange={handleChangePage}
         onRowsPerPageChange={handleChangeRowsPerPage}
-        backgroundColor="customBackground.main"
+        backgroundColor="primary.dark"
       />
     </Box>
   );

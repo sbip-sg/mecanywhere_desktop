@@ -2,7 +2,7 @@ import React from 'react';
 import TableBody from '@mui/material/TableBody';
 import StyledTableCell from './StyledTableCell';
 import StyledTableRow from './StyledTableRow';
-import { InternalDataEntry, ExternalDataEntry } from '../../../utils/dataTypes';
+import { InternalDataEntry, ExternalDataEntry } from '../../common/dataTypes';
 import { PropConfig } from '../propConfig';
 
 interface CustomTableBodyProps<T> {

@@ -1,5 +1,5 @@
 import { useEffect } from 'react';
-import { handleDeregisterHost } from './handleRegistration';
+import { handleDeregisterHost } from '../components/common/handleRegistration';
 import reduxStore from '../redux/store';
 import log from 'electron-log/renderer';
 

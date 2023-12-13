@@ -4,11 +4,13 @@ import { Job, JobResult } from 'renderer/utils/jobs';
 interface UserState {
   authenticated: boolean;
   accessToken: string;
+  refreshToken: string;
 }
 
 const initialUserState: UserState = {
   authenticated: false,
   accessToken: '',
+  refreshToken: '',
 };
 
 interface ThemeState {
@@ -17,6 +19,14 @@ interface ThemeState {
 
 const initialThemeState: ThemeState = {
   color: 'light',
+};
+
+interface ImportingAccountState {
+  importingAccount: boolean;
+}
+
+const initialImportingAccountState: ImportingAccountState = {
+  importingAccount: false,
 };
 
 interface RoleState {
@@ -79,6 +89,11 @@ export const userReducer = (
         ...state,
         accessToken: action.payload,
       };
+    case 'setRefreshToken':
+      return {
+        ...state,
+        refreshToken: action.payload,
+      };
     default:
       return state;
   }
@@ -93,6 +108,21 @@ export const themeReducer = (
       return {
         ...state,
         color: action.payload,
+      };
+    default:
+      return state;
+  }
+};
+
+export const importingAccountReducer = (
+  state: ImportingAccountState = initialImportingAccountState,
+  action: any
+): ImportingAccountState => {
+  switch (action.type) {
+    case 'setImportingAccount':
+      return {
+        ...state,
+        importingAccount: action.payload,
       };
     default:
       return state;
@@ -143,6 +173,7 @@ const reducers = combineReducers({
   transactionDetailsReducer: transactionDetailsReducer,
   userReducer: userReducer,
   themeReducer: themeReducer,
+  importingAccountReducer: importingAccountReducer,
 });
 
 export default reducers;

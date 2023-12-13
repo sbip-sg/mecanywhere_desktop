@@ -1,5 +1,5 @@
-import { convertEpochToStandardTimeWithDate } from 'renderer/utils/unitConversion';
-import { ExternalDataEntry, InternalDataEntry } from '../../utils/dataTypes';
+import { convertEpochToStandardTimeWithDate } from 'renderer/components/common/unitConversion';
+import { ExternalDataEntry, InternalDataEntry } from '../common/dataTypes';
 
 export interface PropConfig<T> {
   property: keyof T;
@@ -63,11 +63,6 @@ export const InternalPropConfigList: PropConfig<InternalDataEntry>[] = [
     label: 'Usage Price (SGD)',
   },
   {
-    property: 'task',
-    renderer: (data: InternalDataEntry) => data.task,
-    label: 'Tasks Ran',
-  },
-  {
     property: 'duration',
     renderer: (data: InternalDataEntry) => data.duration,
     label: 'Duration (min)',
@@ -107,11 +102,6 @@ export const ExternalPropConfigList: PropConfig<ExternalDataEntry>[] = [
     property: 'resource_memory',
     renderer: (data: ExternalDataEntry) => data.resource_memory.toString(),
     label: 'Memory Utilized (MB)',
-  },
-  {
-    property: 'task',
-    renderer: (data: ExternalDataEntry) => data.task,
-    label: 'Tasks Ran',
   },
   {
     property: 'duration',

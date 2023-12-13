@@ -7,7 +7,6 @@ import Popover from '@mui/material/Popover';
 import Typography from '@mui/material/Typography';
 import ToggleButton from '@mui/material/ToggleButton';
 import ToggleButtonGroup from '@mui/material/ToggleButtonGroup';
-import { useTheme } from '@emotion/react';
 
 interface DatePickerPopoverProps {
   dateObjects: Date[] | null;
@@ -22,7 +21,7 @@ interface DatePickerPopoverProps {
 }
 
 const StyledDatePicker = styled(DatePicker)(({ theme }) => ({
-  backgroundColor: 'customBackground.dark',
+  backgroundColor: 'background.paper',
   color: 'secondary.contrastText',
   border: '0px',
   borderRadius: '2px',
@@ -50,7 +49,6 @@ const DatePickerPopover: React.FC<DatePickerPopoverProps> = ({
   setStartDate,
   setEndDate,
 }) => {
-  const theme = useTheme();
   const [startMinDate, setStartMinDate] = useState<Date | null>(null);
   const [startMaxDate, setStartMaxDate] = useState<Date | null>(null);
   const [endMinDate, setEndMinDate] = useState<Date | null>(null);
@@ -102,25 +100,25 @@ const DatePickerPopover: React.FC<DatePickerPopoverProps> = ({
       sx={{
         '.MuiPaper-root': {
           borderRadius: '10px',
-          backgroundColor: 'customBackground.main',
+          backgroundColor: 'background.paper',
         },
       }}
     >
       <Box
         sx={{
           width: '18rem',
-          backgroundColor: 'customBackground.main',
+          backgroundColor: 'background.paper',
           boxShadow: 24,
           padding: '1.5rem',
         }}
       >
         <Typography
-          id="transition-modal-title"
-          style={{
-            fontSize: '14px',
+          variant="subtitle1"
+          sx={{
             letterSpacing: '0.2em',
             margin: '0.5rem 0 0.1rem 0.2rem',
-            fontWeight: '500',
+            fontWeight: '600',
+            color: 'text.primary',
           }}
         >
           GROUP BY
@@ -128,7 +126,7 @@ const DatePickerPopover: React.FC<DatePickerPopoverProps> = ({
         <ToggleButtonGroup
           sx={{
             color: 'primary.main',
-            backgroundColor: 'customBackground.main',
+            backgroundColor: 'primary.dark',
           }}
           value={groupBy}
           exclusive
@@ -141,10 +139,10 @@ const DatePickerPopover: React.FC<DatePickerPopoverProps> = ({
                 padding: '0.2rem 0.5rem 0.2rem 0.5rem',
                 fontSize: '14px',
                 fontWeight: '600',
-                color: 'secondary.main',
-                backgroundColor: 'customBackground.dark',
+                color: 'primary.main',
+                backgroundColor: 'background.paper',
                 '&.Mui-selected': {
-                  color: 'customBackground.dark',
+                  color: 'background.paper',
                   backgroundColor: 'secondary.contrastText',
                   fontSize: '14px',
                   fontWeight: '600',
@@ -158,12 +156,12 @@ const DatePickerPopover: React.FC<DatePickerPopoverProps> = ({
           ))}
         </ToggleButtonGroup>
         <Typography
-          id="transition-modal-title"
-          style={{
-            fontSize: '14px',
+          variant="subtitle1"
+          sx={{
             letterSpacing: '0.2em',
-            margin: '0.5rem 0 0.1rem 0.2rem',
-            fontWeight: '500',
+            margin: '1rem 0 0.1rem 0.2rem',
+            fontWeight: '600',
+            color: 'text.primary',
           }}
         >
           START DATE
@@ -180,12 +178,12 @@ const DatePickerPopover: React.FC<DatePickerPopoverProps> = ({
           maxDate={startMaxDate}
         />
         <Typography
-          id="transition-modal-title"
-          style={{
-            fontSize: '14px',
+          variant="subtitle1"
+          sx={{
             letterSpacing: '0.2em',
-            margin: '0.5rem 0 0.1rem 0.2rem',
-            fontWeight: '500',
+            margin: '1rem 0 0.1rem 0.2rem',
+            fontWeight: '600',
+            color: 'text.primary',
           }}
         >
           END DATE

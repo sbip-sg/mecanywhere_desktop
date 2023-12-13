@@ -8,7 +8,7 @@ import reduxStore from 'renderer/redux/store';
 import RefreshIcon from '@mui/icons-material/Refresh';
 import { scrollbarHeight } from 'renderer/utils/constants';
 import CustomLineChart from './linechart/CustomLineChart';
-import { ExternalDataEntry, InternalDataEntry } from '../../utils/dataTypes';
+import { ExternalDataEntry, InternalDataEntry } from '../common/dataTypes';
 import { ExternalPropConfigList, InternalPropConfigList } from './propConfig';
 import Datagrid from './table/Datagrid';
 import {
@@ -42,10 +42,11 @@ const TxnDashboard: React.FC<TxnDashboardProps> = ({ appRole }) => {
     scrollbarHeight -
     1
   }px`;
-  const fetchAndSetData = async (accessToken) => {
+
+  const fetchAndSetData = async (accessToken: string, role: string) => {
     setIsLoading(true);
     try {
-      const didHistoryResponse = await (appRole === 'provider'
+      const didHistoryResponse = await (role === 'provider'
         ? findPoHistory(accessToken, did)
         : findHostHistory(accessToken, did));
       if (didHistoryResponse) {
@@ -67,7 +68,7 @@ const TxnDashboard: React.FC<TxnDashboardProps> = ({ appRole }) => {
   const handleRefresh = async () => {
     const { accessToken } = reduxStore.getState().userReducer;
     if (accessToken) {
-      await fetchAndSetData(accessToken);
+      await fetchAndSetData(accessToken, appRole);
     } else {
       console.error('Invalid access token or did');
     }
@@ -83,7 +84,7 @@ const TxnDashboard: React.FC<TxnDashboardProps> = ({ appRole }) => {
         console.error('Invalid dummy history response');
         return;
       }
-      await fetchAndSetData(accessToken);
+      await fetchAndSetData(accessToken, appRole);
     } else {
       console.error('Invalid access token or did');
     }
@@ -102,15 +103,14 @@ const TxnDashboard: React.FC<TxnDashboardProps> = ({ appRole }) => {
         console.error('Invalid dummy history response');
         return;
       }
-      await fetchAndSetData(accessToken);
+      await fetchAndSetData(accessToken, appRole);
     } else {
       console.error('Invalid access token or did');
     }
   };
 
-  const handleAddDummyData = async () => {
-    console.log('appRole', appRole);
-    return appRole === 'provider'
+  const handleAddDummyData = async (role: string) => {
+    return role === 'provider'
       ? handleAddProviderDummyData()
       : handleAddHostDummyData();
   };
@@ -121,7 +121,7 @@ const TxnDashboard: React.FC<TxnDashboardProps> = ({ appRole }) => {
       // await new Promise((resolve) => setTimeout(resolve, 500));
       if (credential) {
         const { accessToken } = reduxStore.getState().userReducer;
-        await fetchAndSetData(accessToken);
+        await fetchAndSetData(accessToken, appRole);
       } else {
         console.error('Credential or DID is missing');
       }
@@ -185,17 +185,21 @@ const TxnDashboard: React.FC<TxnDashboardProps> = ({ appRole }) => {
               padding: '3% 0 0 2.5%',
             }}
           >
-            <Box sx={{ display: 'flex' }}>
+            <Box sx={{ display: 'flex', alignItems: 'center' }}>
               <IconButton size="small" onClick={handleRefresh}>
-                <RefreshIcon fontSize="small" sx={{ color: 'text.primary' }} />
+                <RefreshIcon
+                  fontSize="small"
+                  sx={{ color: 'text.primary', marginRight: '0.5rem' }}
+                />
               </IconButton>
               <Typography
-                style={{
+                sx={{
                   fontSize: '14px',
                   letterSpacing: '0.0em',
                   margin: '0 0 0 0',
                   whiteSpace: 'nowrap',
-                  color: 'primary.main',
+                  color: 'text.primary',
+                  textAlign: 'center',
                 }}
               >
                 {appRole === 'host' &&
@@ -205,9 +209,11 @@ const TxnDashboard: React.FC<TxnDashboardProps> = ({ appRole }) => {
               </Typography>
             </Box>
             <Button
-              onClick={handleAddDummyData}
+              onClick={() => handleAddDummyData(appRole)}
               sx={{
                 margin: '2rem 0 0 0',
+                padding: '0.5rem 1.5rem',
+                backgroundColor: 'primary.main',
               }}
             >
               Add Dummy Data (development)
@@ -236,7 +242,6 @@ const TxnDashboard: React.FC<TxnDashboardProps> = ({ appRole }) => {
           >
             <CustomLineChart
               data={data}
-              yAxisLabel="Resource Utilized per Month"
               handleRefresh={handleRefresh}
               handleAddDummyData={handleAddDummyData}
               appRole={appRole}

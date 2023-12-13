@@ -4,8 +4,7 @@ import sha3 from 'js-sha3';
 // @ts-ignore
 import secp256k1 from '../../node_modules/secp256k1';
 
-export const generateMnemonicAndKeyPair = async () => {
-  const mnemonic = generateMnemonic();
+export const generateKeyPair = async (mnemonic: string) => {
   const seed = mnemonicToSeedSync(mnemonic).toString('hex');
   const privateKey = SHA256(seed).toString();
   const privateKeyBuffer = Buffer.from(privateKey, 'hex');
@@ -26,6 +25,14 @@ export const generateMnemonicAndKeyPair = async () => {
     privateKey: privateKeyBuffer,
     publicKeyCompressed: compressedPublicKey,
   };
+};
+
+export const generateMnemonicAndKeyPair = async () => {
+  const mnemonic = generateMnemonic();
+  console.log('mnemonic', mnemonic);
+  const MnemonicAndKeyPair = await generateKeyPair(mnemonic);
+  console.log('MnemonicAndKeyPair', MnemonicAndKeyPair);
+  return MnemonicAndKeyPair;
 };
 
 function isUint8Array(value: any): value is Uint8Array {

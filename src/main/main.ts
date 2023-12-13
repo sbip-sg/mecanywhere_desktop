@@ -237,7 +237,7 @@ const createWindow = async () => {
     show: false,
     width: 1440,
     height: 900,
-    icon: getAssetPath('logo-m.png'),
+    icon: getAssetPath('mecanywhere-icon.png'),
     webPreferences: {
       preload: app.isPackaged
         ? path.join(__dirname, 'preload.js')
@@ -249,7 +249,7 @@ const createWindow = async () => {
   mainWindow.loadURL(resolveHtmlPath('index.html'));
 
   workerWindow = new BrowserWindow({
-    show: true,
+    show: false,
     webPreferences: {
       sandbox: false,
       nodeIntegration: true,

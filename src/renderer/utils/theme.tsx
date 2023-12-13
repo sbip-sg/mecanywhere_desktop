@@ -3,38 +3,23 @@ import { PaletteMode } from '@mui/material';
 import '@mui/material/styles/createPalette';
 import { scrollbarHeight, scrollbarWidth } from './constants';
 
-const lightPurple = '#6D697D';
 const cerulean = '#829CFF';
-const deepCerulean = '#6485FF';
+const mintGreen = '#35D4C7';
+const offWhite = '#f0f1f2';
+const violet = '#BC00A3';
+const darkViolet = '#581845';
 const lightBlack = '#292733';
 const mediumBlack = '#202028';
 const darkBlack = '#18191C';
-const mintGreen = '#35D4C7';
-const offWhite = '#F7F7F7';
-const violet = '#BC00A3';
-const tintedNavy = '#2c3555';
-const navy = '#3f3f74';
-const darkViolet = '#581845';
-const orange = '#FF5F1F';
-const lightWhite = '#FFFFFF';
-const mediumWhite = '#5B4996';
-const darkWhite = '#F4F4F4';
+const white = '#FFFFFF';
+const grey = '#2e2f36';
 const darkThemeSpaceBar1 = '#2b2b2b'; // light
 const darkThemeSpaceBar2 = '#6b6b6b'; // medium
 const darkThemeSpaceBar3 = '#959595'; // dark
 const lightThemeSpaceBar1 = '#f1f1f1'; // light
 const lightThemeSpaceBar2 = '#c1c1c1'; // medium
 const lightThemeSpaceBar3 = '#a8a8a8'; // dark
-
-declare module '@mui/material/styles/createPalette' {
-  export interface PaletteOptions {
-    customBackground: {
-      light: string;
-      main: string;
-      dark: string;
-    };
-  }
-}
+const lightGrey = '#e6e8eb';
 
 export const getDesignTokens = (mode: PaletteMode) => ({
   palette: {
@@ -42,27 +27,26 @@ export const getDesignTokens = (mode: PaletteMode) => ({
     ...(mode === 'light'
       ? {
           primary: {
-            main: tintedNavy,
-            dark: navy,
+            main: cerulean,
+            dark: grey,
           },
           secondary: {
-            main: orange,
-            contrastText: darkViolet,
+            main: mintGreen,
+            contrastText: violet,
           },
           text: {
             primary: darkBlack,
-            secondary: mediumBlack,
+            secondary: white,
           },
-          customBackground: {
-            light: lightWhite,
-            main: mediumWhite,
-            dark: darkWhite,
+          background: {
+            default: white,
+            paper: offWhite,
           },
         }
       : {
           primary: {
             main: cerulean,
-            dark: deepCerulean,
+            dark: mediumBlack,
           },
           secondary: {
             main: mintGreen,
@@ -70,14 +54,17 @@ export const getDesignTokens = (mode: PaletteMode) => ({
           },
           text: {
             primary: offWhite,
-            secondary: lightPurple,
+            secondary: darkBlack,
           },
-          customBackground: {
-            light: lightBlack,
-            main: mediumBlack,
-            dark: darkBlack,
+          background: {
+            default: lightBlack,
+            paper: darkBlack,
           },
         }),
+    customColor: {
+      lightGrey,
+      darkViolet,
+    },
   },
   typography: {
     fontFamily: [
@@ -89,26 +76,32 @@ export const getDesignTokens = (mode: PaletteMode) => ({
     ].join(`,`),
     fontSize: 16,
     h1: {
-      letterSpacing: `0.2em`,
-      fontSize: `1.6rem`,
+      letterSpacing: '0.1em',
+      fontSize: '36px',
     },
     h2: {
-      letterSpacing: `1em`,
-      fontSize: `1.5rem`,
-    },
-    body1: {
-      fontSize: `1.1rem`,
-    },
-    body2: {
-      fontWeight: 500,
+      letterSpacing: '0.05em',
+      fontSize: '28px',
     },
     h3: {
-      fontWeight: 700,
+      letterSpacing: '0.15em',
+      fontSize: '24px',
     },
     h4: {
       fontWeight: 500,
       letterSpacing: `0.1em`,
     },
+    subtitle1: {
+      fontSize: '14px',
+      letterSpacing: `0.1em`,
+    },
+    body1: {
+      fontSize: '16px',
+    },
+    body2: {
+      fontSize: '14px',
+    },
+
     button: {
       fontWeight: 500,
       letterSpacing: `0.15em`,
@@ -118,7 +111,7 @@ export const getDesignTokens = (mode: PaletteMode) => ({
     MuiCssBaseline: {
       styleOverrides: {
         body: {
-          backgroundColor: mode === 'light' ? darkWhite : darkBlack,
+          backgroundColor: mode === 'light' ? offWhite : darkBlack,
           scrollbarColor:
             mode === 'light'
               ? `${lightThemeSpaceBar2} ${darkThemeSpaceBar1}`
@@ -166,7 +159,7 @@ export const getDesignTokens = (mode: PaletteMode) => ({
           ...(mode === 'light'
             ? {
                 color: offWhite,
-                backgroundColor: navy,
+                backgroundColor: grey,
                 '&:hover': {
                   color: offWhite,
                   backgroundColor: darkViolet,
@@ -186,30 +179,81 @@ export const getDesignTokens = (mode: PaletteMode) => ({
     MuiTextField: {
       styleOverrides: {
         root: {
-          '& label': {
-            color: cerulean,
+          ...(mode === 'light'
+            ? {
+                '& label': {
+                  color: grey,
+                },
+                '& label.Mui-focused': {
+                  color: grey,
+                },
+                '& .MuiInput-underline:after': {
+                  borderBottomColor: grey,
+                },
+                '& .MuiOutlinedInput-root': {
+                  '& fieldset': {
+                    borderColor: grey,
+                  },
+                  '&:hover fieldset': {
+                    borderColor: cerulean,
+                    borderWidth: '0.15rem',
+                  },
+                  '&.Mui-focused fieldset': {
+                    borderColor: grey,
+                  },
+                  borderRadius: '3px',
+                },
+                '& .MuiInputBase-root': {
+                  color: grey,
+                },
+              }
+            : {
+                '& label': {
+                  color: cerulean,
+                },
+                '& label.Mui-focused': {
+                  color: cerulean,
+                },
+                '& .MuiInput-underline:after': {
+                  borderBottomColor: cerulean,
+                },
+                '& .MuiOutlinedInput-root': {
+                  '& fieldset': {
+                    borderColor: cerulean,
+                  },
+                  '&:hover fieldset': {
+                    borderColor: cerulean,
+                    borderWidth: '0.15rem',
+                  },
+                  '&.Mui-focused fieldset': {
+                    borderColor: cerulean,
+                  },
+                },
+                '& .MuiInputBase-root': {
+                  color: cerulean,
+                },
+              }),
+        },
+      },
+    },
+    MuiPaper: {
+      styleOverrides: { root: { backgroundImage: 'unset' } },
+    },
+    MuiListItem: {
+      styleOverrides: {
+        root: {
+          '&:hover': {
+            backgroundColor: 'lightGrey',
           },
-          '& label.Mui-focused': {
-            color: cerulean,
-          },
-          '& .MuiInput-underline:after': {
-            borderBottomColor: cerulean,
-          },
-          '& .MuiOutlinedInput-root': {
-            '& fieldset': {
-              borderColor: cerulean,
-            },
-            '&:hover fieldset': {
-              borderColor: cerulean,
-              borderWidth: '0.15rem',
-            },
-            '&.Mui-focused fieldset': {
-              borderColor: cerulean,
-            },
-          },
-          '& .MuiInputBase-root': {
-            color: cerulean,
-          },
+          padding: '0',
+        },
+      },
+    },
+    MuiFormHelperText: {
+      styleOverrides: {
+        root: {
+          fontSize: '1rem',
+          // color: "red"
         },
       },
     },
@@ -218,54 +262,3 @@ export const getDesignTokens = (mode: PaletteMode) => ({
 
 export const createAppTheme = (mode: PaletteMode) =>
   createTheme(getDesignTokens(mode));
-
-// MuiFormHelperText: {
-//   styleOverrides: {
-//     root: {
-//       textTransform: 'initial',
-//       fontSize: '1rem',
-//     },
-//   },
-// },
-
-// export default createTheme(themeOptions);
-
-// background: {
-//   default: mediumBlack,
-// },
-// cerulean: {
-//   main: cerulean,
-// },
-// deepCerulean: {
-//   main: deepCerulean,
-// },
-// violet: {
-//   main: violet,
-// },
-// lightPurple: {
-//   main: lightPurple,
-// },
-// lightBlack: {
-//   main: lightBlack,
-// },
-// mediumBlack: {
-//   main: mediumBlack,
-// },
-// darkBlack: {
-//   main: darkBlack,
-// },
-// mintGreen: {
-//   main: mintGreen,
-// },
-// offWhite: {
-//   main: offWhite,
-// },
-// cerulean: createColor(cerulean),
-// deepCerulean: createColor(deepCerulean),
-// violet: createColor('#BC00A3'),
-// lightPurple: createColor(lightPurple),
-// lightBlack: createColor(lightBlack),
-// mediumBlack: createColor(mediumBlack),
-// darkBlack: createColor(darkBlack),
-// mintGreen: createColor(mintGreen),
-// offWhite: createColor(offWhite),

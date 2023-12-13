@@ -20,6 +20,7 @@ import NavigationLayout from './components/navigation/NavigationLayout';
 import Transitions from './components/transitions/Transition';
 import Register from './components/auth/Register';
 import Login from './components/auth/Login';
+import ImportSeedPhrase from './components/auth/ImportSeedPhrase';
 import Mnemonics from './components/auth/Mnemonics';
 import Profile from './components/profile/Profile';
 import NavigationLayoutTransitionWrapper from './components/navigation/NavigationLayoutTransitionWrapper';
@@ -37,37 +38,50 @@ import useHandleAppExitHook from './utils/useHandleAppExitHook';
 import useClientHooks from './utils/useClientHooks';
 
 const PrivateRoutes = () => {
-  // const authenticated = useSelector(
-  //   (state: RootState) => state.accountUser.authenticated
-  // );
-  // return authenticated ? <Outlet /> : <Navigate to="/clienttxndashboard" />;
-  const authenticated = true;
-  return authenticated ? <Outlet /> : <Navigate to="/login" />;
+  const isAuthenticated = useSelector(
+    (state: RootState) => state.userReducer.authenticated
+  );
+  const role = window.electron.store.get('role');
+  return isAuthenticated ? (
+    <Outlet />
+  ) : (
+    <Navigate
+      to={role === 'provider' ? '/providertxndashboard' : '/hosttxndashboard'}
+    />
+  );
+};
+
+const RootRoute = () => {
+  const isAuthenticated = useSelector(
+    (state: RootState) => state.userReducer.authenticated
+  );
+  const role = window.electron.store.get('role');
+  const did = window.electron.store.get('did');
+
+  if (isAuthenticated) {
+    return (
+      <Navigate
+        to={role === 'provider' ? '/providertxndashboard' : '/hosttxndashboard'}
+      />
+    );
+  }
+  return did === '' ? <Register /> : <Login />;
 };
 
 const Animated = () => {
   const location = useLocation();
+
   return (
     <Routes location={location} key={location.pathname}>
-      {window.electron.store.get('did') === '' ? (
-        <Route
-          path="/"
-          element={
-            <Transitions>
-              <Register />
-            </Transitions>
-          }
-        />
-      ) : (
-        <Route
-          path="/"
-          element={
-            <Transitions>
-              <Login />
-            </Transitions>
-          }
-        />
-      )}
+      <Route
+        path="/"
+        element={
+          <Transitions>
+            <RootRoute />
+          </Transitions>
+        }
+      />
+
       <Route
         path="/login"
         element={
@@ -100,7 +114,23 @@ const Animated = () => {
           </Transitions>
         }
       />
+      <Route
+        path="/import-seed-phrase"
+        element={
+          <Transitions>
+            <ImportSeedPhrase />
+          </Transitions>
+        }
+      />
       <Route element={<PrivateRoutes />}>
+        <Route
+          path="/"
+          element={
+            <Transitions>
+              <HostTxnDashboard />
+            </Transitions>
+          }
+        />
         <Route
           path="/profile"
           element={

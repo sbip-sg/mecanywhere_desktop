@@ -2,15 +2,14 @@ import { Box, Typography, Button, Stack, Container } from '@mui/material';
 import { useState, useCallback } from 'react';
 import { Formik, Form, FormikHelpers } from 'formik';
 import CircularProgress from '@mui/material/CircularProgress';
+import { useSelector } from 'react-redux';
 import { useNavigate } from 'react-router-dom';
-import { useTheme } from '@emotion/react';
-import TextFieldWrapper from '../../utils/TextField';
-import FormSchema from '../../utils/FormSchema';
-// import logoBlack from '../../../../assets/logo-black.png';
-import logoTest from '../../../../assets/logo-test.png';
+import TextFieldWrapper from '../common/TextField';
+import FormSchema from '../common/FormSchema';
 import Transitions from '../transitions/Transition';
-import handleAccountRegistration from './handleAccountRegistration';
-import ErrorDialog from '../../utils/ErrorDialogue';
+import ErrorDialog from '../common/ErrorDialogue';
+import { ReactComponent as Logo } from '../../../../assets/LogoColor.svg';
+import { RootState } from '../../redux/store';
 
 interface FormValues {
   password: string;
@@ -18,7 +17,6 @@ interface FormValues {
 
 const Register = () => {
   const navigate = useNavigate();
-  const theme = useTheme();
   const [isLoading, setIsLoading] = useState(false);
   const [errorDialogOpen, setErrorDialogOpen] = useState(false);
   const [errorMessage, setErrorMessage] = useState('');
@@ -32,7 +30,6 @@ const Register = () => {
       try {
         formActions.resetForm();
         const { password } = values;
-        // await handleAccountRegistration(password);
         navigate('/roleselection', { state: { password } });
       } catch (error) {
         setErrorMessage(String(error));
@@ -43,7 +40,9 @@ const Register = () => {
     },
     []
   );
-
+  const isImportingAccount = useSelector(
+    (state: RootState) => state.importingAccountReducer.importingAccount
+  );
   return isLoading ? (
     <Transitions duration={1}>
       <CircularProgress
@@ -66,32 +65,41 @@ const Register = () => {
     >
       {() => (
         <Form>
-          <Container component="main" maxWidth="xs">
+          <Container
+            component="main"
+            maxWidth="xs"
+            sx={{ height: '100vh', display: 'flex' }}
+          >
             <Box
               sx={{
-                mt: 8,
+                pb: '6rem',
                 display: 'flex',
                 flexDirection: 'column',
                 alignItems: 'center',
+                justifyContent: 'center',
               }}
             >
-              <Box sx={{ display: 'flex', justifyContent: 'center' }}>
-                <img
-                  alt="logo"
-                  src={logoTest}
-                  width="70%"
-                  height="70%"
-                  style={{ margin: '5rem 0 2rem' }}
-                />
-              </Box>
-              <Typography
-                variant="h5"
-                py={2}
-                color="primary.main"
-                marginTop="1rem"
+              <Box
+                sx={{
+                  paddingLeft: '0.5rem',
+                  height: '20%',
+                  width: '100%',
+                  justifyContent: 'center',
+                  display: 'flex',
+                }}
               >
-                CREATE ACCOUNT
-              </Typography>
+                <Logo width="300px" height="100%" />
+              </Box>
+              {isImportingAccount === true ? (
+                <Typography variant="h5" py={4}>
+                  Set Password
+                </Typography>
+              ) : (
+                <Typography variant="h5" py={4}>
+                  CREATE ACCOUNT
+                </Typography>
+              )}
+
               <TextFieldWrapper
                 name="password"
                 placeholder="Enter password"
@@ -101,7 +109,7 @@ const Register = () => {
 
               <Typography
                 fontSize="12px"
-                maxWidth="20rem"
+                maxWidth="22rem"
                 textAlign="center"
                 marginTop="0.5rem"
               >
@@ -110,19 +118,22 @@ const Register = () => {
                   : 'You do not have an account set up on this device. Please register to create a new wallet and seed phrase'}
               </Typography>
               <Stack
-                sx={{ pt: 2 }}
+                sx={{ pt: 4 }}
                 direction="row"
                 spacing={2}
                 justifyContent="center"
               >
-                <Button variant="contained" color="secondary" type="submit">
-                  Create Account
-                </Button>
-                <Button
-                  variant="contained"
-                  color="secondary"
-                  onClick={() => navigate('/login')}
-                >
+                {isImportingAccount === true ? (
+                  <Button variant="contained" type="submit">
+                    Confirm Password
+                  </Button>
+                ) : (
+                  <Button variant="contained" type="submit">
+                    Create Account
+                  </Button>
+                )}
+
+                <Button variant="contained" onClick={() => navigate('/login')}>
                   Back
                 </Button>
               </Stack>

@@ -12,8 +12,9 @@ const handleLogin = async (password: string): Promise<boolean | undefined> => {
   // To sign the credential using the private key to become verifiable presentation
   // Get key with (decryptWithPassword(window.electron.store.get('privateKey'), password))
   const accessTokenResponse = await authenticate(did, credential);
-  const { access_token } = accessTokenResponse;
+  const { access_token, refresh_token } = accessTokenResponse;
   actions.setAccessToken(access_token);
+  actions.setRefreshToken(refresh_token);
   return true; // should only return true if signed VP is verified
 
   // for future reference if the challenge-response scheme for authentication will be reused.

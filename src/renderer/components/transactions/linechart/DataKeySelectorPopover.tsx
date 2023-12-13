@@ -1,12 +1,12 @@
-import React, { useState, useEffect } from 'react';
+import React from 'react';
 import Box from '@mui/material/Box';
 import Popover from '@mui/material/Popover';
 import Typography from '@mui/material/Typography';
 import ToggleButton from '@mui/material/ToggleButton';
 import ToggleButtonGroup from '@mui/material/ToggleButtonGroup';
-import { useTheme } from '@emotion/react';
 import { useSelector } from 'react-redux';
 import { RootState } from 'renderer/redux/store';
+import { datakeyOptions } from './dataKeys';
 
 interface DatakeySelectorPopoverProps {
   anchorEl: HTMLElement | null;
@@ -16,15 +16,6 @@ interface DatakeySelectorPopoverProps {
   selectedRole: string;
   setSelectedRole: React.Dispatch<React.SetStateAction<string>>;
 }
-
-const datakeyOptions = [
-  { label: 'Avg. Memory Utilized (MB)', value: 'resource_memory' },
-  { label: 'Avg. CPU Utilized (cores)', value: 'resource_cpu' },
-  { label: 'Avg. Duration', value: 'avg_duration' },
-  { label: 'Total Duration', value: 'duration' },
-  { label: 'Total Price (SGD)', value: 'price' },
-  { label: 'Network Reliability', value: 'network_reliability' },
-];
 
 const roleOptions = [
   { label: 'Client', value: 'client' },
@@ -40,12 +31,6 @@ const DatakeySelectorPopover: React.FC<DatakeySelectorPopoverProps> = ({
   selectedRole,
   setSelectedRole,
 }) => {
-  const theme = useTheme();
-
-  useEffect(() => {
-    console.log('selectedRoles', selectedRole);
-  }, [selectedRole]);
-
   const handleClose = () => {
     setAnchorEl(null);
   };
@@ -82,14 +67,14 @@ const DatakeySelectorPopover: React.FC<DatakeySelectorPopoverProps> = ({
       sx={{
         '.MuiPaper-root': {
           borderRadius: '10px',
-          backgroundColor: 'customBackground.main',
+          backgroundColor: 'background.paper',
         },
       }}
     >
       <Box
         sx={{
           width: '20rem',
-          backgroundColor: 'customBackground.main',
+          backgroundColor: 'background.paper',
           boxShadow: 24,
           padding: '1.2rem 2rem 2rem 2rem',
         }}
@@ -98,12 +83,12 @@ const DatakeySelectorPopover: React.FC<DatakeySelectorPopoverProps> = ({
           'provider' && (
           <>
             <Typography
-              id="transition-modal-title"
-              style={{
-                fontSize: '15px',
+              variant="subtitle1"
+              sx={{
                 letterSpacing: '0.2em',
-                margin: '0.5rem 0 0.5rem 0.2rem',
+                margin: '0.5rem 0 0.1rem 0.2rem',
                 fontWeight: '600',
+                color: 'text.primary',
               }}
             >
               SELECT ROLE
@@ -111,7 +96,7 @@ const DatakeySelectorPopover: React.FC<DatakeySelectorPopoverProps> = ({
             <ToggleButtonGroup
               sx={{
                 color: 'primary.main',
-                backgroundColor: 'customBackground.main',
+                backgroundColor: 'primary.dark',
                 width: '100%',
               }}
               value={selectedRole}
@@ -122,14 +107,15 @@ const DatakeySelectorPopover: React.FC<DatakeySelectorPopoverProps> = ({
                 <ToggleButton
                   sx={{
                     minWidth: '5rem',
-                    padding: '0.2rem 1rem 0.2rem 1rem',
+                    width: '100%',
+                    padding: '0.2rem 0.5rem 0.2rem 0.5rem',
                     fontSize: '14px',
                     fontWeight: '600',
-                    color: 'text.primary',
-                    backgroundColor: 'customBackground.dark',
+                    color: 'primary.main',
+                    backgroundColor: 'background.paper',
                     '&.Mui-selected': {
-                      color: 'customBackground.dark',
-                      backgroundColor: 'secondary.main',
+                      color: 'background.paper',
+                      backgroundColor: 'secondary.contrastText',
                       fontSize: '14px',
                       fontWeight: '600',
                     },
@@ -144,9 +130,8 @@ const DatakeySelectorPopover: React.FC<DatakeySelectorPopoverProps> = ({
           </>
         )}
         <Typography
-          id="transition-modal-title"
-          style={{
-            fontSize: '15px',
+          variant="subtitle1"
+          sx={{
             letterSpacing: '0.2em',
             margin: '1.5rem 0 0.5rem 0.2rem',
             fontWeight: '600',
@@ -157,7 +142,7 @@ const DatakeySelectorPopover: React.FC<DatakeySelectorPopoverProps> = ({
         <ToggleButtonGroup
           sx={{
             color: 'primary.main',
-            backgroundColor: 'customBackground.main',
+            backgroundColor: 'primary.dark',
             width: '100%',
           }}
           value={datakey}
@@ -169,14 +154,15 @@ const DatakeySelectorPopover: React.FC<DatakeySelectorPopoverProps> = ({
             <ToggleButton
               sx={{
                 minWidth: '5rem',
+                width: '100%',
                 padding: '0.2rem 1rem 0.2rem 1rem',
                 fontSize: '12px',
                 fontWeight: '600',
-                color: 'text.primary',
-                backgroundColor: 'customBackground.dark',
+                color: 'primary.main',
+                backgroundColor: 'background.paper',
                 '&.Mui-selected': {
-                  color: 'customBackground.dark',
-                  backgroundColor: 'secondary.main',
+                  color: 'background.paper',
+                  backgroundColor: 'secondary.contrastText',
                   fontSize: '12px',
                   fontWeight: '600',
                 },

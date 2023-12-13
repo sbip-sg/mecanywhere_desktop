@@ -11,6 +11,11 @@ const setAccessToken: ActionCreator<AnyAction> = (payload: string) => ({
   payload,
 });
 
+const setRefreshToken: ActionCreator<AnyAction> = (payload: string) => ({
+  type: 'setRefreshToken',
+  payload,
+});
+
 const addJob: ActionCreator<AnyAction> = (id: string, content: string) => ({
   type: 'addJob',
   id,
@@ -42,6 +47,11 @@ const setColor: ActionCreator<AnyAction> = (payload: any) => ({
   payload,
 });
 
+const setImportingAccount: ActionCreator<AnyAction> = (payload: any) => ({
+  type: 'setImportingAccount',
+  payload,
+});
+
 const setTransactionDetails: ActionCreator<AnyAction> = (payload: any) => ({
   type: 'setTransactionDetails',
   payload,
@@ -51,6 +61,7 @@ const boundToDoActions = bindActionCreators(
   {
     setAuthenticated,
     setAccessToken,
+    setRefreshToken,
     addJob,
     setJobs,
     addJobResults,
@@ -58,6 +69,7 @@ const boundToDoActions = bindActionCreators(
     setRole,
     setColor,
     setTransactionDetails,
+    setImportingAccount,
   },
   reduxStore.dispatch
 );

@@ -1,35 +1,31 @@
-import { Card, CardContent, Typography, Grid, Box } from '@mui/material';
-import { useTheme } from '@emotion/react';
+import React from 'react';
+import { Card, CardContent, Typography, Grid } from '@mui/material';
+import useIsLightTheme from 'renderer/components/common/useIsLightTheme';
 
-const CustomTypography = ({ children }) => {
-  const theme = useTheme();
-
-  return (
-    <Typography
-      style={{
-        fontSize: '18px',
-        padding: '0rem 0rem 0rem 2rem',
-        color: 'primary.main',
-      }}
-    >
-      {children}
-    </Typography>
-  );
-};
-
-const CustomListHeader = () => {
-  const theme = useTheme();
-  const firstColumnWidth = 4;
-  const secondColumnWidth = 3;
-  const thirdColumnWidth = 2.5;
-  const fourthColumnWidth = 2.4;
+const CustomListHeader = ({ isAnyAccordionExpanded, columnWidths }) => {
+  const columnLabels = ['Date', 'Status', '', 'Amount'];
+  const columnKeys = ['first', 'second', 'third', 'fourth'];
+  let headerTextColor = 'text.primary'; // dark theme case
+  const isLightTheme = useIsLightTheme();
+  if (isLightTheme) {
+    headerTextColor = isAnyAccordionExpanded
+      ? 'text.primary'
+      : 'text.secondary';
+  }
+  let headerBackgroundColor = 'background.paper'; // dark theme case
+  if (isLightTheme) {
+    headerBackgroundColor = isAnyAccordionExpanded
+      ? 'background.default'
+      : 'primary.dark';
+  }
   return (
     <Card
       id="billing-list-header"
+      elevation={0}
       sx={{
         marginBottom: 0,
-        backgroundColor: 'customBackground.dark',
-        margin: 0,
+        backgroundColor: headerBackgroundColor,
+        padding: '1rem 0rem 0.5rem 0rem',
       }}
     >
       <CardContent
@@ -41,42 +37,29 @@ const CustomListHeader = () => {
         }}
       >
         <Grid container alignItems="center" sx={{ paddingRight: '3.5rem' }}>
-          <Grid
-            item
-            container
-            xs={firstColumnWidth}
-            sx={{ justifyContent: 'start' }}
-          >
-            <CustomTypography>Date</CustomTypography>
-          </Grid>
-          <Grid
-            item
-            container
-            xs={secondColumnWidth}
-            sx={{ justifyContent: 'start' }}
-          >
-            <CustomTypography>Status</CustomTypography>
-          </Grid>
-          <Grid
-            item
-            container
-            xs={thirdColumnWidth}
-            sx={{ justifyContent: 'start' }}
-          >
-            <CustomTypography>Resource Consumed</CustomTypography>
-          </Grid>
-          <Grid
-            item
-            container
-            xs={fourthColumnWidth}
-            sx={{ justifyContent: 'start' }}
-          >
-            <CustomTypography>Amount</CustomTypography>
-          </Grid>
+          {columnLabels.map((label, index) => (
+            <Grid
+              key={label}
+              item
+              xs={columnWidths[columnKeys[index]]}
+              sx={{ justifyContent: 'start' }}
+            >
+              {label && (
+                <Typography
+                  variant="body1"
+                  sx={{
+                    padding: '0rem 0rem 0rem 2rem',
+                    color: headerTextColor,
+                  }}
+                >
+                  {label}
+                </Typography>
+              )}
+            </Grid>
+          ))}
         </Grid>
       </CardContent>
     </Card>
   );
 };
-
 export default CustomListHeader;

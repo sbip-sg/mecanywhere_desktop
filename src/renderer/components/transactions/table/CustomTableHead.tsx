@@ -6,7 +6,7 @@ import { visuallyHidden } from '@mui/utils';
 import StyledTableCell from './StyledTableCell';
 import StyledTableRow from './StyledTableRow';
 import { Order } from './comparatorUtils';
-import { InternalDataEntry, ExternalDataEntry } from '../../../utils/dataTypes';
+import { InternalDataEntry, ExternalDataEntry } from '../../common/dataTypes';
 import { PropConfig } from '../propConfig';
 
 interface CustomTableHeadProps {
@@ -41,7 +41,7 @@ const CustomTableHead = (props: CustomTableHeadProps) => {
 
   return (
     <TableHead>
-      <StyledTableRow maxRowHeight={maxRowHeight}>
+      <StyledTableRow maxRowHeight={maxRowHeight} isheader="true">
         {propConfigList.map((config) => (
           <StyledTableCell
             addRightPadding={addRightPadding}
@@ -49,15 +49,22 @@ const CustomTableHead = (props: CustomTableHeadProps) => {
             sortDirection={orderBy === config.property ? order : false}
           >
             <TableSortLabel
-              sx={{
-                '&.Mui-active': {
-                  color: 'text.primary',
-                },
-              }}
               hideSortIcon
               active={false}
               direction={orderBy === config.property ? order : 'asc'}
               onClick={createSortHandler(config.property)}
+              sx={{
+                color: 'primary.dark',
+                // filter: 'brightness(50%)',
+                '&:hover': {
+                  color: 'secondary.contrastText',
+                  // filter: 'brightness(100%)',
+                },
+                '&:focus': {
+                  color: 'secondary.contrastText',
+                  // filter: 'brightness(100%)',
+                },
+              }}
             >
               {config.label}
               {orderBy === config.property ? (

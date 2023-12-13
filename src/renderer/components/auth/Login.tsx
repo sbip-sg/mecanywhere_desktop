@@ -1,18 +1,17 @@
 import Box from '@mui/material/Box';
 import Typography from '@mui/material/Typography';
 import Button from '@mui/material/Button';
-import Stack from '@mui/material/Stack';
 import Container from '@mui/material/Container';
 import CircularProgress from '@mui/material/CircularProgress';
-import { useState, useCallback } from 'react';
+import { useState, useCallback, useEffect } from 'react';
 import { Formik, Form, FormikHelpers } from 'formik';
 import { useNavigate } from 'react-router-dom';
-import ErrorDialog from '../../utils/ErrorDialogue';
-import TextFieldWrapper from '../../utils/TextField';
+import ErrorDialog from '../common/ErrorDialogue';
+import TextFieldWrapper from '../common/TextField';
 import actions from '../../redux/actionCreators';
-import logoTest from '../../../../assets/logo-test.png';
+import { ReactComponent as Logo } from '../../../../assets/LogoColor.svg';
 import Transitions from '../transitions/Transition';
-import FormSchema from '../../utils/FormSchema';
+import FormSchema from '../common/FormSchema';
 import handleLogin from './handleLogin';
 
 interface FormValues {
@@ -41,7 +40,9 @@ const Login = () => {
     setErrorDialogOpen(false);
   };
   const role = window.electron.store.get('role');
-  console.log('role', role);
+  useEffect(() => {
+    actions.setImportingAccount(false); // clear state
+  }, []);
   const handleSubmit = useCallback(
     async (values: FormValues, formActions: FormikHelpers<FormValues>) => {
       setIsLoading(true);
@@ -51,6 +52,7 @@ const Login = () => {
         const userIsAuthenticated = await handleLogin(password);
         if (userIsAuthenticated) {
           actions.setAuthenticated(true);
+          // navigate('/');
           if (role === 'host') {
             navigate('/hosttxndashboard');
           } else if (role === 'provider') {
@@ -93,23 +95,32 @@ const Login = () => {
     >
       {() => (
         <Form>
-          <Container component="main" maxWidth="xs">
+          <Container
+            component="main"
+            maxWidth="xs"
+            sx={{ height: '100vh', display: 'flex' }}
+          >
             <Box
               sx={{
-                mt: 8,
+                pb: '6rem',
                 display: 'flex',
                 flexDirection: 'column',
                 alignItems: 'center',
+                justifyContent: 'center',
               }}
             >
-              <img
-                alt="logo"
-                src={logoTest}
-                width="70%"
-                height="70%"
-                style={{ margin: '5rem 0 2rem' }}
-              />
-              <Typography variant="h5" py={2}>
+              <Box
+                sx={{
+                  paddingLeft: '0.5rem',
+                  height: '20%',
+                  width: '100%',
+                  justifyContent: 'center',
+                  display: 'flex',
+                }}
+              >
+                <Logo width="300px" height="100%" />
+              </Box>
+              <Typography variant="h5" sx={{ py: '2rem' }}>
                 LOG IN
               </Typography>
               <TextFieldWrapper
@@ -126,23 +137,60 @@ const Login = () => {
               >
                 {getMessageByRole(window.electron.store.get('role'))}
               </Typography>
-              <Stack
-                sx={{ pt: 4 }}
-                direction="row"
-                spacing={2}
-                justifyContent="center"
-              >
-                <Button variant="contained" color="secondary" type="submit">
-                  Log In
-                </Button>
+              <Box sx={{ maxWidth: '22rem', width: '100%' }}>
+                <Box
+                  sx={{
+                    pt: '2rem',
+                    display: 'flex',
+                    justifyContent: 'space-between',
+                  }}
+                >
+                  <Button
+                    variant="contained"
+                    type="submit"
+                    sx={{
+                      width: '35%',
+                      color: 'text.primary',
+                      backgroundColor: 'primary.main',
+                      fontWeight: '600',
+                    }}
+                  >
+                    Log In
+                  </Button>
+                  <Button
+                    variant="contained"
+                    onClick={() => navigate('/register')}
+                    sx={{
+                      width: '60%',
+                      color: 'text.primary',
+                      backgroundColor: 'primary.main',
+                      fontWeight: '600',
+                    }}
+                  >
+                    Create Account
+                  </Button>
+                </Box>
+                <Box
+                  sx={{
+                    display: 'flex',
+                    justifyContent: 'center',
+                    py: '0.5rem',
+                    alignItems: 'center',
+                  }}
+                >
+                  <Typography>OR</Typography>
+                </Box>
                 <Button
                   variant="contained"
-                  color="secondary"
-                  onClick={() => navigate('/register')}
+                  onClick={() => navigate('/import-seed-phrase')}
+                  sx={{
+                    maxWidth: '22rem',
+                    width: '100%',
+                  }}
                 >
-                  Create Account
+                  Import With Seed Phrase
                 </Button>
-              </Stack>
+              </Box>
               <ErrorDialog
                 open={errorDialogOpen}
                 onClose={handleCloseErrorDialog}

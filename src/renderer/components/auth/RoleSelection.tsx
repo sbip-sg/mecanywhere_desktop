@@ -1,7 +1,8 @@
-import { Grid, Box, Typography, Button } from '@mui/material';
+import { Grid, Typography, Button } from '@mui/material';
 import { useState, useEffect } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
-import { useTheme } from '@emotion/react';
+import Card from '@mui/material/Card';
+import CardContent from '@mui/material/CardContent';
 import Radio from '@mui/material/Radio';
 import RadioGroup from '@mui/material/RadioGroup';
 import FormControlLabel from '@mui/material/FormControlLabel';
@@ -9,26 +10,28 @@ import FormControl from '@mui/material/FormControl';
 import FormLabel from '@mui/material/FormLabel';
 import actions from '../../redux/actionCreators';
 import handleAccountRegistration from './handleAccountRegistration';
+import { useSelector } from 'react-redux';
+import { RootState } from '../../redux/store';
 
 const RoleSelection = () => {
   const navigate = useNavigate();
   const location = useLocation();
   const password = location.state?.password;
-  const theme = useTheme();
   const [selectedRole, setSelectedRole] = useState('host');
+  const isImportingAccount = useSelector(
+    (state: RootState) => state.importingAccountReducer.importingAccount
+  );
   const handleOnClick = async () => {
-    await handleAccountRegistration(password);
-    navigate('/mnemonics');
+    await handleAccountRegistration(password, isImportingAccount);
+    navigate(isImportingAccount === true ? '/login' : '/mnemonics');
   };
   useEffect(() => {
     if (selectedRole === 'host') {
       window.electron.store.set('role', 'host');
       actions.setRole('host');
-      // actions.setIsProvider(false);
     } else if (selectedRole === 'provider') {
       window.electron.store.set('role', 'provider');
       actions.setRole('provider');
-      // actions.setIsProvider(true);
     } else {
       console.error('no role selected!');
     }
@@ -55,8 +58,6 @@ const RoleSelection = () => {
         xs={12}
         sx={{
           height: '60%',
-          // width: "80%",
-          // backgroundColor: theme.palette.Black.main,
           borderRadius: '12px',
           padding: '0rem 3rem 0rem 3rem',
           margin: '0rem 3rem 1rem 3rem',
@@ -66,10 +67,10 @@ const RoleSelection = () => {
           <FormLabel
             id="demo-radio-buttons-group-label"
             sx={{
-              color: 'text',
+              color: 'text.primary',
               '&.Mui-focused': {
-                color: 'text',
-              },
+                color: 'text.primary',
+              }, // required to override the color when not focused
             }}
           >
             Select a role below:
@@ -79,79 +80,104 @@ const RoleSelection = () => {
             name="radio-buttons-group"
             onChange={(event) => setSelectedRole(event.target.value)}
           >
-            <Box
+            <Card
               sx={{
-                backgroundColor: 'customBackground.main',
+                backgroundColor:
+                  selectedRole === 'host'
+                    ? 'customColor.lightGrey'
+                    : 'background.paper',
                 borderRadius: '12px',
-                padding: '1rem 1rem 1rem 1rem',
-                margin: '1rem 1rem 0rem 1rem',
+                margin: '1rem',
               }}
             >
-              <FormControlLabel
-                value="host"
-                control={
-                  <Radio
-                    sx={{
-                      color: 'text.secondary',
-                      '&.Mui-checked': {
+              <CardContent sx={{ padding: '1rem' }}>
+                <FormControlLabel
+                  value="host"
+                  control={
+                    <Radio
+                      sx={{
                         color: 'primary.main',
-                      },
-                    }}
-                  />
-                }
-                label="HOST"
-              />
-              <Typography
-                fontSize="16px"
-                sx={{
-                  margin: '0 0.5rem 0 0.5rem',
-                  color: 'primary.main',
-                }}
-              >
-                Select this role if you are intending to use this application as
-                an edge device host which shares compute resources.
-              </Typography>
-            </Box>
-            <Box
+                        '&.Mui-checked': { color: 'secondary.contrastText' },
+                      }}
+                    />
+                  }
+                  label={
+                    <Typography
+                      sx={{
+                        color:
+                          selectedRole === 'host'
+                            ? 'secondary.contrastText'
+                            : 'primary.main',
+                        fontWeight: selectedRole === 'host' ? '600' : '500',
+                      }}
+                    >
+                      HOST
+                    </Typography>
+                  }
+                />
+                <Typography
+                  variant="body2"
+                  sx={{
+                    margin: '0 0.5rem',
+                    color: 'text.primary',
+                  }}
+                >
+                  Select this role if you are intending to use this application
+                  as an edge device host which shares compute resources.
+                </Typography>
+              </CardContent>
+            </Card>
+            <Card
               sx={{
-                backgroundColor: 'customBackground.main',
+                backgroundColor:
+                  selectedRole === 'provider'
+                    ? 'customColor.lightGrey'
+                    : 'background.paper',
                 borderRadius: '12px',
-                // display: 'flex',
-                // justifyContent: "center",
-                // alignItems: "ascas"
-                padding: '1rem 1rem 1rem 1rem',
-                margin: '1rem 1rem 0rem 1rem',
+                margin: '1rem',
               }}
             >
-              <FormControlLabel
-                value="provider"
-                control={
-                  <Radio
-                    sx={{
-                      color: 'text.secondary',
-                      '&.Mui-checked': {
+              <CardContent sx={{ padding: '1rem' }}>
+                <FormControlLabel
+                  value="provider"
+                  control={
+                    <Radio
+                      sx={{
                         color: 'primary.main',
-                      },
-                    }}
-                  />
-                }
-                label="PROVIDER"
-              />
-              <Typography
-                fontSize="16px"
-                sx={{
-                  margin: '0 0.5rem 0 0.5rem',
-                  color: 'primary.main',
-                }}
-              >
-                Select this if you are intending to use this application as the
-                parent organization or provider which manages end users which
-                may be the aforementioned host roles. If you wish to use this
-                application as some other roles in the future, keep in mind that
-                you will need to overwrite the existing data on this device
-                before you can register for those new roles.
-              </Typography>
-            </Box>
+                        '&.Mui-checked': { color: 'secondary.contrastText' },
+                      }}
+                    />
+                  }
+                  label={
+                    <Typography
+                      sx={{
+                        color:
+                          selectedRole === 'provider'
+                            ? 'secondary.contrastText'
+                            : 'primary.main',
+                        fontWeight: selectedRole === 'provider' ? '600' : '500',
+                      }}
+                    >
+                      PROVIDER
+                    </Typography>
+                  }
+                />
+                <Typography
+                  variant="body2"
+                  sx={{
+                    margin: '0 0.5rem',
+                    color: 'text.primary',
+                  }}
+                >
+                  Select this if you are intending to use this application as
+                  the parent organization or provider which manages end users
+                  which may be the aforementioned host roles. If you wish to use
+                  this application as some other roles in the future, keep in
+                  mind that you will need to overwrite the existing data on this
+                  device before you can register for those new roles.{' '}
+                </Typography>
+              </CardContent>
+            </Card>
           </RadioGroup>
         </FormControl>
       </Grid>
@@ -166,11 +192,10 @@ const RoleSelection = () => {
         </Button>
         <Button
           variant="contained"
-          color="secondary"
           sx={{ marginLeft: '1rem', height: '60%' }}
-          onClick={() => navigate('/roleSelection')}
+          onClick={() => navigate('/login')}
         >
-          Back
+          Cancel
         </Button>
       </Grid>
     </Grid>

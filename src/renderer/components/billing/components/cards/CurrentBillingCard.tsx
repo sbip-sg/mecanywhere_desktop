@@ -1,15 +1,12 @@
 import { Grid, Typography, Card, CardContent, Button } from '@mui/material';
-import { useTheme } from '@emotion/react';
 
 const CurrentBillingCard = () => {
-  const theme = useTheme();
-
   return (
     <Card
       sx={{
         minWidth: 220,
         height: '100%',
-        backgroundColor: 'customBackground.light',
+        backgroundColor: 'background.default',
       }}
     >
       <CardContent sx={{ width: '100%', height: '100%' }}>
@@ -21,16 +18,16 @@ const CurrentBillingCard = () => {
           </Grid>
           <Grid xs={12}>
             <Typography
-              variant="h5"
+              variant="h2"
               component="div"
               textAlign="end"
-              style={{ color: 'secondary.main', fontSize: '40px' }}
+              style={{ color: 'secondary.main'}}
             >
               103.12 SGD
             </Typography>
           </Grid>
           <Grid xs={12}>
-            <Typography sx={{}} color="text.secondary" textAlign="end">
+            <Typography sx={{}} color="text.primary" textAlign="end">
               Total Earnings
             </Typography>
           </Grid>
@@ -59,9 +56,13 @@ const CurrentBillingCard = () => {
               alignItems: 'center',
             }}
           >
-            <Button sx={{ padding: '0.5rem 1rem 0.5rem 1rem', backgroundColor: 'secondary.contrastText' }}>
+            <Button
+              sx={{
+                padding: '0.5rem 1rem 0.5rem 1rem',
+                backgroundColor: 'primary.main',
+              }}
+            >
               <Typography
-                // variant="body1"
                 fontWeight="600"
                 fontSize="16px"
                 textAlign="end"

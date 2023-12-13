@@ -2,7 +2,7 @@ import { useEffect } from 'react';
 import {
   handleRegisterClient,
   handleDeregisterClient,
-} from 'renderer/utils/handleRegistration';
+} from 'renderer/components/common/handleRegistration';
 import offloadTask from 'renderer/services/OffloadServices';
 import { useSelector } from 'react-redux';
 import { RootState } from 'renderer/redux/store';

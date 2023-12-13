@@ -5,13 +5,11 @@ import Typography from '@mui/material/Typography';
 import Divider from '@mui/material/Divider';
 import ListItemButton from '@mui/material/ListItemButton';
 import { useNavigate } from 'react-router-dom';
-import { useTheme } from '@emotion/react';
 import HostSharingWidget from './HostSharingWidget/HostSharingWidget';
 import actions from '../../../redux/actionCreators';
 import deleteAccount from 'renderer/electron-store';
 
 const HostTab = () => {
-  const theme = useTheme();
   const navigate = useNavigate();
   const listTopBottomMargin = '0.5rem';
   const listItemSpacing = '8px';

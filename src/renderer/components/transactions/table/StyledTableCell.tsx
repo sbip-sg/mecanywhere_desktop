@@ -9,7 +9,7 @@ const StyledTableCell = styled(({ addRightPadding, ...otherProps }) => (
   <TableCell {...otherProps} />
 ))<StyledTableCellProps>(({ theme, addRightPadding }) => ({
   [`&.${tableCellClasses.head}`]: {
-    backgroundColor: 'customBackground.main',
+    backgroundColor: 'primary.dark',
     color: 'primary.main',
     textAlign: 'right',
     fontSize: '14px',

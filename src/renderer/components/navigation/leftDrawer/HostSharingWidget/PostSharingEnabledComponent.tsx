@@ -155,15 +155,15 @@ const PostSharingEnabledComponent = ({
               padding: '0.6rem',
               color: isLoading ? 'primary.main' : 'inherit',
               backgroundColor: isLoading
-                ? 'customBackground.dark'
+                ? 'background.paper'
                 : 'secondary.contrastText',
             }}
           >
             <Typography
-              variant="h3"
               style={{
                 fontSize: '15px',
                 textAlign: 'center',
+                fontWeight: 600,
                 // letterSpacing: '0.05em',
               }}
             >

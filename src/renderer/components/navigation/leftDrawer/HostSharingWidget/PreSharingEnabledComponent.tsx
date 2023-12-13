@@ -3,6 +3,7 @@ import { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import ErrorOutlineIcon from '@mui/icons-material/ErrorOutline';
 import Checkbox from '@mui/material/Checkbox';
+import useIsLightTheme from 'renderer/components/common/useIsLightTheme';
 import CoreSelectorWidget from './CoreSelectorWidget';
 import MemorySelectorSlider from './MemorySelectorSlider';
 import PresetSelectorWidget from './PresetSelectorWidget';
@@ -22,7 +23,7 @@ const PreSharingEnabledComponent = ({
       event.target.checked.toString()
     );
   };
-
+  const isLightTheme = useIsLightTheme();
   useEffect(() => {
     if (window.electron.store.get('isExecutorSettingsSaved') === 'true') {
       window.electron.store.set(
@@ -39,17 +40,18 @@ const PreSharingEnabledComponent = ({
           display: 'flex',
           alignItems: 'center',
           padding: '2rem 0 0 1.5rem',
-          color: 'primary.main',
         }}
       >
-        <ErrorOutlineIcon />
+        <ErrorOutlineIcon sx={{ color: 'primary.main' }} />
         <Typography
           width="80%"
           variant="body2"
-          fontSize="14px"
           textAlign="start"
           padding="0rem 0rem 0rem 1rem"
-          style={{ color: 'primary.main', fontWeight: '600' }}
+          sx={{
+            color: 'primary.main',
+            fontWeight: '600',
+          }}
         >
           You are currently have resource sharing disabled.
         </Typography>
@@ -97,27 +99,27 @@ const PreSharingEnabledComponent = ({
       </AnimatePresence>
       <Box
         sx={{
-          // width: "80%",
           padding: '1rem 1rem 0 1.5rem',
-          display: 'flex',
           justifyContent: 'space-between',
+          display: 'flex',
           alignItems: 'center',
         }}
       >
         <Typography
-          // width="80%"
-          variant="body2"
-          fontSize="16px"
+          fontWeight="600"
+          variant="body1"
           textAlign="start"
-          color="primary.main"
-          // padding="3rem 1.5rem 1rem 1.5rem"
+          color="text.primary"
         >
           Remember configuration
         </Typography>
         <Checkbox
           checked={isExecutorSettingsSaved}
           onChange={handleCheckboxChange}
-          style={{ color: 'text.primary' }}
+          size="small"
+          sx={{
+            color: 'text.primary',
+          }}
         />
       </Box>
       <Box
@@ -132,13 +134,17 @@ const PreSharingEnabledComponent = ({
           sx={{
             width: '100%',
             padding: '0.6rem',
-            color: isLoading ? 'primary.main' : 'customBackground.dark',
-            backgroundColor: isLoading
-              ? 'customBackground.dark'
-              : 'secondary.main',
+            color: isLoading ? 'primary.main' : 'background.paper',
+            backgroundColor: isLoading ? 'background.paper' : 'primary.main',
           }}
         >
-          <Typography variant="h3" fontSize="15px" textAlign="center">
+          <Typography
+            sx={{
+              fontSize: '15px',
+              textAlign: 'center',
+              fontWeight: '600',
+            }}
+          >
             Enable Resource&nbsp;Sharing
           </Typography>
         </Button>

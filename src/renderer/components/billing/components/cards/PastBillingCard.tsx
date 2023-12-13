@@ -12,14 +12,6 @@ import {
   CartesianGrid,
   Tooltip,
 } from 'recharts';
-import { ExternalBillingDataEntry } from '../table/dataTypes';
-import { ExternalDataEntry } from '../../../../utils/dataTypes';
-import { useEffect, useState } from 'react';
-
-interface GroupedData {
-  month: string;
-  resource_consumed: number;
-}
 
 interface GroupedDataEntry {
   month: string;
@@ -32,87 +24,21 @@ interface GroupedDataEntry {
 }
 
 interface PastBillingCardProps {
-  data: ExternalDataEntry[];
+  groupedData: GroupedDataEntry[];
+  appRole: string;
 }
 
-const PastBillingCard: React.FC<PastBillingCardProps> = ({ data }) => {
+const PastBillingCard: React.FC<PastBillingCardProps> = ({
+  groupedData,
+  appRole,
+}) => {
   const theme = useTheme();
-  const [groupedData, setGroupedData] = useState<GroupedDataEntry[]>([]);
-
-  useEffect(() => {
-    const today = new Date();
-    // Filtering data to get entries of the last 6 months including the current month
-    const sixMonthsData = data.filter((entry) => {
-      // Convert the timestamp to milliseconds before creating Date object
-      const entryDate = new Date(entry.session_start_datetime * 1000);
-      const monthDifference =
-        today.getMonth() -
-        entryDate.getMonth() +
-        12 * (today.getFullYear() - entryDate.getFullYear());
-      return monthDifference < 6;
-    });
-
-    // Sorting data in ascending order of session_start_datetime
-    sixMonthsData.sort(
-      (a, b) => a.session_start_datetime - b.session_start_datetime
-    );
-
-    const grouped = sixMonthsData.reduce((acc, entry) => {
-      const entryDate = new Date(entry.session_start_datetime * 1000);
-      const month = entryDate.toLocaleString('default', { month: 'long' });
-
-      if (!acc[month]) {
-        acc[month] = {
-          month,
-          number_of_sessions: 0,
-          total_resource_consumed: 0,
-          total_usage_hours: 0,
-          total_tasks_run: 0,
-          billing_amount: 0,
-          average_network_reliability: 0,
-        };
-      }
-
-      acc[month].number_of_sessions += 1;
-      acc[month].total_resource_consumed += entry.resource_consumed;
-      acc[month].total_usage_hours += entry.duration;
-      acc[month].total_tasks_run += 1; // assuming one task per entry
-      acc[month].billing_amount += entry.price;
-      acc[month].average_network_reliability += entry.network_reliability;
-
-      return acc;
-    }, {} as { [key: string]: GroupedDataEntry });
-
-    const groupedArray = Object.values(grouped).map((entry) => {
-      entry.average_network_reliability /= entry.number_of_sessions;
-      return entry;
-    });
-
-    setGroupedData(groupedArray);
-    console.log('groupedArray', groupedArray);
-  }, [data]);
-
-  // const groupedData: GroupedData[] = data.slice(-6).map((entry) => {
-  //   // need to change to take date from today() instead of slice
-  //   const billingStartDate = new Date(
-  //     entry.billing_start_date.replace(
-  //       /(\d{2})\/(\d{2})\/(\d{2})/,
-  //       '20$3-$1-$2'
-  //     )
-  //   );
-  //   const month = billingStartDate.toLocaleString('default', { month: 'long' });
-  //   return {
-  //     month,
-  //     resource_consumed: entry.total_resource_consumed,
-  //   };
-  // });
-
   return (
     <Card
       sx={{
         minWidth: 220,
         height: '100%',
-        backgroundColor: 'customBackground.light',
+        backgroundColor: 'background.default',
       }}
     >
       <CardContent sx={{ width: '100%', height: '100%' }}>
@@ -130,7 +56,9 @@ const PastBillingCard: React.FC<PastBillingCardProps> = ({ data }) => {
             <ResponsiveContainer width="100%" height="100%">
               <ComposedChart data={groupedData} margin={{ top: 0 }}>
                 <CartesianGrid strokeDasharray="3 3" />
-                <XAxis dataKey="month" tick={{ fontSize: 12 }} />
+                <XAxis dataKey="date" tick={{ fontSize: 12 }}>
+                  <Label style={{ fontSize: 12 }} />
+                </XAxis>
                 <YAxis tick={{ fontSize: 12 }}>
                   <Label
                     value="Resource Consumed"
@@ -141,22 +69,50 @@ const PastBillingCard: React.FC<PastBillingCardProps> = ({ data }) => {
                   />
                 </YAxis>
                 <Tooltip />
-                <Bar
-                  type="monotone"
-                  dataKey="total_resource_consumed"
-                  barSize={40}
-                  // fill={theme.palette.cerulean.main}
-                  fill={theme.palette.primary.main}
-                  legendType="rect"
-                  name="Total Items"
-                />
-                <Line
-                  type="linear"
-                  strokeLinejoin="round"
-                  dataKey="total_resource_consumed"
-                  stroke={theme.palette.secondary.contrastText}
-                  strokeWidth={3}
-                />
+                {/* Display for non-providers (i.e., host) */}
+                {appRole !== 'provider' && (
+                  <>
+                    <Bar
+                      type="monotone"
+                      dataKey="total_price"
+                      barSize={40}
+                      fill={theme.palette.primary.main}
+                      legendType="rect"
+                      name="Total Items"
+                    />
+                    <Line
+                      type="linear"
+                      strokeLinejoin="round"
+                      dataKey="total_price"
+                      stroke={theme.palette.secondary.contrastText}
+                      strokeWidth={3}
+                    />
+                  </>
+                )}
+                {/* Display for providers based on the selected role */}
+                {appRole === 'provider' && (
+                  <>
+                    <Bar
+                      dataKey="client_total_price"
+                      barSize={40}
+                      fill={theme.palette.primary.main} // Different color for client
+                      name="Client Price"
+                    />
+                    <Bar
+                      dataKey="host_total_price"
+                      barSize={40}
+                      fill={theme.palette.secondary.main} // Different color for host
+                      name="Host Price"
+                    />
+                    <Line
+                      type="linear"
+                      strokeLinejoin="round"
+                      dataKey="half_total_price"
+                      stroke={theme.palette.secondary.contrastText} // Different color for line
+                      strokeWidth={3}
+                    />
+                  </>
+                )}
               </ComposedChart>
             </ResponsiveContainer>
           </Grid>
