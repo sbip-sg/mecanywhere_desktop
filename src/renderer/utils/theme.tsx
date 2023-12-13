@@ -3,12 +3,6 @@ import { PaletteMode } from '@mui/material';
 import '@mui/material/styles/createPalette';
 import { scrollbarHeight, scrollbarWidth } from './constants';
 
-// const lightPurple = '#6D697D';
-// const deepCerulean = '#6485FF';
-// const tintedNavy = '#2c3555';
-// const navy = '#3f3f74';
-// const darkWhite = '#F4F4F4';
-// const orange = '#FF5F1F';
 const cerulean = '#829CFF';
 const mintGreen = '#35D4C7';
 const offWhite = '#f0f1f2';
@@ -82,26 +76,32 @@ export const getDesignTokens = (mode: PaletteMode) => ({
     ].join(`,`),
     fontSize: 16,
     h1: {
-      letterSpacing: `0.2em`,
-      fontSize: `1.6rem`,
+      letterSpacing: '0.1em',
+      fontSize: '36px',
     },
     h2: {
-      letterSpacing: `1em`,
-      fontSize: `1.5rem`,
-    },
-    body1: {
-      fontSize: `1.1rem`,
-    },
-    body2: {
-      fontWeight: 500,
+      letterSpacing: '0.05em',
+      fontSize: '28px',
     },
     h3: {
-      fontWeight: 700,
+      letterSpacing: '0.15em',
+      fontSize: '24px',
     },
     h4: {
       fontWeight: 500,
       letterSpacing: `0.1em`,
     },
+    subtitle1: {
+      fontSize: '14px',
+      letterSpacing: `0.1em`,
+    },
+    body1: {
+      fontSize: '16px',
+    },
+    body2: {
+      fontSize: '14px',
+    },
+
     button: {
       fontWeight: 500,
       letterSpacing: `0.15em`,
@@ -238,6 +238,16 @@ export const getDesignTokens = (mode: PaletteMode) => ({
     },
     MuiPaper: {
       styleOverrides: { root: { backgroundImage: 'unset' } },
+    },
+    MuiListItem: {
+      styleOverrides: {
+        root: {
+          '&:hover': {
+            backgroundColor: 'lightGrey',
+          },
+          padding: '0',
+        },
+      },
     },
     MuiFormHelperText: {
       styleOverrides: {

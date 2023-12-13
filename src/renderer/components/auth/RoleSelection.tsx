@@ -116,7 +116,7 @@ const RoleSelection = () => {
                   }
                 />
                 <Typography
-                  fontSize="16px"
+                  variant="body2"
                   sx={{
                     margin: '0 0.5rem',
                     color: 'text.primary',
@@ -163,7 +163,7 @@ const RoleSelection = () => {
                   }
                 />
                 <Typography
-                  fontSize="16px"
+                  variant="body2"
                   sx={{
                     margin: '0 0.5rem',
                     color: 'text.primary',

@@ -2,13 +2,13 @@ import { Box, Typography, Button, Stack, Container } from '@mui/material';
 import { useState, useCallback } from 'react';
 import { Formik, Form, FormikHelpers } from 'formik';
 import CircularProgress from '@mui/material/CircularProgress';
-import { useNavigate } from 'react-router-dom';
-import TextFieldWrapper from '../../utils/TextField';
-import FormSchema from '../../utils/FormSchema';
-import Transitions from '../transitions/Transition';
-import ErrorDialog from '../../utils/ErrorDialogue';
-import { ReactComponent as Logo } from '../../../../assets/LogoColorHorizontal.svg';
 import { useSelector } from 'react-redux';
+import { useNavigate } from 'react-router-dom';
+import TextFieldWrapper from '../common/TextField';
+import FormSchema from '../common/FormSchema';
+import Transitions from '../transitions/Transition';
+import ErrorDialog from '../common/ErrorDialogue';
+import { ReactComponent as Logo } from '../../../../assets/LogoColor.svg';
 import { RootState } from '../../redux/store';
 
 interface FormValues {
@@ -88,7 +88,7 @@ const Register = () => {
                   display: 'flex',
                 }}
               >
-                <Logo width="300px" height="auto" />
+                <Logo width="300px" height="100%" />
               </Box>
               {isImportingAccount === true ? (
                 <Typography variant="h5" py={4}>

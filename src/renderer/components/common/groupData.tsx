@@ -113,7 +113,6 @@ function groupData(
   selfDid,
   appRole
 ) {
-  console.log('appRole', appRole);
   const dataFilteredByDate = filterByDate(data, startDate, endDate);
   const dataFilteredByRoleAndDate = filterByRole(
     dataFilteredByDate,
@@ -201,8 +200,6 @@ function groupData(
       date: group.date,
     };
   });
-
-  console.log('groupedData', groupedData);
 
   return groupedData.sort((a, b) => new Date(a.date) - new Date(b.date));
 }

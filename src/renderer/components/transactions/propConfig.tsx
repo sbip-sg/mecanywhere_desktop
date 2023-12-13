@@ -1,5 +1,5 @@
-import { convertEpochToStandardTimeWithDate } from 'renderer/utils/unitConversion';
-import { ExternalDataEntry, InternalDataEntry } from '../../utils/dataTypes';
+import { convertEpochToStandardTimeWithDate } from 'renderer/components/common/unitConversion';
+import { ExternalDataEntry, InternalDataEntry } from '../common/dataTypes';
 
 export interface PropConfig<T> {
   property: keyof T;

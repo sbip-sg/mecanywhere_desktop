@@ -1,50 +1,56 @@
 import Box from '@mui/material/Box';
-import { useTheme } from '@emotion/react';
 import { TooltipProps } from 'recharts';
 import {
   ValueType,
   NameType,
 } from 'recharts/types/component/DefaultTooltipContent';
+import { isClient, isHost, getLabelForDataKey } from './dataKeys';
 
 const CustomTooltip = ({
   active,
   payload,
   label,
 }: TooltipProps<ValueType, NameType>) => {
-  const theme = useTheme();
   if (active && payload && payload.length) {
     return (
       <Box
         sx={{
           backgroundColor: 'background.default',
-          padding: '1rem 1rem 1rem 1rem',
+          padding: '1rem',
           borderRadius: '7px',
           minWidth: 150,
         }}
       >
-        <Box sx={{ color: 'secondary.main', fontSize: '20px' }}>
+        <Box
+          sx={{ color: 'text.primary', fontSize: '16px', fontWeight: '600' }}
+        >
           {label}
         </Box>
         <Box>
-          {payload.map((pld: any, index: number) => (
-            <Box key={index}>
+          {payload.map((pld: any) => (
+            <Box key={pld.name}>
               <Box
                 sx={{
-                  color: 'secondary.contrastText',
+                  color: isClient(pld.name)
+                    ? 'secondary.main'
+                    : isHost(pld.name)
+                    ? 'secondary.contrastText'
+                    : 'secondary.contrastText',
                   textAlign: 'right',
                   fontSize: '18px',
+                  fontWeight: '600',
                 }}
               >
-                {pld.value}
+                {pld.value.toFixed(2)}
               </Box>
               <Box
                 sx={{
-                  color: 'text.secondary',
+                  color: 'text.primary',
                   textAlign: 'right',
                   fontSize: '14px',
                 }}
               >
-                resource consumed
+                {getLabelForDataKey(pld.name)}
               </Box>
             </Box>
           ))}
@@ -52,6 +58,7 @@ const CustomTooltip = ({
       </Box>
     );
   }
+
   return null;
 };
 

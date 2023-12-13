@@ -232,7 +232,7 @@
     "appId": "org.erb.MECAnywhere",
     "asar": true,
     "asarUnpack": "**\\*.{node,dll}",
-    "icon": "assets/logo-test.png",
+    "icon": "assets/mecanywhere-icon.png",
     "files": [
       "dist",
       "node_modules",

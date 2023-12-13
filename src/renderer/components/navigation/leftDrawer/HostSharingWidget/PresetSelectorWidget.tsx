@@ -2,10 +2,7 @@ import { Typography, FormControl, MenuItem } from '@mui/material';
 import { useTheme } from '@emotion/react';
 import Select, { SelectChangeEvent } from '@mui/material/Select';
 
-const PresetSelectorWidget = ({
-  executorSettings,
-  setExecutorSettings,
-}) => {
+const PresetSelectorWidget = ({ executorSettings, setExecutorSettings }) => {
   const theme = useTheme();
   const handleSelectChange = (event: SelectChangeEvent) => {
     switch (event.target.value) {
@@ -48,11 +45,11 @@ const PresetSelectorWidget = ({
     <>
       <Typography
         width="80%"
-        variant="body2"
-        fontSize="16px"
+        variant="body1"
+        fontWeight="600"
         textAlign="start"
         padding="3rem 1.5rem 1rem 1.5rem"
-        color="textPrimary"
+        color="text.primary"
       >
         Resource Allocation:
       </Typography>
@@ -64,7 +61,8 @@ const PresetSelectorWidget = ({
             fontSize: '14px',
 
             '& .MuiOutlinedInput-notchedOutline': {
-              borderColor: 'text.secondary',
+              borderColor: 'text.primary',
+              opacity: 0.5,
             },
             '& .MuiSvgIcon-root': {
               color: 'text.primary',
@@ -75,7 +73,7 @@ const PresetSelectorWidget = ({
           MenuProps={{
             PaperProps: {
               sx: {
-                bgcolor: 'primary.dark',
+                bgcolor: 'background.default',
                 '& .MuiMenuItem-root': {
                   padding: 2,
                   fontSize: '14px',

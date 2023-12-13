@@ -8,7 +8,7 @@ import reduxStore from 'renderer/redux/store';
 import RefreshIcon from '@mui/icons-material/Refresh';
 import { scrollbarHeight } from 'renderer/utils/constants';
 import CustomLineChart from './linechart/CustomLineChart';
-import { ExternalDataEntry, InternalDataEntry } from '../../utils/dataTypes';
+import { ExternalDataEntry, InternalDataEntry } from '../common/dataTypes';
 import { ExternalPropConfigList, InternalPropConfigList } from './propConfig';
 import Datagrid from './table/Datagrid';
 import {
@@ -185,17 +185,21 @@ const TxnDashboard: React.FC<TxnDashboardProps> = ({ appRole }) => {
               padding: '3% 0 0 2.5%',
             }}
           >
-            <Box sx={{ display: 'flex' }}>
+            <Box sx={{ display: 'flex', alignItems: 'center' }}>
               <IconButton size="small" onClick={handleRefresh}>
-                <RefreshIcon fontSize="small" sx={{ color: 'text.primary' }} />
+                <RefreshIcon
+                  fontSize="small"
+                  sx={{ color: 'text.primary', marginRight: '0.5rem' }}
+                />
               </IconButton>
               <Typography
-                style={{
+                sx={{
                   fontSize: '14px',
                   letterSpacing: '0.0em',
                   margin: '0 0 0 0',
                   whiteSpace: 'nowrap',
-                  color: 'primary.main',
+                  color: 'text.primary',
+                  textAlign: 'center',
                 }}
               >
                 {appRole === 'host' &&
@@ -208,6 +212,8 @@ const TxnDashboard: React.FC<TxnDashboardProps> = ({ appRole }) => {
               onClick={() => handleAddDummyData(appRole)}
               sx={{
                 margin: '2rem 0 0 0',
+                padding: '0.5rem 1.5rem',
+                backgroundColor: 'primary.main',
               }}
             >
               Add Dummy Data (development)
@@ -236,7 +242,6 @@ const TxnDashboard: React.FC<TxnDashboardProps> = ({ appRole }) => {
           >
             <CustomLineChart
               data={data}
-              yAxisLabel="Resource Utilized per Month"
               handleRefresh={handleRefresh}
               handleAddDummyData={handleAddDummyData}
               appRole={appRole}

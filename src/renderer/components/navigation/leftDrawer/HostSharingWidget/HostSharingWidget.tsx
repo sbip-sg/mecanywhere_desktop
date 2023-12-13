@@ -6,7 +6,7 @@ import { styled } from '@mui/material/styles';
 import {
   handleRegisterHost,
   handleDeregisterHost,
-} from 'renderer/utils/handleRegistration';
+} from 'renderer/components/common/handleRegistration';
 import { updateConfig } from 'renderer/services/ExecutorServices';
 import Transitions from '../../../transitions/Transition';
 import PreSharingEnabledComponent from './PreSharingEnabledComponent';

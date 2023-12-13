@@ -1,20 +1,17 @@
 import Box from '@mui/material/Box';
 import Typography from '@mui/material/Typography';
 import Button from '@mui/material/Button';
-import Stack from '@mui/material/Stack';
 import Container from '@mui/material/Container';
 import CircularProgress from '@mui/material/CircularProgress';
-import { useState, useCallback } from 'react';
+import { useState, useCallback, useEffect } from 'react';
 import { Formik, Form, FormikHelpers } from 'formik';
 import { useNavigate } from 'react-router-dom';
-import ErrorDialog from '../../utils/ErrorDialogue';
-import TextFieldWrapper from '../../utils/TextField';
+import ErrorDialog from '../common/ErrorDialogue';
+import TextFieldWrapper from '../common/TextField';
 import actions from '../../redux/actionCreators';
-// import logoTest from '../../../assets/logo-test.png';
-import { ReactComponent as Logo } from '../../../../assets/LogoColorHorizontal.svg';
-
+import { ReactComponent as Logo } from '../../../../assets/LogoColor.svg';
 import Transitions from '../transitions/Transition';
-import FormSchema from '../../utils/FormSchema';
+import FormSchema from '../common/FormSchema';
 import handleLogin from './handleLogin';
 
 interface FormValues {
@@ -43,7 +40,9 @@ const Login = () => {
     setErrorDialogOpen(false);
   };
   const role = window.electron.store.get('role');
-  actions.setImportingAccount(false); // clear state
+  useEffect(() => {
+    actions.setImportingAccount(false); // clear state
+  }, []);
   const handleSubmit = useCallback(
     async (values: FormValues, formActions: FormikHelpers<FormValues>) => {
       setIsLoading(true);
@@ -53,6 +52,7 @@ const Login = () => {
         const userIsAuthenticated = await handleLogin(password);
         if (userIsAuthenticated) {
           actions.setAuthenticated(true);
+          // navigate('/');
           if (role === 'host') {
             navigate('/hosttxndashboard');
           } else if (role === 'provider') {
@@ -118,7 +118,7 @@ const Login = () => {
                   display: 'flex',
                 }}
               >
-                <Logo width="300px" height="auto" />
+                <Logo width="300px" height="100%" />
               </Box>
               <Typography variant="h5" sx={{ py: '2rem' }}>
                 LOG IN

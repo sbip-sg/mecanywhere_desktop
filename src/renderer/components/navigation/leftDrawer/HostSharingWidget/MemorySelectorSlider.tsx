@@ -63,10 +63,10 @@ const MemorySelectorSlider = ({ executorSettings, setExecutorSettings }) => {
             },
 
             '& .MuiSlider-rail': {
-              color: 'text.secondary',
+              color: 'primary.main',
             },
             '& .MuiSlider-track': {
-              color: 'primary.dark',
+              color: 'primary.main',
             },
             '& .MuiSlider-valueLabel': {
               display: 'none',

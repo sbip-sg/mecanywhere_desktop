@@ -1,20 +1,35 @@
+import { useNavigate } from 'react-router-dom';
+import { useState } from 'react';
 import AppBar from '@mui/material/AppBar';
 import Toolbar from '@mui/material/Toolbar';
 import Typography from '@mui/material/Typography';
 import Box from '@mui/material/Box';
 import Button from '@mui/material/Button';
 import AccountCircleIcon from '@mui/icons-material/AccountCircle';
-import { useState } from 'react';
+import useIsLightTheme from 'renderer/components/common/useIsLightTheme';
 import { RightDrawerComponent } from '../rightDrawer';
-import { ReactComponent as Logo } from '../../../../../assets/LogoColorHorizontal.svg';
-import useThemeTextColor from '../../../utils/useThemeTextColor';
+import { ReactComponent as Logo } from '../../../../../assets/LogoColor.svg';
 
 const MenuComponent = () => {
   const [isRightDrawerOpen, setRightDrawerOpen] = useState(false);
   const toggleRightDrawer = (open: boolean) => () => {
     setRightDrawerOpen(open);
   };
-  const textColor = useThemeTextColor();
+  const isLightTheme = useIsLightTheme();
+  const [isHovered, setIsHovered] = useState(false);
+  const navigate = useNavigate();
+  const defaultStyle = {
+    cursor: 'pointer',
+    filter: 'brightness(100%)',
+    width: '20%',
+    height: '20%',
+  };
+  const role = window.electron.store.get('role');
+
+  const hoveredStyle = {
+    ...defaultStyle,
+    filter: 'brightness(120%)',
+  };
 
   return (
     <AppBar
@@ -44,18 +59,26 @@ const MenuComponent = () => {
           }}
         >
           <Logo
-            width="20%"
-            height="20%"
-            style={{ cursor: 'pointer' }}
-            // onClick={handleLogoClick}
+            style={isHovered ? hoveredStyle : defaultStyle}
+            onMouseEnter={() => setIsHovered(true)}
+            onMouseLeave={() => setIsHovered(false)}
+            onClick={() => {
+              if (role === 'host') {
+                navigate('/hosttxndashboard');
+              } else if (role === 'provider') {
+                navigate('/providertxndashboard');
+              } else {
+                console.error('invalid role');
+              }
+            }}
           />
           <Typography
-            variant="h1"
+            variant="h3"
             noWrap
             component="div"
             sx={{
-              color: textColor,
-              marginLeft: '0.5rem',
+              color: isLightTheme ? 'text.secondary' : 'text.primary',
+              marginLeft: '1.7rem',
             }}
           >
             MECAnywhere
@@ -69,18 +92,24 @@ const MenuComponent = () => {
             width: '60px',
             height: '60px',
           }}
-          onMouseEnter={() => console.log('Hovering over the image')}
+          // onMouseEnter={() => console.log('Hovering over the image')}
         >
           <Button
             onClick={toggleRightDrawer(true)}
             sx={{
-              pointerEvents: 'auto',
               backgroundColor: 'primary.dark',
+              '&:hover': {
+                filter: 'brightness(85%)',
+                backgroundColor: 'primary.dark',
+              },
             }}
           >
-            <AccountCircleIcon style={{ fontSize: '50px' }} />
-
-            {/* <Avatar /> */}
+            <AccountCircleIcon
+              sx={{
+                color: 'white',
+                fontSize: '50px',
+              }}
+            />
           </Button>
         </Box>
       </Toolbar>

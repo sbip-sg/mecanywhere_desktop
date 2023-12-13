@@ -4,7 +4,7 @@ import actions from '../redux/actionCreators';
 const url = process.env.REGISTRATION_SERVICE_API_URL;
 
 export async function refreshAccess(refreshToken: string) {
-  console.log('attempt refresh with refresh_token: ', refreshToken);
+  console.log('attempt refresh with refresh_token: ');
   try {
     const urlWithParams = new URL(`${url}/authentication/refresh_access`);
     urlWithParams.searchParams.append('refresh_token', refreshToken);
@@ -28,7 +28,9 @@ export async function refreshAccess(refreshToken: string) {
 export async function handle401Error() {
   const { refreshToken } = reduxStore.getState().userReducer;
   const { access_token } = await refreshAccess(refreshToken);
-  console.log('new_access_token', access_token);
+  if (access_token !== '') {
+    console.log('received new_access_token');
+  }
   actions.setAccessToken(access_token);
   return access_token;
 }

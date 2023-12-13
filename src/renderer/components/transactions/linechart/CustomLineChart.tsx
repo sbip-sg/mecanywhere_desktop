@@ -21,11 +21,11 @@ import AddIcon from '@mui/icons-material/Add';
 import CustomTooltip from './CustomTooltip';
 import DatePickerPopover from './DatePickerPopover';
 import DataKeySelectorPopover from './DataKeySelectorPopover';
-import { ExternalDataEntry } from '../../../utils/dataTypes';
-import groupData from '../../../utils/groupData';
+import { ExternalDataEntry } from '../../common/dataTypes';
+import groupData from '../../common/groupData';
+import { getLabelForDataKey } from './dataKeys';
 
 interface CustomLineChartProps {
-  yAxisLabel: string;
   data: ExternalDataEntry[];
   handleRefresh: () => void;
   handleAddDummyData: (role: string) => void;
@@ -34,7 +34,6 @@ interface CustomLineChartProps {
 
 const CustomLineChart: React.FC<CustomLineChartProps> = ({
   data,
-  yAxisLabel,
   handleRefresh,
   handleAddDummyData,
   appRole,
@@ -162,7 +161,7 @@ const CustomLineChart: React.FC<CustomLineChartProps> = ({
             <XAxis dataKey="date" tick={{ fontSize: 12 }} />
             <YAxis tick={{ fontSize: 12 }}>
               <Label
-                value={yAxisLabel}
+                value={getLabelForDataKey(dataKey)}
                 position="insideLeft"
                 angle={-90}
                 style={{ textAnchor: 'middle', fontSize: 16 }}

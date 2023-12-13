@@ -1,21 +1,25 @@
-import React from 'react';
 import { Box } from '@mui/material';
+import React, { useState } from 'react';
 import CustomListHeader from './CustomListHeader';
 import CustomListItem from './CustomListItem';
-import { useState } from 'react';
 
 interface PastBillingListProps {
   groupedData;
-  appRole: string;
+  appRole;
 }
-
+const columnWidths = {
+  first: 4,
+  second: 3,
+  third: 2.5,
+  fourth: 2.4,
+};
 const PastBillingList: React.FC<PastBillingListProps> = ({
   groupedData,
   appRole,
 }) => {
   const [isAnyAccordionExpanded, setIsAnyAccordionExpanded] = useState(false);
 
-  const handleAccordionChange = (isExpanded) => {
+  const handleAccordionChange = (isExpanded: boolean) => {
     setIsAnyAccordionExpanded(isExpanded);
   };
   const editedData = groupedData.map((item) => {
@@ -45,21 +49,22 @@ const PastBillingList: React.FC<PastBillingListProps> = ({
       dueDate: dueDateFormat,
     };
   });
-  console.log('editedData', editedData);
+
   return (
     <Box display="flex" flexDirection="column">
-      <CustomListHeader isAnyAccordionExpanded={isAnyAccordionExpanded}/>
+      <CustomListHeader
+        isAnyAccordionExpanded={isAnyAccordionExpanded}
+        columnWidths={columnWidths}
+      />
       {editedData.map((item) => (
         <CustomListItem
           key={item.date}
           item={item}
           onAccordionChange={handleAccordionChange}
-          isAnyAccordionExpanded={isAnyAccordionExpanded}
+          columnWidths={columnWidths}
+          appRole={appRole}
         />
       ))}
-      {/* {mockUserBillingData.map((item) => (
-        <CustomListItem key={item.did} item={item} />
-      ))} */}
     </Box>
   );
 };

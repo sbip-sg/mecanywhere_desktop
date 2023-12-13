@@ -18,10 +18,10 @@ const CurrentBillingCard = () => {
           </Grid>
           <Grid xs={12}>
             <Typography
-              variant="h5"
+              variant="h2"
               component="div"
               textAlign="end"
-              style={{ color: 'secondary.main', fontSize: '40px' }}
+              style={{ color: 'secondary.main'}}
             >
               103.12 SGD
             </Typography>

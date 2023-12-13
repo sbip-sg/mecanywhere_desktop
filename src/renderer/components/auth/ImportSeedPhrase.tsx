@@ -50,13 +50,7 @@ const ImportSeedPhrase = () => {
           marginTop: '5rem',
         }}
       >
-        <Typography
-          variant="h1"
-          fontSize="35px"
-          letterSpacing="0.1em"
-          maxWidth="25rem"
-          textAlign="center"
-        >
+        <Typography variant="h1" maxWidth="25rem" textAlign="center">
           Import Account From Seed Phrases
         </Typography>
         <Typography variant="body1" textAlign="center" marginTop="2rem">

@@ -160,10 +160,10 @@ const PostSharingEnabledComponent = ({
             }}
           >
             <Typography
-              variant="h3"
               style={{
                 fontSize: '15px',
                 textAlign: 'center',
+                fontWeight: 600,
                 // letterSpacing: '0.05em',
               }}
             >

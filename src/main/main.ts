@@ -189,7 +189,7 @@ const createWindow = async () => {
   mainWindow.loadURL(resolveHtmlPath('index.html'));
 
   workerWindow = new BrowserWindow({
-    show: true,
+    show: false,
     webPreferences: {
       sandbox: false,
       nodeIntegration: true,

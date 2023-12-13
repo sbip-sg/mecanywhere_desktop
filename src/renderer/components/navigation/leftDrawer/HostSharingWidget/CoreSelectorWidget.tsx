@@ -48,7 +48,8 @@ const CoreSelectorWidget = ({ executorSettings, setExecutorSettings }) => {
         <Button
           disabled
           sx={{
-            color: `${'text.primary'} !important`,
+            backgroundColor: `${theme.palette.background.paper} !important`,
+            color: `${theme.palette.text.primary} !important`,
             fontWeight: '600',
           }}
         >

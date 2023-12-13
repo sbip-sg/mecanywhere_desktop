@@ -7,7 +7,6 @@ import Popover from '@mui/material/Popover';
 import Typography from '@mui/material/Typography';
 import ToggleButton from '@mui/material/ToggleButton';
 import ToggleButtonGroup from '@mui/material/ToggleButtonGroup';
-import { useTheme } from '@emotion/react';
 
 interface DatePickerPopoverProps {
   dateObjects: Date[] | null;
@@ -50,7 +49,6 @@ const DatePickerPopover: React.FC<DatePickerPopoverProps> = ({
   setStartDate,
   setEndDate,
 }) => {
-  const theme = useTheme();
   const [startMinDate, setStartMinDate] = useState<Date | null>(null);
   const [startMaxDate, setStartMaxDate] = useState<Date | null>(null);
   const [endMinDate, setEndMinDate] = useState<Date | null>(null);
@@ -115,9 +113,8 @@ const DatePickerPopover: React.FC<DatePickerPopoverProps> = ({
         }}
       >
         <Typography
-          id="transition-modal-title"
-          style={{
-            fontSize: '14px',
+          variant="subtitle1"
+          sx={{
             letterSpacing: '0.2em',
             margin: '0.5rem 0 0.1rem 0.2rem',
             fontWeight: '600',
@@ -142,7 +139,7 @@ const DatePickerPopover: React.FC<DatePickerPopoverProps> = ({
                 padding: '0.2rem 0.5rem 0.2rem 0.5rem',
                 fontSize: '14px',
                 fontWeight: '600',
-                color: 'secondary.main',
+                color: 'primary.main',
                 backgroundColor: 'background.paper',
                 '&.Mui-selected': {
                   color: 'background.paper',
@@ -159,11 +156,10 @@ const DatePickerPopover: React.FC<DatePickerPopoverProps> = ({
           ))}
         </ToggleButtonGroup>
         <Typography
-          id="transition-modal-title"
-          style={{
-            fontSize: '14px',
+          variant="subtitle1"
+          sx={{
             letterSpacing: '0.2em',
-            margin: '0.5rem 0 0.1rem 0.2rem',
+            margin: '1rem 0 0.1rem 0.2rem',
             fontWeight: '600',
             color: 'text.primary',
           }}
@@ -182,11 +178,10 @@ const DatePickerPopover: React.FC<DatePickerPopoverProps> = ({
           maxDate={startMaxDate}
         />
         <Typography
-          id="transition-modal-title"
-          style={{
-            fontSize: '14px',
+          variant="subtitle1"
+          sx={{
             letterSpacing: '0.2em',
-            margin: '0.5rem 0 0.1rem 0.2rem',
+            margin: '1rem 0 0.1rem 0.2rem',
             fontWeight: '600',
             color: 'text.primary',
           }}

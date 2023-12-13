@@ -5,8 +5,8 @@ import ExpandLessIcon from '@mui/icons-material/ExpandLess';
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 import IconButton from '@mui/material/IconButton';
 import Tooltip from '@mui/material/Tooltip';
+import useIsLightTheme from 'renderer/components/common/useIsLightTheme';
 import { toolbarMinHeight } from './TableParams';
-import useThemeTextColor from '../../../utils/useThemeTextColor';
 
 interface CustomToolbarProps {
   isTableExpanded: Boolean;
@@ -20,7 +20,7 @@ const CustomToolbar: React.FC<CustomToolbarProps> = ({
   const handleClickExpandButton = () => {
     setIsTableExpanded((prev) => !prev);
   };
-  const textColor = useThemeTextColor();
+  const isLightTheme = useIsLightTheme();
 
   return (
     <Toolbar
@@ -38,8 +38,7 @@ const CustomToolbar: React.FC<CustomToolbarProps> = ({
         sx={{
           flex: '1 1 100%',
           whiteSpace: 'nowrap',
-          color: textColor,
-
+          color: isLightTheme ? 'text.secondary' : 'text.primary',
         }}
         variant="body1"
         id="tableTitle"
@@ -50,9 +49,13 @@ const CustomToolbar: React.FC<CustomToolbarProps> = ({
       <Tooltip title={isTableExpanded ? 'Collapse Table' : 'Expand Table'}>
         <IconButton onClick={handleClickExpandButton}>
           {isTableExpanded ? (
-            <ExpandMoreIcon sx={{ color: textColor }} />
+            <ExpandMoreIcon
+              sx={{ color: isLightTheme ? 'text.secondary' : 'text.primary' }}
+            />
           ) : (
-            <ExpandLessIcon sx={{ color: textColor }} />
+            <ExpandLessIcon
+              sx={{ color: isLightTheme ? 'text.secondary' : 'text.primary' }}
+            />
           )}
         </IconButton>
       </Tooltip>

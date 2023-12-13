@@ -4,12 +4,12 @@ import reduxStore from 'renderer/redux/store';
 import CurrentBillingCard from '../components/cards/CurrentBillingCard';
 import PastBillingCard from '../components/cards/PastBillingCard';
 import PastBillingList from '../components/list/PastBillingList';
-import { ExternalDataEntry } from '../../../utils/dataTypes';
+import { ExternalDataEntry } from '../../common/dataTypes';
 import {
   findHostHistory,
   findPoHistory,
 } from '../../../services/TransactionServices';
-import groupData from '../../../utils/groupData';
+import groupData from '../../common/groupData';
 
 interface GroupedDataEntry {
   month: string;
@@ -39,7 +39,7 @@ const BillingDashboard: React.FC<BillingDashboardProps> = ({ appRole }) => {
 
     const endDate = new Date();
     const startDate = getCurrentDateMinusMonths(6);
-    const groupedDataPreview = groupData(
+    const groupedDataTemp = groupData(
       data,
       startDate,
       endDate,
@@ -48,7 +48,7 @@ const BillingDashboard: React.FC<BillingDashboardProps> = ({ appRole }) => {
       selfDid,
       appRole
     );
-    setGroupedData(groupedDataPreview);
+    setGroupedData(groupedDataTemp);
   }, [data, appRole, selfDid]);
 
   const fetchAndSetData = async (accessToken: string, role: string) => {
@@ -89,11 +89,9 @@ const BillingDashboard: React.FC<BillingDashboardProps> = ({ appRole }) => {
       }}
     >
       <Typography
-        variant="h1"
+        variant="h3"
         style={{
-          fontSize: '23px',
           padding: '1rem 1rem 0.5rem 2rem',
-          fontWeight: '600',
         }}
       >
         Billing Overview
@@ -132,11 +130,9 @@ const BillingDashboard: React.FC<BillingDashboardProps> = ({ appRole }) => {
 
       <Box>
         <Typography
-          variant="h1"
+          variant="h3"
           style={{
-            fontSize: '23px',
             padding: '1rem 1rem 0.5rem 2rem',
-            fontWeight: '600',
           }}
         >
           Payout History

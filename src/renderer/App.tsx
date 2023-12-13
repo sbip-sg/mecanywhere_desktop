@@ -37,37 +37,50 @@ import { getDesignTokens } from './utils/theme';
 import useHandleAppExitHook from './utils/useHandleAppExitHook';
 
 const PrivateRoutes = () => {
-  // const authenticated = useSelector(
-  //   (state: RootState) => state.accountUser.authenticated
-  // );
-  // return authenticated ? <Outlet /> : <Navigate to="/clienttxndashboard" />;
-  const authenticated = true;
-  return authenticated ? <Outlet /> : <Navigate to="/login" />;
+  const isAuthenticated = useSelector(
+    (state: RootState) => state.userReducer.authenticated
+  );
+  const role = window.electron.store.get('role');
+  return isAuthenticated ? (
+    <Outlet />
+  ) : (
+    <Navigate
+      to={role === 'provider' ? '/providertxndashboard' : '/hosttxndashboard'}
+    />
+  );
+};
+
+const RootRoute = () => {
+  const isAuthenticated = useSelector(
+    (state: RootState) => state.userReducer.authenticated
+  );
+  const role = window.electron.store.get('role');
+  const did = window.electron.store.get('did');
+
+  if (isAuthenticated) {
+    return (
+      <Navigate
+        to={role === 'provider' ? '/providertxndashboard' : '/hosttxndashboard'}
+      />
+    );
+  }
+  return did === '' ? <Register /> : <Login />;
 };
 
 const Animated = () => {
   const location = useLocation();
+
   return (
     <Routes location={location} key={location.pathname}>
-      {window.electron.store.get('did') === '' ? (
-        <Route
-          path="/"
-          element={
-            <Transitions>
-              <Register />
-            </Transitions>
-          }
-        />
-      ) : (
-        <Route
-          path="/"
-          element={
-            <Transitions>
-              <Login />
-            </Transitions>
-          }
-        />
-      )}
+      <Route
+        path="/"
+        element={
+          <Transitions>
+            <RootRoute />
+          </Transitions>
+        }
+      />
+
       <Route
         path="/login"
         element={
@@ -109,6 +122,14 @@ const Animated = () => {
         }
       />
       <Route element={<PrivateRoutes />}>
+        <Route
+          path="/"
+          element={
+            <Transitions>
+              <HostTxnDashboard />
+            </Transitions>
+          }
+        />
         <Route
           path="/profile"
           element={
