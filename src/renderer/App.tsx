@@ -35,6 +35,7 @@ import Settings from './components/settings/Settings';
 // import useHeartbeatHook from './utils/useHeartbeatHook';
 import { getDesignTokens } from './utils/theme';
 import useHandleAppExitHook from './utils/useHandleAppExitHook';
+import useClientHooks from './utils/useClientHooks';
 
 const PrivateRoutes = () => {
   const isAuthenticated = useSelector(
@@ -206,6 +207,7 @@ const App = () => {
   const theme = useMemo(() => createTheme(getDesignTokens(mode)), [mode]);
   // useHeartbeatHook();
   useHandleAppExitHook();
+  useClientHooks();
   return (
     <StyledEngineProvider injectFirst>
       <ThemeProvider theme={theme}>

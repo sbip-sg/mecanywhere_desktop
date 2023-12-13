@@ -116,44 +116,44 @@ export async function deregisterHost(
   }
 }
 
-// export async function registerClient(token: string, did: string) {
-//   try {
-//     const response = await fetch(`${url}/registration/register_client`, {
-//       method: 'POST',
-//       headers: {
-//         'Content-Type': 'application/json',
-//         Authorization: `Bearer ${token}`,
-//       },
-//       body: JSON.stringify({ did }),
-//     });
+export async function registerClient(token: string, did: string) {
+  try {
+    const response = await fetch(`${url}/registration/register_client`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        Authorization: `Bearer ${token}`,
+      },
+      body: JSON.stringify({ did }),
+    });
 
-//     if (!response.ok) {
-//       throw new Error('Network response not ok');
-//     }
-//     return true;
-//   } catch (error) {
-//     console.error('There was a problem with the fetch operation:', error);
-//   }
-// }
+    if (!response.ok) {
+      throw new Error('Network response not ok');
+    }
+    return true;
+  } catch (error) {
+    console.error('There was a problem with the fetch operation:', error);
+  }
+}
 
-// export async function deregisterClient(token: string, did: string) {
-//   try {
-//     const response = await fetch(`${url}/registration/deregister_client`, {
-//       method: 'POST',
-//       headers: {
-//         'content-type': 'application/json',
-//         Authorization: `Bearer ${token}`,
-//       },
-//       body: JSON.stringify({ did }),
-//     });
-//     if (!response.ok) {
-//       throw new Error('Network response not ok');
-//     }
-//     return true;
-//   } catch (error) {
-//     console.error('There was a problem with the fetch operation:', error);
-//   }
-// }
+export async function deregisterClient(token: string, did: string) {
+  try {
+    const response = await fetch(`${url}/registration/deregister_client`, {
+      method: 'POST',
+      headers: {
+        'content-type': 'application/json',
+        Authorization: `Bearer ${token}`,
+      },
+      body: JSON.stringify({ did }),
+    });
+    if (!response.ok) {
+      throw new Error('Network response not ok');
+    }
+    return true;
+  } catch (error) {
+    console.error('There was a problem with the fetch operation:', error);
+  }
+}
 
 // export async function createChallenge(data: any): Promise<any> {
 //   try {

@@ -1,3 +1,5 @@
+import Channels from '../common/channels.js';
+
 const log = require('electron-log/renderer');
 const amqp = require('amqplib');
 const { ipcRenderer } = require('electron');
@@ -17,9 +19,6 @@ const TaskResult = protobuf
 
 const parseTaskFromProto = (content) => {
   const task = Task.decode(content);
-  if (task.resource != null) {
-    task.resource = struct.decode(task.resource);
-  }
   const typeError = Task.verify(task);
 
   if (typeError) {
@@ -29,7 +28,7 @@ const parseTaskFromProto = (content) => {
     return { id, content: typeError.toString() };
   }
   console.log(` [con] Received: ${JSON.stringify(task)}`);
-  log.info(` [con] Received: ${JSON.stringify(task)}`)
+  log.info(` [con] Received: ${JSON.stringify(task)}`);
 
   return task;
 };
@@ -50,19 +49,21 @@ class Consumer {
     this.startConsumer = async function startConsumer() {
       connection = await amqp.connect(MQ_URL);
       console.log(' [con] Connected to ', MQ_URL);
-      log.info(' [con] Connected to ', MQ_URL)
+      log.info(' [con] Connected to ', MQ_URL);
       channel = await connection.createChannel();
       await channel.assertQueue(queueName, {
         durable: true,
-        expires: 1000 * 60 * 30,
+        autoDelete: true,
       });
       console.log(' [con] Awaiting RPC requests');
-      log.info(' [con] Awaiting RPC requests')
+      log.info(' [con] Awaiting RPC requests');
 
       channel.consume(queueName, async (msg) => {
         const { correlationId } = msg.properties;
         const resultObject = await this.handleMsgContent(msg.content);
-        const serializedResult = TaskResult.encode(resultObject).finish();
+        const serializedResult = TaskResult.encode(
+          TaskResult.fromObject(resultObject)
+        ).finish();
 
         channel.sendToQueue(
           msg.properties.replyTo,
@@ -87,20 +88,20 @@ class Consumer {
         connection = null;
       }
       console.log(' [con] Connection closed');
-      log.info(' [con] Connection closed')
+      log.info(' [con] Connection closed');
 
       delete Consumer.openQueues[queueName];
     };
 
     this.handleMsgContent = async function handleMsgContent(content) {
-      const transactionStartDatetime = Math.floor(new Date().getTime() / 1000)
+      const transactionStartDatetime = Math.floor(new Date().getTime() / 1000);
 
       const task = parseTaskFromProto(content);
       ipcRenderer.send(
-        'job-received',
+        Channels.JOB_RECEIVED,
         task.id,
         task.containerRef,
-        task.content,
+        task.content
         // task.resource,
         // task.runtime
       );
@@ -113,31 +114,37 @@ class Consumer {
         task.runtime
       );
 
-      let resourceConsumed = 0.1;
-      if (task.resource != null) {
-        resourceConsumed = task.resource.cpu * task.resource.memory;
+      if (task.resource == null) {
+        task.resource = { "cpu": 1, "memory": 128 };
       }
-      console.log(` [con] Resource consumed: ${resourceConsumed}`);
-      log.info(` [con] Resource consumed: ${resourceConsumed}`)
+      console.log(` [con] Resource consumed: ${task.resource}`);
+      log.info(` [con] Resource consumed: ${task.resource}`);
 
-      const transactionEndDatetime = Math.floor(new Date().getTime() / 1000)
+      const transactionEndDatetime = Math.floor(new Date().getTime() / 1000);
       const duration = transactionEndDatetime - transactionStartDatetime;
-      const reply = { id: task.id, content: result, resourceConsumed, transactionStartDatetime, transactionEndDatetime, duration };
+      const reply = {
+        id: task.id,
+        content: result,
+        resource: task.resource,
+        transactionStartDatetime,
+        transactionEndDatetime,
+        duration,
+      };
 
       console.log(` [con] Result: ${JSON.stringify(reply)}`);
-      log.info(` [con] Result: ${JSON.stringify(reply)}`)
+      log.info(` [con] Result: ${JSON.stringify(reply)}`);
 
       return reply;
     };
   }
 }
 
-ipcRenderer.on('start-consumer', async (event, queueName) => {
+ipcRenderer.on(Channels.START_CONSUMER, async (event, queueName) => {
   const consumer = new Consumer(queueName);
   await consumer.startConsumer();
 });
 
-ipcRenderer.on('stop-consumer', async (event, queueName) => {
+ipcRenderer.on(Channels.STOP_CONSUMER, async (event, queueName) => {
   const consumer = Consumer.openQueues[queueName];
   if (consumer) {
     await consumer.close();

@@ -2,7 +2,6 @@ import asyncio
 import json
 from py import meca_api
 import torch
-import os
 from dotenv import load_dotenv
 
 def euclidean_distance(a, b):
@@ -26,25 +25,29 @@ async def distributed_knn(input_data, dataset, k, num_processes):
 
     result_list = []
 
-    def callback_on_receive(id, status, response, err):
-        print("Received in test:", id, status, response, err)
+    def callback_on_receive(task_id, status, response, err, corr_id):
+        print("Received in test:", task_id, status, response, err, corr_id)
         if status == 0:
-          raise Exception(err)
+          print(err, "for task: ", task_id, "corr_id:", corr_id)
         try:
           result = json.loads(response)
         except:
           print("Error parsing response:", response)
-          raise SystemExit()
+          return
         result_list.extend(result)
 
-    await meca_api.initiateConnection(os.getenv('DID'), os.getenv('VC'))
+    try:
+      await meca_api.initiate_connection()
+    except Exception as e:
+      await meca_api.disconnect()
+      raise SystemExit()
 
     for i in range(num_processes):
         start_index = i * chunk_size
         end_index = (i + 1) * chunk_size if i < num_processes - 1 else num_data_points
         sliced_dataset = dataset[start_index:end_index].clone().detach()
 
-        await meca_api.offload_task_and_get_result(
+        await meca_api.offload_task(
           task_id=str(i),
           container_ref='jyume/meca:0.0.6',
           data=json.dumps({
@@ -58,6 +61,8 @@ async def distributed_knn(input_data, dataset, k, num_processes):
              "memory": 256
           },
           callback=callback_on_receive)
+
+    await meca_api.join(task_timeout=30, join_timeout=30)
 
     # ====================  ====================
 
