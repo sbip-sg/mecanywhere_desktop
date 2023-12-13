@@ -7,44 +7,59 @@ export interface PropConfig<T> {
   label: string;
 }
 
+export const renderWithOptionalSlice = (
+  value: string,
+  shouldSlice: boolean = true
+): string => {
+  return shouldSlice ? `${value.slice(0, 10)}...` : value;
+};
+
 export const InternalPropConfigList: PropConfig<InternalDataEntry>[] = [
   {
     property: 'transaction_id',
-    renderer: (data: InternalDataEntry) =>
-      `${data.transaction_id.slice(0, 10)}...`,
-    label: 'transaction ID',
+    renderer: (data: InternalDataEntry, shouldSlice?: boolean) =>
+      renderWithOptionalSlice(data.transaction_id, shouldSlice),
+    label: 'Transaction ID',
   },
   {
     property: 'transaction_start_datetime',
     renderer: (data: InternalDataEntry) =>
       convertEpochToStandardTimeWithDate(data.transaction_start_datetime),
-    label: 'transaction Start Datetime',
+    label: 'Transaction Start Datetime',
   },
   {
     property: 'transaction_end_datetime',
     renderer: (data: InternalDataEntry) =>
       convertEpochToStandardTimeWithDate(data.transaction_end_datetime),
-    label: 'transaction End Datetime',
+    label: 'Transaction End Datetime',
   },
   {
     property: 'did',
-    renderer: (data: InternalDataEntry) => `${data.did.slice(0, 10)}...`,
+    renderer: (data: InternalDataEntry, shouldSlice?: boolean) =>
+      renderWithOptionalSlice(data.did, shouldSlice),
+    // renderer: (data: InternalDataEntry) => `${data.did.slice(0, 10)}...`,
     label: 'Client DID',
   },
   {
     property: 'host_did',
-    renderer: (data: InternalDataEntry) => `${data.host_did.slice(0, 10)}...`,
+    renderer: (data: InternalDataEntry, shouldSlice?: boolean) =>
+      renderWithOptionalSlice(data.host_did, shouldSlice),
+    // renderer: (data: InternalDataEntry) => `${data.host_did.slice(0, 10)}...`,
     label: 'Host DID',
   },
   {
     property: 'po_did',
-    renderer: (data: InternalDataEntry) => `${data.po_did.slice(0, 10)}...`,
+    renderer: (data: InternalDataEntry, shouldSlice?: boolean) =>
+      renderWithOptionalSlice(data.po_did, shouldSlice),
+    // renderer: (data: InternalDataEntry) => `${data.po_did.slice(0, 10)}...`,
     label: 'Provider DID of Client',
   },
   {
     property: 'host_po_did',
-    renderer: (data: InternalDataEntry) =>
-      `${data.host_po_did.slice(0, 10)}...`,
+    renderer: (data: InternalDataEntry, shouldSlice?: boolean) =>
+      renderWithOptionalSlice(data.host_po_did, shouldSlice),
+    // renderer: (data: InternalDataEntry) =>
+    //   `${data.host_po_did.slice(0, 10)}...`,
     label: 'Provider DID of Host',
   },
   {
@@ -77,8 +92,10 @@ export const InternalPropConfigList: PropConfig<InternalDataEntry>[] = [
 export const ExternalPropConfigList: PropConfig<ExternalDataEntry>[] = [
   {
     property: 'transaction_id',
-    renderer: (data: ExternalDataEntry) =>
-      `${data.transaction_id.slice(0, 10)}...`,
+    renderer: (data: ExternalDataEntry, shouldSlice?: boolean) =>
+      renderWithOptionalSlice(data.transaction_id, shouldSlice),
+    // renderer: (data: ExternalDataEntry) =>
+    //   `${data.transaction_id.slice(0, 10)}...`,
     label: 'Transaction ID',
   },
   {

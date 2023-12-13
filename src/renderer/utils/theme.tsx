@@ -88,8 +88,8 @@ export const getDesignTokens = (mode: PaletteMode) => ({
       fontSize: '24px',
     },
     h4: {
-      fontWeight: 500,
-      letterSpacing: `0.1em`,
+      letterSpacing: '0.1em',
+      fontSize: '20px',
     },
     subtitle1: {
       fontSize: '14px',

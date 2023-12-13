@@ -19,10 +19,12 @@ import HelpIcon from '@mui/icons-material/Help';
 import SettingsIcon from '@mui/icons-material/Settings';
 import LogoutIcon from '@mui/icons-material/Logout';
 import { useNavigate } from 'react-router-dom';
+import { useSelector } from 'react-redux';
 import deleteAccount from 'renderer/electron-store';
 import useIsLightTheme from 'renderer/components/common/useIsLightTheme';
 import actions from '../../../redux/actionCreators';
 import KeyExportPopover from './KeyExportPopover';
+import { RootState } from '../../../redux/store';
 
 interface RightDrawerComponentProps {
   isOpen: boolean;
@@ -49,6 +51,7 @@ const RightDrawerComponent: React.FC<RightDrawerComponentProps> = ({
 }) => {
   const navigate = useNavigate();
   const isLightTheme = useIsLightTheme();
+  const appRole = useSelector((state: RootState) => state.roleReducer.role);
 
   const handleThemeChange = () => {
     const newColor = isLightTheme ? 'dark' : 'light';
@@ -129,8 +132,9 @@ const RightDrawerComponent: React.FC<RightDrawerComponentProps> = ({
               <Box
                 sx={{
                   display: 'flex',
-                  alignItems: 'center',
-                  justifyContent: 'right',
+                  flexDirection: 'column',
+                  // alignItems: 'center',
+                  // justifyContent: 'right',
                   margin: '0 1rem 1rem 1.5rem',
                 }}
               >
@@ -150,9 +154,19 @@ const RightDrawerComponent: React.FC<RightDrawerComponentProps> = ({
                     </Typography>
                   </Box>
                 </Box>
-                {/* <Typography variant="h5" fontSize="16px" >
-                Registered as a parent organization.
-              </Typography>         */}
+                <Box
+                  sx={{
+                    // display: 'flex',
+                    // alignItems: 'center',
+                    // justifyContent: 'start',
+                    paddingTop: '1rem',
+                  }}
+                >
+                  <Typography variant="h5" fontSize="16px" textAlign="start">
+                    Registered as a{' '}
+                    {appRole ==! 'provider' ? 'parent organization' : 'host'}.
+                  </Typography>
+                </Box>
               </Box>
             </ListItem>
             <Divider variant="middle" sx={{ margin: '0.5rem' }} />

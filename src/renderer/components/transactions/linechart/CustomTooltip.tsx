@@ -27,33 +27,35 @@ const CustomTooltip = ({
           {label}
         </Box>
         <Box>
-          {payload.map((pld: any) => (
-            <Box key={pld.name}>
-              <Box
-                sx={{
-                  color: isClient(pld.name)
-                    ? 'secondary.main'
-                    : isHost(pld.name)
-                    ? 'secondary.contrastText'
-                    : 'secondary.contrastText',
-                  textAlign: 'right',
-                  fontSize: '18px',
-                  fontWeight: '600',
-                }}
-              >
-                {pld.value.toFixed(2)}
+          {payload
+            .filter((pld: any) => pld.name !== 'half_total_price')
+            .map((pld: any) => (
+              <Box key={pld.name}>
+                <Box
+                  sx={{
+                    color: isClient(pld.name)
+                      ? 'secondary.main'
+                      : isHost(pld.name)
+                      ? 'secondary.contrastText'
+                      : 'secondary.contrastText',
+                    textAlign: 'right',
+                    fontSize: '18px',
+                    fontWeight: '600',
+                  }}
+                >
+                  {pld.value.toFixed(2)}
+                </Box>
+                <Box
+                  sx={{
+                    color: 'text.primary',
+                    textAlign: 'right',
+                    fontSize: '14px',
+                  }}
+                >
+                  {getLabelForDataKey(pld.name)}
+                </Box>
               </Box>
-              <Box
-                sx={{
-                  color: 'text.primary',
-                  textAlign: 'right',
-                  fontSize: '14px',
-                }}
-              >
-                {getLabelForDataKey(pld.name)}
-              </Box>
-            </Box>
-          ))}
+            ))}
         </Box>
       </Box>
     );

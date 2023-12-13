@@ -35,7 +35,9 @@ const CustomListItem = ({ item, onAccordionChange, columnWidths, appRole }) => {
     >
       <AccordionSummary
         sx={{
-          padding: '1rem 1.5rem 1rem 0rem',
+          padding: isExpanded
+            ? '0.5rem 1.5rem 0.5rem 0rem'
+            : '1rem 1.5rem 1rem 0rem',
           borderRadius: '10px',
           flexDirection: 'row',
           '&.Mui-expanded': {

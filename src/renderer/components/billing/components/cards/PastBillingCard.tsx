@@ -12,6 +12,7 @@ import {
   CartesianGrid,
   Tooltip,
 } from 'recharts';
+import CustomTooltip from '../../../transactions/linechart/CustomTooltip';
 
 interface GroupedDataEntry {
   month: string;
@@ -68,7 +69,7 @@ const PastBillingCard: React.FC<PastBillingCardProps> = ({
                     offset={10}
                   />
                 </YAxis>
-                <Tooltip />
+                <Tooltip content={<CustomTooltip />} />
                 {/* Display for non-providers (i.e., host) */}
                 {appRole !== 'provider' && (
                   <>
@@ -108,7 +109,7 @@ const PastBillingCard: React.FC<PastBillingCardProps> = ({
                       type="linear"
                       strokeLinejoin="round"
                       dataKey="half_total_price"
-                      stroke={theme.palette.secondary.contrastText} // Different color for line
+                      stroke={theme.palette.text.primary} // Different color for line
                       strokeWidth={3}
                     />
                   </>
