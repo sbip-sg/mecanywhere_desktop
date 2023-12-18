@@ -1,19 +1,22 @@
 syntax = "proto3";
 
-import "google/protobuf/struct.proto";
+message Resource {
+  int32 cpu = 1;
+  int32 memory = 2;
+}
 
 message Task {
   string id = 1;
   string containerRef = 2;
   string content = 3;
-  google.protobuf.Struct resource = 4;
+  Resource resource = 4;
   string runtime = 5;
 }
 
 message TaskResult {
   string id = 1;
   string content = 2;
-  float resource_consumed = 3;
+  Resource resource = 3;
   int32 transaction_start_datetime = 4;
   int32 transaction_end_datetime = 5;
   int32 duration = 6;

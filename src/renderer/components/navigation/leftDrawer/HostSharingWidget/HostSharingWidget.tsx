@@ -53,7 +53,10 @@ const HostSharingWidget = () => {
       microVM_runtime: 'kata',
     };
     const updateConfigResponse = await updateConfig(configToUpdate);
-    await handleRegisterHost();
+    await handleRegisterHost(
+      executorSettings.cpu_cores,
+      executorSettings.memory_mb
+    );
     await new Promise((resolve) => setTimeout(resolve, 1000)); // remove in production; solely for visualization of loading icon
     setResourceSharingEnabled(true);
     setIsLoading(false);

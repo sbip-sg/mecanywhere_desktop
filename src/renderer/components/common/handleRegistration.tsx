@@ -12,11 +12,11 @@ import {
 } from '../../services/RegistrationServices';
 import reduxStore from '../../redux/store';
 
-export const handleRegisterHost = async () => {
+export const handleRegisterHost = async (cpu: number, memory: number) => {
   const did = window.electron.store.get('did');
   const { accessToken } = reduxStore.getState().userReducer;
   if (did && accessToken) {
-    const response = await registerHost(accessToken, did);
+    const response = await registerHost(accessToken, did, cpu, memory);
     if (response) {
       const unpauseResponse = await unpauseExecutor();
       if (!unpauseResponse) {

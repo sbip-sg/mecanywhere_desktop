@@ -64,7 +64,13 @@ export async function authenticate(did: string, credential: object) {
   }
 }
 
-export async function registerHost(token: string, did: string, retryCount = 0) {
+export async function registerHost(
+  token: string,
+  did: string,
+  cpu: number,
+  memory: number,
+  retryCount = 0
+) {
   try {
     const response = await fetch(`${url}/registration/register_host`, {
       method: 'POST',
@@ -72,13 +78,13 @@ export async function registerHost(token: string, did: string, retryCount = 0) {
         'Content-Type': 'application/json',
         Authorization: `Bearer ${token}`,
       },
-      body: JSON.stringify({ did }),
+      body: JSON.stringify({ did, resources: { cpu, memory } }),
     });
 
     if (!response.ok) {
       if (response.status === 401 && retryCount < 1) {
         const newToken = await handle401Error();
-        return registerHost(newToken, did, retryCount + 1);
+        return registerHost(newToken, did, cpu, memory, retryCount + 1);
       }
       throw new Error('Network response not ok');
     }
