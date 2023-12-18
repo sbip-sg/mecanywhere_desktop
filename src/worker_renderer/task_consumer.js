@@ -18,7 +18,15 @@ const TaskResult = protobuf
   .lookupType('TaskResult');
 
 const parseTaskFromProto = (content) => {
-  const task = Task.decode(content);
+  let task;
+  try {
+    task = Task.decode(content);
+  } catch (err) {
+    console.log(' [con] Got decode error: %s', err.toString());
+    log.info(' [con] Got decode error: %s', err.toString());
+    return { id: '', content: err.toString() };
+  }
+
   const typeError = Task.verify(task);
 
   if (typeError) {
@@ -59,6 +67,7 @@ class Consumer {
       log.info(' [con] Awaiting RPC requests');
 
       channel.consume(queueName, async (msg) => {
+        channel.ack(msg);
         const { correlationId } = msg.properties;
         const resultObject = await this.handleMsgContent(msg.content);
         const serializedResult = TaskResult.encode(
@@ -73,8 +82,6 @@ class Consumer {
             persistent: true,
           }
         );
-
-        channel.ack(msg);
       });
     };
 
