@@ -2,6 +2,8 @@
 
 ## Python
 
+This SDK only provides offloading asynchronously and receiving results via callback. To do synchronous offloading, you may use the `join` function immediately after an offload.
+
 #### async def initiate_connection([timeout]) -> None
     Starts a socket connection to the local MECA desktop app.
 
