@@ -281,6 +281,14 @@ func (meca *MecaExecutor) Execute(ctx context.Context, taskCfg TaskConfig, input
 		taskCfg.Rsrc = getDefaultResourceLimit()
 	}
 
+	// validate the gpu setting
+	if taskCfg.Rsrc.UseGPU {
+		gpuCount := meca.rm.GetGPUCount()
+		if gpuCount == 0 || gpuCount < int(taskCfg.Rsrc.GPUCount) {
+			return nil, errors.New("no GPU available")
+		}
+	}
+
 	// translate the runtime type
 	if len(taskCfg.Runtime) > 0 {
 		if rt, ok := meca.runtimes[taskCfg.Runtime]; !ok {

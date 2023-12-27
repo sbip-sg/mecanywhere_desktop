@@ -3,6 +3,7 @@ module github.com/sbip-sg/meca
 go 1.19
 
 require (
+	github.com/NVIDIA/go-nvml v0.12.0-1
 	github.com/docker/cli v24.0.7+incompatible
 	github.com/docker/docker v24.0.5+incompatible
 	github.com/gin-gonic/gin v1.9.1

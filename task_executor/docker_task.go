@@ -213,7 +213,7 @@ func newDockerMecaExecutor(cfg MecaExecutorConfig) *MecaExecutor {
 	return &MecaExecutor{
 		timeout:  cfg.Timeout,
 		tracker:  newTaskTracker(),
-		rm:       NewResourceManager(cfg.Cpu, cfg.Mem),
+		rm:       NewResourceManager(cfg.Cpu, cfg.Mem, cfg.HasGPU),
 		repo:     NewLocalDockerRepo(cli),
 		fac:      NewDockerTaskFactory(cli),
 		runtimes: runtimes,
