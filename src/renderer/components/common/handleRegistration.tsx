@@ -40,7 +40,7 @@ export const handleDeregisterHost = async () => {
   log.info('in deregister');
   const response = await deregisterHost(accessToken, did);
   if (response) {
-    actions.setAccessToken('');
+    // actions.setAccessToken('');
     window.electron.stopConsumer(did);
     log.info('successfully deregistered');
   } else {
@@ -67,7 +67,7 @@ export const handleDeregisterClient = async () => {
   const { accessToken } = reduxStore.getState().userReducer;
   const response = await deregisterClient(accessToken, did);
   if (response) {
-    actions.setAccessToken('');
+    // actions.setAccessToken('');
     log.info('successfully deregistered as client');
   } else {
     throw new Error('Deregistration failed');

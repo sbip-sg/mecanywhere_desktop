@@ -72,6 +72,8 @@ export async function registerHost(
   retryCount = 0
 ) {
   try {
+    console.log('token', token);
+    console.log('did', window.electron.store.get('did'));
     const response = await fetch(`${url}/registration/register_host`, {
       method: 'POST',
       headers: {
