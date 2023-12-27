@@ -28,8 +28,10 @@ func NewTaskConfig(id, rt string, rsrc ResourceLimit) TaskConfig {
 }
 
 type ResourceLimit struct {
-	CPU int64 `json:"cpu"` // core
-	MEM int64 `json:"mem"` // MB
+	CPU      int64 `json:"cpu"` // core
+	MEM      int64 `json:"mem"` // MB
+	UseGPU   bool  `json:"use_gpu"`
+	GPUCount int64 `json:"gpu_count"`
 }
 
 func getDefaultResourceLimit() ResourceLimit {
@@ -41,7 +43,11 @@ func (l ResourceLimit) isEmpty() bool {
 }
 
 func (l ResourceLimit) String() string {
-	return fmt.Sprintf("c%d-m%d", l.CPU, l.MEM)
+	if !l.UseGPU {
+		return fmt.Sprintf("c%d-m%d", l.CPU, l.MEM)
+	} else {
+		return fmt.Sprintf("c%d-m%d-g%d", l.CPU, l.MEM, l.GPUCount)
+	}
 }
 
 func GetTaskId(cfg TaskConfig) string {

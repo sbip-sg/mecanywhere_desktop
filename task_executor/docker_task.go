@@ -11,6 +11,7 @@ import (
 	"strings"
 	"time"
 
+	"github.com/docker/cli/opts"
 	"github.com/docker/docker/api/types"
 	"github.com/docker/docker/api/types/container"
 	"github.com/docker/docker/api/types/network"
@@ -122,6 +123,12 @@ func (t *DockerTask) Init(ctx context.Context, _ string, _ int) error {
 	resources := container.Resources{
 		NanoCPUs: t.resource.CPU * 1000000000,
 		Memory:   t.resource.MEM << 10 << 10,
+	}
+
+	if t.resource.UseGPU {
+		gpuOpts := opts.GpuOpts{}
+		gpuOpts.Set(fmt.Sprintf("count=%d", t.resource.GPUCount))
+		resources.DeviceRequests = gpuOpts.Value()
 	}
 	resp, err := t.cli.ContainerCreate(ctx, &container.Config{Image: t.imageId}, &container.HostConfig{Resources: resources, Runtime: t.runtime}, networkConfig, nil, containerName)
 	if err != nil {
