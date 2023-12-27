@@ -30,23 +30,27 @@ This SDK only provides offloading asynchronously and receiving results via callb
 
 ### Test
 
-Start desktop app, docker daemon, executor and build dockerized task with
+Start desktop app, docker daemon, executor, go to example_containers and build dockerized task with
 ```
-docker build -t test-offload -f containerized_example/Dockerfile.example containerized_example
+docker build -t <tag> example_containers/knn
 ```
-Start virtual env, install requirements and run test-offload.py.
+Go to knn.py and change the container_ref to the tag you just built.
+Start virtual env, install requirements and run knn.py.
 
 ```
 pip install torch==2.0.1+cpu --index-url https://download.pytorch.org/whl/cpu
 pip install -r requirements.txt
+python knn.py
 ```
 
 ### Examples
 
-[test_basic_offload.py](test_basic_offload.py)
+This folder contains examples of how to use the SDK to offload tasks. The example_containers folder contains example tasks that can be called and run by the host.
 
-[test-offload.py](test-offload.py)
+- [basic_offload.py](basic_offload.py) uses the [sampleserver](../task_executor/sample/) container.
+
+- [knn.py](knn.py) uses the [knn](example_containers/knn) container.
 
 ## JavaScript
 
-Not updated
+Not in use
