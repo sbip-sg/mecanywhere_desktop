@@ -21,7 +21,7 @@ const CurrentBillingCard = () => {
               variant="h2"
               component="div"
               textAlign="end"
-              style={{ color: 'secondary.main'}}
+              style={{ color: 'text.primary'}}
             >
               103.12 SGD
             </Typography>

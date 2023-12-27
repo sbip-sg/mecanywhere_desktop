@@ -53,6 +53,8 @@ const HostSharingWidget = () => {
       microVM_runtime: 'kata',
     };
     const updateConfigResponse = await updateConfig(configToUpdate);
+    console.log("executorSettings.cpu_cores", executorSettings.cpu_cores)
+    console.log("executorSettings.memory_mb", executorSettings.memory_mb)
     await handleRegisterHost(
       executorSettings.cpu_cores,
       executorSettings.memory_mb

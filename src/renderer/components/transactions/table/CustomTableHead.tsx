@@ -8,6 +8,7 @@ import StyledTableRow from './StyledTableRow';
 import { Order } from './comparatorUtils';
 import { InternalDataEntry, ExternalDataEntry } from '../../common/dataTypes';
 import { PropConfig } from '../propConfig';
+import useIsLightTheme from 'renderer/components/common/useIsLightTheme';
 
 interface CustomTableHeadProps {
   onRequestSort: (
@@ -32,7 +33,7 @@ const CustomTableHead = (props: CustomTableHeadProps) => {
     addRightPadding,
     maxRowHeight,
   } = props;
-
+  const isLightTheme = useIsLightTheme();
   const createSortHandler =
     (property: keyof InternalDataEntry | keyof ExternalDataEntry) =>
     (event: React.MouseEvent<unknown>) => {
@@ -54,7 +55,7 @@ const CustomTableHead = (props: CustomTableHeadProps) => {
               direction={orderBy === config.property ? order : 'asc'}
               onClick={createSortHandler(config.property)}
               sx={{
-                color: 'primary.dark',
+                color: isLightTheme ? 'primary.dark' : 'text.primary',
                 // filter: 'brightness(50%)',
                 '&:hover': {
                   color: 'secondary.contrastText',

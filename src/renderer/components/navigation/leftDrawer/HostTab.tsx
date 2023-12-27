@@ -8,14 +8,21 @@ import { useNavigate } from 'react-router-dom';
 import HostSharingWidget from './HostSharingWidget/HostSharingWidget';
 import actions from '../../../redux/actionCreators';
 import deleteAccount from 'renderer/electron-store';
+import { Box } from '@mui/material';
+import useIsLightTheme from 'renderer/components/common/useIsLightTheme';
 
 const HostTab = () => {
   const navigate = useNavigate();
   const listTopBottomMargin = '0.5rem';
   const listItemSpacing = '8px';
-
+  const isLightTheme = useIsLightTheme();
   return (
-    <>
+    <Box
+      sx={{
+        backgroundColor: isLightTheme ? '' : 'primary.dark',
+        height: '100%',
+      }}
+    >
       <List disablePadding component="li">
         <HostSharingWidget />
         <Divider />
@@ -73,7 +80,7 @@ const HostTab = () => {
         </ListItemButton>
       </List>
       <Divider />
-    </>
+    </Box>
   );
 };
 

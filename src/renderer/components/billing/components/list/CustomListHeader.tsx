@@ -15,7 +15,7 @@ const CustomListHeader = ({ isAnyAccordionExpanded, columnWidths }) => {
   let headerBackgroundColor = 'background.paper'; // dark theme case
   if (isLightTheme) {
     headerBackgroundColor = isAnyAccordionExpanded
-      ? 'background.default'
+      ? 'background.paper'
       : 'primary.dark';
   }
   return (
