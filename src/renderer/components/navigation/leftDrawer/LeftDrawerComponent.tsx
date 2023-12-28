@@ -5,7 +5,7 @@ import { useEffect } from 'react';
 import { useSelector } from 'react-redux';
 import { RootState } from '../../../redux/store';
 import ProviderTab from './ProviderTab';
-import HostTab from './HostTab';
+import ClientHostTab from './ClientHostTab';
 import actions from '../../../redux/actionCreators';
 
 const LeftDrawerComponent = () => {
@@ -29,7 +29,8 @@ const LeftDrawerComponent = () => {
     >
       <Toolbar sx={{ backgroundColor: 'red' }} />
       <Box id="drawerlist-wrapper" sx={{ height: '100%', overflow: 'auto' }}>
-        {role === 'host' && <HostTab />}
+        {role === 'host' && <ClientHostTab />}
+        {role === 'client' && <ClientHostTab />}
         {role === 'provider' && <ProviderTab />}
       </Box>
     </Drawer>

@@ -55,6 +55,8 @@ const Login = () => {
           // navigate('/');
           if (role === 'host') {
             navigate('/hosttxndashboard');
+          } else if (role === 'client') {
+            navigate('/clienttxndashboard');
           } else if (role === 'provider') {
             navigate('/providertxndashboard');
           } else {

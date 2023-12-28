@@ -12,6 +12,7 @@ module.exports = {
     'no-useless-catch': 'off',
     'no-console': 'off',
     'camelcase': 'off',
+    'no-else-return': 'off',
     'consistent-return': 'off',
     "no-unused-vars": ["error", { "argsIgnorePattern": "^_" }],
     'react/function-component-definition': [

@@ -1,21 +1,22 @@
 import List from '@mui/material/List';
 import DashboardIcon from '@mui/icons-material/Dashboard';
 import PaidIcon from '@mui/icons-material/Paid';
+import SwapHorizIcon from '@mui/icons-material/SwapHoriz';
 import Typography from '@mui/material/Typography';
 import Divider from '@mui/material/Divider';
 import ListItemButton from '@mui/material/ListItemButton';
+import { Box } from '@mui/material';
+import useIsLightTheme from 'renderer/components/common/useIsLightTheme';
 import { useNavigate } from 'react-router-dom';
 import HostSharingWidget from './HostSharingWidget/HostSharingWidget';
 import actions from '../../../redux/actionCreators';
-import deleteAccount from 'renderer/electron-store';
-import { Box } from '@mui/material';
-import useIsLightTheme from 'renderer/components/common/useIsLightTheme';
 
 const HostTab = () => {
   const navigate = useNavigate();
   const listTopBottomMargin = '0.5rem';
   const listItemSpacing = '8px';
   const isLightTheme = useIsLightTheme();
+
   return (
     <Box
       sx={{
@@ -68,7 +69,7 @@ const HostTab = () => {
           }}
           key="switch_view_to_provider"
         >
-          <PaidIcon
+          <SwapHorizIcon
             sx={{ marginRight: listItemSpacing, color: 'text.primary' }}
           />
           <Typography

@@ -35,13 +35,13 @@ export async function recordTask(
   }
 }
 
-export async function findDidHistory(
+export async function findClientHistory(
   token: string,
   did: string,
   retryCount = 0
 ) {
   try {
-    const response = await fetch(`${transactionUrl}/find_did_history`, {
+    const response = await fetch(`${transactionUrl}/find_client_history`, {
       method: 'POST',
       headers: {
         'content-type': 'application/json',
@@ -52,7 +52,7 @@ export async function findDidHistory(
     if (!response.ok) {
       if (response.status === 401 && retryCount < 1) {
         const newToken = await handle401Error();
-        return findDidHistory(newToken, did, retryCount + 1);
+        return findClientHistory(newToken, did, retryCount + 1);
       }
       throw new Error('Network response not ok');
     }

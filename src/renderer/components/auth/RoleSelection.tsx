@@ -29,6 +29,10 @@ const RoleSelection = () => {
     if (selectedRole === 'host') {
       window.electron.store.set('role', 'host');
       actions.setRole('host');
+    }
+    if (selectedRole === 'client') {
+      window.electron.store.set('role', 'client');
+      actions.setRole('client');
     } else if (selectedRole === 'provider') {
       window.electron.store.set('role', 'provider');
       actions.setRole('provider');
@@ -124,6 +128,54 @@ const RoleSelection = () => {
                 >
                   Select this role if you are intending to use this application
                   as an edge device host which shares compute resources.
+                </Typography>
+              </CardContent>
+            </Card>
+            <Card
+              sx={{
+                backgroundColor:
+                  selectedRole === 'provider'
+                    ? 'customColor.lightGrey'
+                    : 'background.paper',
+                borderRadius: '12px',
+                margin: '1rem',
+              }}
+            >
+              <CardContent sx={{ padding: '1rem' }}>
+                <FormControlLabel
+                  value="client"
+                  control={
+                    <Radio
+                      sx={{
+                        color: 'primary.main',
+                        '&.Mui-checked': { color: 'secondary.contrastText' },
+                      }}
+                    />
+                  }
+                  label={
+                    <Typography
+                      sx={{
+                        color:
+                          selectedRole === 'client'
+                            ? 'secondary.contrastText'
+                            : 'primary.main',
+                        fontWeight: selectedRole === 'client' ? '600' : '500',
+                      }}
+                    >
+                      CLIENT
+                    </Typography>
+                  }
+                />
+                <Typography
+                  variant="body2"
+                  sx={{
+                    margin: '0 0.5rem',
+                    color: 'text.primary',
+                  }}
+                >
+                  Select this if you are intending to use this application as a
+                  client which utilize resources from a pool of MECAnywhere
+                  Host.{' '}
                 </Typography>
               </CardContent>
             </Card>

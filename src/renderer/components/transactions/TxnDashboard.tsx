@@ -14,6 +14,7 @@ import Datagrid from './table/Datagrid';
 import {
   addDummyHistory,
   findHostHistory,
+  findClientHistory,
   findPoHistory,
 } from '../../services/TransactionServices';
 import Transitions from '../transitions/Transition';
@@ -46,9 +47,21 @@ const TxnDashboard: React.FC<TxnDashboardProps> = ({ appRole }) => {
   const fetchAndSetData = async (accessToken: string, role: string) => {
     setIsLoading(true);
     try {
-      const didHistoryResponse = await (role === 'provider'
-        ? findPoHistory(accessToken, did)
-        : findHostHistory(accessToken, did));
+      let didHistoryResponse;
+
+      switch (role) {
+        case 'provider':
+          didHistoryResponse = await findPoHistory(accessToken, did);
+          break;
+        case 'host':
+          didHistoryResponse = await findHostHistory(accessToken, did);
+          break;
+        case 'client':
+          didHistoryResponse = await findClientHistory(accessToken, did);
+          break;
+        default:
+          console.error('Unknown role:', role);
+      }
       if (didHistoryResponse) {
         const responseBody = await didHistoryResponse.json();
         if (responseBody.length > 0) {
@@ -90,6 +103,22 @@ const TxnDashboard: React.FC<TxnDashboardProps> = ({ appRole }) => {
     }
   };
 
+  const handleAddClientDummyData = async () => {
+    const { accessToken } = reduxStore.getState().userReducer;
+    if (accessToken) {
+      const addDummyClientResponse = await addDummyHistory(accessToken, {
+        client_did: did,
+      });
+      if (!addDummyClientResponse) {
+        console.error('Invalid dummy history response');
+        return;
+      }
+      await fetchAndSetData(accessToken, appRole);
+    } else {
+      console.error('Invalid access token or did');
+    }
+  };
+
   const handleAddProviderDummyData = async () => {
     const { accessToken } = reduxStore.getState().userReducer;
     if (accessToken) {
@@ -110,9 +139,13 @@ const TxnDashboard: React.FC<TxnDashboardProps> = ({ appRole }) => {
   };
 
   const handleAddDummyData = async (role: string) => {
-    return role === 'provider'
-      ? handleAddProviderDummyData()
-      : handleAddHostDummyData();
+    if (role === 'provider') {
+      return handleAddProviderDummyData();
+    } else if (role === 'host') {
+      return handleAddHostDummyData();
+    } else if (role === 'client') {
+      return handleAddClientDummyData();
+    }
   };
 
   useEffect(() => {
@@ -204,6 +237,8 @@ const TxnDashboard: React.FC<TxnDashboardProps> = ({ appRole }) => {
               >
                 {appRole === 'host' &&
                   'You have not shared any resources for the past 6 months.'}
+                {appRole === 'client' &&
+                  'You have not used any resources for the past 6 months.'}
                 {appRole === 'provider' &&
                   'Your users have not shared any resources for the past 6 months.'}
               </Typography>

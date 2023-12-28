@@ -2,18 +2,17 @@ import { useNavigate } from 'react-router-dom';
 import React from 'react';
 import {
   Grid,
+  Box,
   Typography,
   Stack,
   Button,
   Card,
   CardContent,
 } from '@mui/material';
-import ArrowBackIcon from '@mui/icons-material/ArrowBack';
-import reduxStore from 'renderer/redux/store';
-import { convertEpochToStandardTimeWithDate } from '../common/unitConversion';
 import { useSelector } from 'react-redux';
-import { RootState } from '../../../redux/store';
+import ArrowBackIcon from '@mui/icons-material/ArrowBack';
 import { ExternalPropConfigList, InternalPropConfigList } from './propConfig';
+import reduxStore, { RootState } from '../../redux/store';
 
 interface TitleTypographyProps {
   title: string;
@@ -47,22 +46,6 @@ const DataTypography: React.FC<DataTypographyProps> = ({ data }) => {
   );
 };
 
-function randomNormalDistribution(mean: number, standardDeviation: number) {
-  let u = 0;
-  let v = 0;
-  while (u === 0) u = Math.random(); // Converting [0,1) to (0,1)
-  while (v === 0) v = Math.random();
-
-  const z = Math.sqrt(-2.0 * Math.log(u)) * Math.cos(2.0 * Math.PI * v);
-  const scaledValue = mean + standardDeviation * z;
-
-  return Math.max(Math.min(scaledValue, 100), 50); // Clamping the value between 50 and 100
-}
-
-function limitDecimalPlaces(number: number, decimalPlaces: number) {
-  return Number(number.toFixed(decimalPlaces));
-}
-
 const TransactionDetails: React.FC = () => {
   const appRole = useSelector((state: RootState) => state.roleReducer.role);
   const propConfigList =
@@ -80,9 +63,11 @@ const TransactionDetails: React.FC = () => {
       sx={{
         height: '100%',
         margin: '1.5rem 0 0 1.8rem',
+        paddingBottom: '2rem',
         display: 'flex',
         justifyContent: 'center',
         alignItems: 'center',
+        // overflow: 'auto !important',
       }}
     >
       <Stack
@@ -91,6 +76,7 @@ const TransactionDetails: React.FC = () => {
           width: '80%',
           display: 'flex',
           justifyContent: 'center',
+          // overflow: 'auto !important',
         }}
       >
         <Button
@@ -117,77 +103,41 @@ const TransactionDetails: React.FC = () => {
             backgroundColor: 'background.default',
           }}
         >
-          <CardContent>
-            <Grid sx={{ display: 'flex', alignItems: 'center' }}>
-              <Typography variant="h4" sx={{ fontWeight: '600' }}>
-                TRANSACTION
-              </Typography>
-              <Typography
-                variant="h4"
-                sx={{ color: 'secondary.contrastText', whiteSpace: 'pre' }}
+          <CardContent sx={{ overflow: 'auto' }}>
+            <Box sx={{ minWidth: '30rem' }}>
+              <Grid sx={{ display: 'flex', alignItems: 'center' }}>
+                <Typography variant="h4" sx={{ fontWeight: '600' }}>
+                  TRANSACTION
+                </Typography>
+                <Typography
+                  variant="h4"
+                  sx={{ color: 'secondary.contrastText', whiteSpace: 'pre' }}
+                >
+                  {'   #'}
+                  {data.transaction_id}
+                </Typography>
+              </Grid>
+              <Grid
+                container
+                item
+                xs={12}
+                sx={{
+                  borderRadius: '12px',
+                  padding: '1rem 0.5rem 0.5rem 0rem',
+                }}
               >
-                {'   #'}
-                {data.transaction_id}
-              </Typography>
-            </Grid>
-            <Grid
-              container
-              item
-              xs={12}
-              sx={{
-                borderRadius: '12px',
-                padding: '1rem 0.5rem 0.5rem 0rem',
-              }}
-            >
-              <Grid item xs={4.5} sx={{}}>
-                {propConfigList.map((config) => (
-                  <TitleTypography title={config.label} />
-                ))}
-                {/* <TitleTypography title="Transaction ID:" />
-                <TitleTypography title="DID:" />
-                <TitleTypography title="Transaction Start Datetime:" />
-                <TitleTypography title="Transaction End Datetime:" />
-                <TitleTypography title="Duration:" />
-                <TitleTypography title="Network Reliability:" />
-                <TitleTypography title="Task:" />
-                <TitleTypography title="Memory Utilized (MB):" />
-                <TitleTypography title="CPU Utilized (cores):" />
-                <TitleTypography title="Usage Charge/Earned:" /> */}
+                <Grid item xs={4.5} sx={{}}>
+                  {propConfigList.map((config) => (
+                    <TitleTypography title={config.label} />
+                  ))}
+                </Grid>
+                <Grid item xs={7.5}>
+                  {propConfigList.map((config) => (
+                    <DataTypography data={config.renderer(data as any)} />
+                  ))}
+                </Grid>
               </Grid>
-              <Grid item xs={7.5}>
-                {propConfigList.map((config) => (
-                  <DataTypography data={config.renderer(data as any, false)} />
-                ))}
-                {/* <DataTypography data={data.transaction_id} />
-                <DataTypography data={window.electron.store.get('did')} />
-                <DataTypography
-                  data={convertEpochToStandardTimeWithDate(
-                    data.transaction_start_datetime
-                  )}
-                />
-                <DataTypography
-                  data={convertEpochToStandardTimeWithDate(
-                    data.transaction_end_datetime
-                  )}
-                />
-                <DataTypography
-                  data={`${limitDecimalPlaces(
-                    data.duration / 60 / 60,
-                    2
-                  )} hours`}
-                />
-                <DataTypography
-                  data={`${limitDecimalPlaces(
-                    randomNormalDistribution(85, 10),
-                    2
-                  )} %`}
-                />
-                <DataTypography data={data.task_name} />
-                <DataTypography data={data.resource_memory} />
-                <DataTypography data={data.resource_cpu} />
-                <DataTypography data={data.price} /> */}
-              </Grid>
-            </Grid>
+            </Box>
           </CardContent>
         </Card>
       </Stack>

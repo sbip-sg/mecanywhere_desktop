@@ -24,6 +24,7 @@ import ImportSeedPhrase from './components/auth/ImportSeedPhrase';
 import Mnemonics from './components/auth/Mnemonics';
 import Profile from './components/profile/Profile';
 import NavigationLayoutTransitionWrapper from './components/navigation/NavigationLayoutTransitionWrapper';
+import ClientTxnDashboard from './components/transactions/ClientTxnDashboard';
 import HostTxnDashboard from './components/transactions/HostTxnDashboard';
 import ProviderTxnDashboard from './components/transactions/ProviderTxnDashboard';
 import HostBillingDashboard from './components/billing/dashboard/HostBillingDashboard';
@@ -144,6 +145,14 @@ const Animated = () => {
           element={
             <Transitions>
               <HostTxnDashboard />
+            </Transitions>
+          }
+        />
+        <Route
+          path="/clienttxndashboard"
+          element={
+            <Transitions>
+              <ClientTxnDashboard />
             </Transitions>
           }
         />
