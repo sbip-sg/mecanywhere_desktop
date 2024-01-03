@@ -1,6 +1,15 @@
 # SDK for developers using MECAnywhere
 
-## Python
+- "Developers" in this document refers to developers who want to offload their tasks to MECAnywhere.
+
+The task execution flow is as such 
+<iframe style="border: 1px solid rgba(0, 0, 0, 0.1);" width="800" height="450" src="https://www.figma.com/embed?embed_host=share&url=https%3A%2F%2Fwww.figma.com%2Ffile%2FpPA7irgoz9B39ux2AVI7Lr%2FMECAnywhere-Task-Execution%3Ftype%3Dwhiteboard%26node-id%3D0%253A1%26t%3DIMTH5p2ftl2CkgKo-1" allowfullscreen></iframe>
+
+Therefore, developers only have 2 things to do:
+1. Use the SDK in their application to connect to MECAnywhere desktop app.
+2. Build a containerized task and upload it to a public container repository.
+
+## Python SDK
 
 This SDK only provides offloading asynchronously and receiving results via callback. To do synchronous offloading, you may use the `join` function immediately after an offload.
 
@@ -28,14 +37,19 @@ This SDK only provides offloading asynchronously and receiving results via callb
       - task_timeout: int - timeout for each task
       - join_timeout: int - timeout for all tasks
 
-### Test
+### Test (with KNN example)
 
-Start desktop app, docker daemon, executor, go to example_containers and build dockerized task with
+> You may skip step 1 if you uploaded your image to a public container repository or have it built in your local device.
+
+1. Go to example_containers and build dockerized task with
+
 ```
 docker build -t <tag> example_containers/knn
 ```
-Go to knn.py and change the container_ref to the tag you just built.
-Start virtual env, install requirements and run knn.py.
+
+2. Start MECAnywhere desktop app.
+3. Go to knn.py and change the container_ref to the tag you just built.
+Start virtual env, install requirements and run knn.py. 
 
 ```
 pip install torch==2.0.1+cpu --index-url https://download.pytorch.org/whl/cpu
