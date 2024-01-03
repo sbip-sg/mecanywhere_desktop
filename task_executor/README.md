@@ -9,7 +9,7 @@ It receives the task definition including the image id, resource limit and the i
 ```json
 {
   "id": "task-name",
-  "resource": {"cpu":1, "mem":128}
+  "resource": {"cpu":1, "mem":128},
   "input": "input accepted by the task codes"
 }
 ```

@@ -1,0 +1,6 @@
+# now only support docker
+type: "docker"
+# timeout in minutes
+timeout: 10
+cpu: 8
+mem: 8192
