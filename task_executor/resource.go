@@ -213,6 +213,7 @@ type ResourceStats struct {
 	TaskMEM     int     `json:"task_mem"`      // MB
 	TaskUsedCPU float64 `json:"task_used_cpu"` // %
 	TaskUsedMEM float64 `json:"task_used_mem"` // %
+	GPUModel    string  `json:"gpu_model"`
 	TaskGPU     int     `json:"task_gpu"`      // count
 	TaskUsedGPU int     `json:"task_used_gpu"` // count
 }
@@ -413,6 +414,7 @@ func (m *resourceManager) Stats() (stats ResourceStats) {
 	stats.TaskMEM = int(m.taskTotalMEM)
 	stats.TaskUsedCPU = 100 - 100*float64(m.taskAvailCPU.Load())/float64(m.taskTotalCPU)
 	stats.TaskUsedMEM = 100 - 100*float64(m.taskAvailMEM.Load())/float64(m.taskTotalMEM)
+	stats.GPUModel = m.monitor.GetGPUModel()
 	stats.TaskGPU = m.monitor.GetGPUCount()
 	stats.TaskUsedGPU = len(m.gpuAvail)
 	return
