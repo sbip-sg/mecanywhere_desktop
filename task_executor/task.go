@@ -59,7 +59,7 @@ func GetTaskId(cfg TaskConfig) string {
 
 type Task interface {
 	GetId() string
-	Init(ctx context.Context, config string, port int) error
+	Init(ctx context.Context, config string, port int, gpus []int) error
 	Execute(ctx context.Context, input []byte) ([]byte, error)
 	GetResource() ResourceLimit // get resource limit of the task
 	CleanUp() error

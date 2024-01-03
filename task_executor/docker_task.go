@@ -110,7 +110,7 @@ func (t *DockerTask) GetResource() ResourceLimit {
 
 // start the container which should run a server
 // to replace with using docker bridge network only
-func (t *DockerTask) Init(ctx context.Context, _ string, _ int) error {
+func (t *DockerTask) Init(ctx context.Context, _ string, _ int, gpus []int) error {
 	containerName := createContainerName(t.taskId)
 	log.Printf("init started %d for %s", time.Now().UnixMicro(), containerName)
 
@@ -127,7 +127,13 @@ func (t *DockerTask) Init(ctx context.Context, _ string, _ int) error {
 
 	if t.resource.UseGPU {
 		gpuOpts := opts.GpuOpts{}
-		gpuOpts.Set(fmt.Sprintf("count=%d", t.resource.GPUCount))
+		deviceOpts := "\"device="
+		for _, gpu := range gpus {
+			deviceOpts += fmt.Sprintf("%d,", gpu)
+		}
+		deviceOpts = deviceOpts[:len(deviceOpts)-1] + "\""
+		log.Printf("gpu device opts: %s", deviceOpts)
+		gpuOpts.Set(deviceOpts)
 		resources.DeviceRequests = gpuOpts.Value()
 	}
 	resp, err := t.cli.ContainerCreate(ctx, &container.Config{Image: t.imageId}, &container.HostConfig{Resources: resources, Runtime: t.runtime}, networkConfig, nil, containerName)

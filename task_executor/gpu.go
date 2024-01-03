@@ -7,6 +7,11 @@ import (
 	"github.com/NVIDIA/go-nvml/pkg/nvml"
 )
 
+type GPUUtil struct {
+	compute uint32
+	memory  uint32
+}
+
 func InitGPUMonitor() error {
 	ret := nvml.Init()
 	if ret != nvml.SUCCESS {
@@ -44,19 +49,23 @@ func GetGPUModel() (string, error) {
 	}
 }
 
-func GetGPUUtilization() ([]uint32, error) {
+func GetGPUUtilization() ([]GPUUtil, error) {
 	count, err := GetGPUCount()
 	if err != nil {
 		return nil, err
 	}
-	utils := make([]uint32, count)
+	utils := make([]GPUUtil, count)
 	for i := 0; i < count; i++ {
 		if device, ret := nvml.DeviceGetHandleByIndex(i); ret != nvml.SUCCESS {
-			utils[i] = 100
+			utils[i].compute = 100
 		} else if util, ret := device.GetUtilizationRates(); ret != nvml.SUCCESS {
-			utils[i] = 100
+			utils[i].compute = 100
+		} else if memInfo, ret := device.GetMemoryInfo(); ret != nvml.SUCCESS {
+			utils[i].compute = 100
+			utils[i].memory = 100
 		} else {
-			utils[i] = util.Gpu
+			utils[i].compute = util.Gpu
+			utils[i].memory = uint32((memInfo.Used >> 20) * 100 / (memInfo.Total >> 20))
 		}
 	}
 	return utils, nil

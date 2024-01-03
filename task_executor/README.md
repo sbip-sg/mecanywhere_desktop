@@ -51,7 +51,7 @@ docker run --name meca_executor_test -v /var/run/docker.sock:/var/run/docker.soc
 curl http://localhost:2591 -X POST -H "Content-Type: application/json" -d '{"id": "yourDockerAccount/sampleserver:latest", "input": "{\"name\": \"sbip\"}"}'
 ```
 
-for host with GPU, shall pass `--gpus=all` to the meca-executor
+for host with GPU, shall pass `--gpus=all` to the meca-executor. (or pass selected gpus for meca to use, for example, `--gpus='"device=1,2,3"'`)
 
 ```sh
 docker run --name meca_executor_test --gpus=all  -v /var/run/docker.sock:/var/run/docker.sock  -v <gpu-enabled-config-file>:/app/meca_executor.yaml  --net=meca --ip=172.18.0.255 -p 2591:2591 meca-executor:latest
@@ -73,4 +73,10 @@ Pick the microVM runtime if the host has it.
 
 ```sh
 curl http://172.18.0.255:2591 -X POST -H "Content-Type: application/json" -d '{"id": "hugy718/sample:v1","runtime": "microVM", "resource": {"cpu":1, "mem":128}, "input": "{\"name\": \"sbip\"}"}'
+```
+
+Specify GPU
+
+```sh
+curl htp://172.18.0.255:2591 -X POST -H "Content-Type: application/json" -d '{"id": "meca-python-task:1227", "resource": {"cpu":1, "mem":256, "use_gpu": true, "gpu_count": 3}, "input": "{\"name\": \"sbip\"}"}'
 ```
