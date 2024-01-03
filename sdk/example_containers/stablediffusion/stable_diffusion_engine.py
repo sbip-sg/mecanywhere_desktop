@@ -29,6 +29,31 @@ class StableDiffusionEngine:
         self.core = Core()
         self.core.set_property({'CACHE_DIR': './cache'})
 
+        if model == "bes-dev/stable-diffusion-v1-4-openvino":
+           # read from local
+            self._text_encoder = self.core.read_model(
+                "stable-diffusion-v1-4-openvino/text_encoder.xml"
+            )
+            self.text_encoder = self.core.compile_model(self._text_encoder, device)
+            # diffusion
+            self._unet = self.core.read_model(
+                "stable-diffusion-v1-4-openvino/unet.xml"
+            )
+            self.unet = self.core.compile_model(self._unet, device)
+            self.latent_shape = tuple(self._unet.inputs[0].shape)[1:]
+            # decoder
+            self._vae_decoder = self.core.read_model(
+                "stable-diffusion-v1-4-openvino/vae_decoder.xml"
+            )
+            self.vae_decoder = self.core.compile_model(self._vae_decoder, device)
+            # encoder
+            self._vae_encoder = self.core.read_model(
+                "stable-diffusion-v1-4-openvino/vae_encoder.xml"
+            )
+            self.vae_encoder = self.core.compile_model(self._vae_encoder, device)
+            self.init_image_shape = tuple(self._vae_encoder.inputs[0].shape)[2:]
+            return
+
         # text features
         self._text_encoder = self.core.read_model(
             hf_hub_download(repo_id=model, filename="text_encoder.xml"),
