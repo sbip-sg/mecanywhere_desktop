@@ -32,6 +32,7 @@ import ProviderBillingDashboard from './components/billing/dashboard/ProviderBil
 import TransactionDetails from './components/transactions/TransactionDetails';
 import RoleSelection from './components/auth/RoleSelection';
 import UserManagement from './components/userManagement/UserManagement';
+import Payment from './components/misc/Payment';
 import Settings from './components/settings/Settings';
 // import useHeartbeatHook from './utils/useHeartbeatHook';
 import { getDesignTokens } from './utils/theme';
@@ -205,6 +206,14 @@ const Animated = () => {
           }
         />
       </Route>
+      <Route
+        path="/payment"
+        element={
+          <Transitions>
+            <Payment />
+          </Transitions>
+        }
+      />
     </Routes>
   );
 };

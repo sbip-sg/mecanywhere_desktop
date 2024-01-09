@@ -109,6 +109,7 @@
   "dependencies": {
     "@emotion/react": "^11.10.6",
     "@emotion/styled": "^11.10.6",
+    "@metamask/sdk": "^0.14.1",
     "@mui/icons-material": "^5.11.16",
     "@mui/material": "^5.14.1",
     "@reduxjs/toolkit": "^1.9.5",
@@ -129,6 +130,7 @@
     "pb-util": "^1.0.3",
     "process": "^0.11.10",
     "protobufjs": "^7.2.3",
+    "qrcode": "^1.5.3",
     "querystring-es3": "^0.2.1",
     "react": "^18.2.0",
     "react-datepicker": "^4.16.0",
@@ -143,6 +145,7 @@
     "stream-http": "^3.2.0",
     "url": "^0.11.3",
     "util": "^0.12.5",
+    "web3": "^1.8.1",
     "yup": "^1.1.1"
   },
   "devDependencies": {

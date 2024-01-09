@@ -49,7 +49,7 @@ async def distributed_knn(input_data, dataset, k, num_processes):
 
         await meca_api.offload_task(
           task_id=str(i),
-          container_ref='jyume/meca:0.0.6',
+          container_ref='my_knn_app:latest',
           data=json.dumps({
             "dataset": sliced_dataset.tolist(),
             "point": input_data.tolist(),

@@ -78,6 +78,25 @@ const ClientTab = () => {
         </ListItemButton>
       </List>
       <Divider />
+      <List disablePadding component="li">
+        <ListItemButton
+          onClick={() => {
+            navigate('/payment');
+         }}
+          key="testpayment"
+        >
+          <SwapHorizIcon
+            sx={{ marginRight: listItemSpacing, color: 'text.primary' }}
+          />
+          <Typography
+            margin={`${listTopBottomMargin} 0 ${listTopBottomMargin} 0`}
+            sx={{ color: 'text.primary' }}
+          >
+            Test Payment
+          </Typography>
+        </ListItemButton>
+      </List>
+      <Divider />
     </Box>
   );
 };

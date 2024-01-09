@@ -13,6 +13,8 @@ const handleLogin = async (password: string): Promise<boolean | undefined> => {
   // Get key with (decryptWithPassword(window.electron.store.get('privateKey'), password))
   const accessTokenResponse = await authenticate(did, credential);
   const { access_token, refresh_token } = accessTokenResponse;
+  console.log("did, ", did)
+  console.log("access_token", access_token)
   actions.setAccessToken(access_token);
   actions.setRefreshToken(refresh_token);
   return true; // should only return true if signed VP is verified
