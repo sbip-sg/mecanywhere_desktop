@@ -1,18 +1,24 @@
 import { useEffect, useState } from 'react';
 import { MetaMaskSDK, SDKProvider } from '@metamask/sdk';
-import QRCode from 'qrcode';
-import { Buffer } from 'buffer';
-import { existsSync } from 'fs';
-import paymentContract from './PaymentContract.json';
 import { Box, Button } from '@mui/material';
 import Web3 from 'web3';
+import paymentContract from './PaymentContract.json';
+import paymentContract2 from './PaymentContract2.json';
+import QRCodePopover from './QRCodePopover';
+import DisconnectedComponent from './DisconnectedComponent';
+import ConnectedComponent from './ConnectedComponent';
+import { withdrawFromContract } from 'renderer/services/PaymentServices';
+import reduxStore from 'renderer/redux/store';
 
 const MetaMaskComponent = () => {
+  const [otp, setOtp] = useState('');
+  const [connected, setConnected] = useState(false);
   const [account, setAccount] = useState('');
   const [chainId, setChainId] = useState('');
-  const [response, setResponse] = useState('');
   const [provider, setProvider] = useState<SDKProvider>();
   const [sdk, setSDK] = useState<MetaMaskSDK>();
+  const [open, setOpen] = useState(false);
+  const [qrCodeUrl, setQrCodeUrl] = useState('');
 
   useEffect(() => {
     console.log('sdk', sdk);
@@ -23,106 +29,108 @@ const MetaMaskComponent = () => {
   }, [provider]);
 
   useEffect(() => {
-    const doAsync = async () => {
-      const clientSdk = new MetaMaskSDK({
-        shouldShimWeb3: false,
-        storage: {
-          enabled: true,
+    console.log('qrcodeurl', qrCodeUrl);
+  }, [qrCodeUrl]);
+
+  useEffect(() => {
+    console.log('otp', otp);
+  }, [otp]);
+
+  const handleConnect = async () => {
+    const clientSdk = new MetaMaskSDK({
+      shouldShimWeb3: false,
+      storage: {
+        enabled: false,
+      },
+      dappMetadata: {
+        name: 'Electron Test Dapp',
+        url: 'https://metamask.io/sdk/',
+      },
+      modals: {
+        install: ({ link }) => {
+          setQrCodeUrl(link);
+          return {};
         },
-        dappMetadata: {
-          name: 'Electron Test Dapp',
-          url: 'https://metamask.io/sdk/',
-        },
-        modals: {
-          install: ({ link }) => {
-            QRCode.toCanvas(
-              document.getElementById('qrCode'),
-              link,
-              (error) => {
-                if (error) console.error(error);
+        otp: () => {
+          return {
+            updateOTPValue: (otpValue) => {
+              if (otpValue !== '') {
+                setOtp(otpValue);
               }
-            );
-            return {};
-          },
-          otp: () => {
-            return {
-              updateOTPValue: (otpValue) => {
-                if (otpValue !== '') {
-                  document.getElementById('otp').innerText = otpValue;
-                }
-              },
-            };
-          },
+            },
+          };
         },
-      });
-      setSDK(clientSdk);
-      await clientSdk.init();
-      const clientProvider = clientSdk.getProvider();
-      setProvider(clientProvider);
-      clientProvider.on('chainChanged', (chain) => {
-        console.log(`chainChanged ${chain}`);
-        setChainId(chain);
-      });
+      },
+    });
+    setSDK(clientSdk);
+    await clientSdk.init();
+    const clientProvider = clientSdk.getProvider();
+    setProvider(clientProvider);
 
-      clientProvider.on('accountsChanged', (accounts: string[]) => {
-        if (accounts.length === 0) {
-          setAccount('Accounts disconnected!');
-          return;
-        }
-        console.log(`accountsChanged ${accounts}`);
-        setAccount(accounts[0]);
-      });
-      clientProvider.on('connect', () => {
-        // document.getElementById('qrCode').innerText = '';
-        //   setButtonDisplay(true);
-        if (account !== '') {
-          //   document.getElementById('otp').innerText = '';
-        }
-      });
-    };
-    doAsync();
-  }, []);
+    clientProvider.on('chainChanged', (chain: string) => {
+      console.log(`chainChanged ${chain}`);
+      setChainId(chain);
+    });
 
-  //   // SDK Functions
-  const connect = async () => {
-    console.log('connect');
-    await provider
+    clientProvider.on('accountsChanged', (args) => {
+      const accounts = args as string[];
+      if (accounts.length === 0) {
+        handleDisconnect();
+        return;
+      }
+      console.log(`accountsChanged ${accounts}`);
+      setAccount(accounts[0]);
+    });
+
+    clientProvider.on('connect', () => {
+      console.log('connected');
+      setOpen(false);
+      setConnected(true);
+      setQrCodeUrl('');
+    });
+
+    clientProvider.on('disconnect', () => {
+      console.log('disconnect');
+      // setOpen(false);
+      // setConnected(true);
+      // setQrCodeUrl('');
+    });
+
+    console.log('connecting');
+    setOpen(true);
+    await clientProvider
       .request({ method: 'eth_requestAccounts' })
       .then((accounts) => {
-        console.log('accounts', accounts);
         const acc = accounts?.[0];
+        const chain = clientProvider.chainId;
         setAccount(acc);
-        // document.getElementById('connectButton').textContent = 'Connected';
-        // document.getElementById('qrCode').style.display = 'none';
-        const chain = provider.chainId;
-        console.log('chain', chain);
-        // if (chain) {
-        // const chainToSwitchTo = currentChainId === '0x1' ? '0x5' : '0x1'; // 0xaa36a7 aka 11155111 is sepolia
-        // await ethereum.request({
-        //   method: 'wallet_switchEthereumChain',
-        //   params: [{ chainId: chainToSwitchTo }],
-
-        // }
         setChainId(chain);
+        console.log('accounts', accounts);
+        console.log('chain', chain);
       })
       .catch((error) => {
         console.error(error);
       });
   };
+
+  const handleDisconnect = () => {
+    sdk?.terminate();
+    setAccount('');
+    setChainId('');
+    setConnected(false);
+    console.log('disconnected');
+  };
+
   const handlePay = async () => {
-    // Make the function async to use "await"
-    // const contractAddress = '0x59A8E8986dbbb35b63eC15893D1AFFC37dE46286';
     const contractAddress = '0x00A2D67F79e8652ce878685Ac1B7E0b5e9A475C9';
     const senderAddress = '0xA32fE9BC86ADF555Db1146ef44eb7fFEB54c86CA';
-    // const abi = '../contract/build/contracts/PaymentContract.json'; // Use "require" to import the ABI
-    const web3 = new Web3(provider); // Initialize Web3 with the injected Ethereum provider
-    console.log("paymentContract", paymentContract)
+    const web3 = new Web3(provider);
+    console.log('paymentContract', paymentContract);
     try {
-      const contract = new web3.eth.Contract(paymentContract, contractAddress); // Initialize the contract
+      const contract = new web3.eth.Contract(paymentContract, contractAddress);
       const fromDid = window.electron.store.get('did');
       console.log('fromdid', fromDid);
-      const amountToSend = web3.utils.toWei('0.06', 'ether'); // For sending 1 Ether, for example.
-
+      const amountToSend = web3.utils.toWei('0.01', 'ether');
       await contract.methods.pay(fromDid).send({
         from: senderAddress,
         value: amountToSend,
@@ -132,98 +140,126 @@ const MetaMaskComponent = () => {
       console.error('Payment error', error);
     }
   };
-  //   const makePayment = async () => {
-  //     const from = provider.selectedAddress;
-  //     const message = 'Hello World from the Electron Example dapp!';
-  //     const hexMessage = '0x' + Buffer.from(message, 'utf8').toString('hex');
-  //     provider
-  //       .request({
-  //         method: 'personal_sign',
-  //         params: [hexMessage, from, 'Example password'],
-  //       })
-  //       .then((result) => {
-  //         setResponse(result.toString());
-  //         console.log('sign', result);
-  //       })
-  //       .catch((e) => console.log('sign ERR', e));
-  //   };
 
-  const terminate = () => {
-    sdk?.terminate();
-    setAccount('');
-    setChainId('');
-    setResponse('');
-    // setButtonDisplay(false);
-    // document.getElementById('qrCode').innerText = '';
-    // document.getElementById('otp').innerText = '';
+  const handleWithdraw = async () => {
+    console.log('handleWithdraw1');
+    const did = window.electron.store.get('did');
+    const address = '0xA32fE9BC86ADF555Db1146ef44eb7fFEB54c86CA';
+    const amount = 0.03;
+    const { accessToken } = reduxStore.getState().userReducer;
+    const withdrawRequest = {
+      did: did,
+      address: address,
+      amount: amount.toString(),
+    };
+    // console.log(wiu)
+    const withdrawResponse = await withdrawFromContract(
+      accessToken,
+      withdrawRequest
+    );
+    console.log('handleWithdraw', withdrawResponse);
   };
 
-  //   const hasSessionStored = () => {
-  //     return existsSync('.sdk-comm');
-  //   };
-
   return (
-    <div>
-      <canvas id="qrCode" />
-      <Box id="otp">{account}</Box>
-      <Button id="connectButton" onClick={() => connect()}>
-        Connect
-      </Button>
-      <Button id="terminateButton" onClick={terminate}>
-        Terminate
-      </Button>
-      <Button id="terminateButton" onClick={handlePay}>
-        Terminate
-      </Button>
-      <div id="response">{response}</div>
-      <div id="account">Account: {account}</div>
-      <div id="chain">Chain ID: {chainId}</div>
-    </div>
+    <Box sx={{ height: '100%' }}>
+      <QRCodePopover
+        open={open}
+        setOpen={setOpen}
+        qrCodeUrl={qrCodeUrl}
+        setQrCodeUrl={setQrCodeUrl}
+      />
+      {connected ? (
+        <ConnectedComponent
+          handleDisconnect={handleDisconnect}
+          handlePay={handlePay}
+          handleWithdraw={handleWithdraw}
+          account={account}
+          chainId={chainId}
+        />
+      ) : (
+        <DisconnectedComponent handleConnect={handleConnect} />
+      )}
+    </Box>
   );
 };
 
 export default MetaMaskComponent;
 
-//   const personalSign = async () => {
-//     const from = ethereum.selectedAddress;
-//     const message = 'Hello World from the Electron Example dapp!';
-//     const hexMessage = '0x' + Buffer.from(message, 'utf8').toString('hex');
-//     ethereum
-//       .request({
-//         method: 'personal_sign',
-//         params: [hexMessage, from, 'Example password'],
-//       })
-//       .then((result) => {
-//         setResponse(result.toString());
-//         console.log('sign', result);
-//       })
-//       .catch((e) => console.log('sign ERR', e));
-//   };
+// if (chain) {
+// const chainToSwitchTo = currentChainId === '0x1' ? '0x5' : '0x1'; // 0xaa36a7 aka 11155111 is sepolia
+// await ethereum.request({
+//   method: 'wallet_switchEthereumChain',
+//   params: [{ chainId: chainToSwitchTo }],
 
-//   const switchChain = async () => {
-//     const currentChainId = ethereum.chainId;
-//     const chainToSwitchTo = currentChainId === '0x1' ? '0x5' : '0x1';
-//     await ethereum.request({
-//       method: 'wallet_switchEthereumChain',
-//       params: [{ chainId: chainToSwitchTo }],
+// }
+
+//   const hasSessionStored = () => {
+//     return existsSync('.sdk-comm');
+//   };
+// otp: () => {
+//   return {
+//     updateOTPValue: (otpValue) => {
+//       if (otpValue !== '') {
+//         setOtp(otpValue);
+//         console.log('otp', otpValue);
+//       }
+//     },
+//   };
+// },
+
+// useEffect(() => {
+//   const doAsync = async () => {
+//     const clientSdk = new MetaMaskSDK({
+//       shouldShimWeb3: false,
+//       storage: {
+//         enabled: false,
+//       },
+//       dappMetadata: {
+//         name: 'Electron Test Dapp',
+//         url: 'https://metamask.io/sdk/',
+//       },
+//       modals: {
+//         install: ({ link }) => {
+//           setQrCodeUrl(link);
+//           return {};
+//         },
+//         otp: () => {
+//           return {
+//             updateOTPValue: (otpValue) => {
+//               if (otpValue !== '') {
+//                 setOtp(otpValue);
+//               }
+//             },
+//           };
+//         },
+//       },
+//     });
+//     setSDK(clientSdk);
+//     await clientSdk.init();
+//     const clientProvider = clientSdk.getProvider();
+//     setProvider(clientProvider);
+
+//     clientProvider.on('chainChanged', (chain: string) => {
+//       console.log(`chainChanged ${chain}`);
+//       setChainId(chain);
+//     });
+
+//     clientProvider.on('accountsChanged', (args) => {
+//       const accounts = args as string[];
+//       if (accounts.length === 0) {
+//         handleDisconnect();
+//         return;
+//       }
+//       console.log(`accountsChanged ${accounts}`);
+//       setAccount(accounts[0]);
+//     });
+
+//     clientProvider.on('connect', () => {
+//       console.log('connected');
+//       setOpen(false);
+//       setConnected(true);
+//       setQrCodeUrl('');
 //     });
 //   };
-{
-  /* <Button
-        id="personalSignButton"
-        onClick={personalSign}
-        style={{ display: 'none' }}
-      >
-        Sign
-      </Button>
-      <Button id="signTypedDataButton" style={{ display: 'none' }}>
-        Sign Typed Data
-      </Button>
-      <Button
-        id="switchChainButton"
-        onClick={switchChain}
-        style={{ display: 'none' }}
-      >
-        Switch Chain
-      </Button> */
-}
+//   doAsync();
+// }, []);
