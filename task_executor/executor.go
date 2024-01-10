@@ -281,6 +281,14 @@ func (meca *MecaExecutor) Execute(ctx context.Context, taskCfg TaskConfig, input
 		taskCfg.Rsrc = getDefaultResourceLimit()
 	}
 
+	// validate the gpu setting
+	if taskCfg.Rsrc.UseGPU {
+		gpuCount := meca.rm.GetGPUCount()
+		if gpuCount == 0 || gpuCount < int(taskCfg.Rsrc.GPUCount) {
+			return nil, errors.New("not enough GPU available")
+		}
+	}
+
 	// translate the runtime type
 	if len(taskCfg.Runtime) > 0 {
 		if rt, ok := meca.runtimes[taskCfg.Runtime]; !ok {
@@ -342,7 +350,21 @@ func (meca *MecaExecutor) Execute(ctx context.Context, taskCfg TaskConfig, input
 		h.initMu.Lock()
 		if !h.initialized.Load() {
 			// reserve the resources
+			// reserve the gpu
+			var gpus []int
+			if taskCfg.Rsrc.UseGPU {
+				// set to 10 percent utilization for filtering out GPUs in use.
+				if gpus, err = meca.rm.ReserveGPU(int(taskCfg.Rsrc.GPUCount), 10); err != nil {
+					h.initMu.Unlock()
+					return nil, err
+				}
+			}
+
+			// reserve the cpu and memory
 			if err := meca.rm.Reserve(float64(taskCfg.Rsrc.CPU), int(taskCfg.Rsrc.MEM)); err != nil {
+				if taskCfg.Rsrc.UseGPU {
+					meca.rm.ReleaseGPU(gpus)
+				}
 				h.initMu.Unlock()
 				return nil, err
 			}
@@ -350,17 +372,19 @@ func (meca *MecaExecutor) Execute(ctx context.Context, taskCfg TaskConfig, input
 			port := port_alloc()
 			retryCount := 0
 			for {
-				if err = h.task.Init(ctx, "", port); err == nil {
+				if err = h.task.Init(ctx, "", port, gpus); err == nil {
 					// register release callback when the task init successfully
 					releaseCpu := float64(taskCfg.Rsrc.CPU)
 					releaseMem := int(taskCfg.Rsrc.MEM)
 					h.releaseCb = func() error {
+						meca.rm.ReleaseGPU(gpus)
 						return meca.rm.Release(releaseCpu, releaseMem)
 					}
 					h.initialized.Store(true)
 					break
 				} else if retryCount > 10 {
 					// init failed, release resources
+					meca.rm.ReleaseGPU(gpus)
 					meca.rm.Release(float64(taskCfg.Rsrc.CPU), int(taskCfg.Rsrc.MEM))
 					break
 				}

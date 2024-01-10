@@ -11,6 +11,7 @@ type MecaExecutorConfig struct {
 	Timeout        int     `yaml:"timeout"`
 	Cpu            float64 `yaml:"cpu"`
 	Mem            int     `yaml:"mem"`
+	HasGPU         bool    `yaml:"has_gpu"`
 	MicroVMRuntime string  `yaml:"microVM_runtime"`
 }
 
@@ -32,5 +33,6 @@ type MecaExecutorConfigReq struct {
 	Timeout        int     `json:"timeout"`
 	Cpu            float64 `json:"cpu" binding:"required,gt=0.0"`
 	Mem            int     `json:"mem" binding:"required,gt=0"`
+	HasGPU         int     `json:"has_gpu"`
 	MicroVMRuntime string  `json:"microVM_runtime"`
 }

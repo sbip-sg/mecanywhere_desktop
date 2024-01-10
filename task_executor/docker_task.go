@@ -11,6 +11,7 @@ import (
 	"strings"
 	"time"
 
+	"github.com/docker/cli/opts"
 	"github.com/docker/docker/api/types"
 	"github.com/docker/docker/api/types/container"
 	"github.com/docker/docker/api/types/network"
@@ -109,7 +110,7 @@ func (t *DockerTask) GetResource() ResourceLimit {
 
 // start the container which should run a server
 // to replace with using docker bridge network only
-func (t *DockerTask) Init(ctx context.Context, _ string, _ int) error {
+func (t *DockerTask) Init(ctx context.Context, _ string, _ int, gpus []int) error {
 	containerName := createContainerName(t.taskId)
 	log.Printf("init started %d for %s", time.Now().UnixMicro(), containerName)
 
@@ -122,6 +123,18 @@ func (t *DockerTask) Init(ctx context.Context, _ string, _ int) error {
 	resources := container.Resources{
 		NanoCPUs: t.resource.CPU * 1000000000,
 		Memory:   t.resource.MEM << 10 << 10,
+	}
+
+	if t.resource.UseGPU {
+		gpuOpts := opts.GpuOpts{}
+		deviceOpts := "\"device="
+		for _, gpu := range gpus {
+			deviceOpts += fmt.Sprintf("%d,", gpu)
+		}
+		deviceOpts = deviceOpts[:len(deviceOpts)-1] + "\""
+		log.Printf("gpu device opts: %s", deviceOpts)
+		gpuOpts.Set(deviceOpts)
+		resources.DeviceRequests = gpuOpts.Value()
 	}
 	resp, err := t.cli.ContainerCreate(ctx, &container.Config{Image: t.imageId}, &container.HostConfig{Resources: resources, Runtime: t.runtime}, networkConfig, nil, containerName)
 	if err != nil {
@@ -206,7 +219,7 @@ func newDockerMecaExecutor(cfg MecaExecutorConfig) *MecaExecutor {
 	return &MecaExecutor{
 		timeout:  cfg.Timeout,
 		tracker:  newTaskTracker(),
-		rm:       NewResourceManager(cfg.Cpu, cfg.Mem),
+		rm:       NewResourceManager(cfg.Cpu, cfg.Mem, cfg.HasGPU),
 		repo:     NewLocalDockerRepo(cli),
 		fac:      NewDockerTaskFactory(cli),
 		runtimes: runtimes,

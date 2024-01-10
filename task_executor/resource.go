@@ -4,6 +4,7 @@ import (
 	"errors"
 	"fmt"
 	"log"
+	"sync"
 	"sync/atomic"
 	"time"
 
@@ -17,28 +18,43 @@ var (
 
 // monitor the availble resource on the host
 type ResourceMonitor interface {
-	Start() bool          // start monitoring
-	Stop()                // stop monitoring
-	GetCPU() int          // in core count
-	GetMEM() int          // in MB
-	GetCPUUsed() float64  // in core count
-	GetMEMUsed() float64  // in MB
-	GetCPUAvail() float64 // in core count
-	GetMEMAvail() float64 // in MB
+	Start() bool            // start monitoring
+	Stop()                  // stop monitoring
+	GetCPU() int            // in core count
+	GetMEM() int            // in MB
+	GetCPUUsed() float64    // in core count
+	GetMEMUsed() float64    // in MB
+	GetCPUAvail() float64   // in core count
+	GetMEMAvail() float64   // in MB
+	GetGPUCount() int       // in count
+	GetGPUModel() string    // in string
+	GetGPUUtils() []GPUUtil // in list of GPUUtil (% pair)
 }
 
 var _ ResourceMonitor = (*resourceMonitor)(nil)
 
 type resourceMonitor struct {
+	// setting
+	hasGPU bool
+
+	// cpu and mem
 	cpuCount    int
 	memTotal    uint64        // in MB
 	lastCPUUsed atomic.Uint64 // in per mille
 	lastmemUsed atomic.Uint64 // in per mille
-	stopChn     chan<- struct{}
+
+	// gpu
+	gpuCount   int
+	gpuModel   string
+	gpuUsed    []atomic.Uint32
+	gpuMemUsed []atomic.Uint32
+	stopChn    chan<- struct{}
 }
 
-func NewResourceMonitor() *resourceMonitor {
-	return &resourceMonitor{}
+func NewResourceMonitor(hasGPU bool) *resourceMonitor {
+	return &resourceMonitor{
+		hasGPU: hasGPU,
+	}
 }
 
 func (m *resourceMonitor) Start() bool {
@@ -60,10 +76,50 @@ func (m *resourceMonitor) Start() bool {
 		m.lastCPUUsed.Store(uint64(cu[0] * 10))
 	}
 
+	if m.hasGPU {
+		if err := InitGPUMonitor(); err != nil {
+			log.Printf("failed to init gpu monitor: %v", err)
+			return false
+		}
+
+		defer ShutdownGPUMonitor()
+
+		if gpus, err := GetGPUCount(); err != nil {
+			log.Printf("failed to get gpu info: %v", err)
+		} else {
+			m.gpuCount = gpus
+			log.Printf("gpu count: %d", m.gpuCount)
+		}
+
+		if model, err := GetGPUModel(); err != nil {
+			log.Printf("failed to get gpu model: %v", err)
+		} else {
+			m.gpuModel = model
+			log.Printf("gpu model: %s", m.gpuModel)
+		}
+
+		if utils, err := GetGPUUtilization(); err != nil {
+			log.Printf("failed to get gpu utilization: %v", err)
+		} else {
+			m.gpuUsed = make([]atomic.Uint32, m.gpuCount)
+			m.gpuMemUsed = make([]atomic.Uint32, m.gpuCount)
+			for i := 0; i < m.gpuCount; i++ {
+				m.gpuUsed[i].Store(utils[i].compute)
+				m.gpuMemUsed[i].Store(utils[i].memory)
+			}
+		}
+	}
+
 	// launch a goroutine to update the value in background
 	stopChn := make(chan struct{})
 	m.stopChn = stopChn
 	go func() {
+
+		if m.hasGPU {
+			InitGPUMonitor()
+			defer ShutdownGPUMonitor()
+		}
+
 		for {
 			select {
 			case <-stopChn:
@@ -82,6 +138,18 @@ func (m *resourceMonitor) Start() bool {
 					// perform no update
 				} else {
 					m.lastmemUsed.Store((ms.Used >> 10) / (ms.Total >> 20))
+				}
+
+				if m.hasGPU {
+
+					if utils, err := GetGPUUtilization(); err != nil {
+						log.Printf("failed to get gpu utilization: %v", err)
+					} else {
+						for i := 0; i < m.gpuCount; i++ {
+							m.gpuUsed[i].Store(utils[i].compute)
+							m.gpuMemUsed[i].Store(utils[i].memory)
+						}
+					}
 				}
 
 				// log.Printf("[Resource monitor] cpu: %.2f%%, mem %.2f%%", float64(m.lastCPUUsed.Load())/10, float64(m.lastmemUsed.Load())/10)
@@ -119,6 +187,23 @@ func (m *resourceMonitor) GetMEMAvail() float64 {
 	return 100 - float64(m.lastmemUsed.Load())/10
 }
 
+func (m *resourceMonitor) GetGPUCount() int {
+	return m.gpuCount
+}
+
+func (m *resourceMonitor) GetGPUModel() string {
+	return m.gpuModel
+}
+
+func (m *resourceMonitor) GetGPUUtils() []GPUUtil {
+	ret := make([]GPUUtil, m.gpuCount)
+	for i := 0; i < m.gpuCount; i++ {
+		ret[i].compute = m.gpuUsed[i].Load()
+		ret[i].memory = m.gpuMemUsed[i].Load()
+	}
+	return ret
+}
+
 type ResourceStats struct {
 	TotalCPU    int     `json:"total_cpu"`     // core
 	TotalMEM    int     `json:"total_mem"`     // MB
@@ -128,6 +213,9 @@ type ResourceStats struct {
 	TaskMEM     int     `json:"task_mem"`      // MB
 	TaskUsedCPU float64 `json:"task_used_cpu"` // %
 	TaskUsedMEM float64 `json:"task_used_mem"` // %
+	GPUModel    string  `json:"gpu_model"`
+	TaskGPU     int     `json:"task_gpu"`      // count
+	TaskUsedGPU int     `json:"task_used_gpu"` // count
 }
 
 func (rs *ResourceStats) IsEmpty() bool {
@@ -141,6 +229,9 @@ type ResourceManager interface {
 	UpdateConfig(cpu float64, mem int) string
 	Reserve(cpu float64, mem int) error
 	Release(cpu float64, mem int) error
+	GetGPUCount() int
+	ReserveGPU(count int, utilLimit int) ([]int, error)
+	ReleaseGPU([]int) error
 	Stats() ResourceStats
 }
 
@@ -154,13 +245,17 @@ type resourceManager struct {
 	taskTotalMEM uint64
 	taskAvailCPU atomic.Uint64 // keep one decimal after core count
 	taskAvailMEM atomic.Uint64
+	hasGPU       bool // controlled by meca-executor config, if false, gpu related functions are turned on.
+	gpuReserveMu sync.Mutex
+	gpuAvail     map[int]struct{}
 }
 
-func NewResourceManager(totalCPU float64, totalMem int) *resourceManager {
+func NewResourceManager(totalCPU float64, totalMem int, hasGPU bool) *resourceManager {
 	return &resourceManager{
-		monitor:     NewResourceMonitor(),
+		monitor:     NewResourceMonitor(hasGPU),
 		totalCPUCfg: totalCPU,
 		totalMEMCfg: totalMem,
+		hasGPU:      hasGPU,
 	}
 }
 
@@ -188,6 +283,13 @@ func (m *resourceManager) Start() bool {
 	}
 	// adjust based on the host info
 	m.adjustResourceConfig()
+	if m.hasGPU {
+		gpuCount := m.monitor.GetGPUCount()
+		m.gpuAvail = make(map[int]struct{}, gpuCount)
+		for i := 0; i < gpuCount; i++ {
+			m.gpuAvail[i] = struct{}{}
+		}
+	}
 	log.Printf("meca task executor resource manager started with cpu %f core, mem %d MB", float64(m.taskTotalCPU)/10, m.taskTotalMEM)
 	return true
 }
@@ -242,6 +344,67 @@ func (m *resourceManager) Release(cpu float64, mem int) error {
 	return nil
 }
 
+func (m *resourceManager) GetGPUCount() int {
+	if !m.hasGPU {
+		return 0
+	}
+	return m.monitor.GetGPUCount()
+}
+
+func (m *resourceManager) ReserveGPU(count int, utilLimit int) ([]int, error) {
+	if !m.hasGPU {
+		log.Printf("no gpu available")
+		return nil, errMECANotEnoughResource
+	}
+
+	m.gpuReserveMu.Lock()
+	defer m.gpuReserveMu.Unlock()
+	if count > m.monitor.GetGPUCount() {
+		log.Printf("gpu count not enough")
+		return nil, errMECANotEnoughResource
+	}
+	if len(m.gpuAvail) < count {
+		log.Printf("avail gpu count not enough")
+		return nil, errMECANotEnoughResource
+	}
+	// GPU allocation is done in full. If the utilization of a GPU is higher than the limit, it will not be allocated.
+	utils := m.monitor.GetGPUUtils()
+	log.Printf("gpu utils: %v", utils)
+	ret := make([]int, 0, count)
+	for k := range m.gpuAvail {
+		if int(utils[k].compute) > utilLimit || int(utils[k].memory) > utilLimit {
+			continue
+		}
+		ret = append(ret, k)
+		delete(m.gpuAvail, k)
+		if len(ret) == count {
+			break
+		}
+	}
+
+	// if not enough, release the reserved ones
+	if len(ret) < count {
+		for _, k := range ret {
+			m.gpuAvail[k] = struct{}{}
+		}
+		log.Printf("reserved gpu count not enough")
+		return nil, errMECANotEnoughResource
+	}
+	return ret, nil
+}
+
+func (m *resourceManager) ReleaseGPU(ids []int) error {
+	if !m.hasGPU {
+		return nil
+	}
+	m.gpuReserveMu.Lock()
+	defer m.gpuReserveMu.Unlock()
+	for _, id := range ids {
+		m.gpuAvail[id] = struct{}{}
+	}
+	return nil
+}
+
 func (m *resourceManager) Stats() (stats ResourceStats) {
 	stats.TotalCPU = m.monitor.GetCPU()
 	stats.TotalMEM = m.monitor.GetMEM()
@@ -251,5 +414,8 @@ func (m *resourceManager) Stats() (stats ResourceStats) {
 	stats.TaskMEM = int(m.taskTotalMEM)
 	stats.TaskUsedCPU = 100 - 100*float64(m.taskAvailCPU.Load())/float64(m.taskTotalCPU)
 	stats.TaskUsedMEM = 100 - 100*float64(m.taskAvailMEM.Load())/float64(m.taskTotalMEM)
+	stats.GPUModel = m.monitor.GetGPUModel()
+	stats.TaskGPU = m.monitor.GetGPUCount()
+	stats.TaskUsedGPU = len(m.gpuAvail)
 	return
 }
