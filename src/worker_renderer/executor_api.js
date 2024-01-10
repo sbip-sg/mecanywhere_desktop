@@ -28,4 +28,4 @@ async function postTaskExecution(containerRef, input, resource, runtime) {
   return msg;
 }
 
-module.exports.postTaskExecution = postTaskExecution;
+module.exports = { postTaskExecution };
