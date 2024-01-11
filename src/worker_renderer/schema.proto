@@ -11,6 +11,8 @@ message Task {
   string content = 3;
   Resource resource = 4;
   string runtime = 5;
+  bool useGpu = 6;
+  int32 gpuCount = 7;
 }
 
 message TaskResult {

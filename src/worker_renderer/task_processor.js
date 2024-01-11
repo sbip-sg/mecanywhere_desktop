@@ -44,7 +44,9 @@ async function handleMsgContent(content) {
     task.containerRef,
     task.content,
     task.resource,
-    task.runtime
+    task.runtime,
+    task.useGpu,
+    task.gpuCount
   );
 
   if (task.resource == null) {
