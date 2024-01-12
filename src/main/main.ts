@@ -19,13 +19,14 @@ import {
 } from 'electron';
 import { autoUpdater } from 'electron-updater';
 import { performance } from 'perf_hooks';
+import log from 'electron-log/main';
 import MenuBuilder from './menu';
 import { resolveHtmlPath } from './util';
 import Channels from '../common/channels';
 
 const Store = require('electron-store');
 const io = require('socket.io')();
-import log from 'electron-log/main';
+const Docker = require('dockerode');
 
 process.env['ELECTRON_DISABLE_SECURITY_WARNINGS'] = 'true';
 
@@ -37,6 +38,7 @@ const start = performance.now();
 const SDK_SOCKET_PORT = process.env.SDK_SOCKET_PORT || 3001;
 
 const store = new Store();
+const docker = new Docker();
 
 class AppUpdater {
   constructor() {
@@ -57,7 +59,7 @@ appdev_server.on('connection', (socket) => {
     console.log('Client registered: ', registered);
     socket.emit('registered', registered);
   }
-  ipcMain.on(Channels.CLIENT_REGISTERED, onClientRegistered)
+  ipcMain.on(Channels.CLIENT_REGISTERED, onClientRegistered);
 
   async function onJobResultsReceived(
     event: IpcMainEvent,
@@ -67,10 +69,24 @@ appdev_server.on('connection', (socket) => {
     taskId: String,
     transactionId: String
   ) {
-    console.log('Sending job results to client... ', status, response, error, taskId, transactionId)
-    socket.emit('job_results_received', status, response, error, taskId, transactionId);
+    console.log(
+      'Sending job results to client... ',
+      status,
+      response,
+      error,
+      taskId,
+      transactionId
+    );
+    socket.emit(
+      'job_results_received',
+      status,
+      response,
+      error,
+      taskId,
+      transactionId
+    );
   }
-  ipcMain.on(Channels.JOB_RESULTS_RECEIVED, onJobResultsReceived)
+  ipcMain.on(Channels.JOB_RESULTS_RECEIVED, onJobResultsReceived);
 
   socket.on('offload', async (jobJson: string) => {
     console.log('Received job...', jobJson);
@@ -104,28 +120,6 @@ appdev_server.on('connection', (socket) => {
   } catch (error) {
     console.log(error);
   }
-});
-
-function showLoginWindow() {
-  // window.loadURL('https://www.your-site.com/login')
-  if (mainWindow) {
-    shell.openExternal('localhost:1212/login');
-    // mainWindow
-    //   .loadFile('src/main/login.html') // For testing purposes only
-    //   .then(() => {
-    //     if (mainWindow) {
-    //       mainWindow.show();
-    //       console.log("mainwindowshowdone")
-    //     }
-    //   });
-  }
-}
-ipcMain.handle(Channels.OPEN_LINK_PLEASE, () => {
-  shell.openExternal('http://localhost:3000/');
-});
-
-ipcMain.on(Channels.OPEN_WINDOW, (event) => {
-  showLoginWindow();
 });
 
 ipcMain.on(Channels.STORE_GET, async (event, key) => {
@@ -199,6 +193,75 @@ if (process.env.NODE_ENV === 'production') {
   const sourceMapSupport = require('source-map-support');
   sourceMapSupport.install();
 }
+
+const stopAndRemoveContainer = (containerName) => {
+  docker.listContainers({ all: true }, (err, containers) => {
+    if (err) {
+      console.error(err);
+      return;
+    }
+    const containerInfo = containers.find((c) =>
+      c.Names.some((n) => n === `/${containerName}`)
+    );
+
+    if (containerInfo) {
+      const container = docker.getContainer(containerInfo.Id);
+      container.stop((err) => {
+        if (err) {
+          console.error(err);
+          return;
+        }
+        container.remove((err) => {
+          if (err) {
+            console.error(err);
+          } else {
+            console.log(
+              `Container ${containerName} stopped and removed successfully.`
+            );
+          }
+        });
+      });
+    } else {
+      console.log(`Container ${containerName} not found.`);
+    }
+  });
+};
+const startDockerContainer = (containerName: string) => {
+  const containerOptions = {
+    name: containerName,
+    Image: 'meca-executor:latest',
+    ExposedPorts: { '2591/tcp': {} },
+
+    HostConfig: {
+      Binds: ['/var/run/docker.sock:/var/run/docker.sock'],
+      PortBindings: { '2591/tcp': [{ HostPort: '2591' }] },
+      NetworkMode: 'meca',
+    },
+    NetworkingConfig: {
+      EndpointsConfig: {
+        meca: {
+          IPAMConfig: {
+            IPv4Address: '173.18.0.255',
+          },
+        },
+      },
+    },
+  };
+  docker.createContainer(containerOptions, (err, container) => {
+    if (err) {
+      console.error(err);
+      return;
+    }
+
+    container.start((err, data) => {
+      if (err) {
+        console.error(err);
+      } else {
+        console.log('Container started');
+      }
+    });
+  });
+};
 
 const isDebug =
   process.env.NODE_ENV === 'development' || process.env.DEBUG_PROD === 'true';
@@ -313,6 +376,10 @@ app
     const appReadyMs = performance.now() - start;
     console.log(`App ready in ${appReadyMs} ms`);
     createWindow();
+    const containerName = 'meca_executor_test';
+    stopAndRemoveContainer(containerName);
+    console.log("removed..?")
+    startDockerContainer(containerName);
     app.on('activate', () => {
       // On macOS it's common to re-create a window in the app when the
       // dock icon is clicked and there are no other windows open.
