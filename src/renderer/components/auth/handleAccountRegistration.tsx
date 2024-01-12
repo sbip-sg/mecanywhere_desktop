@@ -78,6 +78,7 @@ const handleAccountRegistration = async (
           option: 'low',
           cpu_cores: 1,
           memory_mb: 2048,
+          gpus: 0,
         })
       );
     } catch (createAccountError) {

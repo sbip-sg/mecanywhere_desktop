@@ -78,5 +78,5 @@ curl http://172.18.0.255:2591 -X POST -H "Content-Type: application/json" -d '{"
 Specify GPU
 
 ```sh
-curl htp://172.18.0.255:2591 -X POST -H "Content-Type: application/json" -d '{"id": "meca-python-task:1227", "resource": {"cpu":1, "mem":256, "use_gpu": true, "gpu_count": 3}, "input": "{\"name\": \"sbip\"}"}'
+curl http://172.18.0.255:2591 -X POST -H "Content-Type: application/json" -d '{"id": "meca-python-task:1227", "resource": {"cpu":1, "mem":256, "use_gpu": true, "gpu_count": 3}, "input": "{\"name\": \"sbip\"}"}'
 ```

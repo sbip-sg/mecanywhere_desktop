@@ -1,9 +1,7 @@
 import { Typography, FormControl, MenuItem } from '@mui/material';
-import { useTheme } from '@emotion/react';
 import Select, { SelectChangeEvent } from '@mui/material/Select';
 
 const PresetSelectorWidget = ({ executorSettings, setExecutorSettings }) => {
-  const theme = useTheme();
   const handleSelectChange = (event: SelectChangeEvent) => {
     switch (event.target.value) {
       case 'low':
@@ -48,12 +46,12 @@ const PresetSelectorWidget = ({ executorSettings, setExecutorSettings }) => {
         variant="body1"
         fontWeight="600"
         textAlign="start"
-        padding="3rem 1.5rem 1rem 1.5rem"
+        padding="2rem 0 1rem 0"
         color="text.primary"
       >
         Resource Allocation:
       </Typography>
-      <FormControl sx={{ width: '100%', padding: '0rem 1.5rem 1rem 1.5rem' }}>
+      <FormControl sx={{ width: '100%' }}>
         <Select
           id="demo-simple-select"
           value={executorSettings.option}

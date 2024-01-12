@@ -69,6 +69,7 @@ const PostSharingEnabledComponent = ({
     const interval = setInterval(async () => {
       const fetchResource = async () => {
         const resources = await getResourceStats();
+        console.log("resources,", resources)
         setResourcesLog(resources);
       };
       fetchResource();

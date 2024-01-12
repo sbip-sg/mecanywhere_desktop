@@ -122,7 +122,9 @@ const MetaMaskComponent = () => {
   };
 
   const handlePay = async () => {
-    const contractAddress = '0x00A2D67F79e8652ce878685Ac1B7E0b5e9A475C9';
+    // const contractAddress = '0x00A2D67F79e8652ce878685Ac1B7E0b5e9A475C9';
+    const contractAddress = '0xe3ed4fd891fEf89Cb5ED7f609fEDEB87ddcC864c';
+
     const senderAddress = '0xA32fE9BC86ADF555Db1146ef44eb7fFEB54c86CA';
     const web3 = new Web3(provider);
     console.log('paymentContract', paymentContract);
@@ -150,7 +152,7 @@ const MetaMaskComponent = () => {
     const withdrawRequest = {
       did: did,
       address: address,
-      amount: amount.toString(),
+      amount: amount,
     };
     // console.log(wiu)
     const withdrawResponse = await withdrawFromContract(

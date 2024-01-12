@@ -25,10 +25,11 @@ const LeftDrawerComponent = () => {
           width: 325,
           boxSizing: 'border-box',
         },
+        scrollbarGutter: 'stable',
       }}
     >
       <Toolbar sx={{ backgroundColor: 'red' }} />
-      <Box id="drawerlist-wrapper" sx={{ height: '100%', overflow: 'auto' }}>
+      <Box id="drawerlist-wrapper" sx={{ height: '100%', overflow: 'overlay' }}>
         {role === 'host' && <ClientHostTab />}
         {role === 'client' && <ClientHostTab />}
         {role === 'provider' && <ProviderTab />}

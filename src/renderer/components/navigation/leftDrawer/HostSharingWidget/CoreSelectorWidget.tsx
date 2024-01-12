@@ -3,18 +3,22 @@ import {
   ButtonGroup,
   Button,
   Stack,
-  Grid,
+  Box,
   IconButton,
 } from '@mui/material';
 import KeyboardArrowDownIcon from '@mui/icons-material/KeyboardArrowDown';
 import KeyboardArrowUpIcon from '@mui/icons-material/KeyboardArrowUp';
 import { useTheme } from '@emotion/react';
 
-const CoreSelectorWidget = ({ executorSettings, setExecutorSettings }) => {
+const CoreSelectorWidget = ({
+  executorSettings,
+  setExecutorSettings,
+  totalCpuCores,
+}) => {
   const theme = useTheme();
 
   const incrementCore = () => {
-    if (executorSettings.cpu_cores < 4) {
+    if (executorSettings.cpu_cores < totalCpuCores) {
       setExecutorSettings((prev) => ({
         ...prev,
         cpu_cores: prev.cpu_cores + 1,
@@ -32,14 +36,19 @@ const CoreSelectorWidget = ({ executorSettings, setExecutorSettings }) => {
   };
 
   return (
-    <Grid container item xs={12} sx={{ justifyContent: 'space-between' }}>
+    <Box
+      sx={{
+        display: 'flex',
+        justifyContent: 'space-between',
+        padding: '1rem 0.1rem',
+      }}
+    >
       <Typography
+        variant="body1"
         sx={{
-          height: '100%',
-          fontSize: '15px',
+          color: 'text.primary',
           display: 'flex',
           alignItems: 'center',
-          color: 'text.primary',
         }}
       >
         CPU cores
@@ -74,7 +83,7 @@ const CoreSelectorWidget = ({ executorSettings, setExecutorSettings }) => {
           </IconButton>
         </Stack>
       </ButtonGroup>
-    </Grid>
+    </Box>
   );
 };
 

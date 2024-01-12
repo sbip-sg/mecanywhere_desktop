@@ -6,6 +6,7 @@ import Checkbox from '@mui/material/Checkbox';
 import useIsLightTheme from 'renderer/components/common/useIsLightTheme';
 import CoreSelectorWidget from './CoreSelectorWidget';
 import MemorySelectorSlider from './MemorySelectorSlider';
+import GpuSelectorWidget from './GpuSelectorWidget';
 import PresetSelectorWidget from './PresetSelectorWidget';
 
 const PreSharingEnabledComponent = ({
@@ -15,7 +16,10 @@ const PreSharingEnabledComponent = ({
   setIsExecutorSettingsSaved,
   executorSettings,
   setExecutorSettings,
+  deviceResource,
 }) => {
+  const [allocateGPU, setAllocateGPU] = useState(false);
+
   const handleCheckboxChange = (event) => {
     setIsExecutorSettingsSaved(event.target.checked);
     window.electron.store.set(
@@ -23,7 +27,10 @@ const PreSharingEnabledComponent = ({
       event.target.checked.toString()
     );
   };
-  const isLightTheme = useIsLightTheme();
+  const handleGPUCheckBoxChange = (event) => {
+    setAllocateGPU(event.target.checked);
+  };
+
   useEffect(() => {
     if (window.electron.store.get('isExecutorSettingsSaved') === 'true') {
       window.electron.store.set(
@@ -34,12 +41,12 @@ const PreSharingEnabledComponent = ({
   }, [executorSettings]);
 
   return (
-    <Stack width="100%">
+    <Stack width="85%">
       <Box
         sx={{
           display: 'flex',
           alignItems: 'center',
-          padding: '2rem 0 0 1.5rem',
+          padding: '1rem 0 0 0',
         }}
       >
         <ErrorOutlineIcon sx={{ color: 'primary.main' }} />
@@ -62,52 +69,85 @@ const PreSharingEnabledComponent = ({
       />
       <AnimatePresence mode="wait">
         <motion.div
-          style={{
-            height: executorSettings.option === 'custom' ? '50%' : '0',
-            width: '100%',
-            display: 'flex',
-            justifyContent: 'center',
-            alignContent: 'center',
-            overflowY: 'hidden',
-          }}
-          initial={{ height: '0' }}
           animate={{
-            height: executorSettings.option === 'custom' ? '50%' : '0',
+            height: executorSettings.option === 'custom' ? '100%' : '0',
           }}
           transition={{ duration: 0.3, ease: 'easeInOut' }}
         >
-          <Grid
-            container
-            item
+          <Stack
+            className="resource-allocator"
             sx={{
               height: '100%',
               width: '100%',
-              padding: '0rem 1.5rem 0rem 1.5rem',
               overflow: 'hidden',
+              display: 'flex',
             }}
           >
             <CoreSelectorWidget
               executorSettings={executorSettings}
               setExecutorSettings={setExecutorSettings}
+              totalCpuCores={deviceResource.totalCpuCores}
             />
             <MemorySelectorSlider
               executorSettings={executorSettings}
               setExecutorSettings={setExecutorSettings}
+              totalMem={deviceResource.totalMem}
             />
-          </Grid>
+          </Stack>
         </motion.div>
       </AnimatePresence>
       <Box
         sx={{
-          padding: '1rem 1rem 0 1.5rem',
+          justifyContent: 'space-between',
+          display: 'flex',
+          alignItems: 'center',
+          height: '100%',
+          padding: '1.5rem 0 0 0',
+        }}
+      >
+        <Typography
+          fontWeight="600"
+          variant="body1"
+          textAlign="start"
+          color="text.primary"
+        >
+          Allocate GPU
+        </Typography>
+        <Checkbox
+          checked={allocateGPU}
+          onChange={handleGPUCheckBoxChange}
+          size="small"
+          sx={{
+            color: 'text.primary',
+            padding: '0.2rem 0',
+          }}
+        />
+      </Box>
+      <AnimatePresence mode="wait">
+        <motion.div
+          animate={{
+            height: allocateGPU ? '100%' : '0',
+          }}
+          transition={{ duration: 0.3, ease: 'easeInOut' }}
+        >
+          <GpuSelectorWidget
+            executorSettings={executorSettings}
+            setExecutorSettings={setExecutorSettings}
+            deviceResource={deviceResource}
+          />
+        </motion.div>
+      </AnimatePresence>
+      <Box
+        sx={{
+          padding: '1.5rem 0 0.5rem 0',
           justifyContent: 'space-between',
           display: 'flex',
           alignItems: 'center',
         }}
       >
         <Typography
-          fontWeight="600"
           variant="body1"
+          fontWeight="600"
           textAlign="start"
           color="text.primary"
         >
@@ -119,36 +159,29 @@ const PreSharingEnabledComponent = ({
           size="small"
           sx={{
             color: 'text.primary',
+            padding: '0.2rem 0',
           }}
         />
       </Box>
-      <Box
+      <Button
+        onClick={handleEnableResourceSharing}
         sx={{
-          display: 'flex',
-          justifyContent: 'center',
-          padding: '1rem 1.5rem 2rem 1.5rem',
+          margin: '1.5rem 0',
+          padding: '0.5rem',
+          color: isLoading ? 'primary.main' : 'background.paper',
+          backgroundColor: isLoading ? 'background.paper' : 'primary.main',
         }}
       >
-        <Button
-          onClick={handleEnableResourceSharing}
+        <Typography
+          variant="body1"
           sx={{
-            width: '100%',
-            padding: '0.6rem',
-            color: isLoading ? 'primary.main' : 'background.paper',
-            backgroundColor: isLoading ? 'background.paper' : 'primary.main',
+            textAlign: 'center',
+            fontWeight: '600',
           }}
         >
-          <Typography
-            sx={{
-              fontSize: '15px',
-              textAlign: 'center',
-              fontWeight: '600',
-            }}
-          >
-            Enable Resource&nbsp;Sharing
-          </Typography>
-        </Button>
-      </Box>
+          Enable Resource&nbsp;Sharing
+        </Typography>
+      </Button>
     </Stack>
   );
 };

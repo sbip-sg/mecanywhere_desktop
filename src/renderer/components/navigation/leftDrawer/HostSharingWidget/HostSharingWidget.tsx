@@ -1,5 +1,5 @@
 import { Box } from '@mui/material';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { useTheme } from '@emotion/react';
 import CircularProgress from '@mui/material/CircularProgress';
 import { styled } from '@mui/material/styles';
@@ -7,18 +7,30 @@ import {
   handleRegisterHost,
   handleDeregisterHost,
 } from 'renderer/components/common/handleRegistration';
-import { updateConfig } from 'renderer/services/ExecutorServices';
+import {
+  updateConfig,
+  unpauseExecutor,
+  getResourceStats,
+  pauseExecutor,
+} from 'renderer/services/ExecutorServices';
 import Transitions from '../../../transitions/Transition';
 import PreSharingEnabledComponent from './PreSharingEnabledComponent';
 import PostSharingEnabledComponent from './PostSharingEnabledComponent';
 
+interface deviceResourceType {
+  totalCpuCores: number;
+  totalMem: number;
+  totalGpus: number;
+  gpuModel: string;
+}
+
 const HostSharingWidget = () => {
-  const theme = useTheme();
   const [isLoading, setIsLoading] = useState(false);
   let initialExecutorSettings = {
     option: 'low',
     cpu_cores: 1,
     memory_mb: 2048,
+    gpus: 0,
   };
   const initialIsExecutorSettingsSaved =
     window.electron.store.get('isExecutorSettingsSaved') === 'true';
@@ -40,9 +52,44 @@ const HostSharingWidget = () => {
   const [executorSettings, setExecutorSettings] = useState(
     initialExecutorSettings
   );
-
   const [resourceSharingEnabled, setResourceSharingEnabled] =
     useState<Boolean>(false);
+  const [deviceResource, setDeviceResource] = useState<deviceResourceType>({
+    totalCpuCores: 4,
+    totalMem: 8192,
+    totalGpus: 0,
+    gpuModel: '',
+  });
+
+  const getDeviceResource = async () => {
+    await unpauseExecutor();
+    const resourceStats = await getResourceStats();
+    const totalCpuCores = resourceStats.total_cpu;
+    const totalMem = resourceStats.total_mem;
+    const totalGpus = resourceStats.task_gpu;
+    const gpuModel = resourceStats.gpu_model;
+    await pauseExecutor();
+    return { totalCpuCores, totalMem, totalGpus, gpuModel };
+  };
+
+  useEffect(() => {
+    console.log('deviceResource', deviceResource);
+  }, [deviceResource]);
+
+  useEffect(() => {
+    const doGetDeviceResource = async () => {
+      const { totalCpuCores, totalMem, totalGpus, gpuModel } =
+        await getDeviceResource();
+      setDeviceResource({
+        totalCpuCores,
+        totalMem,
+        totalGpus,
+        gpuModel,
+        // gpuModel: 'NVIDIA GeForce RTX 3060 Ti',
+      });
+    };
+    doGetDeviceResource();
+  }, []);
 
   const handleEnableResourceSharing = async () => {
     setIsLoading(true);
@@ -52,9 +99,7 @@ const HostSharingWidget = () => {
       mem: executorSettings.memory_mb,
       microVM_runtime: 'kata',
     };
-    const updateConfigResponse = await updateConfig(configToUpdate);
-    console.log("executorSettings.cpu_cores", executorSettings.cpu_cores)
-    console.log("executorSettings.memory_mb", executorSettings.memory_mb)
+    await updateConfig(configToUpdate);
     await handleRegisterHost(
       executorSettings.cpu_cores,
       executorSettings.memory_mb
@@ -87,7 +132,6 @@ const HostSharingWidget = () => {
         height: '100%',
         width: '100%',
         display: 'flex',
-        // padding: "1.2rem 1.2rem 1.2rem 1.2rem"
       }}
     >
       {isLoading && (
@@ -127,6 +171,7 @@ const HostSharingWidget = () => {
             setIsExecutorSettingsSaved={setIsExecutorSettingsSaved}
             executorSettings={executorSettings}
             setExecutorSettings={setExecutorSettings}
+            deviceResource={deviceResource}
           />
         ) : (
           <PostSharingEnabledComponent

@@ -10,6 +10,8 @@ export async function withdrawFromContract(token: string, request: any) {
       },
       body: JSON.stringify(request),
     });
+    const res = await response.json();
+    console.log('response.detail', res.detail);
     if (!response.ok) {
       throw new Error('Network response not ok');
     }

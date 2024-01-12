@@ -20,6 +20,7 @@ const lightThemeSpaceBar1 = '#f1f1f1'; // light
 const lightThemeSpaceBar2 = '#c1c1c1'; // medium
 const lightThemeSpaceBar3 = '#a8a8a8'; // dark
 const lightGrey = '#e6e8eb';
+const red = '#e57373';
 
 export const getDesignTokens = (mode: PaletteMode) => ({
   palette: {
@@ -42,6 +43,9 @@ export const getDesignTokens = (mode: PaletteMode) => ({
             default: white,
             paper: offWhite,
           },
+          error: {
+            main: red,
+          },
         }
       : {
           primary: {
@@ -59,6 +63,9 @@ export const getDesignTokens = (mode: PaletteMode) => ({
           background: {
             default: lightBlack,
             paper: darkBlack,
+          },
+          error: {
+            main: red,
           },
         }),
     customColor: {

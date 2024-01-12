@@ -1,91 +1,104 @@
-import { Grid, Typography, Slider } from '@mui/material';
-import { useTheme } from '@emotion/react';
+import { Box, Stack, Typography, Slider } from '@mui/material';
 
-const sliderMarks = [
-  {
-    value: 1024,
-    label: '1024',
-  },
-  {
-    value: 8192,
-    label: '8192',
-  },
-];
-const MemorySelectorSlider = ({ executorSettings, setExecutorSettings }) => {
-  const theme = useTheme();
+const MemorySelectorSlider = ({
+  executorSettings,
+  setExecutorSettings,
+  totalMem,
+}) => {
   const handleSliderChange = (event, newValue) => {
     setExecutorSettings({ ...executorSettings, memory_mb: newValue });
   };
+  const sliderStep = 256;
+  const sliderMinMark = 1024;
+  const sliderMaxMark = Math.floor(totalMem / sliderStep) * sliderStep;
+  const sliderMarks = [
+    {
+      value: sliderMinMark,
+      label: `${sliderMinMark}`,
+    },
+    {
+      value: sliderMaxMark,
+      label: `${sliderMaxMark}`,
+    },
+  ];
   return (
-    <>
-      <Grid
-        container
-        item
-        xs={12}
+    <Stack
+      sx={{
+        display: 'flex',
+        justifyContent: 'center',
+        alignItems: 'center',
+      }}
+    >
+      <Box
         sx={{
-          padding: '1rem 0rem 0rem 0rem',
+          width: '100%',
+          display: 'flex',
           justifyContent: 'space-between',
         }}
       >
-        <Typography
-          sx={{ height: '100%', fontSize: '15px', color: 'text.primary' }}
-        >
+        <Typography variant="body1" sx={{ color: 'text.primary' }}>
           Memory (MB)
         </Typography>
         <Typography
+          variant="body1"
           sx={{
-            height: '100%',
-            fontSize: '15px',
             color: 'text.primary',
             fontWeight: '600',
           }}
         >
           {executorSettings.memory_mb}
         </Typography>
-      </Grid>
-      <Grid container item xs={12} sx={{ padding: '0rem 0rem 0rem 0rem' }}>
-        <Slider
-          value={executorSettings.memory_mb}
-          min={1024}
-          max={8192}
-          step={256}
-          onChange={handleSliderChange}
-          valueLabelDisplay="auto"
-          valueLabelFormat={(value) => `${value} MB`}
-          marks={sliderMarks}
-          sx={{
-            '& .MuiSlider-thumb': {
-              color: 'primary.main',
-            },
-            '& .MuiSlider-mark': {
-              color: 'transparent',
-              backgroundColor: 'transparent',
-            },
+      </Box>
 
-            '& .MuiSlider-rail': {
-              color: 'primary.main',
-            },
-            '& .MuiSlider-track': {
-              color: 'primary.main',
-            },
-            '& .MuiSlider-valueLabel': {
-              display: 'none',
-            },
-            '& .MuiSlider-markLabel': {
-              fontSize: '12px',
-              top: '25px',
-              color: 'text.secondary',
-            },
-            '& .MuiSlider-markLabel[data-index="0"]': {
-              transform: 'none',
-            },
-            '& .MuiSlider-markLabel[data-index="1"]': {
-              transform: 'translateX(-100%)',
-            },
-          }}
-        />
-      </Grid>
-    </>
+      <Slider
+        value={executorSettings.memory_mb}
+        min={sliderMinMark}
+        max={sliderMaxMark}
+        step={sliderStep}
+        onChange={handleSliderChange}
+        valueLabelDisplay="auto"
+        valueLabelFormat={(value) => `${value} MB`}
+        marks={sliderMarks}
+        sx={{
+          width: 'calc(100% - 20px)',
+          mx: '10px',
+
+          '& .MuiSlider-thumb': {
+            color: 'primary.main',
+            zIndex: 100,
+          },
+          '& .MuiSlider-mark': {
+            color: 'transparent',
+            backgroundColor: 'transparent',
+            zIndex: 100,
+          },
+
+          '& .MuiSlider-rail': {
+            color: 'primary.main',
+            zIndex: 100,
+          },
+          '& .MuiSlider-track': {
+            color: 'primary.main',
+            zIndex: 100,
+          },
+          '& .MuiSlider-valueLabel': {
+            display: 'none',
+            zIndex: 100,
+          },
+          '& .MuiSlider-markLabel': {
+            fontSize: '12px',
+            // top: '25px',
+            color: 'text.primary',
+          },
+          '& .MuiSlider-markLabel[data-index="0"]': {
+            transform: 'translateX(-10%) ',
+          },
+          '& .MuiSlider-markLabel[data-index="1"]': {
+            transform: 'translateX(-90%) ',
+          },
+        }}
+      />
+    </Stack>
   );
 };
 
