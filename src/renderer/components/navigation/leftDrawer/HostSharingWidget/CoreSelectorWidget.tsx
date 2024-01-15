@@ -9,14 +9,18 @@ import {
 import KeyboardArrowDownIcon from '@mui/icons-material/KeyboardArrowDown';
 import KeyboardArrowUpIcon from '@mui/icons-material/KeyboardArrowUp';
 import { useTheme } from '@emotion/react';
+import { useSelector } from 'react-redux';
+import { RootState } from 'renderer/redux/store';
 
 const CoreSelectorWidget = ({
   executorSettings,
   setExecutorSettings,
-  totalCpuCores,
+  // totalCpuCores,
 }) => {
   const theme = useTheme();
-
+  const totalCpuCores = useSelector(
+    (state: RootState) => state.deviceStatsReducer.totalCpuCores
+  );
   const incrementCore = () => {
     if (executorSettings.cpu_cores < totalCpuCores) {
       setExecutorSettings((prev) => ({

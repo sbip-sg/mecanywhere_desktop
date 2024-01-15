@@ -9,23 +9,24 @@ import {
 } from 'renderer/components/common/handleRegistration';
 import {
   updateConfig,
-  unpauseExecutor,
   getResourceStats,
+  unpauseExecutor,
   pauseExecutor,
 } from 'renderer/services/ExecutorServices';
 import Transitions from '../../../transitions/Transition';
 import PreSharingEnabledComponent from './PreSharingEnabledComponent';
 import PostSharingEnabledComponent from './PostSharingEnabledComponent';
-
-interface deviceResourceType {
-  totalCpuCores: number;
-  totalMem: number;
-  totalGpus: number;
-  gpuModel: string;
-}
+import actions from '../../../../redux/actionCreators';
+import ErrorDialog from '../../../common/ErrorDialogue';
 
 const HostSharingWidget = () => {
   const [isLoading, setIsLoading] = useState(false);
+  const [errorDialogOpen, setErrorDialogOpen] = useState(false);
+  const [errorMessage, setErrorMessage] = useState('');
+  const handleCloseErrorDialog = () => {
+    setErrorDialogOpen(false);
+  };
+
   let initialExecutorSettings = {
     option: 'low',
     cpu_cores: 1,
@@ -46,6 +47,48 @@ const HostSharingWidget = () => {
     );
   }
 
+  useEffect(() => {
+    setIsLoading(true);
+    handleRetrieveDeviceStats();
+  }, []);
+
+  const handleRetrieveDeviceStats = async () => {
+    let success = false;
+    const maxRetries = 10;
+    const retryInterval = 500;
+
+    for (let i = 0; i < maxRetries && !success; i++) {
+      try {
+        await unpauseExecutor();
+        const resourceStats = await getResourceStats();
+        console.log('resourceStats', resourceStats);
+        const totalCpuCores = resourceStats.total_cpu;
+        const totalMem = resourceStats.total_mem;
+        const totalGpus = resourceStats.task_gpu;
+        const gpuModel = resourceStats.gpu_model;
+        actions.setDeviceStats({
+          totalCpuCores,
+          totalMem,
+          totalGpus,
+          gpuModel,
+        });
+        await pauseExecutor();
+        success = true;
+        setIsLoading(false);
+      } catch (error) {
+        console.error('Error retrieving device stats: ', error);
+        if (i < maxRetries - 1) {
+          console.log(`Retrying in ${retryInterval / 1000} seconds...`);
+          await new Promise((resolve) => setTimeout(resolve, retryInterval));
+        }
+      }
+    }
+
+    if (!success) {
+      console.error('Failed to retrieve device stats after several retries.');
+      setIsLoading(false);
+    }
+  };
   const [isExecutorSettingsSaved, setIsExecutorSettingsSaved] = useState(
     initialIsExecutorSettingsSaved
   );
@@ -54,42 +97,6 @@ const HostSharingWidget = () => {
   );
   const [resourceSharingEnabled, setResourceSharingEnabled] =
     useState<Boolean>(false);
-  const [deviceResource, setDeviceResource] = useState<deviceResourceType>({
-    totalCpuCores: 4,
-    totalMem: 8192,
-    totalGpus: 0,
-    gpuModel: '',
-  });
-
-  const getDeviceResource = async () => {
-    await unpauseExecutor();
-    const resourceStats = await getResourceStats();
-    const totalCpuCores = resourceStats.total_cpu;
-    const totalMem = resourceStats.total_mem;
-    const totalGpus = resourceStats.task_gpu;
-    const gpuModel = resourceStats.gpu_model;
-    await pauseExecutor();
-    return { totalCpuCores, totalMem, totalGpus, gpuModel };
-  };
-
-  useEffect(() => {
-    console.log('deviceResource', deviceResource);
-  }, [deviceResource]);
-
-  useEffect(() => {
-    const doGetDeviceResource = async () => {
-      const { totalCpuCores, totalMem, totalGpus, gpuModel } =
-        await getDeviceResource();
-      setDeviceResource({
-        totalCpuCores,
-        totalMem,
-        totalGpus,
-        gpuModel,
-        // gpuModel: 'NVIDIA GeForce RTX 3060 Ti',
-      });
-    };
-    doGetDeviceResource();
-  }, []);
 
   const handleEnableResourceSharing = async () => {
     setIsLoading(true);
@@ -99,15 +106,32 @@ const HostSharingWidget = () => {
       mem: executorSettings.memory_mb,
       microVM_runtime: 'kata',
     };
-    await updateConfig(configToUpdate);
-    await handleRegisterHost(
-      executorSettings.cpu_cores,
-      executorSettings.memory_mb
-    );
-    await new Promise((resolve) => setTimeout(resolve, 1000)); // remove in production; solely for visualization of loading icon
-    setResourceSharingEnabled(true);
-    setIsLoading(false);
+    const containerName = 'meca_executor_test';
+    try {
+      // const containerExist = await window.electron.checkContainerExist(
+      //   containerName
+      // );
+
+      // if (containerExist) {
+      await updateConfig(configToUpdate);
+      await handleRegisterHost(
+        executorSettings.cpu_cores,
+        executorSettings.memory_mb
+      );
+      await new Promise((resolve) => setTimeout(resolve, 1000)); // for loading visualization
+      setResourceSharingEnabled(true);
+      // } else {
+      //   return;
+      // }
+    } catch (error) {
+      setErrorMessage("Container is not valid or doesn't exist");
+      setErrorDialogOpen(true);
+      console.error('Error:', error);
+    } finally {
+      setIsLoading(false);
+    }
   };
+
   const handleDisableResourceSharing = async () => {
     setIsLoading(true);
     await handleDeregisterHost();
@@ -115,6 +139,7 @@ const HostSharingWidget = () => {
     setResourceSharingEnabled(false);
     setIsLoading(false);
   };
+
   const BlurredBackground = styled('div')({
     position: 'absolute',
     width: '100%',
@@ -167,11 +192,11 @@ const HostSharingWidget = () => {
           <PreSharingEnabledComponent
             handleEnableResourceSharing={handleEnableResourceSharing}
             isLoading={isLoading}
+            setIsLoading={setIsLoading}
             isExecutorSettingsSaved={isExecutorSettingsSaved}
             setIsExecutorSettingsSaved={setIsExecutorSettingsSaved}
             executorSettings={executorSettings}
             setExecutorSettings={setExecutorSettings}
-            deviceResource={deviceResource}
           />
         ) : (
           <PostSharingEnabledComponent
@@ -181,6 +206,11 @@ const HostSharingWidget = () => {
           />
         )}
       </Box>
+      <ErrorDialog
+        open={errorDialogOpen}
+        onClose={handleCloseErrorDialog}
+        errorMessage={errorMessage}
+      />
     </Box>
   );
 };

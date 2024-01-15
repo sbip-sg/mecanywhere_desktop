@@ -39,6 +39,7 @@ import { getDesignTokens } from './utils/theme';
 import useHandleAppExitHook from './utils/useHandleAppExitHook';
 import useClientHooks from './utils/useClientHooks';
 
+
 const PrivateRoutes = () => {
   const isAuthenticated = useSelector(
     (state: RootState) => state.userReducer.authenticated

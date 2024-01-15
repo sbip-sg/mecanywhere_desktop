@@ -6,19 +6,23 @@ import {
   Box,
   IconButton,
 } from '@mui/material';
+import { useSelector } from 'react-redux';
+import { RootState } from 'renderer/redux/store';
 import KeyboardArrowDownIcon from '@mui/icons-material/KeyboardArrowDown';
 import KeyboardArrowUpIcon from '@mui/icons-material/KeyboardArrowUp';
 import ErrorIcon from '@mui/icons-material/Error';
 import { useTheme } from '@emotion/react';
 
-const GpuSelectorWidget = ({
-  executorSettings,
-  setExecutorSettings,
-  deviceResource,
-}) => {
+const GpuSelectorWidget = ({ executorSettings, setExecutorSettings }) => {
   const theme = useTheme();
+  const totalGpus = useSelector(
+    (state: RootState) => state.deviceStatsReducer.totalGpus
+  );
+  const gpuModel = useSelector(
+    (state: RootState) => state.deviceStatsReducer.gpuModel
+  );
   const incrementGpu = () => {
-    if (executorSettings.gpus < deviceResource.totalGpus) {
+    if (executorSettings.gpus < totalGpus) {
       setExecutorSettings((prev) => ({
         ...prev,
         gpus: prev.gpus + 1,
@@ -48,7 +52,7 @@ const GpuSelectorWidget = ({
       <Box
         sx={{ display: 'flex', alignItems: 'center', padding: '0.2rem 0 0 0' }}
       >
-        {deviceResource.gpuModel === '' ? (
+        {gpuModel === '' ? (
           <>
             <ErrorIcon
               sx={{
@@ -62,12 +66,10 @@ const GpuSelectorWidget = ({
             </Typography>
           </>
         ) : (
-          <Typography variant="body2">
-            {`Model: ${deviceResource.gpuModel}`}
-          </Typography>
+          <Typography variant="body2">{`Model: ${gpuModel}`}</Typography>
         )}
       </Box>
-      {deviceResource.gpuModel !== '' && (
+      {gpuModel !== '' && (
         <Box
           sx={{
             height: '100%',

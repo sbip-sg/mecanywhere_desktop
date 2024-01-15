@@ -1,15 +1,18 @@
+// import log from 'electron-log/renderer';
 import { useEffect } from 'react';
+import { stopExecutor } from 'renderer/services/ExecutorServices';
 import { handleDeregisterHost } from '../components/common/handleRegistration';
 import reduxStore from '../redux/store';
-import log from 'electron-log/renderer';
 
 const handleAppExit = async () => {
   const { accessToken } = reduxStore.getState().userReducer;
-  log.info('accessToken', accessToken);
+  // log.info('accessToken', accessToken);
+  await stopExecutor();
   if (accessToken && accessToken !== '') {
     await handleDeregisterHost();
   }
 };
+
 const useHandleAppExitHook = () => {
   useEffect(() => {
     const handleAppCloseInitiated = async () => {

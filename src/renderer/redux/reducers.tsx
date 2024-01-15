@@ -47,6 +47,20 @@ const initialJobsState: JobsState = {
   jobResults: [],
 };
 
+interface DeviceStats {
+  totalCpuCores: number;
+  totalMem: number;
+  totalGpus: number;
+  gpuModel: string;
+}
+
+const initialDeviceStats: DeviceStats = {
+  totalCpuCores: 4,
+  totalMem: 8192,
+  totalGpus: 0,
+  gpuModel: '',
+};
+
 export const transactionDetailsReducer = (state = {}, action: any) => {
   switch (action.type) {
     case 'setTransactionDetails':
@@ -129,6 +143,18 @@ export const importingAccountReducer = (
   }
 };
 
+export const deviceStatsReducer = (
+  state: DeviceStats = initialDeviceStats,
+  action: any
+): DeviceStats => {
+  switch (action.type) {
+    case 'setDeviceStats':
+      return action.payload;
+    default:
+      return state;
+  }
+};
+
 const jobsReducer = (
   state: JobsState = initialJobsState,
   action: any
@@ -174,6 +200,7 @@ const reducers = combineReducers({
   userReducer: userReducer,
   themeReducer: themeReducer,
   importingAccountReducer: importingAccountReducer,
+  deviceStatsReducer: deviceStatsReducer,
 });
 
 export default reducers;

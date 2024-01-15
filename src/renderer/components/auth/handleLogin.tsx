@@ -13,10 +13,11 @@ const handleLogin = async (password: string): Promise<boolean | undefined> => {
   // Get key with (decryptWithPassword(window.electron.store.get('privateKey'), password))
   const accessTokenResponse = await authenticate(did, credential);
   const { access_token, refresh_token } = accessTokenResponse;
-  console.log("did, ", did)
-  console.log("access_token", access_token)
+  console.log('did, ', did);
+  console.log('access_token', access_token);
   actions.setAccessToken(access_token);
   actions.setRefreshToken(refresh_token);
+  await handleStartExecutor('meca_executor_test');
   return true; // should only return true if signed VP is verified
 
   // for future reference if the challenge-response scheme for authentication will be reused.
@@ -36,6 +37,21 @@ const handleLogin = async (password: string): Promise<boolean | undefined> => {
   // });
   // console.log("res", res)
   // return res;
+};
+
+const handleStartExecutor = async (containerName: string) => {
+  const containerExist = await window.electron.checkContainerExist(
+    containerName
+  );
+  if (containerExist) {
+    const hasGpuSupport = await window.electron.checkContainerGpuSupport(
+      containerName
+    );
+    if (hasGpuSupport) {
+      await window.electron.removeExecutorContainer(containerName);
+    }
+  }
+  await window.electron.runExecutorContainer(containerName);
 };
 
 export default handleLogin;

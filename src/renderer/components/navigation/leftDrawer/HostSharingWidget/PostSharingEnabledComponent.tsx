@@ -53,7 +53,6 @@ const PostSharingEnabledComponent = ({
   isLoading,
   setIsLoading,
 }) => {
-  const theme = useTheme();
   const [resourcesLog, setResourcesLog] = useState<ResourcesLog>({
     total_cpu: 8,
     total_mem: 8192,
@@ -69,7 +68,6 @@ const PostSharingEnabledComponent = ({
     const interval = setInterval(async () => {
       const fetchResource = async () => {
         const resources = await getResourceStats();
-        console.log("resources,", resources)
         setResourcesLog(resources);
       };
       fetchResource();

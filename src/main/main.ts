@@ -23,7 +23,8 @@ import log from 'electron-log/main';
 import MenuBuilder from './menu';
 import { resolveHtmlPath } from './util';
 import Channels from '../common/channels';
-
+const fs = require('fs');
+const os = require('os');
 const Store = require('electron-store');
 const io = require('socket.io')();
 const Docker = require('dockerode');
@@ -125,26 +126,305 @@ appdev_server.on('connection', (socket) => {
 ipcMain.on(Channels.STORE_GET, async (event, key) => {
   try {
     const encryptedKey = store.get(key);
-
     if (encryptedKey !== undefined) {
       const decryptedKey = safeStorage.decryptString(
         Buffer.from(encryptedKey, 'latin1')
       );
       event.returnValue = decryptedKey;
     } else {
-      // Handle the case when the key is undefined (not found)
-      event.returnValue = null; // Or another appropriate default value
+      event.returnValue = null;
     }
   } catch (error) {
-    // Handle any errors that may occur during the decryption process
     console.error('Error while getting value:', error);
-    event.returnValue = null; // Or another appropriate default value
+    event.returnValue = null;
   }
 });
 
 ipcMain.on(Channels.STORE_SET, async (event, key, val) => {
   const buffer = safeStorage.encryptString(val);
   store.set(key, buffer.toString('latin1'));
+});
+
+ipcMain.on(Channels.REMOVE_EXECUTOR_CONTAINER, async (event, containerName) => {
+  docker.listContainers({ all: true }, (err, containers) => {
+    if (err) {
+      console.error(err);
+      event.reply(
+        Channels.REMOVE_EXECUTOR_CONTAINER_RESPONSE,
+        false,
+        err.message
+      );
+      return;
+    }
+
+    const containerInfo = containers.find((c) =>
+      c.Names.some((n) => n === `/${containerName}`)
+    );
+
+    if (containerInfo) {
+      const container = docker.getContainer(containerInfo.Id);
+
+      const removeContainer = () => {
+        container.remove((err) => {
+          if (err) {
+            console.error(err);
+            event.reply(
+              Channels.REMOVE_EXECUTOR_CONTAINER_RESPONSE,
+              false,
+              err.message
+            );
+          } else {
+            event.reply(Channels.REMOVE_EXECUTOR_CONTAINER_RESPONSE, true);
+            console.log(`Container ${containerName} removed successfully.`);
+          }
+        });
+      };
+
+      // Check if the container is already stopped
+      if (containerInfo.State === 'running') {
+        container.stop((err) => {
+          if (err) {
+            console.error(err);
+            event.reply(
+              Channels.REMOVE_EXECUTOR_CONTAINER_RESPONSE,
+              false,
+              err.message
+            );
+            return;
+          }
+          removeContainer();
+        });
+      } else {
+        removeContainer();
+      }
+    } else {
+      console.log(`Container ${containerName} not found.`);
+      event.reply(Channels.REMOVE_EXECUTOR_CONTAINER_RESPONSE, true);
+    }
+  });
+});
+
+ipcMain.on(Channels.RUN_EXECUTOR_CONTAINER, async (event, containerName) => {
+  try {
+    docker.listContainers({ all: true }, (err, containers) => {
+      if (err) {
+        console.error(err);
+        return;
+      }
+
+      const existingContainer = containers.find((c) =>
+        c.Names.includes('/' + containerName)
+      );
+
+      if (existingContainer) {
+        // Container exists, start it if it's not running
+        if (existingContainer.State !== 'running') {
+          docker.getContainer(existingContainer.Id).start((err, data) => {
+            if (err) {
+              console.error(err);
+            } else {
+              log.info('Existing container started');
+              event.reply(Channels.RUN_EXECUTOR_CONTAINER_RESPONSE, true);
+            }
+          });
+        } else {
+          log.info('Container is already running');
+          event.reply(Channels.RUN_EXECUTOR_CONTAINER_RESPONSE, true);
+        }
+      } else {
+        // Container does not exist, create and start it
+        const containerOptions = {
+          name: containerName,
+          Image: 'meca-executor:latest',
+          ExposedPorts: { '2591/tcp': {} },
+          HostConfig: {
+            Binds: ['/var/run/docker.sock:/var/run/docker.sock'],
+            PortBindings: { '2591/tcp': [{ HostPort: '2591' }] },
+            NetworkMode: 'meca',
+          },
+          NetworkingConfig: {
+            EndpointsConfig: {
+              meca: {
+                IPAMConfig: {
+                  IPv4Address: '173.18.0.255',
+                },
+              },
+            },
+          },
+        };
+
+        docker.createContainer(containerOptions, (err, container) => {
+          if (err) {
+            console.error(err);
+            return;
+          }
+
+          container.start((err, data) => {
+            if (err) {
+              console.error(err);
+            } else {
+              log.info('New container started');
+              event.reply(Channels.RUN_EXECUTOR_CONTAINER_RESPONSE, true);
+            }
+          });
+        });
+      }
+    });
+  } catch (error) {
+    event.reply(Channels.RUN_EXECUTOR_CONTAINER_RESPONSE, false, error.message);
+  }
+});
+
+ipcMain.on(
+  Channels.RUN_EXECUTOR_GPU_CONTAINER,
+  async (event, containerName) => {
+    try {
+      // Configuration data
+      const configData = `
+type: "docker"
+timeout: 1
+cpu: 4
+mem: 4096
+has_gpu: true
+`;
+
+      // Create a temporary file and write configuration data
+      const tempDir = os.tmpdir();
+      const configFilePath = path.join(tempDir, 'meca_docker_gpu.yaml');
+      fs.writeFileSync(configFilePath, configData);
+
+      const containerOptions = {
+        name: containerName,
+        Image: 'meca-executor:latest',
+        ExposedPorts: { '2591/tcp': {} },
+        HostConfig: {
+          Binds: [
+            '/var/run/docker.sock:/var/run/docker.sock',
+            `${configFilePath}:/app/meca_executor.yaml`,
+          ],
+          PortBindings: { '2591/tcp': [{ HostPort: '2591' }] },
+          NetworkMode: 'meca',
+          DeviceRequests: [
+            {
+              Driver: '',
+              Count: -1, // -1 specifies "all GPUs"
+              DeviceIDs: [],
+              Capabilities: [['gpu']],
+              Options: {},
+            },
+          ],
+        },
+        NetworkingConfig: {
+          EndpointsConfig: {
+            meca: {
+              IPAMConfig: {
+                IPv4Address: '173.18.0.255',
+              },
+            },
+          },
+        },
+      };
+      docker.createContainer(containerOptions, (err, container) => {
+        if (err) {
+          console.error(err);
+          return;
+        }
+        container.start((err, data) => {
+          if (err) {
+            event.reply(
+              Channels.RUN_EXECUTOR_GPU_CONTAINER_RESPONSE,
+              false,
+              err.message
+            );
+            console.error(err);
+          } else {
+            log.info('New container started');
+            event.reply(Channels.RUN_EXECUTOR_GPU_CONTAINER_RESPONSE, true);
+          }
+        });
+      });
+    } catch (error) {
+      console.error(error);
+      event.reply(
+        Channels.RUN_EXECUTOR_GPU_CONTAINER_RESPONSE,
+        false,
+        error.message
+      );
+    }
+  }
+);
+// Function to check if a container has GPU support
+function checkIfContainerHasGpu(containerId, callback) {
+  const container = docker.getContainer(containerId);
+  container.inspect((err, data) => {
+    if (err) {
+      callback(err, null);
+      return;
+    }
+    const hasGpu = data.HostConfig.DeviceRequests?.some((deviceRequest) =>
+      deviceRequest.Capabilities?.some((capability) =>
+        capability.includes('gpu')
+      )
+    );
+    callback(null, hasGpu);
+  });
+}
+
+
+ipcMain.on(Channels.CHECK_CONTAINER_EXIST, (event, containerName) => {
+  docker.listContainers({ all: true }, (err, containers) => {
+    if (err) {
+      console.error('Error listing containers:', err);
+      event.reply(Channels.CHECK_CONTAINER_EXIST_RESPONSE, false, err.message);
+      return;
+    }
+
+    const containerExists = containers.some((container) => 
+      container.Names.some((name) => name === `/${containerName}`)
+    );
+
+    event.reply(Channels.CHECK_CONTAINER_EXIST_RESPONSE, true, containerExists);
+  });
+});
+// IPC listener to check for GPU support in a container
+ipcMain.on(Channels.CHECK_CONTAINER_GPU_SUPPORT, (event, containerName) => {
+  docker.listContainers({ all: true }, (err, containers) => {
+    if (err) {
+      console.error('Error listing containers:', err);
+      event.reply(
+        Channels.CHECK_CONTAINER_GPU_SUPPORT_RESPONSE,
+        false,
+        err.message
+      );
+      return;
+    }
+
+    const containerInfo = containers.find((c) =>
+      c.Names.includes('/' + containerName)
+    );
+
+    if (containerInfo) {
+      checkIfContainerHasGpu(containerInfo.Id, (error, hasGpu) => {
+        if (error) {
+          console.error('Error inspecting container:', error);
+          event.reply(
+            Channels.CHECK_CONTAINER_GPU_SUPPORT_RESPONSE,
+            false,
+            error.message
+          );
+        } else {
+          event.reply(
+            Channels.CHECK_CONTAINER_GPU_SUPPORT_RESPONSE,
+            true,
+            hasGpu
+          );
+        }
+      });
+    } else {
+      console.log(`Container ${containerName} not found.`);
+      event.reply(Channels.CHECK_CONTAINER_GPU_SUPPORT_RESPONSE, true, false);
+    }
+  });
 });
 
 ipcMain.on(Channels.JOB_RESULTS_RECEIVED, async (event, id, result) => {
@@ -193,75 +473,6 @@ if (process.env.NODE_ENV === 'production') {
   const sourceMapSupport = require('source-map-support');
   sourceMapSupport.install();
 }
-
-const stopAndRemoveContainer = (containerName) => {
-  docker.listContainers({ all: true }, (err, containers) => {
-    if (err) {
-      console.error(err);
-      return;
-    }
-    const containerInfo = containers.find((c) =>
-      c.Names.some((n) => n === `/${containerName}`)
-    );
-
-    if (containerInfo) {
-      const container = docker.getContainer(containerInfo.Id);
-      container.stop((err) => {
-        if (err) {
-          console.error(err);
-          return;
-        }
-        container.remove((err) => {
-          if (err) {
-            console.error(err);
-          } else {
-            console.log(
-              `Container ${containerName} stopped and removed successfully.`
-            );
-          }
-        });
-      });
-    } else {
-      console.log(`Container ${containerName} not found.`);
-    }
-  });
-};
-const startDockerContainer = (containerName: string) => {
-  const containerOptions = {
-    name: containerName,
-    Image: 'meca-executor:latest',
-    ExposedPorts: { '2591/tcp': {} },
-
-    HostConfig: {
-      Binds: ['/var/run/docker.sock:/var/run/docker.sock'],
-      PortBindings: { '2591/tcp': [{ HostPort: '2591' }] },
-      NetworkMode: 'meca',
-    },
-    NetworkingConfig: {
-      EndpointsConfig: {
-        meca: {
-          IPAMConfig: {
-            IPv4Address: '173.18.0.255',
-          },
-        },
-      },
-    },
-  };
-  docker.createContainer(containerOptions, (err, container) => {
-    if (err) {
-      console.error(err);
-      return;
-    }
-
-    container.start((err, data) => {
-      if (err) {
-        console.error(err);
-      } else {
-        console.log('Container started');
-      }
-    });
-  });
-};
 
 const isDebug =
   process.env.NODE_ENV === 'development' || process.env.DEBUG_PROD === 'true';
@@ -342,20 +553,26 @@ const createWindow = async () => {
     }
   });
 
+  // before closing
   mainWindow.on('close', (e) => {
-    log.info('mainWindow close');
+    log.info('app closing');
     e.preventDefault();
     mainWindow?.webContents.send('app-close-initiated');
   });
+
+  // signify app successfully closed
   mainWindow.on('closed', () => {
-    log.info('mainWindow closed');
+    log.info('app successfully closed');
     mainWindow = null;
   });
+
+  // intended for app reload, but not working currently
   mainWindow.webContents.on('will-navigate', (event) => {
     log.info('mainWindow did-start-navigation');
     event.preventDefault();
     mainWindow?.webContents.send('app-reload-initiated');
   });
+
   const menuBuilder = new MenuBuilder(mainWindow);
   menuBuilder.buildMenu();
 
@@ -376,10 +593,6 @@ app
     const appReadyMs = performance.now() - start;
     console.log(`App ready in ${appReadyMs} ms`);
     createWindow();
-    const containerName = 'meca_executor_test';
-    stopAndRemoveContainer(containerName);
-    console.log("removed..?")
-    startDockerContainer(containerName);
     app.on('activate', () => {
       // On macOS it's common to re-create a window in the app when the
       // dock icon is clicked and there are no other windows open.
