@@ -16,6 +16,7 @@ const PreSharingEnabledComponent = ({
   setIsExecutorSettingsSaved,
   executorSettings,
   setExecutorSettings,
+  setDeviceHasGpu,
 }) => {
   const [allocateGPU, setAllocateGPU] = useState(false);
 
@@ -28,24 +29,26 @@ const PreSharingEnabledComponent = ({
   };
 
   const handleGPUCheckBoxChange = async (event) => {
-    setIsLoading(true)
+    setIsLoading(true);
     await window.electron.removeExecutorContainer('meca_executor_test');
     if (!allocateGPU) {
-      await window.electron
-        .runExecutorGpuContainer('meca_executor_test')
-        .catch((error) => {
-          console.error('Error starting GPU container:', error);
-        });
+      try {
+        await window.electron.runExecutorGpuContainer('meca_executor_test');
+        setDeviceHasGpu(true);
+      } catch (error) {
+        setDeviceHasGpu(false);
+        console.error('Error starting GPU container:', error);
+      }
       setAllocateGPU(true);
     } else {
-      await window.electron
-        .runExecutorContainer('meca_executor_test')
-        .catch((error) => {
-          console.error('Error starting container:', error);
-        });
+      try {
+        await window.electron.runExecutorContainer('meca_executor_test');
+      } catch (error) {
+        console.error('Error starting container:', error);
+      }
       setAllocateGPU(false);
     }
-    setIsLoading(false)
+    setIsLoading(false);
   };
 
   useEffect(() => {

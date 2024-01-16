@@ -23,6 +23,17 @@ const HostSharingWidget = () => {
   const [isLoading, setIsLoading] = useState(false);
   const [errorDialogOpen, setErrorDialogOpen] = useState(false);
   const [errorMessage, setErrorMessage] = useState('');
+  const [deviceHasGpu, setDeviceHasGpu] = useState(false);
+  const [initialResourcesLog, setInitialResourcesLog] = useState({
+    total_cpu: 0,
+    total_mem: 0,
+    used_cpu: 0,
+    used_mem: 0,
+    task_cpu: 0,
+    task_mem: 0,
+    task_used_cpu: 0,
+    task_used_mem: 0,
+  });
   const handleCloseErrorDialog = () => {
     setErrorDialogOpen(false);
   };
@@ -50,7 +61,7 @@ const HostSharingWidget = () => {
   useEffect(() => {
     setIsLoading(true);
     handleRetrieveDeviceStats();
-  }, []);
+  }, [deviceHasGpu]);
 
   const handleRetrieveDeviceStats = async () => {
     let success = false;
@@ -100,29 +111,34 @@ const HostSharingWidget = () => {
 
   const handleEnableResourceSharing = async () => {
     setIsLoading(true);
-    const configToUpdate = {
-      timeout: 2,
-      cpu: executorSettings.cpu_cores,
-      mem: executorSettings.memory_mb,
-      microVM_runtime: 'kata',
-    };
     const containerName = 'meca_executor_test';
     try {
-      // const containerExist = await window.electron.checkContainerExist(
-      //   containerName
-      // );
-
-      // if (containerExist) {
-      await updateConfig(configToUpdate);
-      await handleRegisterHost(
-        executorSettings.cpu_cores,
-        executorSettings.memory_mb
+      const containerExist = await window.electron.checkContainerExist(
+        containerName
       );
-      await new Promise((resolve) => setTimeout(resolve, 1000)); // for loading visualization
-      setResourceSharingEnabled(true);
-      // } else {
-      //   return;
-      // }
+      if (containerExist) {
+        const hasGpuSupport = await window.electron.checkContainerGpuSupport(
+          containerName
+        );
+        if (hasGpuSupport && !deviceHasGpu) {
+          setErrorMessage(
+            'Failed to start the container: GPU not detected or unavailable.'
+          );
+          setErrorDialogOpen(true);
+        } else {
+          await updateConfig({
+            cpu: executorSettings.cpu_cores,
+            mem: executorSettings.memory_mb,
+          });
+          await handleRegisterHost(
+            executorSettings.cpu_cores,
+            executorSettings.memory_mb
+          );
+          const initialResources = await getResourceStats();
+          setInitialResourcesLog(initialResources);
+          setResourceSharingEnabled(true);
+        }
+      }
     } catch (error) {
       setErrorMessage("Container is not valid or doesn't exist");
       setErrorDialogOpen(true);
@@ -135,7 +151,6 @@ const HostSharingWidget = () => {
   const handleDisableResourceSharing = async () => {
     setIsLoading(true);
     await handleDeregisterHost();
-    await new Promise((resolve) => setTimeout(resolve, 1000)); // remove in production; solely for visualization of loading icon
     setResourceSharingEnabled(false);
     setIsLoading(false);
   };
@@ -197,12 +212,14 @@ const HostSharingWidget = () => {
             setIsExecutorSettingsSaved={setIsExecutorSettingsSaved}
             executorSettings={executorSettings}
             setExecutorSettings={setExecutorSettings}
+            setDeviceHasGpu={setDeviceHasGpu}
           />
         ) : (
           <PostSharingEnabledComponent
             handleDisableResourceSharing={handleDisableResourceSharing}
             isLoading={isLoading}
             setIsLoading={setIsLoading}
+            initialResourcesLog={initialResourcesLog}
           />
         )}
       </Box>

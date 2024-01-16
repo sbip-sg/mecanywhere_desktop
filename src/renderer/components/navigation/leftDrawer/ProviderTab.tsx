@@ -1,6 +1,6 @@
 import List from '@mui/material/List';
 import DashboardIcon from '@mui/icons-material/Dashboard';
-import PaidIcon from '@mui/icons-material/Paid';
+import AccountBalanceIcon from '@mui/icons-material/AccountBalance';
 import SwapHorizIcon from '@mui/icons-material/SwapHoriz';
 import Typography from '@mui/material/Typography';
 import Divider from '@mui/material/Divider';
@@ -38,7 +38,7 @@ const ProviderTab = () => {
           onClick={() => navigate('/providerbillingdashboard')}
           key="billing"
         >
-          <PaidIcon
+          <AccountBalanceIcon
             sx={{ marginRight: listItemSpacing, color: 'text.primary' }}
           />
           <Typography
@@ -94,7 +94,6 @@ const ProviderTab = () => {
         </ListItemButton>
       </List>
       <Divider />
-     
     </>
   );
 };

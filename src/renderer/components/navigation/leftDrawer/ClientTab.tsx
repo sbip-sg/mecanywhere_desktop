@@ -1,7 +1,8 @@
 import List from '@mui/material/List';
 import DashboardIcon from '@mui/icons-material/Dashboard';
-import PaidIcon from '@mui/icons-material/Paid';
+import AccountBalanceIcon from '@mui/icons-material/AccountBalance';
 import SwapHorizIcon from '@mui/icons-material/SwapHoriz';
+import MonetizationOnIcon from '@mui/icons-material/MonetizationOn';
 import Typography from '@mui/material/Typography';
 import Divider from '@mui/material/Divider';
 import ListItemButton from '@mui/material/ListItemButton';
@@ -45,7 +46,7 @@ const ClientTab = () => {
           onClick={() => navigate('/hostbillingdashboard')}
           key="hostbilling"
         >
-          <PaidIcon
+          <AccountBalanceIcon
             sx={{ marginRight: listItemSpacing, color: 'text.primary' }}
           />
           <Typography
@@ -53,6 +54,25 @@ const ClientTab = () => {
             sx={{ color: 'text.primary' }}
           >
             Payout
+          </Typography>
+        </ListItemButton>
+      </List>
+      <Divider />
+      <List disablePadding component="li">
+        <ListItemButton
+          onClick={() => {
+            navigate('/payment');
+          }}
+          key="payment"
+        >
+          <MonetizationOnIcon
+            sx={{ marginRight: listItemSpacing, color: 'text.primary' }}
+          />
+          <Typography
+            margin={`${listTopBottomMargin} 0 ${listTopBottomMargin} 0`}
+            sx={{ color: 'text.primary' }}
+          >
+            Payment
           </Typography>
         </ListItemButton>
       </List>
@@ -74,25 +94,6 @@ const ClientTab = () => {
             sx={{ color: 'text.primary' }}
           >
             Switch To Provider View (Dev)
-          </Typography>
-        </ListItemButton>
-      </List>
-      <Divider />
-      <List disablePadding component="li">
-        <ListItemButton
-          onClick={() => {
-            navigate('/payment');
-         }}
-          key="testpayment"
-        >
-          <SwapHorizIcon
-            sx={{ marginRight: listItemSpacing, color: 'text.primary' }}
-          />
-          <Typography
-            margin={`${listTopBottomMargin} 0 ${listTopBottomMargin} 0`}
-            sx={{ color: 'text.primary' }}
-          >
-            Test Payment
           </Typography>
         </ListItemButton>
       </List>

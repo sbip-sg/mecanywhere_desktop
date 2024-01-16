@@ -353,23 +353,23 @@ has_gpu: true
     }
   }
 );
-// Function to check if a container has GPU support
-function checkIfContainerHasGpu(containerId, callback) {
+
+const checkIfContainerHasGpu = (containerId, callback) => {
   const container = docker.getContainer(containerId);
   container.inspect((err, data) => {
     if (err) {
-      callback(err, null);
+      callback(err, false);
       return;
     }
-    const hasGpu = data.HostConfig.DeviceRequests?.some((deviceRequest) =>
-      deviceRequest.Capabilities?.some((capability) =>
-        capability.includes('gpu')
-      )
-    );
+    const hasGpu =
+      data.HostConfig.DeviceRequests?.some((deviceRequest) =>
+        deviceRequest.Capabilities?.some((capability) =>
+          capability.includes('gpu')
+        )
+      ) || false;
     callback(null, hasGpu);
   });
-}
-
+};
 
 ipcMain.on(Channels.CHECK_CONTAINER_EXIST, (event, containerName) => {
   docker.listContainers({ all: true }, (err, containers) => {
@@ -379,7 +379,7 @@ ipcMain.on(Channels.CHECK_CONTAINER_EXIST, (event, containerName) => {
       return;
     }
 
-    const containerExists = containers.some((container) => 
+    const containerExists = containers.some((container) =>
       container.Names.some((name) => name === `/${containerName}`)
     );
 
@@ -404,8 +404,10 @@ ipcMain.on(Channels.CHECK_CONTAINER_GPU_SUPPORT, (event, containerName) => {
     );
 
     if (containerInfo) {
-      checkIfContainerHasGpu(containerInfo.Id, (error, hasGpu) => {
+      checkIfContainerHasGpu(containerInfo.Id, (error, hasGpu: boolean) => {
         if (error) {
+          console.log('bb', hasGpu);
+
           console.error('Error inspecting container:', error);
           event.reply(
             Channels.CHECK_CONTAINER_GPU_SUPPORT_RESPONSE,
@@ -413,6 +415,7 @@ ipcMain.on(Channels.CHECK_CONTAINER_GPU_SUPPORT, (event, containerName) => {
             error.message
           );
         } else {
+          console.log('aa', hasGpu);
           event.reply(
             Channels.CHECK_CONTAINER_GPU_SUPPORT_RESPONSE,
             true,

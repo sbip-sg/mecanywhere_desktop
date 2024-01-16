@@ -1,12 +1,6 @@
 import { Box, Typography, Button, Grid, Stack } from '@mui/material';
-import { useTheme } from '@emotion/react';
 import { useState, useEffect } from 'react';
-import {
-  getResourceStats,
-  pauseExecutor,
-  unpauseExecutor,
-} from 'renderer/services/ExecutorServices';
-import PauseIcon from '@mui/icons-material/Pause';
+import { getResourceStats } from 'renderer/services/ExecutorServices';
 import WifiTetheringIcon from '@mui/icons-material/WifiTethering';
 
 interface ResourcesLog {
@@ -52,28 +46,24 @@ const PostSharingEnabledComponent = ({
   handleDisableResourceSharing,
   isLoading,
   setIsLoading,
+  initialResourcesLog,
 }) => {
-  const [resourcesLog, setResourcesLog] = useState<ResourcesLog>({
-    total_cpu: 8,
-    total_mem: 8192,
-    used_cpu: 0,
-    used_mem: 15.4,
-    task_cpu: 4,
-    task_mem: 4096,
-    task_used_cpu: 0,
-    task_used_mem: 0,
-  });
+  const [resourcesLog, setResourcesLog] =
+    useState<ResourcesLog>(initialResourcesLog);
 
   useEffect(() => {
     const interval = setInterval(async () => {
       const fetchResource = async () => {
         const resources = await getResourceStats();
-        setResourcesLog(resources);
+        if (resources.success) {
+          setResourcesLog(resources);
+        }
       };
       fetchResource();
     }, 1000);
     return () => clearInterval(interval);
   }, []);
+
   return (
     <Stack
       width="100%"
