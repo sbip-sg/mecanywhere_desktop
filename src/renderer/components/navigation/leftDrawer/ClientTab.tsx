@@ -53,7 +53,7 @@ const ClientTab = () => {
             margin={`${listTopBottomMargin} 0 ${listTopBottomMargin} 0`}
             sx={{ color: 'text.primary' }}
           >
-            Payout
+            Billing
           </Typography>
         </ListItemButton>
       </List>

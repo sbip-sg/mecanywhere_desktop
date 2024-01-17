@@ -11,7 +11,7 @@ import TextFieldWrapper from '../common/TextField';
 import actions from '../../redux/actionCreators';
 import { ReactComponent as Logo } from '../../../../assets/LogoColor.svg';
 import Transitions from '../transitions/Transition';
-import FormSchema from '../common/FormSchema';
+import { LoginFormSchema } from '../common/FormSchema';
 import handleLogin from './handleLogin';
 
 interface FormValues {
@@ -90,7 +90,7 @@ const Login = () => {
   ) : (
     <Formik
       initialValues={{ password: '' }}
-      validationSchema={FormSchema}
+      validationSchema={LoginFormSchema}
       onSubmit={(values, formActions) => {
         handleSubmit(values, formActions);
       }}

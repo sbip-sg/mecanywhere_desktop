@@ -5,7 +5,7 @@ import CircularProgress from '@mui/material/CircularProgress';
 import { useSelector } from 'react-redux';
 import { useNavigate } from 'react-router-dom';
 import TextFieldWrapper from '../common/TextField';
-import FormSchema from '../common/FormSchema';
+import { RegisterFormSchema } from '../common/FormSchema';
 import Transitions from '../transitions/Transition';
 import ErrorDialog from '../common/ErrorDialogue';
 import { ReactComponent as Logo } from '../../../../assets/LogoColor.svg';
@@ -58,7 +58,7 @@ const Register = () => {
   ) : (
     <Formik
       initialValues={{ password: '' }}
-      validationSchema={FormSchema}
+      validationSchema={RegisterFormSchema}
       onSubmit={(values, formActions) => {
         handleSubmit(values, formActions);
       }}

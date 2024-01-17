@@ -32,13 +32,12 @@ import ProviderBillingDashboard from './components/billing/dashboard/ProviderBil
 import TransactionDetails from './components/transactions/TransactionDetails';
 import RoleSelection from './components/auth/RoleSelection';
 import UserManagement from './components/userManagement/UserManagement';
-import Payment from './components/misc/Payment';
+import Payment from './components/payment/Payment';
 import Settings from './components/settings/Settings';
 // import useHeartbeatHook from './utils/useHeartbeatHook';
 import { getDesignTokens } from './utils/theme';
 import useHandleAppExitHook from './utils/useHandleAppExitHook';
 import useClientHooks from './utils/useClientHooks';
-
 
 const PrivateRoutes = () => {
   const isAuthenticated = useSelector(

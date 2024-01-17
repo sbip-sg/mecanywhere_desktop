@@ -28,10 +28,15 @@ interface QRCodePopoverProps {
   qrCodeUrl: string;
   setQrCodeUrl: (_value: string) => void;
 }
-const QRCodePopover: React.FC<QRCodePopoverProps> = ({ open, setOpen, qrCodeUrl, setQrCodeUrl }) => {
+const QRCodePopover: React.FC<QRCodePopoverProps> = ({
+  open,
+  setOpen,
+  qrCodeUrl,
+  setQrCodeUrl,
+}) => {
   const handleClose = () => {
     setOpen(false);
-    setQrCodeUrl('')
+    setQrCodeUrl('');
   };
   const canvasRef = useRef(null);
 
@@ -52,7 +57,7 @@ const QRCodePopover: React.FC<QRCodePopoverProps> = ({ open, setOpen, qrCodeUrl,
       fullWidth
     >
       <DialogTitle sx={{ textAlign: 'center', marginTop: '1rem' }}>
-        QRCode
+        Connect to Metamask
       </DialogTitle>
       <DialogContent
         sx={{
@@ -63,15 +68,11 @@ const QRCodePopover: React.FC<QRCodePopoverProps> = ({ open, setOpen, qrCodeUrl,
         }}
       >
         <Typography variant="subtitle1" padding="1rem" textAlign="center">
-          Scan with your Metamask App
+          Scan with your Metamask Mobile App
         </Typography>
         <Box
           sx={{
-            // maxWidth: '25rem',
-            // height: '5rem',
-            // minHeight: '5rem',
-            // backgroundColor: 'customColor.lightGrey',
-            height:'100%',
+            height: '100%',
             width: '100%',
             display: 'flex',
             justifyContent: 'center',
