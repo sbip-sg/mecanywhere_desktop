@@ -55,7 +55,7 @@ const PostSharingEnabledComponent = ({
     const interval = setInterval(async () => {
       const fetchResource = async () => {
         const resources = await getResourceStats();
-        if (resources.success) {
+        if (Object.keys(resources).length === Object.keys(initialResourcesLog).length) {
           setResourcesLog(resources);
         }
       };
