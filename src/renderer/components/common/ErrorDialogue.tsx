@@ -18,10 +18,21 @@ const ErrorDialog: FC<ErrorDialogProps> = ({ open, onClose, errorMessage }) => {
   };
 
   return (
-    <Dialog open={open} onClose={handleClose}>
-      <DialogTitle>Error</DialogTitle>
+    <Dialog
+      open={open}
+      onClose={handleClose}
+      PaperProps={{
+        sx: {
+          padding: '1rem',
+          minWidth: '30%',
+        },
+      }}
+    >
+      <DialogTitle sx={{ color: 'error.main' }}>Error</DialogTitle>
       <DialogContent>
-        <DialogContentText>{errorMessage}</DialogContentText>
+        <DialogContentText sx={{ color: 'text.primary', fontSize: '18px' }}>
+          {errorMessage}
+        </DialogContentText>
       </DialogContent>
       <DialogActions>
         <Button onClick={handleClose}>OK</Button>

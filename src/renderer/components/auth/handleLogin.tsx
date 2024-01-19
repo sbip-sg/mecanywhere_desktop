@@ -10,32 +10,66 @@ const handleLogin = async (password: string): Promise<boolean | undefined> => {
   const did = window.electron.store.get('did');
   const credential = JSON.parse(window.electron.store.get('credential'));
   // To sign the credential using the private key to become verifiable presentation
-  // Get key with (decryptWithPassword(window.electron.store.get('privateKey'), password))
+  // Get key with (decryptWithPassword(window.electron.store.get('privateKey'), password)). Rmb to catch password wrong error here
   const accessTokenResponse = await authenticate(did, credential);
+  if (accessTokenResponse.error) {
+    throw new Error(accessTokenResponse.error); // Propagate the error
+  }
   const { access_token, refresh_token } = accessTokenResponse;
-  console.log("did, ", did)
-  console.log("access_token", access_token)
+  console.log('did, ', did);
+  console.log('access_token', access_token);
   actions.setAccessToken(access_token);
   actions.setRefreshToken(refresh_token);
-  return true; // should only return true if signed VP is verified
+  try {
+    const dockerDaemonIsRunning =
+      await window.electron.checkDockerDaemonRunning();
+    if (!dockerDaemonIsRunning) {
+      throw new Error('Docker daemon is not running');
+    }
+    try {
+      await handleStartExecutor('meca_executor_test');
+    } catch (executorError) {
+      console.error('Error starting executor:', executorError);
+      throw executorError;
+    }
+    return true; // should only return true if signed VP is verified
+  } catch (error) {
+    console.error('Error in login process:', error);
+    throw error;
+  }
+};
 
-  // for future reference if the challenge-response scheme for authentication will be reused.
-  // const challenge = await createChallenge({
-  //   did: window.electron.store.get('did'),
-  // });
-  // console.log("challenge", challenge)
-  // const signature = signMessage(
-  //   decryptWithPassword(window.electron.store.get('privateKey'), password),
-  //   challenge
-  // );
-  // console.log("signature", signature)
-  // const res = await verifyResponse({
-  //   message: challenge,
-  //   publicKey: window.electron.store.get('publicKeyCompressed'),
-  //   signature,
-  // });
-  // console.log("res", res)
-  // return res;
+const handleStartExecutor = async (containerName: string) => {
+  const containerExist = await window.electron.checkContainerExist(
+    containerName
+  );
+  if (containerExist) {
+    const hasGpuSupport = await window.electron.checkContainerGpuSupport(
+      containerName
+    );
+    if (hasGpuSupport) {
+      await window.electron.removeExecutorContainer(containerName);
+    }
+  }
+  await window.electron.runExecutorContainer(containerName);
 };
 
 export default handleLogin;
+
+// for future reference if the challenge-response scheme for authentication will be reused.
+// const challenge = await createChallenge({
+//   did: window.electron.store.get('did'),
+// });
+// console.log("challenge", challenge)
+// const signature = signMessage(
+//   decryptWithPassword(window.electron.store.get('privateKey'), password),
+//   challenge
+// );
+// console.log("signature", signature)
+// const res = await verifyResponse({
+//   message: challenge,
+//   publicKey: window.electron.store.get('publicKeyCompressed'),
+//   signature,
+// });
+// console.log("res", res)
+// return res;

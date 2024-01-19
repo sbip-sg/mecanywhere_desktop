@@ -61,6 +61,7 @@ export async function authenticate(did: string, credential: object) {
     return res;
   } catch (error) {
     console.error('There was a problem with the fetch operation:', error);
+    return { error };
   }
 }
 
@@ -72,8 +73,6 @@ export async function registerHost(
   retryCount = 0
 ) {
   try {
-    console.log('token', token);
-    console.log('did', window.electron.store.get('did'));
     const response = await fetch(`${url}/registration/register_host`, {
       method: 'POST',
       headers: {
@@ -90,7 +89,6 @@ export async function registerHost(
       }
       throw new Error('Network response not ok');
     }
-
     return true;
   } catch (error) {
     console.error('There was a problem with the fetch operation:', error);

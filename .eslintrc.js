@@ -14,6 +14,8 @@ module.exports = {
     'camelcase': 'off',
     'no-else-return': 'off',
     'consistent-return': 'off',
+    'no-use-before-define': 'off',
+    'no-await-in-loop': 'off',
     "no-unused-vars": ["error", { "argsIgnorePattern": "^_" }],
     'react/function-component-definition': [
       2,

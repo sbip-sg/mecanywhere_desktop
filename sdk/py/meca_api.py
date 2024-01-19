@@ -50,13 +50,17 @@ async def offload_task(
     data: str,
     callback: Callable[[str], None],
     resource: dict = None,
-    runtime: str = None
+    runtime: str = None,
+    use_gpu: bool = False,
+    gpu_count: int = 0,
   ) -> str:
   print('Offloading task...', container_ref, data)
   payload = {
     'task_id': task_id,
     'container_reference': container_ref,
-    'content': data
+    'content': data,
+    'use_gpu': use_gpu,
+    'gpu_count': gpu_count,
   }
   if resource:
     payload['resource'] = resource

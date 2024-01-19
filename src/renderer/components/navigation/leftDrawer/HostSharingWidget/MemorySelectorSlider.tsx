@@ -1,10 +1,14 @@
 import { Box, Stack, Typography, Slider } from '@mui/material';
+import { useSelector } from 'react-redux';
+import { RootState } from 'renderer/redux/store';
 
 const MemorySelectorSlider = ({
   executorSettings,
   setExecutorSettings,
-  totalMem,
 }) => {
+  const totalMem = useSelector(
+    (state: RootState) => state.deviceStatsReducer.totalMem
+  );
   const handleSliderChange = (event, newValue) => {
     setExecutorSettings({ ...executorSettings, memory_mb: newValue });
   };

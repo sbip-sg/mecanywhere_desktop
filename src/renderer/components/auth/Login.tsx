@@ -11,7 +11,7 @@ import TextFieldWrapper from '../common/TextField';
 import actions from '../../redux/actionCreators';
 import { ReactComponent as Logo } from '../../../../assets/LogoColor.svg';
 import Transitions from '../transitions/Transition';
-import FormSchema from '../common/FormSchema';
+import { LoginFormSchema } from '../common/FormSchema';
 import handleLogin from './handleLogin';
 
 interface FormValues {
@@ -62,12 +62,15 @@ const Login = () => {
           } else {
             console.error('invalid role');
           }
-        } else {
-          setErrorMessage('Wrong password');
-          setErrorDialogOpen(true);
         }
       } catch (error) {
-        setErrorMessage('Wrong password');
+        if (error instanceof Error) {
+          setErrorMessage(error.message);
+        } else {
+          setErrorMessage(
+            typeof error === 'string' ? error : 'An unexpected error occurred'
+          );
+        }
         setErrorDialogOpen(true);
       }
       setIsLoading(false);
@@ -90,7 +93,7 @@ const Login = () => {
   ) : (
     <Formik
       initialValues={{ password: '' }}
-      validationSchema={FormSchema}
+      validationSchema={LoginFormSchema}
       onSubmit={(values, formActions) => {
         handleSubmit(values, formActions);
       }}

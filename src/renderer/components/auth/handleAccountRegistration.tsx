@@ -81,6 +81,15 @@ const handleAccountRegistration = async (
           gpus: 0,
         })
       );
+      // window.electron.store.set(
+      //   'deviceStats',
+      //   JSON.stringify({
+      //     totalCpuCores: 4,
+      //     totalMem: 8192,
+      //     totalGpus: 0,
+      //     gpuModel: '',
+      //   })
+      // );
     } catch (createAccountError) {
       throw createAccountError;
     }

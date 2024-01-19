@@ -33,6 +33,8 @@ async def main():
         "cpu": 1,
         "memory": 256
       },
+      use_gpu=True,
+      gpu_count=1
     )
 
   await meca_api.join()

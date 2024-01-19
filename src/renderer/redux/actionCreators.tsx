@@ -57,6 +57,11 @@ const setTransactionDetails: ActionCreator<AnyAction> = (payload: any) => ({
   payload,
 });
 
+const setDeviceStats: ActionCreator<AnyAction> = (payload: any) => ({
+  type: 'setDeviceStats',
+  payload,
+});
+
 const boundToDoActions = bindActionCreators(
   {
     setAuthenticated,
@@ -70,6 +75,7 @@ const boundToDoActions = bindActionCreators(
     setColor,
     setTransactionDetails,
     setImportingAccount,
+    setDeviceStats,
   },
   reduxStore.dispatch
 );

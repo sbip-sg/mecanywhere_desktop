@@ -3,7 +3,6 @@ import { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import ErrorOutlineIcon from '@mui/icons-material/ErrorOutline';
 import Checkbox from '@mui/material/Checkbox';
-import useIsLightTheme from 'renderer/components/common/useIsLightTheme';
 import CoreSelectorWidget from './CoreSelectorWidget';
 import MemorySelectorSlider from './MemorySelectorSlider';
 import GpuSelectorWidget from './GpuSelectorWidget';
@@ -12,11 +11,12 @@ import PresetSelectorWidget from './PresetSelectorWidget';
 const PreSharingEnabledComponent = ({
   handleEnableResourceSharing,
   isLoading,
+  setIsLoading,
   isExecutorSettingsSaved,
   setIsExecutorSettingsSaved,
   executorSettings,
   setExecutorSettings,
-  deviceResource,
+  setDeviceHasGpu,
 }) => {
   const [allocateGPU, setAllocateGPU] = useState(false);
 
@@ -27,8 +27,28 @@ const PreSharingEnabledComponent = ({
       event.target.checked.toString()
     );
   };
-  const handleGPUCheckBoxChange = (event) => {
-    setAllocateGPU(event.target.checked);
+
+  const handleGPUCheckBoxChange = async (event) => {
+    setIsLoading(true);
+    await window.electron.removeExecutorContainer('meca_executor_test');
+    if (!allocateGPU) {
+      try {
+        await window.electron.runExecutorGpuContainer('meca_executor_test');
+        setDeviceHasGpu(true);
+      } catch (error) {
+        setDeviceHasGpu(false);
+        console.error('Error starting GPU container:', error);
+      }
+      setAllocateGPU(true);
+    } else {
+      try {
+        await window.electron.runExecutorContainer('meca_executor_test');
+      } catch (error) {
+        console.error('Error starting container:', error);
+      }
+      setAllocateGPU(false);
+    }
+    setIsLoading(false);
   };
 
   useEffect(() => {
@@ -86,12 +106,10 @@ const PreSharingEnabledComponent = ({
             <CoreSelectorWidget
               executorSettings={executorSettings}
               setExecutorSettings={setExecutorSettings}
-              totalCpuCores={deviceResource.totalCpuCores}
             />
             <MemorySelectorSlider
               executorSettings={executorSettings}
               setExecutorSettings={setExecutorSettings}
-              totalMem={deviceResource.totalMem}
             />
           </Stack>
         </motion.div>
@@ -133,7 +151,6 @@ const PreSharingEnabledComponent = ({
           <GpuSelectorWidget
             executorSettings={executorSettings}
             setExecutorSettings={setExecutorSettings}
-            deviceResource={deviceResource}
           />
         </motion.div>
       </AnimatePresence>

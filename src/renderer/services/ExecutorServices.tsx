@@ -12,6 +12,7 @@ export async function stopExecutor() {
       throw new Error(`Failed to stop executor: ${response.statusText}`);
     }
     const res = await response.json();
+    console.log('stopped executor', res);
     return res;
   } catch (error) {
     console.error('There was a problem with the fetch operation:', error);
@@ -29,6 +30,7 @@ export async function unpauseExecutor() {
     if (!response.ok) {
       throw new Error(`Failed to unpause executor: ${response.statusText}`);
     }
+    console.log('unpaused executor');
     return true;
   } catch (error) {
     console.error('There was a problem with the fetch operation:', error);
@@ -46,6 +48,7 @@ export async function pauseExecutor() {
     if (!response.ok) {
       throw new Error(`Failed to pause executor: ${response.statusText}`);
     }
+    console.log('paused executor');
     return true;
   } catch (error) {
     console.error('There was a problem with the fetch operation:', error);

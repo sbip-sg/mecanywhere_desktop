@@ -91,7 +91,7 @@ const BillingDashboard: React.FC<BillingDashboardProps> = ({ appRole }) => {
       <Typography
         variant="h3"
         style={{
-          padding: '1rem 1rem 0.5rem 2rem',
+          padding: '1rem 0 0.5rem 2rem',
         }}
       >
         Billing Overview

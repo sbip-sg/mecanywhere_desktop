@@ -2,21 +2,30 @@ from py import meca_api
 import asyncio
 import base64
 import sys
+import os
 
 
 def callback_on_receive(task_id, status, response, err, corr_id):
     if status == 1:
       try:
-        with open("output.png", "wb") as f:
+        os.mkdir('build')
+      except OSError as error:
+        print(error)
+      try:
+        with open("build/output.png", "wb") as f:
           f.write(base64.b64decode(response))
-        print("Received result for task", task_id, "at output.png")
+        print("Received result for task", task_id, "at build/output.png")
       except:
         print("Received result for task", task_id, ":", response)
     else:
       print(err, "for task: ", task_id, "corr_id:", corr_id)
 
 async def main():
-  prompt = ' '.join(sys.argv[1:])
+  args = ' '.join(sys.argv[1:])
+
+  if args == '':
+    print("Usage: python3 stablediffusion.py <args>")
+    return
 
   try:
     await meca_api.initiate_connection()
@@ -27,9 +36,9 @@ async def main():
   await meca_api.offload_task(
     str(101),
     'sdtest:latest',
-    "{\"prompt\": \"%s\"}" % prompt,
+    args,
     callback=callback_on_receive,
-    resource={'cpu': 4, 'memory': 4096},
+    resource={'cpu': 8, 'memory': 8192},
   )
 
   await meca_api.join(500, 500)
