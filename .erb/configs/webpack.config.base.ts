@@ -9,6 +9,27 @@ import webpackPaths from './webpack.paths';
 import { dependencies as externals } from '../../release/app/package.json';
 import path from 'path';
 
+
+// Load .env file
+const env = dotenv.config().parsed;
+
+console.log("process.platform", process.platform)
+// Determine TASK_EXECUTOR_URL based on the OS
+// const TASK_EXECUTOR_URL = process.platform === "win32" 
+//     ? "http://localhost:2591" 
+//     : "http://172.18.0.255:2591";
+
+const IPV4_ADDRESS = process.platform === "win32" ? "173.18.0.255" : "172.18.0.255"
+console.log("IPV4_ADDRESS", IPV4_ADDRESS)
+// Merge custom environment variables
+const environmentVariables = {
+  ...env, // Existing .env variables
+  // TASK_EXECUTOR_URL, // Add TASK_EXECUTOR_URL
+  IPV4_ADDRESS,
+  NODE_ENV: 'production', // You can keep or remove this line depending on your setup
+};
+
+
 const configuration: webpack.Configuration = {
   externals: [...Object.keys(externals || {})],
 
@@ -65,10 +86,7 @@ const configuration: webpack.Configuration = {
   },
 
   plugins: [
-    new webpack.EnvironmentPlugin({
-      NODE_ENV: 'production',
-      ...dotenv.config().parsed,
-    }),
+    new webpack.EnvironmentPlugin(environmentVariables),
     new webpack.ProvidePlugin({
       Buffer: ['buffer', 'Buffer'],
     }),

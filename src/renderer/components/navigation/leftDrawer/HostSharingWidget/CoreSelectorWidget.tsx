@@ -8,7 +8,7 @@ import {
 } from '@mui/material';
 import KeyboardArrowDownIcon from '@mui/icons-material/KeyboardArrowDown';
 import KeyboardArrowUpIcon from '@mui/icons-material/KeyboardArrowUp';
-import { useTheme } from '@emotion/react';
+import { useTheme } from '@mui/material/styles';
 import { useSelector } from 'react-redux';
 import { RootState } from 'renderer/redux/store';
 

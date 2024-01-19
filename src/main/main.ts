@@ -246,7 +246,7 @@ ipcMain.on(Channels.RUN_EXECUTOR_CONTAINER, async (event, containerName) => {
             EndpointsConfig: {
               meca: {
                 IPAMConfig: {
-                  IPv4Address: '173.18.0.255',
+                  IPv4Address: process.env.IPV4_ADDRESS,
                 },
               },
             },
@@ -318,7 +318,7 @@ has_gpu: true
           EndpointsConfig: {
             meca: {
               IPAMConfig: {
-                IPv4Address: '173.18.0.255',
+                IPv4Address: process.env.IPV4_ADDRESS,
               },
             },
           },

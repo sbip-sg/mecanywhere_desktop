@@ -11,7 +11,7 @@ import { RootState } from 'renderer/redux/store';
 import KeyboardArrowDownIcon from '@mui/icons-material/KeyboardArrowDown';
 import KeyboardArrowUpIcon from '@mui/icons-material/KeyboardArrowUp';
 import ErrorIcon from '@mui/icons-material/Error';
-import { useTheme } from '@emotion/react';
+import { useTheme } from '@mui/material/styles';
 
 const GpuSelectorWidget = ({ executorSettings, setExecutorSettings }) => {
   const theme = useTheme();

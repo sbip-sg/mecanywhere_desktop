@@ -107,7 +107,6 @@
     }
   },
   "dependencies": {
-    "@emotion/react": "^11.10.6",
     "@emotion/styled": "^11.10.6",
     "@mui/icons-material": "^5.11.16",
     "@mui/material": "^5.14.1",
@@ -116,7 +115,6 @@
     "bip39": "^3.1.0",
     "buffer": "^6.0.3",
     "crypto-js": "^4.1.1",
-    "dockerode": "^4.0.2",
     "dotenv": "^16.3.1",
     "electron-debug": "^3.2.0",
     "electron-log": "^5.0.0-rc.1",
@@ -142,11 +140,9 @@
     "recharts": "^2.7.3",
     "redux": "^4.2.1",
     "redux-thunk": "^2.4.2",
-    "socket.io": "^4.7.1",
     "stream-http": "^3.2.0",
     "url": "^0.11.3",
     "util": "^0.12.5",
-    "web3": "^1.8.1",
     "yup": "^1.1.1"
   },
   "devDependencies": {
