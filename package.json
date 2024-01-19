@@ -109,7 +109,6 @@
   "dependencies": {
     "@emotion/react": "^11.10.6",
     "@emotion/styled": "^11.10.6",
-    "@metamask/sdk": "^0.14.1",
     "@mui/icons-material": "^5.11.16",
     "@mui/material": "^5.14.1",
     "@reduxjs/toolkit": "^1.9.5",

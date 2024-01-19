@@ -7,6 +7,7 @@ import webpack from 'webpack';
 import TsconfigPathsPlugins from 'tsconfig-paths-webpack-plugin';
 import webpackPaths from './webpack.paths';
 import { dependencies as externals } from '../../release/app/package.json';
+import path from 'path';
 
 const configuration: webpack.Configuration = {
   externals: [...Object.keys(externals || {})],
@@ -58,6 +59,9 @@ const configuration: webpack.Configuration = {
     },
     // There is no need to add aliases here, the paths in tsconfig get mirrored
     plugins: [new TsconfigPathsPlugins()],
+    alias: {
+      react: path.resolve('./node_modules/react')
+    }
   },
 
   plugins: [
