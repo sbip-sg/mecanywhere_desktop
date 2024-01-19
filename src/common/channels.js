@@ -1,6 +1,8 @@
 const Channels = {
   STORE_GET: 'electron-store-get',
   STORE_SET: 'electron-store-set',
+  CHECK_DOCKER_DAEMON_RUNNING: 'check-docker-daemon-running',
+  CHECK_DOCKER_DAEMON_RUNNING_RESPONSE: 'check-docker-daemon-running-response',
   REMOVE_EXECUTOR_CONTAINER: 'remove-executor-container',
   REMOVE_EXECUTOR_CONTAINER_RESPONSE: 'remove-executor-response',
   RUN_EXECUTOR_CONTAINER_RESPONSE: 'run-executor-container-response',

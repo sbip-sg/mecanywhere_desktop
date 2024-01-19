@@ -371,6 +371,22 @@ const checkIfContainerHasGpu = (containerId, callback) => {
   });
 };
 
+ipcMain.on(Channels.CHECK_DOCKER_DAEMON_RUNNING, (event) => {
+  docker.ping((err, data) => {
+    if (err) {
+      console.error('Docker daemon is not running', err);
+      event.reply(
+        Channels.CHECK_DOCKER_DAEMON_RUNNING_RESPONSE,
+        false,
+        err.message
+      );
+    } else {
+      console.log('Docker daemon is running', data);
+      event.reply(Channels.CHECK_DOCKER_DAEMON_RUNNING_RESPONSE, true, true);
+    }
+  });
+});
+
 ipcMain.on(Channels.CHECK_CONTAINER_EXIST, (event, containerName) => {
   docker.listContainers({ all: true }, (err, containers) => {
     if (err) {

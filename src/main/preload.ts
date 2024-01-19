@@ -21,6 +21,23 @@ const electronHandler = {
     },
   },
 
+  checkDockerDaemonRunning: () => {
+    return new Promise<boolean>((resolve, reject) => {
+      ipcRenderer.send(Channels.CHECK_DOCKER_DAEMON_RUNNING);
+      ipcRenderer.once(
+        Channels.CHECK_DOCKER_DAEMON_RUNNING_RESPONSE,
+        (event, success, error) => {
+          if (success) {
+            resolve(true);
+          } else {
+            reject(new Error(error));
+          }
+        }
+      );
+    });
+  },
+
+
   removeExecutorContainer: (containerName: string) => {
     return new Promise<void>((resolve, reject) => {
       ipcRenderer.send(Channels.REMOVE_EXECUTOR_CONTAINER, containerName);

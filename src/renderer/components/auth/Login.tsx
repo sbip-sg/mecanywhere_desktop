@@ -62,12 +62,15 @@ const Login = () => {
           } else {
             console.error('invalid role');
           }
-        } else {
-          setErrorMessage('Wrong password');
-          setErrorDialogOpen(true);
         }
       } catch (error) {
-        setErrorMessage('Wrong password');
+        if (error instanceof Error) {
+          setErrorMessage(error.message);
+        } else {
+          setErrorMessage(
+            typeof error === 'string' ? error : 'An unexpected error occurred'
+          );
+        }
         setErrorDialogOpen(true);
       }
       setIsLoading(false);
