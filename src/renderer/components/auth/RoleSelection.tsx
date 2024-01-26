@@ -30,10 +30,11 @@ const RoleSelection = () => {
       window.electron.store.set('role', 'host');
       actions.setRole('host');
     }
-    if (selectedRole === 'client') {
-      window.electron.store.set('role', 'client');
-      actions.setRole('client');
-    } else if (selectedRole === 'provider') {
+    // if (selectedRole === 'client') {
+    //   window.electron.store.set('role', 'client');
+    //   actions.setRole('client');
+    // }
+    else if (selectedRole === 'provider') {
       window.electron.store.set('role', 'provider');
       actions.setRole('provider');
     } else {
@@ -115,7 +116,7 @@ const RoleSelection = () => {
                         fontWeight: selectedRole === 'host' ? '600' : '500',
                       }}
                     >
-                      HOST
+                      HOST / CLIENT
                     </Typography>
                   }
                 />
@@ -126,12 +127,12 @@ const RoleSelection = () => {
                     color: 'text.primary',
                   }}
                 >
-                  Select this role if you are intending to use this application
-                  as an edge device host which shares compute resources.
+                  Select this role if you wish to share or utilize compute
+                  resources.
                 </Typography>
               </CardContent>
             </Card>
-            <Card
+            {/* <Card
               sx={{
                 backgroundColor:
                   selectedRole === 'provider'
@@ -178,7 +179,7 @@ const RoleSelection = () => {
                   Host.{' '}
                 </Typography>
               </CardContent>
-            </Card>
+            </Card> */}
             <Card
               sx={{
                 backgroundColor:
