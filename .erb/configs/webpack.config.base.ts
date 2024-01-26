@@ -81,7 +81,7 @@ const configuration: webpack.Configuration = {
     // There is no need to add aliases here, the paths in tsconfig get mirrored
     plugins: [new TsconfigPathsPlugins()],
     alias: {
-      react: path.resolve('./node_modules/react')
+      react: path.resolve('./src/node_modules/react')
     }
   },
 
