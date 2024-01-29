@@ -8,8 +8,8 @@ import reduxStore from 'renderer/redux/store';
 import RefreshIcon from '@mui/icons-material/Refresh';
 import { scrollbarHeight } from 'renderer/utils/constants';
 import CustomLineChart from './linechart/CustomLineChart';
-import { ExternalDataEntry, InternalDataEntry } from '../common/dataTypes';
-import { ExternalPropConfigList, InternalPropConfigList } from './propConfig';
+import { ExternalDataEntry } from '../common/dataTypes';
+import { ExternalPropConfigList } from './propConfig';
 import Datagrid from './table/Datagrid';
 import {
   addDummyHistory,
@@ -24,11 +24,7 @@ import {
   unexpandedRowPerPage,
 } from './table/TableParams';
 
-interface TxnDashboardProps {
-  appRole: string;
-}
-
-const TxnDashboard: React.FC<TxnDashboardProps> = ({ appRole }) => {
+const TxnDashboard: React.FC = () => {
   const did = window.electron.store.get('did');
   const [data, setData] = useState<ExternalDataEntry[]>([]);
   const [hasData, setHasData] = useState(false);
@@ -85,7 +81,7 @@ const TxnDashboard: React.FC<TxnDashboardProps> = ({ appRole }) => {
   const handleRefresh = async () => {
     const { accessToken } = reduxStore.getState().userReducer;
     if (accessToken) {
-      await fetchAndSetData(accessToken, appRole);
+      await fetchAndSetData(accessToken);
     } else {
       console.error('Invalid access token or did');
     }
@@ -201,7 +197,7 @@ const TxnDashboard: React.FC<TxnDashboardProps> = ({ appRole }) => {
                   textAlign: 'center',
                 }}
               >
-                  You have not done any MECA transactions for the past 6 months.
+                You have not done any MECA transactions for the past 6 months.
               </Typography>
             </Box>
             <Button
@@ -240,7 +236,6 @@ const TxnDashboard: React.FC<TxnDashboardProps> = ({ appRole }) => {
               data={data}
               handleRefresh={handleRefresh}
               handleAddDummyData={handleAddDummyData}
-              appRole={appRole}
             />
           </motion.div>
         )}
@@ -259,11 +254,7 @@ const TxnDashboard: React.FC<TxnDashboardProps> = ({ appRole }) => {
               data={data}
               isTableExpanded={isTableExpanded}
               setIsTableExpanded={setIsTableExpanded}
-              propConfigList={
-                appRole === 'provider'
-                  ? InternalPropConfigList
-                  : ExternalPropConfigList
-              }
+              propConfigList={ExternalPropConfigList}
             />
           </motion.div>
         )}

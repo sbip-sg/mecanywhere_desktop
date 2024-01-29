@@ -10,12 +10,12 @@ import SummaryColumn from './customListItemComponents/SummaryColumn';
 import UtilizationColumn from './customListItemComponents/UtilizationColumn';
 import AccordionHeader from './customListItemComponents/AccordionHeader';
 
-const CustomListItem = ({ item, onAccordionChange, columnWidths, appRole }) => {
+const CustomListItem = ({ item, onAccordionChange, columnWidths }) => {
   const [isExpanded, setIsExpanded] = useState(false);
   const handleExpansion = () => {
     const newExpandedState = !isExpanded;
     setIsExpanded(newExpandedState);
-    onAccordionChange(newExpandedState); // Notify parent about the change
+    onAccordionChange(newExpandedState);
   };
   return (
     <Accordion
@@ -76,14 +76,9 @@ const CustomListItem = ({ item, onAccordionChange, columnWidths, appRole }) => {
           <UtilizationColumn
             item={item}
             columnWidth={columnWidths.second + columnWidths.third}
-            appRole={appRole}
           />
           <Divider orientation="vertical" flexItem />
-          <SummaryColumn
-            item={item}
-            columnWidth={columnWidths.fourth}
-            appRole={appRole}
-          />
+          <SummaryColumn item={item} columnWidth={columnWidths.fourth} />
         </Grid>
       </AccordionDetails>
     </Accordion>

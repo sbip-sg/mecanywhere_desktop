@@ -51,8 +51,6 @@ const RightDrawerComponent: React.FC<RightDrawerComponentProps> = ({
 }) => {
   const navigate = useNavigate();
   const isLightTheme = useIsLightTheme();
-  const appRole = useSelector((state: RootState) => state.roleReducer.role);
-
   const handleThemeChange = () => {
     const newColor = isLightTheme ? 'dark' : 'light';
     actions.setColor(newColor);
@@ -119,7 +117,7 @@ const RightDrawerComponent: React.FC<RightDrawerComponentProps> = ({
                 fontWeight="600"
                 padding="1rem 0rem 0rem 0rem"
               >
-                jeryong@gmail.com
+                placeholder@gmail.com
               </Typography>
             </ListItem>
             <ListItem
@@ -137,7 +135,7 @@ const RightDrawerComponent: React.FC<RightDrawerComponentProps> = ({
                 }}
               >
                 <Box paddingTop="0.5rem">
-                  Device Information:
+                  Placeholder Device Information:
                   <Box paddingLeft="1rem" paddingTop="0.5rem">
                     <Typography variant="body1" fontSize="13px">
                       Type: PC
@@ -158,8 +156,7 @@ const RightDrawerComponent: React.FC<RightDrawerComponentProps> = ({
                   }}
                 >
                   <Typography variant="h5" fontSize="16px" textAlign="start">
-                    Registered as a{' '}
-                    {appRole ==! 'provider' ? 'parent organization' : 'host'}.
+                    Welcome to MECAnywhere!
                   </Typography>
                 </Box>
               </Box>

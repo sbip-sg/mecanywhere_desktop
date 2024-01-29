@@ -38,7 +38,7 @@ const Login = () => {
         const userIsAuthenticated = await handleLogin(password);
         if (userIsAuthenticated) {
           actions.setAuthenticated(true);
-          navigate('/hosttxndashboard');
+          navigate('/txndashboard');
         }
       } catch (error) {
         if (error instanceof Error) {

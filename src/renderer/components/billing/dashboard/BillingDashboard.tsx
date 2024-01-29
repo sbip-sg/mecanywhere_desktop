@@ -20,11 +20,8 @@ interface GroupedDataEntry {
   billing_amount: number;
   average_network_reliability: number;
 }
-interface BillingDashboardProps {
-  appRole: string;
-}
 
-const BillingDashboard: React.FC<BillingDashboardProps> = ({ appRole }) => {
+const BillingDashboard: React.FC = () => {
   const did = window.electron.store.get('did');
   const [data, setData] = useState<ExternalDataEntry[]>([]);
   const [groupedData, setGroupedData] = useState<GroupedDataEntry[]>([]);
@@ -43,11 +40,11 @@ const BillingDashboard: React.FC<BillingDashboardProps> = ({ appRole }) => {
       startDate,
       endDate,
       'month',
-      'both',
+      'both'
     );
     setGroupedData(groupedDataTemp);
   }, [data]);
-  
+
   function combineHistories(hostDidHistory, clientDidHistory) {
     const hostWithRole = hostDidHistory.map((item) => ({
       ...item,
@@ -138,7 +135,7 @@ const BillingDashboard: React.FC<BillingDashboardProps> = ({ appRole }) => {
             height: '100%',
           }}
         >
-          <PastBillingCard groupedData={groupedData}/>
+          <PastBillingCard groupedData={groupedData} />
         </Grid>
       </Grid>
 
@@ -153,7 +150,7 @@ const BillingDashboard: React.FC<BillingDashboardProps> = ({ appRole }) => {
         </Typography>
       </Box>
       <Box sx={{ padding: '1rem 1rem 0.5rem 2rem' }}>
-        <PastBillingList groupedData={groupedData} appRole={appRole} />
+        <PastBillingList groupedData={groupedData} />
       </Box>
     </Box>
   );

@@ -5,7 +5,6 @@ import CustomListItem from './CustomListItem';
 
 interface PastBillingListProps {
   groupedData;
-  appRole;
 }
 const columnWidths = {
   first: 4,
@@ -15,7 +14,6 @@ const columnWidths = {
 };
 const PastBillingList: React.FC<PastBillingListProps> = ({
   groupedData,
-  appRole,
 }) => {
   const [isAnyAccordionExpanded, setIsAnyAccordionExpanded] = useState(false);
 
@@ -62,7 +60,6 @@ const PastBillingList: React.FC<PastBillingListProps> = ({
           item={item}
           onAccordionChange={handleAccordionChange}
           columnWidths={columnWidths}
-          appRole={appRole}
         />
       ))}
     </Box>
