@@ -1,5 +1,7 @@
-import Web3 from 'web3';
-import { AbiItem } from 'web3-utils';
+// import { AbiItem } from '../../../web3-utils';
+// import { AbiItem } from '../../../node_modules/web3-utils';
+// import { AbiItem } from '../../../node_modules/web3-utils';
+import Web3 from '../../../node_modules/web3';
 import paymentContractAbi from './PaymentContract.json';
 
 const handlePay = async (
@@ -10,7 +12,7 @@ const handlePay = async (
 ) => {
   try {
     const web3 = new Web3(provider);
-    const paymentContract = paymentContractAbi as AbiItem[];
+    const paymentContract = paymentContractAbi;
     const contract = new web3.eth.Contract(paymentContract, contractAddress);
     const did = window.electron.store.get('did');
     const amountToSend = web3.utils.toWei(amount.toString(), 'ether');
