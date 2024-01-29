@@ -1,19 +1,23 @@
 import Box from '@mui/material/Box';
 import Drawer from '@mui/material/Drawer';
 import Toolbar from '@mui/material/Toolbar';
-import { useEffect } from 'react';
-import { useSelector } from 'react-redux';
-import { RootState } from '../../../redux/store';
-import ProviderTab from './ProviderTab';
-import ClientHostTab from './ClientHostTab';
-import actions from '../../../redux/actionCreators';
+import useIsLightTheme from 'renderer/components/common/useIsLightTheme';
+import List from '@mui/material/List';
+import DashboardIcon from '@mui/icons-material/Dashboard';
+import AccountBalanceIcon from '@mui/icons-material/AccountBalance';
+import MonetizationOnIcon from '@mui/icons-material/MonetizationOn';
+import Typography from '@mui/material/Typography';
+import Divider from '@mui/material/Divider';
+import ListItemButton from '@mui/material/ListItemButton';
+import { useNavigate } from 'react-router-dom';
+import HostSharingWidget from './HostSharingWidget/HostSharingWidget';
 
 const LeftDrawerComponent = () => {
-  useEffect(() => {
-    const roleElectron = window.electron.store.get('role');
-    actions.setRole(roleElectron);
-  }, []);
-  const role = useSelector((state: RootState) => state.roleReducer.role);
+  const navigate = useNavigate();
+  const listTopBottomMargin = '0.5rem';
+  const listItemSpacing = '8px';
+  const isLightTheme = useIsLightTheme();
+
   return (
     <Drawer
       id="left-drawer"
@@ -29,10 +33,69 @@ const LeftDrawerComponent = () => {
       }}
     >
       <Toolbar sx={{ backgroundColor: 'red' }} />
-      <Box id="drawerlist-wrapper" sx={{ height: '100%', overflow: 'overlay' }}>
-        {role === 'host' && <ClientHostTab />}
-        {role === 'client' && <ClientHostTab />}
-        {role === 'provider' && <ProviderTab />}
+      <Box
+        id="drawerlist-wrapper"
+        sx={{
+          height: '100%',
+          overflow: 'overlay',
+          backgroundColor: isLightTheme ? '' : 'primary.dark',
+        }}
+      >
+        <List disablePadding component="li">
+          <HostSharingWidget />
+          <Divider />
+          <ListItemButton
+            onClick={() => navigate('/txndashboard')}
+            key="hosttxn"
+          >
+            <DashboardIcon
+              sx={{ marginRight: listItemSpacing, color: 'text.primary' }}
+            />
+            <Typography
+              margin={`${listTopBottomMargin} 0 ${listTopBottomMargin} 0`}
+              sx={{ color: 'text.primary' }}
+            >
+              Dashboard
+            </Typography>
+          </ListItemButton>
+        </List>
+        <Divider />
+        <List disablePadding component="li">
+          <ListItemButton
+            onClick={() => navigate('/billingdashboard')}
+            key="billing"
+          >
+            <AccountBalanceIcon
+              sx={{ marginRight: listItemSpacing, color: 'text.primary' }}
+            />
+            <Typography
+              margin={`${listTopBottomMargin} 0 ${listTopBottomMargin} 0`}
+              sx={{ color: 'text.primary' }}
+            >
+              Billing
+            </Typography>
+          </ListItemButton>
+        </List>
+        <Divider />
+        <List disablePadding component="li">
+          <ListItemButton
+            onClick={() => {
+              navigate('/payment');
+            }}
+            key="payment"
+          >
+            <MonetizationOnIcon
+              sx={{ marginRight: listItemSpacing, color: 'text.primary' }}
+            />
+            <Typography
+              margin={`${listTopBottomMargin} 0 ${listTopBottomMargin} 0`}
+              sx={{ color: 'text.primary' }}
+            >
+              Payment
+            </Typography>
+          </ListItemButton>
+        </List>
+        <Divider />
       </Box>
     </Drawer>
   );

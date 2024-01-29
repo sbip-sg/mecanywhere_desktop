@@ -18,19 +18,6 @@ interface FormValues {
   password: string;
 }
 
-const getMessageByRole = (role: String) => {
-  switch (role) {
-    case 'host':
-      return 'You have previously registered as a host on this device. Please log in to continue.';
-    case 'provider':
-      return 'You have previously registered as a provider on this device. Please log in to continue.';
-    case 'client':
-      return 'You have previously registered as a client on this device. Please log in to continue.';
-    default:
-      return 'It appears you have yet to set up MECAnywhere on this device. To get started, please proceed with the registration.';
-  }
-};
-
 const Login = () => {
   const [isLoading, setIsLoading] = useState(false);
   const [errorDialogOpen, setErrorDialogOpen] = useState(false);
@@ -39,7 +26,6 @@ const Login = () => {
   const handleCloseErrorDialog = () => {
     setErrorDialogOpen(false);
   };
-  const role = window.electron.store.get('role');
   useEffect(() => {
     actions.setImportingAccount(false); // clear state
   }, []);
@@ -52,16 +38,7 @@ const Login = () => {
         const userIsAuthenticated = await handleLogin(password);
         if (userIsAuthenticated) {
           actions.setAuthenticated(true);
-          // navigate('/');
-          if (role === 'host') {
-            navigate('/hosttxndashboard');
-          } else if (role === 'client') {
-            navigate('/clienttxndashboard');
-          } else if (role === 'provider') {
-            navigate('/providertxndashboard');
-          } else {
-            console.error('invalid role');
-          }
+          navigate('/txndashboard');
         }
       } catch (error) {
         if (error instanceof Error) {
@@ -75,7 +52,7 @@ const Login = () => {
       }
       setIsLoading(false);
     },
-    [role, navigate]
+    [navigate]
   );
 
   return isLoading ? (
@@ -140,7 +117,8 @@ const Login = () => {
                 textAlign="center"
                 marginTop="0.5rem"
               >
-                {getMessageByRole(window.electron.store.get('role'))}
+                You have previously registered an account on this device. Please
+                log in to continue.
               </Typography>
               <Box sx={{ maxWidth: '22rem', width: '100%' }}>
                 <Box

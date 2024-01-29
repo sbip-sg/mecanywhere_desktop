@@ -37,11 +37,6 @@ const setJobResults: ActionCreator<AnyAction> = (payload: any) => ({
   payload,
 });
 
-const setRole: ActionCreator<AnyAction> = (payload: any) => ({
-  type: 'setRole',
-  payload,
-});
-
 const setColor: ActionCreator<AnyAction> = (payload: any) => ({
   type: 'setColor',
   payload,
@@ -71,7 +66,6 @@ const boundToDoActions = bindActionCreators(
     setJobs,
     addJobResults,
     setJobResults,
-    setRole,
     setColor,
     setTransactionDetails,
     setImportingAccount,

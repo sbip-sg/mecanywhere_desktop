@@ -24,14 +24,9 @@ import ImportSeedPhrase from './components/auth/ImportSeedPhrase';
 import Mnemonics from './components/auth/Mnemonics';
 import Profile from './components/profile/Profile';
 import NavigationLayoutTransitionWrapper from './components/navigation/NavigationLayoutTransitionWrapper';
-import ClientTxnDashboard from './components/transactions/ClientTxnDashboard';
-import HostTxnDashboard from './components/transactions/HostTxnDashboard';
-import ProviderTxnDashboard from './components/transactions/ProviderTxnDashboard';
-import HostBillingDashboard from './components/billing/dashboard/HostBillingDashboard';
-import ProviderBillingDashboard from './components/billing/dashboard/ProviderBillingDashboard';
+import TxnDashboard from './components/transactions/TxnDashboard';
+import BillingDashboard from './components/billing/dashboard/BillingDashboard';
 import TransactionDetails from './components/transactions/TransactionDetails';
-import RoleSelection from './components/auth/RoleSelection';
-import UserManagement from './components/userManagement/UserManagement';
 import Payment from './components/payment/Payment';
 import Settings from './components/settings/Settings';
 // import useHeartbeatHook from './utils/useHeartbeatHook';
@@ -43,29 +38,17 @@ const PrivateRoutes = () => {
   const isAuthenticated = useSelector(
     (state: RootState) => state.userReducer.authenticated
   );
-  const role = window.electron.store.get('role');
-  return isAuthenticated ? (
-    <Outlet />
-  ) : (
-    <Navigate
-      to={role === 'provider' ? '/providertxndashboard' : '/hosttxndashboard'}
-    />
-  );
+  return isAuthenticated ? <Outlet /> : <Navigate to="/txndashboard" />;
 };
 
 const RootRoute = () => {
   const isAuthenticated = useSelector(
     (state: RootState) => state.userReducer.authenticated
   );
-  const role = window.electron.store.get('role');
   const did = window.electron.store.get('did');
 
   if (isAuthenticated) {
-    return (
-      <Navigate
-        to={role === 'provider' ? '/providertxndashboard' : '/hosttxndashboard'}
-      />
-    );
+    return <Navigate to="/txndashboard" />;
   }
   return did === '' ? <Register /> : <Login />;
 };
@@ -109,14 +92,6 @@ const Animated = () => {
         }
       />
       <Route
-        path="/roleselection"
-        element={
-          <Transitions>
-            <RoleSelection />
-          </Transitions>
-        }
-      />
-      <Route
         path="/import-seed-phrase"
         element={
           <Transitions>
@@ -129,7 +104,7 @@ const Animated = () => {
           path="/"
           element={
             <Transitions>
-              <HostTxnDashboard />
+              <TxnDashboard />
             </Transitions>
           }
         />
@@ -142,42 +117,18 @@ const Animated = () => {
           }
         />
         <Route
-          path="/hosttxndashboard"
+          path="/txndashboard"
           element={
             <Transitions>
-              <HostTxnDashboard />
+              <TxnDashboard />
             </Transitions>
           }
         />
         <Route
-          path="/clienttxndashboard"
+          path="/billingdashboard"
           element={
             <Transitions>
-              <ClientTxnDashboard />
-            </Transitions>
-          }
-        />
-        <Route
-          path="/providertxndashboard"
-          element={
-            <Transitions>
-              <ProviderTxnDashboard />
-            </Transitions>
-          }
-        />
-        <Route
-          path="/hostbillingdashboard"
-          element={
-            <Transitions>
-              <HostBillingDashboard />
-            </Transitions>
-          }
-        />
-        <Route
-          path="/providerbillingdashboard"
-          element={
-            <Transitions>
-              <ProviderBillingDashboard />
+              <BillingDashboard />
             </Transitions>
           }
         />
@@ -186,14 +137,6 @@ const Animated = () => {
           element={
             <Transitions>
               <TransactionDetails />
-            </Transitions>
-          }
-        />
-        <Route
-          path="/usermanagement"
-          element={
-            <Transitions>
-              <UserManagement />
             </Transitions>
           }
         />

@@ -47,9 +47,7 @@ const DataTypography: React.FC<DataTypographyProps> = ({ data }) => {
 };
 
 const TransactionDetails: React.FC = () => {
-  const appRole = useSelector((state: RootState) => state.roleReducer.role);
-  const propConfigList =
-    appRole === 'provider' ? InternalPropConfigList : ExternalPropConfigList;
+  const propConfigList = ExternalPropConfigList;
   const navigate = useNavigate();
   const data =
     reduxStore.getState().transactionDetailsReducer.transactionDetails;

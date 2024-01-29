@@ -10,6 +10,7 @@ import Transitions from '../transitions/Transition';
 import ErrorDialog from '../common/ErrorDialogue';
 import { ReactComponent as Logo } from '../../../../assets/LogoColor.svg';
 import { RootState } from '../../redux/store';
+import handleAccountRegistration from './handleAccountRegistration';
 
 interface FormValues {
   password: string;
@@ -23,6 +24,9 @@ const Register = () => {
   const handleCloseErrorDialog = () => {
     setErrorDialogOpen(false);
   };
+  const isImportingAccount = useSelector(
+    (state: RootState) => state.importingAccountReducer.importingAccount
+  );
   const did = window.electron.store.get('did');
   const handleSubmit = useCallback(
     async (values: FormValues, formActions: FormikHelpers<FormValues>) => {
@@ -30,7 +34,10 @@ const Register = () => {
       try {
         formActions.resetForm();
         const { password } = values;
-        navigate('/roleselection', { state: { password } });
+
+        await handleAccountRegistration(password, isImportingAccount);
+        navigate(isImportingAccount === true ? '/login' : '/mnemonics');
+        // navigate('/mnemonics', { state: { password } });
       } catch (error) {
         setErrorMessage(String(error));
         setErrorDialogOpen(true);
@@ -39,9 +46,6 @@ const Register = () => {
       setIsLoading(false);
     },
     []
-  );
-  const isImportingAccount = useSelector(
-    (state: RootState) => state.importingAccountReducer.importingAccount
   );
   return isLoading ? (
     <Transitions duration={1}>

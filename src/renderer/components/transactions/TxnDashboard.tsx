@@ -8,14 +8,13 @@ import reduxStore from 'renderer/redux/store';
 import RefreshIcon from '@mui/icons-material/Refresh';
 import { scrollbarHeight } from 'renderer/utils/constants';
 import CustomLineChart from './linechart/CustomLineChart';
-import { ExternalDataEntry, InternalDataEntry } from '../common/dataTypes';
-import { ExternalPropConfigList, InternalPropConfigList } from './propConfig';
+import { ExternalDataEntry } from '../common/dataTypes';
+import { ExternalPropConfigList } from './propConfig';
 import Datagrid from './table/Datagrid';
 import {
   addDummyHistory,
   findHostHistory,
   findClientHistory,
-  findPoHistory,
 } from '../../services/TransactionServices';
 import Transitions from '../transitions/Transition';
 import {
@@ -25,11 +24,7 @@ import {
   unexpandedRowPerPage,
 } from './table/TableParams';
 
-interface TxnDashboardProps {
-  appRole: string;
-}
-
-const TxnDashboard: React.FC<TxnDashboardProps> = ({ appRole }) => {
+const TxnDashboard: React.FC = () => {
   const did = window.electron.store.get('did');
   const [data, setData] = useState<ExternalDataEntry[]>([]);
   const [hasData, setHasData] = useState(false);
@@ -44,33 +39,38 @@ const TxnDashboard: React.FC<TxnDashboardProps> = ({ appRole }) => {
     1
   }px`;
 
-  const fetchAndSetData = async (accessToken: string, role: string) => {
+  function combineHistories(hostDidHistory, clientDidHistory) {
+    const hostWithRole = hostDidHistory.map((item) => ({
+      ...item,
+      role: 'host',
+    }));
+    const clientWithRole = clientDidHistory.map((item) => ({
+      ...item,
+      role: 'client',
+    }));
+    return [...hostWithRole, ...clientWithRole];
+  }
+
+  const fetchAndSetData = async (accessToken: string) => {
     setIsLoading(true);
     try {
-      let didHistoryResponse;
+      const hostDidHistoryResponse = await findHostHistory(accessToken, did);
+      const clientDidHistoryResponse = await findClientHistory(
+        accessToken,
+        did
+      );
+      const hostDidHistory = await hostDidHistoryResponse?.json();
+      const clientDidHistory = await clientDidHistoryResponse?.json();
+      const transactionHistory = combineHistories(
+        hostDidHistory,
+        clientDidHistory
+      );
+      console.log('transactionHistory', transactionHistory);
 
-      switch (role) {
-        case 'provider':
-          didHistoryResponse = await findPoHistory(accessToken, did);
-          break;
-        case 'host':
-          didHistoryResponse = await findHostHistory(accessToken, did);
-          break;
-        case 'client':
-          didHistoryResponse = await findClientHistory(accessToken, did);
-          break;
-        default:
-          console.error('Unknown role:', role);
+      if (transactionHistory.length > 0) {
+        setHasData(true);
       }
-      if (didHistoryResponse) {
-        const responseBody = await didHistoryResponse.json();
-        if (responseBody.length > 0) {
-          setHasData(true);
-        }
-        setData(responseBody);
-      } else {
-        console.error('No response from didHistory');
-      }
+      setData(transactionHistory);
     } catch (error) {
       console.error('Error fetching data:', error);
     } finally {
@@ -81,29 +81,13 @@ const TxnDashboard: React.FC<TxnDashboardProps> = ({ appRole }) => {
   const handleRefresh = async () => {
     const { accessToken } = reduxStore.getState().userReducer;
     if (accessToken) {
-      await fetchAndSetData(accessToken, appRole);
+      await fetchAndSetData(accessToken);
     } else {
       console.error('Invalid access token or did');
     }
   };
 
-  const handleAddHostDummyData = async () => {
-    const { accessToken } = reduxStore.getState().userReducer;
-    if (accessToken) {
-      const addDummyHistoryResponse = await addDummyHistory(accessToken, {
-        host_did: did,
-      });
-      if (!addDummyHistoryResponse) {
-        console.error('Invalid dummy history response');
-        return;
-      }
-      await fetchAndSetData(accessToken, appRole);
-    } else {
-      console.error('Invalid access token or did');
-    }
-  };
-
-  const handleAddClientDummyData = async () => {
+  const handleAddDummyData = async () => {
     const { accessToken } = reduxStore.getState().userReducer;
     if (accessToken) {
       const addDummyClientResponse = await addDummyHistory(accessToken, {
@@ -113,38 +97,16 @@ const TxnDashboard: React.FC<TxnDashboardProps> = ({ appRole }) => {
         console.error('Invalid dummy history response');
         return;
       }
-      await fetchAndSetData(accessToken, appRole);
-    } else {
-      console.error('Invalid access token or did');
-    }
-  };
-
-  const handleAddProviderDummyData = async () => {
-    const { accessToken } = reduxStore.getState().userReducer;
-    if (accessToken) {
-      const hostPoResponse = await addDummyHistory(accessToken, {
-        host_po_did: did,
+      const addDummyHostResponse = await addDummyHistory(accessToken, {
+        host_did: did,
       });
-      const clientPoResponse = await addDummyHistory(accessToken, {
-        client_po_did: did,
-      });
-      if (!hostPoResponse || !clientPoResponse) {
+      if (!addDummyHostResponse) {
         console.error('Invalid dummy history response');
         return;
       }
-      await fetchAndSetData(accessToken, appRole);
+      await fetchAndSetData(accessToken);
     } else {
       console.error('Invalid access token or did');
-    }
-  };
-
-  const handleAddDummyData = async (role: string) => {
-    if (role === 'provider') {
-      return handleAddProviderDummyData();
-    } else if (role === 'host') {
-      return handleAddHostDummyData();
-    } else if (role === 'client') {
-      return handleAddClientDummyData();
     }
   };
 
@@ -154,7 +116,7 @@ const TxnDashboard: React.FC<TxnDashboardProps> = ({ appRole }) => {
       // await new Promise((resolve) => setTimeout(resolve, 500));
       if (credential) {
         const { accessToken } = reduxStore.getState().userReducer;
-        await fetchAndSetData(accessToken, appRole);
+        await fetchAndSetData(accessToken);
       } else {
         console.error('Credential or DID is missing');
       }
@@ -235,16 +197,11 @@ const TxnDashboard: React.FC<TxnDashboardProps> = ({ appRole }) => {
                   textAlign: 'center',
                 }}
               >
-                {appRole === 'host' &&
-                  'You have not shared any resources for the past 6 months.'}
-                {appRole === 'client' &&
-                  'You have not used any resources for the past 6 months.'}
-                {appRole === 'provider' &&
-                  'Your users have not shared any resources for the past 6 months.'}
+                You have not done any MECA transactions for the past 6 months.
               </Typography>
             </Box>
             <Button
-              onClick={() => handleAddDummyData(appRole)}
+              onClick={() => handleAddDummyData()}
               sx={{
                 margin: '2rem 0 0 0',
                 padding: '0.5rem 1.5rem',
@@ -279,7 +236,6 @@ const TxnDashboard: React.FC<TxnDashboardProps> = ({ appRole }) => {
               data={data}
               handleRefresh={handleRefresh}
               handleAddDummyData={handleAddDummyData}
-              appRole={appRole}
             />
           </motion.div>
         )}
@@ -298,11 +254,7 @@ const TxnDashboard: React.FC<TxnDashboardProps> = ({ appRole }) => {
               data={data}
               isTableExpanded={isTableExpanded}
               setIsTableExpanded={setIsTableExpanded}
-              propConfigList={
-                appRole === 'provider'
-                  ? InternalPropConfigList
-                  : ExternalPropConfigList
-              }
+              propConfigList={ExternalPropConfigList}
             />
           </motion.div>
         )}

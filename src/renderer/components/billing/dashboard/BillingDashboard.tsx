@@ -7,7 +7,7 @@ import PastBillingList from '../components/list/PastBillingList';
 import { ExternalDataEntry } from '../../common/dataTypes';
 import {
   findHostHistory,
-  findPoHistory,
+  findClientHistory,
 } from '../../../services/TransactionServices';
 import groupData from '../../common/groupData';
 
@@ -20,15 +20,11 @@ interface GroupedDataEntry {
   billing_amount: number;
   average_network_reliability: number;
 }
-interface BillingDashboardProps {
-  appRole: string;
-}
 
-const BillingDashboard: React.FC<BillingDashboardProps> = ({ appRole }) => {
+const BillingDashboard: React.FC = () => {
   const did = window.electron.store.get('did');
   const [data, setData] = useState<ExternalDataEntry[]>([]);
   const [groupedData, setGroupedData] = useState<GroupedDataEntry[]>([]);
-  const selfDid = window.electron.store.get('did');
 
   useEffect(() => {
     const getCurrentDateMinusMonths = (months: number) => {
@@ -44,24 +40,39 @@ const BillingDashboard: React.FC<BillingDashboardProps> = ({ appRole }) => {
       startDate,
       endDate,
       'month',
-      'both',
-      selfDid,
-      appRole
+      'both'
     );
     setGroupedData(groupedDataTemp);
-  }, [data, appRole, selfDid]);
+  }, [data]);
 
-  const fetchAndSetData = async (accessToken: string, role: string) => {
+  function combineHistories(hostDidHistory, clientDidHistory) {
+    const hostWithRole = hostDidHistory.map((item) => ({
+      ...item,
+      role: 'host',
+    }));
+    const clientWithRole = clientDidHistory.map((item) => ({
+      ...item,
+      role: 'client',
+    }));
+    return [...hostWithRole, ...clientWithRole];
+  }
+
+  const fetchAndSetData = async (accessToken: string) => {
     try {
-      const didHistoryResponse = await (role === 'provider'
-        ? findPoHistory(accessToken, did)
-        : findHostHistory(accessToken, did));
-      if (didHistoryResponse) {
-        const responseBody = await didHistoryResponse.json();
-        setData(responseBody);
-      } else {
-        console.error('No response from didHistory');
-      }
+      const hostDidHistoryResponse = await findHostHistory(accessToken, did);
+      const clientDidHistoryResponse = await findClientHistory(
+        accessToken,
+        did
+      );
+      const hostDidHistory = await hostDidHistoryResponse?.json();
+      const clientDidHistory = await clientDidHistoryResponse?.json();
+      const transactionHistory = combineHistories(
+        hostDidHistory,
+        clientDidHistory
+      );
+      console.log('transactionHistory', transactionHistory);
+
+      setData(transactionHistory);
     } catch (error) {
       console.error('Error fetching data:', error);
     }
@@ -72,7 +83,7 @@ const BillingDashboard: React.FC<BillingDashboardProps> = ({ appRole }) => {
     const retrieveData = async () => {
       if (credential) {
         const { accessToken } = reduxStore.getState().userReducer;
-        await fetchAndSetData(accessToken, appRole);
+        await fetchAndSetData(accessToken);
       } else {
         console.error('Credential or DID is missing');
       }
@@ -124,7 +135,7 @@ const BillingDashboard: React.FC<BillingDashboardProps> = ({ appRole }) => {
             height: '100%',
           }}
         >
-          <PastBillingCard groupedData={groupedData} appRole={appRole} />
+          <PastBillingCard groupedData={groupedData} />
         </Grid>
       </Grid>
 
@@ -139,7 +150,7 @@ const BillingDashboard: React.FC<BillingDashboardProps> = ({ appRole }) => {
         </Typography>
       </Box>
       <Box sx={{ padding: '1rem 1rem 0.5rem 2rem' }}>
-        <PastBillingList groupedData={groupedData} appRole={appRole} />
+        <PastBillingList groupedData={groupedData} />
       </Box>
     </Box>
   );

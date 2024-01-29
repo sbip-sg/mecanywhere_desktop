@@ -52,7 +52,7 @@ const GpuSelectorWidget = ({ executorSettings, setExecutorSettings }) => {
       <Box
         sx={{ display: 'flex', alignItems: 'center', padding: '0.2rem 0 0 0' }}
       >
-        {gpuModel === '' ? (
+        {gpuModel === '' || gpuModel === undefined ? (
           <>
             <ErrorIcon
               sx={{
@@ -69,7 +69,7 @@ const GpuSelectorWidget = ({ executorSettings, setExecutorSettings }) => {
           <Typography variant="body2">{`Model: ${gpuModel}`}</Typography>
         )}
       </Box>
-      {gpuModel !== '' && (
+      {!(gpuModel === '' || gpuModel === undefined) && (
         <Box
           sx={{
             height: '100%',

@@ -24,8 +24,6 @@ const MenuComponent = () => {
     width: '20%',
     height: '20%',
   };
-  const role = window.electron.store.get('role');
-
   const hoveredStyle = {
     ...defaultStyle,
     filter: 'brightness(120%)',
@@ -62,15 +60,7 @@ const MenuComponent = () => {
             style={isHovered ? hoveredStyle : defaultStyle}
             onMouseEnter={() => setIsHovered(true)}
             onMouseLeave={() => setIsHovered(false)}
-            onClick={() => {
-              if (role === 'host') {
-                navigate('/hosttxndashboard');
-              } else if (role === 'provider') {
-                navigate('/providertxndashboard');
-              } else {
-                console.error('invalid role');
-              }
-            }}
+            onClick={() => navigate('/txndashboard')}
           />
           <Typography
             variant="h3"
@@ -92,7 +82,6 @@ const MenuComponent = () => {
             width: '60px',
             height: '60px',
           }}
-          // onMouseEnter={() => console.log('Hovering over the image')}
         >
           <Button
             onClick={toggleRightDrawer(true)}

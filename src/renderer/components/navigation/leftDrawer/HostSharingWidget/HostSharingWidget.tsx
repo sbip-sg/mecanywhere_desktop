@@ -76,6 +76,7 @@ const HostSharingWidget = () => {
         const totalMem = resourceStats.total_mem;
         const totalGpus = resourceStats.task_gpu;
         const gpuModel = resourceStats.gpu_model;
+        console.log("gpuModel", gpuModel)
         actions.setDeviceStats({
           totalCpuCores,
           totalMem,
