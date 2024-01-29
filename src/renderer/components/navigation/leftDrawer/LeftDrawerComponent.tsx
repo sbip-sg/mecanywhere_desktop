@@ -45,7 +45,7 @@ const LeftDrawerComponent = () => {
           <HostSharingWidget />
           <Divider />
           <ListItemButton
-            onClick={() => navigate('/hosttxndashboard')}
+            onClick={() => navigate('/txndashboard')}
             key="hosttxn"
           >
             <DashboardIcon
@@ -62,8 +62,8 @@ const LeftDrawerComponent = () => {
         <Divider />
         <List disablePadding component="li">
           <ListItemButton
-            onClick={() => navigate('/hostbillingdashboard')}
-            key="hostbilling"
+            onClick={() => navigate('/billingdashboard')}
+            key="billing"
           >
             <AccountBalanceIcon
               sx={{ marginRight: listItemSpacing, color: 'text.primary' }}

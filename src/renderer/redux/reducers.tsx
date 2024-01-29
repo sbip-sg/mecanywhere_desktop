@@ -29,14 +29,6 @@ const initialImportingAccountState: ImportingAccountState = {
   importingAccount: false,
 };
 
-interface RoleState {
-  role: string;
-}
-
-const initialRoleState: RoleState = {
-  role: '',
-};
-
 interface JobsState {
   jobs: Job[];
   jobResults: JobResult[];
@@ -67,21 +59,6 @@ export const transactionDetailsReducer = (state = {}, action: any) => {
       return {
         ...state,
         transactionDetails: action.payload,
-      };
-    default:
-      return state;
-  }
-};
-
-export const roleReducer = (
-  state: RoleState = initialRoleState,
-  action: any
-) => {
-  switch (action.type) {
-    case 'setRole':
-      return {
-        ...state,
-        role: action.payload,
       };
     default:
       return state;
@@ -195,7 +172,6 @@ const jobsReducer = (
 
 const reducers = combineReducers({
   jobs: jobsReducer,
-  roleReducer: roleReducer,
   transactionDetailsReducer: transactionDetailsReducer,
   userReducer: userReducer,
   themeReducer: themeReducer,

@@ -4,8 +4,6 @@ import Popover from '@mui/material/Popover';
 import Typography from '@mui/material/Typography';
 import ToggleButton from '@mui/material/ToggleButton';
 import ToggleButtonGroup from '@mui/material/ToggleButtonGroup';
-import { useSelector } from 'react-redux';
-import { RootState } from 'renderer/redux/store';
 import { datakeyOptions } from './dataKeys';
 
 interface DatakeySelectorPopoverProps {
@@ -124,12 +122,6 @@ const DatakeySelectorPopover: React.FC<DatakeySelectorPopoverProps> = ({
             </ToggleButton>
           ))}
         </ToggleButtonGroup>
-        {/* {useSelector((state: RootState) => state.roleReducer.role) ===
-          'provider' && (
-          <>
-            
-          </>
-        )} */}
         <Typography
           variant="subtitle1"
           sx={{

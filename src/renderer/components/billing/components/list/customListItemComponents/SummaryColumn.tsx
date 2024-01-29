@@ -5,7 +5,6 @@ import { CaptionTypography, DetailTypography } from './CustomTypography';
 interface ColumnProps {
   item: any;
   columnWidth: any;
-  appRole: any;
 }
 
 const CenteredGridItem = ({ xs, children, alignItems }) => (
@@ -23,11 +22,7 @@ const CenteredGridItem = ({ xs, children, alignItems }) => (
   </Grid>
 );
 
-const SummaryColumn: React.FC<ColumnProps> = ({
-  item,
-  columnWidth,
-  appRole,
-}) => {
+const SummaryColumn: React.FC<ColumnProps> = ({ item, columnWidth }) => {
   return (
     <Grid
       item
@@ -39,30 +34,24 @@ const SummaryColumn: React.FC<ColumnProps> = ({
       }}
     >
       <Grid item container xs={12}>
-        {appRole === 'provider' && (
-          <>
-            <CenteredGridItem xs={6} alignItems="end">
-              <CaptionTypography>Client</CaptionTypography>
-            </CenteredGridItem>
-            <CenteredGridItem xs={6} alignItems="end">
-              <CaptionTypography>Host</CaptionTypography>
-            </CenteredGridItem>
-            <CenteredGridItem xs={6} alignItems="start">
-              <DetailTypography
-                sx={{ color: 'secondary.contrastText', fontWeight: '600' }}
-              >
-                {-item.client_total_price.toFixed(2)}
-              </DetailTypography>
-            </CenteredGridItem>
-            <CenteredGridItem xs={6} alignItems="start">
-              <DetailTypography
-                sx={{ color: 'secondary.main', fontWeight: '600' }}
-              >
-                {item.host_total_price.toFixed(2)}
-              </DetailTypography>
-            </CenteredGridItem>
-          </>
-        )}
+        <CenteredGridItem xs={6} alignItems="end">
+          <CaptionTypography>Client</CaptionTypography>
+        </CenteredGridItem>
+        <CenteredGridItem xs={6} alignItems="end">
+          <CaptionTypography>Host</CaptionTypography>
+        </CenteredGridItem>
+        <CenteredGridItem xs={6} alignItems="start">
+          <DetailTypography
+            sx={{ color: 'secondary.contrastText', fontWeight: '600' }}
+          >
+            {-item.client_total_price.toFixed(2)}
+          </DetailTypography>
+        </CenteredGridItem>
+        <CenteredGridItem xs={6} alignItems="start">
+          <DetailTypography sx={{ color: 'secondary.main', fontWeight: '600' }}>
+            {item.host_total_price.toFixed(2)}
+          </DetailTypography>
+        </CenteredGridItem>
       </Grid>
       <Box sx={{ width: '100%' }}>
         <Typography
@@ -84,11 +73,9 @@ const SummaryColumn: React.FC<ColumnProps> = ({
             textAlign: 'end',
           }}
         >
-          {`${
-            appRole === 'provider'
-              ? -(item.host_total_price - item.client_total_price).toFixed(2)
-              : item.total_price.toFixed(2)
-          } SGD`}
+          {`${-(item.host_total_price - item.client_total_price).toFixed(
+            2
+          )} SGD`}
         </Typography>
         <Typography
           sx={{
@@ -100,10 +87,8 @@ const SummaryColumn: React.FC<ColumnProps> = ({
             width: '100%',
           }}
         >
-          {appRole === 'provider'
-            ? item.host_total_price - item.client_total_price > 0
-              ? 'receivable'
-              : 'payable'
+          {item.host_total_price - item.client_total_price > 0
+            ? 'receivable'
             : 'payable'}
         </Typography>
       </Box>
