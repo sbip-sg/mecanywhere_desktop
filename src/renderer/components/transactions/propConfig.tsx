@@ -80,7 +80,7 @@ export const InternalPropConfigList: PropConfig<InternalDataEntry>[] = [
   {
     property: 'duration',
     renderer: (data: InternalDataEntry) => data.duration,
-    label: 'Duration (min)',
+    label: 'Duration (s)',
   },
   {
     property: 'network_reliability',
@@ -123,6 +123,6 @@ export const ExternalPropConfigList: PropConfig<ExternalDataEntry>[] = [
   {
     property: 'duration',
     renderer: (data: ExternalDataEntry) => data.duration,
-    label: 'Duration (min)',
+    label: 'Duration (s)',
   },
 ];

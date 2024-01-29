@@ -5,7 +5,6 @@ import sha3 from 'js-sha3';
 import secp256k1 from '../../node_modules/secp256k1';
 
 export const generateKeyPair = async (mnemonic: string) => {
-  console.log("secp256k1", secp256k1)
   const seed = mnemonicToSeedSync(mnemonic).toString('hex');
   const privateKey = SHA256(seed).toString();
   const privateKeyBuffer = Buffer.from(privateKey, 'hex');
@@ -19,7 +18,6 @@ export const generateKeyPair = async (mnemonic: string) => {
     false
   );
   const publicKey = uncompressedPublicKey.slice(1);
-
   return {
     mnemonic,
     publicKey,
@@ -30,9 +28,9 @@ export const generateKeyPair = async (mnemonic: string) => {
 
 export const generateMnemonicAndKeyPair = async () => {
   const mnemonic = generateMnemonic();
-  console.log('mnemonic', mnemonic);
+  // console.log('mnemonic', mnemonic);
   const MnemonicAndKeyPair = await generateKeyPair(mnemonic);
-  console.log('MnemonicAndKeyPair', MnemonicAndKeyPair);
+  // console.log('MnemonicAndKeyPair', MnemonicAndKeyPair);
   return MnemonicAndKeyPair;
 };
 

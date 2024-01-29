@@ -24,14 +24,10 @@ import ImportSeedPhrase from './components/auth/ImportSeedPhrase';
 import Mnemonics from './components/auth/Mnemonics';
 import Profile from './components/profile/Profile';
 import NavigationLayoutTransitionWrapper from './components/navigation/NavigationLayoutTransitionWrapper';
-import ClientTxnDashboard from './components/transactions/ClientTxnDashboard';
 import HostTxnDashboard from './components/transactions/HostTxnDashboard';
-import ProviderTxnDashboard from './components/transactions/ProviderTxnDashboard';
 import HostBillingDashboard from './components/billing/dashboard/HostBillingDashboard';
-import ProviderBillingDashboard from './components/billing/dashboard/ProviderBillingDashboard';
 import TransactionDetails from './components/transactions/TransactionDetails';
 import RoleSelection from './components/auth/RoleSelection';
-import UserManagement from './components/userManagement/UserManagement';
 import Payment from './components/payment/Payment';
 import Settings from './components/settings/Settings';
 // import useHeartbeatHook from './utils/useHeartbeatHook';
@@ -43,12 +39,11 @@ const PrivateRoutes = () => {
   const isAuthenticated = useSelector(
     (state: RootState) => state.userReducer.authenticated
   );
-  const role = window.electron.store.get('role');
   return isAuthenticated ? (
     <Outlet />
   ) : (
     <Navigate
-      to={role === 'provider' ? '/providertxndashboard' : '/hosttxndashboard'}
+      to={'/hosttxndashboard'}
     />
   );
 };
@@ -57,13 +52,12 @@ const RootRoute = () => {
   const isAuthenticated = useSelector(
     (state: RootState) => state.userReducer.authenticated
   );
-  const role = window.electron.store.get('role');
   const did = window.electron.store.get('did');
 
   if (isAuthenticated) {
     return (
       <Navigate
-        to={role === 'provider' ? '/providertxndashboard' : '/hosttxndashboard'}
+        to={'/hosttxndashboard'}
       />
     );
   }
@@ -150,22 +144,6 @@ const Animated = () => {
           }
         />
         <Route
-          path="/clienttxndashboard"
-          element={
-            <Transitions>
-              <ClientTxnDashboard />
-            </Transitions>
-          }
-        />
-        <Route
-          path="/providertxndashboard"
-          element={
-            <Transitions>
-              <ProviderTxnDashboard />
-            </Transitions>
-          }
-        />
-        <Route
           path="/hostbillingdashboard"
           element={
             <Transitions>
@@ -174,26 +152,10 @@ const Animated = () => {
           }
         />
         <Route
-          path="/providerbillingdashboard"
-          element={
-            <Transitions>
-              <ProviderBillingDashboard />
-            </Transitions>
-          }
-        />
-        <Route
           path="/details/:sessionId"
           element={
             <Transitions>
               <TransactionDetails />
-            </Transitions>
-          }
-        />
-        <Route
-          path="/usermanagement"
-          element={
-            <Transitions>
-              <UserManagement />
             </Transitions>
           }
         />

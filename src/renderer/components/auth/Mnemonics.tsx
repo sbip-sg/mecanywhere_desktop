@@ -63,7 +63,7 @@ const Mnemonics = () => {
         <Button
           variant="contained"
           color="secondary"
-          onClick={() => navigate('/roleSelection')}
+          onClick={() => navigate('/login')}
         >
           Back
         </Button>

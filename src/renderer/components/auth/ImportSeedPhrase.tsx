@@ -26,6 +26,7 @@ const ImportSeedPhrase = () => {
 
   const handlePasteMnemonics = async () => {
     const pastedText = await navigator.clipboard.readText();
+    console.log("pastedText", pastedText)
     const pastedWords = pastedText.split(/\s+/).slice(0, 12);
     setWords(pastedWords.concat(Array(12 - pastedWords.length).fill('')));
   };
@@ -35,6 +36,9 @@ const ImportSeedPhrase = () => {
   };
 
   const handleProceedImportAccount = () => {
+    const mnemonics = words.join(' ');
+    console.log(mnemonics)
+    window.electron.store.set('mnemonic', mnemonics)
     navigate('/register');
     actions.setImportingAccount(true);
   };
@@ -137,16 +141,16 @@ const ImportSeedPhrase = () => {
         <Button
           sx={{ margin: '0 1rem 0 0' }}
           variant="contained"
-          onClick={handleProceedImportAccount}
+          onClick={() => navigate('/login')}
         >
-          Import Account
+          Back to Login
         </Button>
         <Button
           sx={{ margin: '0 1rem 0 0' }}
           variant="contained"
-          onClick={() => navigate('/login')}
+          onClick={handleProceedImportAccount}
         >
-          Back to Login
+          Import Account
         </Button>
       </Box>
     </>

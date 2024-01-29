@@ -26,14 +26,13 @@ interface GroupedDataEntry {
 
 interface PastBillingCardProps {
   groupedData: GroupedDataEntry[];
-  appRole: string;
 }
 
 const PastBillingCard: React.FC<PastBillingCardProps> = ({
   groupedData,
-  appRole,
 }) => {
   const theme = useTheme();
+  console.log("groupedData", groupedData)
   return (
     <Card
       sx={{
@@ -70,9 +69,7 @@ const PastBillingCard: React.FC<PastBillingCardProps> = ({
                   />
                 </YAxis>
                 <Tooltip content={<CustomTooltip />} />
-                {/* Display for non-providers (i.e., host) */}
-                {appRole !== 'provider' && (
-                  <>
+
                     <Bar
                       type="monotone"
                       dataKey="total_price"
@@ -88,32 +85,7 @@ const PastBillingCard: React.FC<PastBillingCardProps> = ({
                       stroke={theme.palette.secondary.contrastText}
                       strokeWidth={3}
                     />
-                  </>
-                )}
-                {/* Display for providers based on the selected role */}
-                {appRole === 'provider' && (
-                  <>
-                    <Bar
-                      dataKey="client_total_price"
-                      barSize={40}
-                      fill={theme.palette.primary.main} // Different color for client
-                      name="Client Price"
-                    />
-                    <Bar
-                      dataKey="host_total_price"
-                      barSize={40}
-                      fill={theme.palette.secondary.main} // Different color for host
-                      name="Host Price"
-                    />
-                    <Line
-                      type="linear"
-                      strokeLinejoin="round"
-                      dataKey="half_total_price"
-                      stroke={theme.palette.text.primary} // Different color for line
-                      strokeWidth={3}
-                    />
-                  </>
-                )}
+              
               </ComposedChart>
             </ResponsiveContainer>
           </Grid>

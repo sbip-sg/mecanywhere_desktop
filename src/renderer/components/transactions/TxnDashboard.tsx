@@ -201,12 +201,7 @@ const TxnDashboard: React.FC<TxnDashboardProps> = ({ appRole }) => {
                   textAlign: 'center',
                 }}
               >
-                {appRole === 'host' &&
-                  'You have not shared any resources for the past 6 months.'}
-                {appRole === 'client' &&
-                  'You have not used any resources for the past 6 months.'}
-                {appRole === 'provider' &&
-                  'Your users have not shared any resources for the past 6 months.'}
+                  You have not done any MECA transactions for the past 6 months.
               </Typography>
             </Box>
             <Button

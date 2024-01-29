@@ -5,9 +5,13 @@
 // import { signMessage, decryptWithPassword } from '../../utils/cryptoUtils';
 import { authenticate } from 'renderer/services/RegistrationServices';
 import actions from '../../redux/actionCreators';
+import { error } from 'console';
 
 const handleLogin = async (password: string): Promise<boolean | undefined> => {
   const did = window.electron.store.get('did');
+  if (!did) {
+    throw new Error("No account detected on this device!")
+  }
   const credential = JSON.parse(window.electron.store.get('credential'));
   // To sign the credential using the private key to become verifiable presentation
   // Get key with (decryptWithPassword(window.electron.store.get('privateKey'), password)). Rmb to catch password wrong error here

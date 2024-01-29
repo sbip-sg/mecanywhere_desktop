@@ -75,7 +75,6 @@ const KeyExportPopover: React.FC<KeyExportPopoverProps> = ({
         <Box
           sx={{
             maxWidth: '25rem',
-            height: '5rem',
             minHeight: '5rem',
             backgroundColor: 'customColor.lightGrey',
             width: '100%',
