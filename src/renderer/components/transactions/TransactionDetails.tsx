@@ -9,10 +9,9 @@ import {
   Card,
   CardContent,
 } from '@mui/material';
-import { useSelector } from 'react-redux';
 import ArrowBackIcon from '@mui/icons-material/ArrowBack';
-import { ExternalPropConfigList, InternalPropConfigList } from './propConfig';
-import reduxStore, { RootState } from '../../redux/store';
+import { ExternalPropConfigList } from './propConfig';
+import reduxStore from '../../redux/store';
 
 interface TitleTypographyProps {
   title: string;
@@ -65,7 +64,6 @@ const TransactionDetails: React.FC = () => {
         display: 'flex',
         justifyContent: 'center',
         alignItems: 'center',
-        // overflow: 'auto !important',
       }}
     >
       <Stack
@@ -74,7 +72,6 @@ const TransactionDetails: React.FC = () => {
           width: '80%',
           display: 'flex',
           justifyContent: 'center',
-          // overflow: 'auto !important',
         }}
       >
         <Button

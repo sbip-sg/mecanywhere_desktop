@@ -25,7 +25,7 @@ import Mnemonics from './components/auth/Mnemonics';
 import Profile from './components/profile/Profile';
 import NavigationLayoutTransitionWrapper from './components/navigation/NavigationLayoutTransitionWrapper';
 import TxnDashboard from './components/transactions/TxnDashboard';
-import BillingDashboard from './components/billing/dashboard/BillingDashboard';
+import BillingDashboard from './components/billing/BillingDashboard';
 import TransactionDetails from './components/transactions/TransactionDetails';
 import Payment from './components/payment/Payment';
 import Settings from './components/settings/Settings';

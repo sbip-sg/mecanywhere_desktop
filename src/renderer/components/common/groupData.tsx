@@ -1,5 +1,7 @@
-const filterByDate = (entries, startDate, endDate) => {
-  return entries.filter((entry) => {
+import { DataEntry, AccumulatorType } from './dataTypes';
+
+const filterByDate = (entries: DataEntry[], startDate: Date, endDate: Date) => {
+  return entries.filter((entry: DataEntry) => {
     if (startDate && endDate) {
       const entryDate = new Date(entry.transaction_start_datetime * 1000);
       return entryDate >= startDate && entryDate <= endDate;
@@ -8,7 +10,7 @@ const filterByDate = (entries, startDate, endDate) => {
   });
 };
 
-const filterByRole = (entries, selectedRole) => {
+const filterByRole = (entries: DataEntry[], selectedRole: string) => {
   return entries.filter(() => {
     if (selectedRole === 'client') {
       return true;
@@ -23,7 +25,7 @@ const filterByRole = (entries, selectedRole) => {
   });
 };
 
-function getGroupKey(entryDate, groupBy) {
+function getGroupKey(entryDate: Date, groupBy: string) {
   if (groupBy === 'day') {
     return entryDate.toLocaleDateString();
   }
@@ -37,7 +39,7 @@ function getGroupKey(entryDate, groupBy) {
   })} ${entryDate.getFullYear()}`;
 }
 
-function initializeAccumulator(groupKey) {
+function initializeAccumulator(groupKey: string) {
   return {
     date: groupKey,
     client_resource_cpu: 0,
@@ -55,7 +57,11 @@ function initializeAccumulator(groupKey) {
   };
 }
 
-function updateAccumulator(accumulator, entry, groupKey) {
+function updateAccumulator(
+  accumulator: AccumulatorType,
+  entry: DataEntry,
+  groupKey: string
+) {
   if (entry.role === 'client') {
     accumulator[groupKey].client_count += 1;
     accumulator[groupKey].client_resource_cpu += Number(entry.resource_cpu);
@@ -80,7 +86,13 @@ function updateAccumulator(accumulator, entry, groupKey) {
   return accumulator;
 }
 
-function groupData(data, startDate, endDate, groupBy, selectedRole) {
+function groupData(
+  data: DataEntry[],
+  startDate: Date,
+  endDate: Date,
+  groupBy: string,
+  selectedRole: string
+) {
   const dataFilteredByDate = filterByDate(data, startDate, endDate);
   const dataFilteredByRoleAndDate = filterByRole(
     dataFilteredByDate,
@@ -88,7 +100,7 @@ function groupData(data, startDate, endDate, groupBy, selectedRole) {
   );
 
   const groupedDataAccumulator = dataFilteredByRoleAndDate.reduce(
-    (accumulator, entry) => {
+    (accumulator: AccumulatorType, entry) => {
       const entryDate = new Date(entry.transaction_start_datetime * 1000);
       const groupKey = getGroupKey(entryDate, groupBy);
       accumulator[groupKey] =
@@ -145,8 +157,9 @@ function groupData(data, startDate, endDate, groupBy, selectedRole) {
       date: group.date,
     };
   });
-
-  return groupedData.sort((a, b) => new Date(a.date) - new Date(b.date));
+  return groupedData.sort(
+    (a, b) => new Date(a.date).getTime() - new Date(b.date).getTime()
+  );
 }
 
 export default groupData;

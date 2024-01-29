@@ -21,12 +21,12 @@ import AddIcon from '@mui/icons-material/Add';
 import CustomTooltip from './CustomTooltip';
 import DatePickerPopover from './DatePickerPopover';
 import DataKeySelectorPopover from './DataKeySelectorPopover';
-import { ExternalDataEntry } from '../../common/dataTypes';
+import { DataEntry } from '../../common/dataTypes';
 import groupData from '../../common/groupData';
 import { getLabelForDataKey } from './dataKeys';
 
 interface CustomLineChartProps {
-  data: ExternalDataEntry[];
+  data: DataEntry[];
   handleRefresh: () => void;
   handleAddDummyData: () => void;
 }

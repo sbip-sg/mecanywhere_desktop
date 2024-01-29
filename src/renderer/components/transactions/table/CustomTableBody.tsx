@@ -2,22 +2,18 @@ import React from 'react';
 import TableBody from '@mui/material/TableBody';
 import StyledTableCell from './StyledTableCell';
 import StyledTableRow from './StyledTableRow';
-import { InternalDataEntry, ExternalDataEntry } from '../../common/dataTypes';
+import { DataEntry } from '../../common/dataTypes';
 import { PropConfig } from '../propConfig';
 
 interface CustomTableBodyProps<T> {
   visibleRows: T[];
   handleTableRowClick: (query: string) => void;
-  propConfigList:
-    | PropConfig<InternalDataEntry>[]
-    | PropConfig<ExternalDataEntry>[];
+  propConfigList: PropConfig<DataEntry>[];
   emptyRows: number;
   addRightPadding: boolean;
   maxRowHeight: number;
 }
-const CustomTableBody: React.FC<
-  CustomTableBodyProps<InternalDataEntry | ExternalDataEntry>
-> = ({
+const CustomTableBody: React.FC<CustomTableBodyProps<DataEntry>> = ({
   visibleRows,
   handleTableRowClick,
   propConfigList,

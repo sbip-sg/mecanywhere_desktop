@@ -1,5 +1,4 @@
-//scare lady faint task monitor toss stadium law fly path maid electric
-import { useState } from 'react';
+import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 
 import {
@@ -16,17 +15,17 @@ import actions from '../../redux/actionCreators';
 
 const ImportSeedPhrase = () => {
   const [words, setWords] = useState(Array(12).fill(''));
-  const [showWords, setShowWords] = useState(false); // State for toggle visibility
+  const [showWords, setShowWords] = useState(false);
   const navigate = useNavigate();
-  const handleChange = (index) => (event) => {
-    const newWords = [...words];
-    newWords[index] = event.target.value;
-    setWords(newWords);
-  };
+  const handleChange =
+    (index: number) => (event: React.ChangeEvent<HTMLInputElement>) => {
+      const newWords = [...words];
+      newWords[index] = event.target.value;
+      setWords(newWords);
+    };
 
   const handlePasteMnemonics = async () => {
     const pastedText = await navigator.clipboard.readText();
-    console.log("pastedText", pastedText)
     const pastedWords = pastedText.split(/\s+/).slice(0, 12);
     setWords(pastedWords.concat(Array(12 - pastedWords.length).fill('')));
   };
@@ -37,8 +36,7 @@ const ImportSeedPhrase = () => {
 
   const handleProceedImportAccount = () => {
     const mnemonics = words.join(' ');
-    console.log(mnemonics)
-    window.electron.store.set('mnemonic', mnemonics)
+    window.electron.store.set('mnemonic', mnemonics);
     navigate('/register');
     actions.setImportingAccount(true);
   };
@@ -76,7 +74,7 @@ const ImportSeedPhrase = () => {
               <Grid item xs={2} sm={2} key={index}>
                 <TextField
                   label={`word ${index + 1}`}
-                  type={showWords ? 'text' : 'password'} // Change type based on visibility
+                  type={showWords ? 'text' : 'password'}
                   variant="outlined"
                   value={word}
                   onChange={handleChange(index)}

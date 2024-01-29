@@ -2,7 +2,18 @@ import React from 'react';
 import { Card, CardContent, Typography, Grid } from '@mui/material';
 import useIsLightTheme from 'renderer/components/common/useIsLightTheme';
 
-const CustomListHeader = ({ isAnyAccordionExpanded, columnWidths }) => {
+interface ColumnWidths {
+  [key: string]: number;
+}
+interface CustomListHeaderProps {
+  isAnyAccordionExpanded: boolean;
+  columnWidths: ColumnWidths;
+}
+
+const CustomListHeader: React.FC<CustomListHeaderProps> = ({
+  isAnyAccordionExpanded,
+  columnWidths,
+}) => {
   const columnLabels = ['Date', 'Status', '', 'Amount'];
   const columnKeys = ['first', 'second', 'third', 'fourth'];
   let headerTextColor = 'text.primary'; // dark theme case
@@ -41,7 +52,9 @@ const CustomListHeader = ({ isAnyAccordionExpanded, columnWidths }) => {
             <Grid
               key={label}
               item
-              xs={columnWidths[columnKeys[index]]}
+              xs={
+                (columnWidths as { [key: string]: number })[columnKeys[index]]
+              }
               sx={{ justifyContent: 'start' }}
             >
               {label && (
@@ -62,4 +75,5 @@ const CustomListHeader = ({ isAnyAccordionExpanded, columnWidths }) => {
     </Card>
   );
 };
+
 export default CustomListHeader;

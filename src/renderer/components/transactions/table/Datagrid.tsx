@@ -5,7 +5,7 @@ import Table from '@mui/material/Table';
 import TableContainer from '@mui/material/TableContainer';
 import actions from 'renderer/redux/actionCreators';
 import { useNavigate } from 'react-router-dom';
-import { InternalDataEntry, ExternalDataEntry } from '../../common/dataTypes';
+import { DataEntry } from '../../common/dataTypes';
 import { PropConfig } from '../propConfig';
 import { Order, stableSort, getComparator } from './comparatorUtils';
 import CustomTableHead from './CustomTableHead';
@@ -15,12 +15,10 @@ import CustomToolbar from './CustomToolbar';
 import { maxRowHeight, expandedRowPerPage } from './TableParams';
 
 interface DatagridProps {
-  data: InternalDataEntry[] | ExternalDataEntry[];
+  data: DataEntry[];
   isTableExpanded: boolean;
   setIsTableExpanded: React.Dispatch<React.SetStateAction<boolean>>;
-  propConfigList:
-    | PropConfig<InternalDataEntry>[]
-    | PropConfig<ExternalDataEntry>[];
+  propConfigList: PropConfig<DataEntry>[];
 }
 
 const Datagrid: React.FC<DatagridProps> = ({
@@ -31,9 +29,9 @@ const Datagrid: React.FC<DatagridProps> = ({
 }) => {
   const navigate = useNavigate();
   const [order, setOrder] = useState<Order>('asc');
-  const [orderBy, setOrderBy] = useState<
-    keyof InternalDataEntry | keyof ExternalDataEntry
-  >('transaction_start_datetime');
+  const [orderBy, setOrderBy] = useState<keyof DataEntry>(
+    'transaction_start_datetime'
+  );
   const [page, setPage] = useState(0);
   const [tableOverflow, setTableOverflow] = useState(true);
   const [rowsPerPage, setRowsPerPage] = useState(expandedRowPerPage);
@@ -52,15 +50,15 @@ const Datagrid: React.FC<DatagridProps> = ({
     }
   };
   const handleRequestSort = (
-    event: React.MouseEvent<unknown>,
-    property: keyof ExternalDataEntry | keyof InternalDataEntry
+    _event: React.MouseEvent<unknown>,
+    property: keyof DataEntry
   ) => {
     const isAsc = orderBy === property && order === 'asc';
     setOrder(isAsc ? 'desc' : 'asc');
     setOrderBy(property);
   };
   const handleChangePage = (
-    event: React.MouseEvent<HTMLButtonElement, MouseEvent> | null,
+    _event: React.MouseEvent<HTMLButtonElement, MouseEvent> | null,
     newPage: number
   ) => {
     setPage(newPage);
@@ -75,10 +73,10 @@ const Datagrid: React.FC<DatagridProps> = ({
     page > 0 ? Math.max(0, (1 + page) * rowsPerPage - data.length) : 0;
   const visibleRows = useMemo(
     () =>
-      stableSort<InternalDataEntry | ExternalDataEntry>(
-        data,
-        getComparator(order, orderBy)
-      ).slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage),
+      stableSort<DataEntry>(data, getComparator(order, orderBy)).slice(
+        page * rowsPerPage,
+        page * rowsPerPage + rowsPerPage
+      ),
     [order, orderBy, page, rowsPerPage, data]
   );
   // table expansion effect
@@ -149,7 +147,6 @@ const Datagrid: React.FC<DatagridProps> = ({
         page={page}
         onPageChange={handleChangePage}
         onRowsPerPageChange={handleChangeRowsPerPage}
-        backgroundColor="primary.dark"
       />
     </Box>
   );

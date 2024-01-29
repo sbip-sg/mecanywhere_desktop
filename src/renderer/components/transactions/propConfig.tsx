@@ -1,9 +1,10 @@
+import React from 'react';
 import { convertEpochToStandardTimeWithDate } from 'renderer/components/common/unitConversion';
-import { ExternalDataEntry, InternalDataEntry } from '../common/dataTypes';
+import { DataEntry } from '../common/dataTypes';
 
 export interface PropConfig<T> {
   property: keyof T;
-  renderer: (data: T) => React.ReactNode;
+  renderer: (_data: T) => React.ReactNode;
   label: string;
 }
 
@@ -14,115 +15,38 @@ export const renderWithOptionalSlice = (
   return shouldSlice ? `${value.slice(0, 10)}...` : value;
 };
 
-export const InternalPropConfigList: PropConfig<InternalDataEntry>[] = [
+export const ExternalPropConfigList: PropConfig<DataEntry>[] = [
   {
     property: 'transaction_id',
-    renderer: (data: InternalDataEntry, shouldSlice?: boolean) =>
+    renderer: (data: DataEntry, shouldSlice?: boolean) =>
       renderWithOptionalSlice(data.transaction_id, shouldSlice),
     label: 'Transaction ID',
   },
   {
     property: 'transaction_start_datetime',
-    renderer: (data: InternalDataEntry) =>
-      convertEpochToStandardTimeWithDate(data.transaction_start_datetime),
-    label: 'Transaction Start Datetime',
-  },
-  {
-    property: 'transaction_end_datetime',
-    renderer: (data: InternalDataEntry) =>
-      convertEpochToStandardTimeWithDate(data.transaction_end_datetime),
-    label: 'Transaction End Datetime',
-  },
-  {
-    property: 'did',
-    renderer: (data: InternalDataEntry, shouldSlice?: boolean) =>
-      renderWithOptionalSlice(data.did, shouldSlice),
-    // renderer: (data: InternalDataEntry) => `${data.did.slice(0, 10)}...`,
-    label: 'Client DID',
-  },
-  {
-    property: 'host_did',
-    renderer: (data: InternalDataEntry, shouldSlice?: boolean) =>
-      renderWithOptionalSlice(data.host_did, shouldSlice),
-    // renderer: (data: InternalDataEntry) => `${data.host_did.slice(0, 10)}...`,
-    label: 'Host DID',
-  },
-  {
-    property: 'po_did',
-    renderer: (data: InternalDataEntry, shouldSlice?: boolean) =>
-      renderWithOptionalSlice(data.po_did, shouldSlice),
-    // renderer: (data: InternalDataEntry) => `${data.po_did.slice(0, 10)}...`,
-    label: 'Provider DID of Client',
-  },
-  {
-    property: 'host_po_did',
-    renderer: (data: InternalDataEntry, shouldSlice?: boolean) =>
-      renderWithOptionalSlice(data.host_po_did, shouldSlice),
-    // renderer: (data: InternalDataEntry) =>
-    //   `${data.host_po_did.slice(0, 10)}...`,
-    label: 'Provider DID of Host',
-  },
-  {
-    property: 'resource_cpu',
-    renderer: (data: InternalDataEntry) => data.resource_cpu,
-    label: 'CPU Utilized (cores)',
-  },
-  {
-    property: 'resource_memory',
-    renderer: (data: ExternalDataEntry) => data.resource_memory.toString(),
-    label: 'Memory Utilized (MB)',
-  },
-  {
-    property: 'price',
-    renderer: (data: InternalDataEntry) => data.price,
-    label: 'Usage Price (SGD)',
-  },
-  {
-    property: 'duration',
-    renderer: (data: InternalDataEntry) => data.duration,
-    label: 'Duration (s)',
-  },
-  {
-    property: 'network_reliability',
-    renderer: (data: InternalDataEntry) => data.network_reliability,
-    label: 'Network Reliability, %',
-  },
-];
-
-export const ExternalPropConfigList: PropConfig<ExternalDataEntry>[] = [
-  {
-    property: 'transaction_id',
-    renderer: (data: ExternalDataEntry, shouldSlice?: boolean) =>
-      renderWithOptionalSlice(data.transaction_id, shouldSlice),
-    // renderer: (data: ExternalDataEntry) =>
-    //   `${data.transaction_id.slice(0, 10)}...`,
-    label: 'Transaction ID',
-  },
-  {
-    property: 'transaction_start_datetime',
-    renderer: (data: ExternalDataEntry) =>
+    renderer: (data: DataEntry) =>
       convertEpochToStandardTimeWithDate(data.transaction_start_datetime),
     label: 'Start Datetime',
   },
   {
     property: 'transaction_end_datetime',
-    renderer: (data: ExternalDataEntry) =>
+    renderer: (data: DataEntry) =>
       convertEpochToStandardTimeWithDate(data.transaction_end_datetime),
     label: 'End Datetime',
   },
   {
     property: 'resource_cpu',
-    renderer: (data: ExternalDataEntry) => data.resource_cpu.toString(),
+    renderer: (data: DataEntry) => data.resource_cpu.toString(),
     label: 'CPU Utilized (cores)',
   },
   {
     property: 'resource_memory',
-    renderer: (data: ExternalDataEntry) => data.resource_memory.toString(),
+    renderer: (data: DataEntry) => data.resource_memory.toString(),
     label: 'Memory Utilized (MB)',
   },
   {
     property: 'duration',
-    renderer: (data: ExternalDataEntry) => data.duration,
+    renderer: (data: DataEntry) => data.duration,
     label: 'Duration (s)',
   },
 ];

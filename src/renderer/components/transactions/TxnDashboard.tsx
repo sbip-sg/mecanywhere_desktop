@@ -8,15 +8,12 @@ import reduxStore from 'renderer/redux/store';
 import RefreshIcon from '@mui/icons-material/Refresh';
 import { scrollbarHeight } from 'renderer/utils/constants';
 import CustomLineChart from './linechart/CustomLineChart';
-import { ExternalDataEntry } from '../common/dataTypes';
+import { DataEntry } from '../common/dataTypes';
 import { ExternalPropConfigList } from './propConfig';
 import Datagrid from './table/Datagrid';
-import {
-  addDummyHistory,
-  findHostHistory,
-  findClientHistory,
-} from '../../services/TransactionServices';
+import { addDummyHistory } from '../../services/TransactionServices';
 import Transitions from '../transitions/Transition';
+import fetchTransactionHistory from '../common/fetchTransactionHistory';
 import {
   tablePaginationMinHeight,
   maxRowHeight,
@@ -26,7 +23,7 @@ import {
 
 const TxnDashboard: React.FC = () => {
   const did = window.electron.store.get('did');
-  const [data, setData] = useState<ExternalDataEntry[]>([]);
+  const [data, setData] = useState<DataEntry[]>([]);
   const [hasData, setHasData] = useState(false);
   const [isTableExpanded, setIsTableExpanded] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
@@ -39,40 +36,20 @@ const TxnDashboard: React.FC = () => {
     1
   }px`;
 
-  function combineHistories(hostDidHistory, clientDidHistory) {
-    const hostWithRole = hostDidHistory.map((item) => ({
-      ...item,
-      role: 'host',
-    }));
-    const clientWithRole = clientDidHistory.map((item) => ({
-      ...item,
-      role: 'client',
-    }));
-    return [...hostWithRole, ...clientWithRole];
-  }
-
   const fetchAndSetData = async (accessToken: string) => {
     setIsLoading(true);
     try {
-      const hostDidHistoryResponse = await findHostHistory(accessToken, did);
-      const clientDidHistoryResponse = await findClientHistory(
+      const transactionHistory = await fetchTransactionHistory(
         accessToken,
         did
       );
-      const hostDidHistory = await hostDidHistoryResponse?.json();
-      const clientDidHistory = await clientDidHistoryResponse?.json();
-      const transactionHistory = combineHistories(
-        hostDidHistory,
-        clientDidHistory
-      );
-      console.log('transactionHistory', transactionHistory);
-
       if (transactionHistory.length > 0) {
         setHasData(true);
       }
       setData(transactionHistory);
     } catch (error) {
       console.error('Error fetching data:', error);
+      setHasData(false);
     } finally {
       setIsLoading(false);
     }
@@ -113,7 +90,6 @@ const TxnDashboard: React.FC = () => {
   useEffect(() => {
     const credential = JSON.parse(window.electron.store.get('credential'));
     const retrieveData = async () => {
-      // await new Promise((resolve) => setTimeout(resolve, 500));
       if (credential) {
         const { accessToken } = reduxStore.getState().userReducer;
         await fetchAndSetData(accessToken);
@@ -122,7 +98,7 @@ const TxnDashboard: React.FC = () => {
       }
     };
     retrieveData();
-  }, []);
+  }, []); // eslint-disable-line react-hooks/exhaustive-deps
 
   return isLoading ? (
     <CircularProgress

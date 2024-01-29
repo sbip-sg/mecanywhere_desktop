@@ -1,4 +1,4 @@
-import { InternalDataEntry, ExternalDataEntry } from '../../common/dataTypes';
+import { DataEntry } from '../../common/dataTypes';
 
 export function descendingComparator<T>(a: T, b: T, orderBy: keyof T) {
   if (b[orderBy] < a[orderBy]) {
@@ -24,9 +24,7 @@ export function stableSort<T>(array: T[], comparator: (a: T, b: T) => number) {
   return stabilizedThis.map((el) => el[0]);
 }
 
-export function getComparator<
-  Key extends keyof InternalDataEntry | keyof ExternalDataEntry
->(
+export function getComparator<Key extends keyof DataEntry>(
   order: Order,
   orderBy: any // cant fix lol
 ): (

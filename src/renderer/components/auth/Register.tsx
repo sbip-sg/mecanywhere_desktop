@@ -34,10 +34,8 @@ const Register = () => {
       try {
         formActions.resetForm();
         const { password } = values;
-
         await handleAccountRegistration(password, isImportingAccount);
         navigate(isImportingAccount === true ? '/login' : '/mnemonics');
-        // navigate('/mnemonics', { state: { password } });
       } catch (error) {
         setErrorMessage(String(error));
         setErrorDialogOpen(true);

@@ -422,8 +422,6 @@ ipcMain.on(Channels.CHECK_CONTAINER_GPU_SUPPORT, (event, containerName) => {
     if (containerInfo) {
       checkIfContainerHasGpu(containerInfo.Id, (error, hasGpu: boolean) => {
         if (error) {
-          console.log('bb', hasGpu);
-
           console.error('Error inspecting container:', error);
           event.reply(
             Channels.CHECK_CONTAINER_GPU_SUPPORT_RESPONSE,
@@ -431,7 +429,6 @@ ipcMain.on(Channels.CHECK_CONTAINER_GPU_SUPPORT, (event, containerName) => {
             error.message
           );
         } else {
-          console.log('aa', hasGpu);
           event.reply(
             Channels.CHECK_CONTAINER_GPU_SUPPORT_RESPONSE,
             true,

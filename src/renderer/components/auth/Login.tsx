@@ -27,7 +27,7 @@ const Login = () => {
     setErrorDialogOpen(false);
   };
   useEffect(() => {
-    actions.setImportingAccount(false); // clear state
+    actions.setImportingAccount(false);
   }, []);
   const handleSubmit = useCallback(
     async (values: FormValues, formActions: FormikHelpers<FormValues>) => {

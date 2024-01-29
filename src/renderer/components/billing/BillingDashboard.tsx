@@ -1,29 +1,16 @@
 import React, { useState, useEffect } from 'react';
 import { Grid, Typography, Box } from '@mui/material';
 import reduxStore from 'renderer/redux/store';
-import CurrentBillingCard from '../components/cards/CurrentBillingCard';
-import PastBillingCard from '../components/cards/PastBillingCard';
-import PastBillingList from '../components/list/PastBillingList';
-import { ExternalDataEntry } from '../../common/dataTypes';
-import {
-  findHostHistory,
-  findClientHistory,
-} from '../../../services/TransactionServices';
-import groupData from '../../common/groupData';
-
-interface GroupedDataEntry {
-  month: string;
-  number_of_sessions: number;
-  total_resource_consumed: number;
-  total_usage_hours: number;
-  total_tasks_run: number;
-  billing_amount: number;
-  average_network_reliability: number;
-}
+import CurrentBillingCard from './components/cards/CurrentBillingCard';
+import PastBillingCard from './components/cards/PastBillingCard';
+import PastBillingList from './components/list/PastBillingList';
+import { DataEntry, GroupedDataEntry } from '../common/dataTypes';
+import groupData from '../common/groupData';
+import fetchTransactionHistory from '../common/fetchTransactionHistory';
 
 const BillingDashboard: React.FC = () => {
   const did = window.electron.store.get('did');
-  const [data, setData] = useState<ExternalDataEntry[]>([]);
+  const [data, setData] = useState<DataEntry[]>([]);
   const [groupedData, setGroupedData] = useState<GroupedDataEntry[]>([]);
 
   useEffect(() => {
@@ -45,33 +32,12 @@ const BillingDashboard: React.FC = () => {
     setGroupedData(groupedDataTemp);
   }, [data]);
 
-  function combineHistories(hostDidHistory, clientDidHistory) {
-    const hostWithRole = hostDidHistory.map((item) => ({
-      ...item,
-      role: 'host',
-    }));
-    const clientWithRole = clientDidHistory.map((item) => ({
-      ...item,
-      role: 'client',
-    }));
-    return [...hostWithRole, ...clientWithRole];
-  }
-
   const fetchAndSetData = async (accessToken: string) => {
     try {
-      const hostDidHistoryResponse = await findHostHistory(accessToken, did);
-      const clientDidHistoryResponse = await findClientHistory(
+      const transactionHistory = await fetchTransactionHistory(
         accessToken,
         did
       );
-      const hostDidHistory = await hostDidHistoryResponse?.json();
-      const clientDidHistory = await clientDidHistoryResponse?.json();
-      const transactionHistory = combineHistories(
-        hostDidHistory,
-        clientDidHistory
-      );
-      console.log('transactionHistory', transactionHistory);
-
       setData(transactionHistory);
     } catch (error) {
       console.error('Error fetching data:', error);
@@ -89,7 +55,7 @@ const BillingDashboard: React.FC = () => {
       }
     };
     retrieveData();
-  }, []);
+  }, []); // eslint-disable-line react-hooks/exhaustive-deps
 
   return (
     <Box

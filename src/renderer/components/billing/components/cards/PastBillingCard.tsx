@@ -13,26 +13,14 @@ import {
   Tooltip,
 } from 'recharts';
 import CustomTooltip from '../../../transactions/linechart/CustomTooltip';
-
-interface GroupedDataEntry {
-  month: string;
-  number_of_sessions: number;
-  total_resource_consumed: number;
-  total_usage_hours: number;
-  total_tasks_run: number;
-  billing_amount: number;
-  average_network_reliability: number;
-}
+import { GroupedDataEntry } from '../../../common/dataTypes';
 
 interface PastBillingCardProps {
   groupedData: GroupedDataEntry[];
 }
 
-const PastBillingCard: React.FC<PastBillingCardProps> = ({
-  groupedData,
-}) => {
+const PastBillingCard: React.FC<PastBillingCardProps> = ({ groupedData }) => {
   const theme = useTheme();
-  console.log("groupedData", groupedData)
   return (
     <Card
       sx={{
@@ -70,22 +58,21 @@ const PastBillingCard: React.FC<PastBillingCardProps> = ({
                 </YAxis>
                 <Tooltip content={<CustomTooltip />} />
 
-                    <Bar
-                      type="monotone"
-                      dataKey="total_price"
-                      barSize={40}
-                      fill={theme.palette.primary.main}
-                      legendType="rect"
-                      name="Total Items"
-                    />
-                    <Line
-                      type="linear"
-                      strokeLinejoin="round"
-                      dataKey="total_price"
-                      stroke={theme.palette.secondary.contrastText}
-                      strokeWidth={3}
-                    />
-              
+                <Bar
+                  type="monotone"
+                  dataKey="total_price"
+                  barSize={40}
+                  fill={theme.palette.primary.main}
+                  legendType="rect"
+                  name="Total Items"
+                />
+                <Line
+                  type="linear"
+                  strokeLinejoin="round"
+                  dataKey="total_price"
+                  stroke={theme.palette.secondary.contrastText}
+                  strokeWidth={3}
+                />
               </ComposedChart>
             </ResponsiveContainer>
           </Grid>
