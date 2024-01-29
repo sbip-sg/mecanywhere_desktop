@@ -133,8 +133,6 @@ const RightDrawerComponent: React.FC<RightDrawerComponentProps> = ({
                 sx={{
                   display: 'flex',
                   flexDirection: 'column',
-                  // alignItems: 'center',
-                  // justifyContent: 'right',
                   margin: '0 1rem 1rem 1.5rem',
                 }}
               >
@@ -156,9 +154,6 @@ const RightDrawerComponent: React.FC<RightDrawerComponentProps> = ({
                 </Box>
                 <Box
                   sx={{
-                    // display: 'flex',
-                    // alignItems: 'center',
-                    // justifyContent: 'start',
                     paddingTop: '1rem',
                   }}
                 >
