@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react';
-import { MetaMaskSDK, SDKProvider } from '@metamask/sdk';
 import { Box, Typography } from '@mui/material';
+import { MetaMaskSDK, SDKProvider } from '../../../node_modules/@metamask/sdk';
+import Web3 from '../../../node_modules/web3';
 import QRCodePopover from './QRCodePopover';
 import WalletDisconnected from './WalletDisconnected';
 import WalletConnected from './WalletConnected';
@@ -29,6 +30,14 @@ const Payment = () => {
     setErrorDialogOpen(false);
   };
 
+  useEffect(()=>{
+    console.log("sdk", sdk)
+  }, [sdk])
+
+  useEffect(()=>{
+    console.log("provider", provider)
+  }, [provider])
+
   useEffect(() => {
     const getClientBalance = async () => {
       if (provider && account.length === 42) {
@@ -44,6 +53,7 @@ const Payment = () => {
   }, [provider, account]);
 
   const handleConnect = async () => {
+    console.log('Web3', Web3)
     const clientSdk = new MetaMaskSDK({
       shouldShimWeb3: false,
       storage: {

@@ -28,17 +28,14 @@ import { getLabelForDataKey } from './dataKeys';
 interface CustomLineChartProps {
   data: ExternalDataEntry[];
   handleRefresh: () => void;
-  handleAddDummyData: (role: string) => void;
-  appRole: string;
+  handleAddDummyData: () => void;
 }
 
 const CustomLineChart: React.FC<CustomLineChartProps> = ({
   data,
   handleRefresh,
   handleAddDummyData,
-  appRole,
 }) => {
-  const selfDid = window.electron.store.get('did');
   const theme = useTheme();
   const [groupBy, setGroupBy] = useState<string>('month');
   const [dataKey, setDataKey] = useState<string>('avg_resource_memory');
@@ -72,9 +69,7 @@ const CustomLineChart: React.FC<CustomLineChartProps> = ({
     startDate,
     endDate,
     groupBy,
-    selectedRole,
-    selfDid,
-    appRole
+    selectedRole
   );
 
   return (
@@ -99,7 +94,7 @@ const CustomLineChart: React.FC<CustomLineChartProps> = ({
         }}
       >
         <Box id="widget-wrapper" sx={{ ml: 'auto', padding: '1.2rem 0 0 0' }}>
-          <IconButton size="small" onClick={() => handleAddDummyData(appRole)}>
+          <IconButton size="small" onClick={() => handleAddDummyData()}>
             <AddIcon fontSize="small" sx={{ color: 'text.primary' }} />
           </IconButton>
           <IconButton size="small" onClick={handleRefresh}>
@@ -168,39 +163,25 @@ const CustomLineChart: React.FC<CustomLineChartProps> = ({
               />
             </YAxis>
             <Tooltip content={<CustomTooltip />} />
-            {/* Display for non-providers (i.e., host) */}
-            {appRole !== 'provider' && (
+
+            {selectedRole === 'client' || selectedRole === 'both' ? (
               <Line
                 type="monotone"
-                dataKey={dataKey}
+                dataKey={`client_${dataKey}`}
+                stroke={theme.palette.secondary.main}
+                strokeWidth={3}
+                animationDuration={500}
+              />
+            ) : null}
+            {selectedRole === 'host' || selectedRole === 'both' ? (
+              <Line
+                type="monotone"
+                dataKey={`host_${dataKey}`}
                 stroke={theme.palette.secondary.contrastText}
                 strokeWidth={3}
                 animationDuration={500}
               />
-            )}
-            {/* Display for providers based on the selected role */}
-            {appRole === 'provider' && (
-              <>
-                {selectedRole === 'client' || selectedRole === 'both' ? (
-                  <Line
-                    type="monotone"
-                    dataKey={`client_${dataKey}`}
-                    stroke={theme.palette.secondary.main}
-                    strokeWidth={3}
-                    animationDuration={500}
-                  />
-                ) : null}
-                {selectedRole === 'host' || selectedRole === 'both' ? (
-                  <Line
-                    type="monotone"
-                    dataKey={`host_${dataKey}`}
-                    stroke={theme.palette.secondary.contrastText}
-                    strokeWidth={3}
-                    animationDuration={500}
-                  />
-                ) : null}
-              </>
-            )}
+            ) : null}
           </LineChart>
         </ResponsiveContainer>
       </Box>

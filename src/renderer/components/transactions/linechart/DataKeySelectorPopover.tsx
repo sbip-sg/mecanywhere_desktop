@@ -79,56 +79,57 @@ const DatakeySelectorPopover: React.FC<DatakeySelectorPopoverProps> = ({
           padding: '1.2rem 2rem 2rem 2rem',
         }}
       >
-        {useSelector((state: RootState) => state.roleReducer.role) ===
+        <Typography
+          variant="subtitle1"
+          sx={{
+            letterSpacing: '0.2em',
+            margin: '0.5rem 0 0.1rem 0.2rem',
+            fontWeight: '600',
+            color: 'text.primary',
+          }}
+        >
+          SELECT ROLE
+        </Typography>
+        <ToggleButtonGroup
+          sx={{
+            color: 'primary.main',
+            backgroundColor: 'primary.dark',
+            width: '100%',
+          }}
+          value={selectedRole}
+          onChange={handleChangeRole}
+          exclusive
+        >
+          {roleOptions.map((option) => (
+            <ToggleButton
+              sx={{
+                minWidth: '5rem',
+                width: '100%',
+                padding: '0.2rem 0.5rem 0.2rem 0.5rem',
+                fontSize: '14px',
+                fontWeight: '600',
+                color: 'primary.main',
+                backgroundColor: 'background.paper',
+                '&.Mui-selected': {
+                  color: 'background.paper',
+                  backgroundColor: 'secondary.contrastText',
+                  fontSize: '14px',
+                  fontWeight: '600',
+                },
+              }}
+              key={option.value}
+              value={option.value}
+            >
+              {option.label}
+            </ToggleButton>
+          ))}
+        </ToggleButtonGroup>
+        {/* {useSelector((state: RootState) => state.roleReducer.role) ===
           'provider' && (
           <>
-            <Typography
-              variant="subtitle1"
-              sx={{
-                letterSpacing: '0.2em',
-                margin: '0.5rem 0 0.1rem 0.2rem',
-                fontWeight: '600',
-                color: 'text.primary',
-              }}
-            >
-              SELECT ROLE
-            </Typography>
-            <ToggleButtonGroup
-              sx={{
-                color: 'primary.main',
-                backgroundColor: 'primary.dark',
-                width: '100%',
-              }}
-              value={selectedRole}
-              onChange={handleChangeRole}
-              exclusive
-            >
-              {roleOptions.map((option) => (
-                <ToggleButton
-                  sx={{
-                    minWidth: '5rem',
-                    width: '100%',
-                    padding: '0.2rem 0.5rem 0.2rem 0.5rem',
-                    fontSize: '14px',
-                    fontWeight: '600',
-                    color: 'primary.main',
-                    backgroundColor: 'background.paper',
-                    '&.Mui-selected': {
-                      color: 'background.paper',
-                      backgroundColor: 'secondary.contrastText',
-                      fontSize: '14px',
-                      fontWeight: '600',
-                    },
-                  }}
-                  key={option.value}
-                  value={option.value}
-                >
-                  {option.label}
-                </ToggleButton>
-              ))}
-            </ToggleButtonGroup>
+            
           </>
-        )}
+        )} */}
         <Typography
           variant="subtitle1"
           sx={{
