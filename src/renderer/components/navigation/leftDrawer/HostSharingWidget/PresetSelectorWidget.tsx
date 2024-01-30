@@ -1,7 +1,17 @@
+import React from 'react';
 import { Typography, FormControl, MenuItem } from '@mui/material';
 import Select, { SelectChangeEvent } from '@mui/material/Select';
+import { ExecutorSettings } from '../../../../utils/dataTypes';
 
-const PresetSelectorWidget = ({ executorSettings, setExecutorSettings }) => {
+interface PresetSelectorWidgetProps {
+  executorSettings: ExecutorSettings;
+  setExecutorSettings: React.Dispatch<React.SetStateAction<ExecutorSettings>>;
+}
+
+const PresetSelectorWidget: React.FC<PresetSelectorWidgetProps> = ({
+  executorSettings,
+  setExecutorSettings,
+}) => {
   const handleSelectChange = (event: SelectChangeEvent) => {
     switch (event.target.value) {
       case 'low':

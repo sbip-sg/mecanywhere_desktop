@@ -1,7 +1,13 @@
+import React from 'react';
 import { Box } from '@mui/material';
 import Typography from '@mui/material/Typography';
 
-const Status = ({ children, isExpanded }) => {
+interface StatusProps {
+  children: React.ReactNode;
+  isExpanded: boolean;
+}
+
+const Status: React.FC<StatusProps> = ({ children, isExpanded }) => {
   let statusColor;
   let bgColor;
   if (isExpanded) {

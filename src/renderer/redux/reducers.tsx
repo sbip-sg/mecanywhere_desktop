@@ -1,11 +1,12 @@
 import { combineReducers } from 'redux';
-import { Job, JobResult } from 'renderer/utils/jobs';
-
-interface UserState {
-  authenticated: boolean;
-  accessToken: string;
-  refreshToken: string;
-}
+import {
+  DataEntry,
+  UserState,
+  ThemeState,
+  ImportingAccountState,
+  JobsState,
+  DeviceStats,
+} from 'renderer/utils/dataTypes';
 
 const initialUserState: UserState = {
   authenticated: false,
@@ -13,38 +14,18 @@ const initialUserState: UserState = {
   refreshToken: '',
 };
 
-interface ThemeState {
-  color: string;
-}
-
 const initialThemeState: ThemeState = {
   color: 'light',
 };
-
-interface ImportingAccountState {
-  importingAccount: boolean;
-}
 
 const initialImportingAccountState: ImportingAccountState = {
   importingAccount: false,
 };
 
-interface JobsState {
-  jobs: Job[];
-  jobResults: JobResult[];
-}
-
 const initialJobsState: JobsState = {
   jobs: [],
   jobResults: [],
 };
-
-interface DeviceStats {
-  totalCpuCores: number;
-  totalMem: number;
-  totalGpus: number;
-  gpuModel: string;
-}
 
 const initialDeviceStats: DeviceStats = {
   totalCpuCores: 4,
@@ -53,13 +34,26 @@ const initialDeviceStats: DeviceStats = {
   gpuModel: '',
 };
 
-export const transactionDetailsReducer = (state = {}, action: any) => {
+const initialDataEntry: DataEntry = {
+  duration: 0,
+  network_reliability: 0,
+  price: 0,
+  resource_cpu: 0,
+  resource_memory: 0,
+  role: '',
+  task_name: '',
+  transaction_end_datetime: 0,
+  transaction_start_datetime: 0,
+  transaction_id: '',
+};
+
+export const dataEntryReducer = (
+  state: DataEntry = initialDataEntry,
+  action: any
+) => {
   switch (action.type) {
-    case 'setTransactionDetails':
-      return {
-        ...state,
-        transactionDetails: action.payload,
-      };
+    case 'setDataEntry':
+      return action.payload;
     default:
       return state;
   }
@@ -137,7 +131,7 @@ const jobsReducer = (
   action: any
 ): JobsState => {
   switch (action.type) {
-    case 'addJob':
+    case 'addJob': {
       const newJob = {
         id: action.id,
         content: action.content,
@@ -146,12 +140,13 @@ const jobsReducer = (
         ...state,
         jobs: [...state.jobs, newJob],
       };
+    }
     case 'setJobs':
       return {
         ...state,
         jobs: [action.payload],
       };
-    case 'addJobResults':
+    case 'addJobResults': {
       const newJobResult = {
         id: action.id,
         content: action.content,
@@ -160,6 +155,7 @@ const jobsReducer = (
         ...state,
         jobResults: [...state.jobResults, newJobResult],
       };
+    }
     case 'setJobResults':
       return {
         ...state,
@@ -172,11 +168,11 @@ const jobsReducer = (
 
 const reducers = combineReducers({
   jobs: jobsReducer,
-  transactionDetailsReducer: transactionDetailsReducer,
-  userReducer: userReducer,
-  themeReducer: themeReducer,
-  importingAccountReducer: importingAccountReducer,
-  deviceStatsReducer: deviceStatsReducer,
+  dataEntryReducer,
+  userReducer,
+  themeReducer,
+  importingAccountReducer,
+  deviceStatsReducer,
 });
 
 export default reducers;

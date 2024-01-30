@@ -1,16 +1,30 @@
+import React from 'react';
 import { Box, Stack, Typography, Slider } from '@mui/material';
 import { useSelector } from 'react-redux';
 import { RootState } from 'renderer/redux/store';
+import { ExecutorSettings } from '../../../../utils/dataTypes';
 
-const MemorySelectorSlider = ({
+interface MemorySelectorSliderProps {
+  executorSettings: ExecutorSettings;
+  setExecutorSettings: React.Dispatch<React.SetStateAction<ExecutorSettings>>;
+}
+
+const MemorySelectorSlider: React.FC<MemorySelectorSliderProps> = ({
   executorSettings,
   setExecutorSettings,
 }) => {
   const totalMem = useSelector(
     (state: RootState) => state.deviceStatsReducer.totalMem
   );
-  const handleSliderChange = (event, newValue) => {
-    setExecutorSettings({ ...executorSettings, memory_mb: newValue });
+  const handleSliderChange = (_event: Event, newValue: number | number[]) => {
+    if (typeof newValue === 'number') {
+      setExecutorSettings({ ...executorSettings, memory_mb: newValue });
+    } else {
+      console.error(
+        'Expected newValue to be a number, but received:',
+        newValue
+      );
+    }
   };
   const sliderStep = 256;
   const sliderMinMark = 1024;

@@ -5,7 +5,7 @@ import Table from '@mui/material/Table';
 import TableContainer from '@mui/material/TableContainer';
 import actions from 'renderer/redux/actionCreators';
 import { useNavigate } from 'react-router-dom';
-import { DataEntry } from '../../common/dataTypes';
+import { DataEntry } from '../../../utils/dataTypes';
 import { PropConfig } from '../propConfig';
 import { Order, stableSort, getComparator } from './comparatorUtils';
 import CustomTableHead from './CustomTableHead';
@@ -43,7 +43,7 @@ const Datagrid: React.FC<DatagridProps> = ({
       (entry) => entry.transaction_id === transactionId
     );
     if (transactionDetails) {
-      actions.setTransactionDetails(transactionDetails);
+      actions.setDataEntry(transactionDetails);
       navigate(`/details/${transactionId}`);
     } else {
       console.error('entry doesnt exist');

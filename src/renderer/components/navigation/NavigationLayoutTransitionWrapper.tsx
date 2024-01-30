@@ -1,6 +1,6 @@
 import { useSelector } from 'react-redux';
 import { ReactNode, FC } from 'react';
-import Transitions from '../transitions/Transition';
+import Transitions from '../../utils/Transition';
 import { RootState } from '../../redux/store';
 
 interface NavigationLayoutTransitionWrapperProps {

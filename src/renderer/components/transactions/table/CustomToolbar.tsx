@@ -5,7 +5,7 @@ import ExpandLessIcon from '@mui/icons-material/ExpandLess';
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 import IconButton from '@mui/material/IconButton';
 import Tooltip from '@mui/material/Tooltip';
-import useIsLightTheme from 'renderer/components/common/useIsLightTheme';
+import useIsLightTheme from 'renderer/utils/useIsLightTheme';
 import { toolbarMinHeight } from './TableParams';
 
 interface CustomToolbarProps {

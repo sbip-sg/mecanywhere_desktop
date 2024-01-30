@@ -1,13 +1,12 @@
 import { useEffect, useState } from 'react';
 import { Box, Typography } from '@mui/material';
 import { MetaMaskSDK, SDKProvider } from '../../../node_modules/@metamask/sdk';
-import Web3 from '../../../node_modules/web3';
 import QRCodePopover from './QRCodePopover';
 import WalletDisconnected from './WalletDisconnected';
 import WalletConnected from './WalletConnected';
 import PaymentPopover from './PaymentPopover';
 import WithdrawalPopover from './WithdrawalPopover';
-import ErrorDialog from '../common/ErrorDialogue';
+import ErrorDialog from '../componentsCommon/ErrorDialogue';
 
 const Payment = () => {
   const [connected, setConnected] = useState(false);
@@ -30,14 +29,6 @@ const Payment = () => {
     setErrorDialogOpen(false);
   };
 
-  useEffect(()=>{
-    console.log("sdk", sdk)
-  }, [sdk])
-
-  useEffect(()=>{
-    console.log("provider", provider)
-  }, [provider])
-
   useEffect(() => {
     const getClientBalance = async () => {
       if (provider && account.length === 42) {
@@ -45,15 +36,18 @@ const Payment = () => {
           method: 'eth_getBalance',
           params: [account, 'latest'],
         });
-        const clientBalanceDecimal = parseInt(clientBalanceHex, 16);
-        setClientBalance(clientBalanceDecimal / 1e18);
+        if (typeof clientBalanceHex === 'string') {
+          const clientBalanceDecimal = parseInt(clientBalanceHex, 16);
+          setClientBalance(clientBalanceDecimal / 1e18);
+        } else {
+          console.error('clientBalanceHex is not a string');
+        }
       }
     };
     getClientBalance();
   }, [provider, account]);
 
   const handleConnect = async () => {
-    console.log('Web3', Web3)
     const clientSdk = new MetaMaskSDK({
       shouldShimWeb3: false,
       storage: {
@@ -79,7 +73,6 @@ const Payment = () => {
       const argsArray = args as string[];
       const chain = argsArray[0];
       if (chain) {
-        console.log(`chainChanged ${chain}`);
         setChainId(chain);
       } else {
         console.error('chainChanged event did not provide a string argument');
@@ -92,12 +85,11 @@ const Payment = () => {
         handleDisconnect();
         return;
       }
-      console.log(`accountsChanged ${accounts}`);
       setAccount(accounts[0]);
     });
 
     clientProvider.on('connect', () => {
-      console.log('connected');
+      console.log('metamask connected');
       setOpenQR(false);
       setConnected(true);
       setIsReversed(true);
@@ -108,7 +100,7 @@ const Payment = () => {
       handleDisconnect();
     });
 
-    console.log('connecting');
+    console.log('metamask connecting');
     setOpenQR(true);
     await clientProvider
       .request({ method: 'eth_requestAccounts' })
@@ -120,22 +112,10 @@ const Payment = () => {
         if (chain !== null) {
           setChainId(chain);
         } else {
-          console.log('Chain ID is null');
+          console.error('Chain ID is null');
         }
-        console.log('accounts', accounts);
-        console.log('chain', chain);
         return null;
-        // return clientProvider.request({
-        //   method: 'eth_getBalance',
-        //   params: [acc, 'latest'],
-        // });
       })
-      // .then((clientBalanceHex) => {
-      //   const clientBalanceDecimal = parseInt(clientBalanceHex, 16); // Convert hex to decimal
-      //   const clientBalance = clientBalanceDecimal / 1e18;
-      //   console.log(`Balance: ${clientBalance} ETH`);
-      //   return null;
-      // })
       .catch((error) => {
         console.error(error);
       });
@@ -147,7 +127,7 @@ const Payment = () => {
     setChainId('');
     setConnected(false);
     setIsReversed(false);
-    console.log('disconnected');
+    console.log('metamask disconnected');
   };
 
   return (
@@ -186,6 +166,7 @@ const Payment = () => {
       <PaymentPopover
         open={openPayment}
         setOpen={setOpenPayment}
+        account={account}
         balance={balance}
         setBalance={setBalance}
         clientBalance={clientBalance}
@@ -213,52 +194,3 @@ const Payment = () => {
 };
 
 export default Payment;
-
-// if (chain) {
-// const chainToSwitchTo = currentChainId === '0x1' ? '0x5' : '0x1'; // 0xaa36a7 aka 11155111 is sepolia
-// await ethereum.request({
-//   method: 'wallet_switchEthereumChain',
-//   params: [{ chainId: chainToSwitchTo }],
-
-// }
-
-//   const hasSessionStored = () => {
-//     return existsSync('.sdk-comm');
-//   };
-// otp: () => {
-//   return {
-//     updateOTPValue: (otpValue) => {
-//       if (otpValue !== '') {
-//         setOtp(otpValue);
-//         console.log('otp', otpValue);
-//       }
-//     },
-//   };
-// },
-
-// const handleWithdraw = async () => {
-//   const did = window.electron.store.get('did');
-//   const address = '0xA32fE9BC86ADF555Db1146ef44eb7fFEB54c86CA';
-//   const amount = 0.03;
-//   const { accessToken } = reduxStore.getState().userReducer;
-//   const withdrawRequest = {
-//     did: did,
-//     address: address,
-//     amount: amount,
-//   };
-//   const withdrawResponse = await withdrawFromContract(
-//     accessToken,
-//     withdrawRequest
-//   );
-//   console.log('handleWithdraw', withdrawResponse);
-// };
-// useEffect(() => {
-//   const getBalanceAsync = async () => {
-//     const balanceAsync = await getBalance(
-//       'token_placeholder',
-//       'did_placeholder'
-//     );
-//     setBalance(balanceAsync);
-//   };
-//   getBalanceAsync();
-// }, [balance]);

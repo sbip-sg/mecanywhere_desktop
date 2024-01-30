@@ -1,4 +1,4 @@
-import { DataEntry } from '../../common/dataTypes';
+import { DataEntry } from '../../../utils/dataTypes';
 
 export function descendingComparator<T>(a: T, b: T, orderBy: keyof T) {
   if (b[orderBy] < a[orderBy]) {
@@ -26,10 +26,12 @@ export function stableSort<T>(array: T[], comparator: (a: T, b: T) => number) {
 
 export function getComparator<Key extends keyof DataEntry>(
   order: Order,
-  orderBy: any // cant fix lol
+  orderBy: Key
 ): (
-  a: { [key in Key]: number | string },
-  b: { [key in Key]: number | string }
+  // eslint-disable-next-line no-unused-vars
+  _a: { [key in Key]: number | string },
+  // eslint-disable-next-line no-unused-vars
+  _b: { [key in Key]: number | string }
 ) => number {
   return order === 'desc'
     ? (a, b) => descendingComparator(a, b, orderBy)

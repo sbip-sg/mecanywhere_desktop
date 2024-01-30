@@ -1,5 +1,5 @@
-import { Box, Typography, Button, Grid, Stack } from '@mui/material';
-import { useState, useEffect } from 'react';
+import React, { useState, useEffect } from 'react';
+import { Box, Typography, Button, Stack } from '@mui/material';
 import { motion, AnimatePresence } from 'framer-motion';
 import ErrorOutlineIcon from '@mui/icons-material/ErrorOutline';
 import Checkbox from '@mui/material/Checkbox';
@@ -7,8 +7,20 @@ import CoreSelectorWidget from './CoreSelectorWidget';
 import MemorySelectorSlider from './MemorySelectorSlider';
 import GpuSelectorWidget from './GpuSelectorWidget';
 import PresetSelectorWidget from './PresetSelectorWidget';
+import { ExecutorSettings } from '../../../../utils/dataTypes';
 
-const PreSharingEnabledComponent = ({
+interface PreSharingEnabledComponentProps {
+  handleEnableResourceSharing: () => Promise<void>;
+  isLoading: boolean;
+  setIsLoading: React.Dispatch<React.SetStateAction<boolean>>;
+  isExecutorSettingsSaved: boolean;
+  setIsExecutorSettingsSaved: React.Dispatch<React.SetStateAction<boolean>>;
+  executorSettings: ExecutorSettings;
+  setExecutorSettings: React.Dispatch<React.SetStateAction<ExecutorSettings>>;
+  setDeviceHasGpu: React.Dispatch<React.SetStateAction<boolean>>;
+}
+
+const PreSharingEnabledComponent: React.FC<PreSharingEnabledComponentProps> = ({
   handleEnableResourceSharing,
   isLoading,
   setIsLoading,
@@ -20,7 +32,7 @@ const PreSharingEnabledComponent = ({
 }) => {
   const [allocateGPU, setAllocateGPU] = useState(false);
 
-  const handleCheckboxChange = (event) => {
+  const handleCheckboxChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     setIsExecutorSettingsSaved(event.target.checked);
     window.electron.store.set(
       'isExecutorSettingsSaved',
@@ -28,7 +40,7 @@ const PreSharingEnabledComponent = ({
     );
   };
 
-  const handleGPUCheckBoxChange = async (event) => {
+  const handleGPUCheckBoxChange = async () => {
     setIsLoading(true);
     await window.electron.removeExecutorContainer('meca_executor_test');
     if (!allocateGPU) {

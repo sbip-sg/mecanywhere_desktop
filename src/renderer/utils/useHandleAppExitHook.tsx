@@ -1,7 +1,7 @@
 // import log from 'electron-log/renderer';
 import { useEffect } from 'react';
 import { stopExecutor } from 'renderer/services/ExecutorServices';
-import { handleDeregisterHost } from '../components/common/handleRegistration';
+import { handleDeregisterHost } from '../components/componentsCommon/handleRegistration';
 import reduxStore from '../redux/store';
 
 const handleAppExit = async () => {

@@ -1,10 +1,11 @@
 import React from 'react';
 import { Card, CardContent, Typography, Grid } from '@mui/material';
-import useIsLightTheme from 'renderer/components/common/useIsLightTheme';
+import useIsLightTheme from 'renderer/utils/useIsLightTheme';
 
 interface ColumnWidths {
   [key: string]: number;
 }
+
 interface CustomListHeaderProps {
   isAnyAccordionExpanded: boolean;
   columnWidths: ColumnWidths;

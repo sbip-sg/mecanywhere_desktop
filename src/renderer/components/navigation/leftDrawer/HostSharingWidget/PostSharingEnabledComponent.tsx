@@ -1,20 +1,21 @@
+import React, { useState, useEffect } from 'react';
 import { Box, Typography, Button, Grid, Stack } from '@mui/material';
-import { useState, useEffect } from 'react';
 import { getResourceStats } from 'renderer/services/ExecutorServices';
 import WifiTetheringIcon from '@mui/icons-material/WifiTethering';
+import { ResourcesLog } from '../../../../utils/dataTypes';
 
-interface ResourcesLog {
-  total_cpu: number;
-  total_mem: number;
-  used_cpu: number;
-  used_mem: number;
-  task_cpu: number;
-  task_mem: number;
-  task_used_cpu: number;
-  task_used_mem: number;
+interface InfoItemProps {
+  caption: string;
+  detail: string;
 }
 
-const InfoItem = ({ caption, detail }) => {
+interface PostSharingEnabledComponentProps {
+  handleDisableResourceSharing: () => Promise<void>;
+  isLoading: boolean;
+  initialResourcesLog: ResourcesLog;
+}
+
+const InfoItem: React.FC<InfoItemProps> = ({ caption, detail }) => {
   return (
     <Box
       sx={{
@@ -42,12 +43,10 @@ const InfoItem = ({ caption, detail }) => {
     </Box>
   );
 };
-const PostSharingEnabledComponent = ({
-  handleDisableResourceSharing,
-  isLoading,
-  setIsLoading,
-  initialResourcesLog,
-}) => {
+
+const PostSharingEnabledComponent: React.FC<
+  PostSharingEnabledComponentProps
+> = ({ handleDisableResourceSharing, isLoading, initialResourcesLog }) => {
   const [resourcesLog, setResourcesLog] =
     useState<ResourcesLog>(initialResourcesLog);
 
@@ -55,7 +54,10 @@ const PostSharingEnabledComponent = ({
     const interval = setInterval(async () => {
       const fetchResource = async () => {
         const resources = await getResourceStats();
-        if (Object.keys(resources).length === Object.keys(initialResourcesLog).length) {
+        if (
+          Object.keys(resources).length ===
+          Object.keys(initialResourcesLog).length
+        ) {
           setResourcesLog(resources);
         }
       };
@@ -149,11 +151,10 @@ const PostSharingEnabledComponent = ({
             }}
           >
             <Typography
-              style={{
+              sx={{
                 fontSize: '15px',
                 textAlign: 'center',
                 fontWeight: 600,
-                // letterSpacing: '0.05em',
               }}
             >
               Disable Resource&nbsp;Sharing

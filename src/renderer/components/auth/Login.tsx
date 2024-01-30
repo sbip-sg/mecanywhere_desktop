@@ -6,12 +6,12 @@ import CircularProgress from '@mui/material/CircularProgress';
 import { useState, useCallback, useEffect } from 'react';
 import { Formik, Form, FormikHelpers } from 'formik';
 import { useNavigate } from 'react-router-dom';
-import ErrorDialog from '../common/ErrorDialogue';
-import TextFieldWrapper from '../common/TextField';
+import ErrorDialog from '../componentsCommon/ErrorDialogue';
+import TextFieldWrapper from '../componentsCommon/TextField';
 import actions from '../../redux/actionCreators';
 import { ReactComponent as Logo } from '../../../../assets/LogoColor.svg';
-import Transitions from '../transitions/Transition';
-import { LoginFormSchema } from '../common/FormSchema';
+import Transitions from '../../utils/Transition';
+import { LoginFormSchema } from '../componentsCommon/FormSchema';
 import handleLogin from './handleLogin';
 
 interface FormValues {

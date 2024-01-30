@@ -2,12 +2,12 @@ import React from 'react';
 import TableBody from '@mui/material/TableBody';
 import StyledTableCell from './StyledTableCell';
 import StyledTableRow from './StyledTableRow';
-import { DataEntry } from '../../common/dataTypes';
+import { DataEntry } from '../../../utils/dataTypes';
 import { PropConfig } from '../propConfig';
 
 interface CustomTableBodyProps<T> {
   visibleRows: T[];
-  handleTableRowClick: (query: string) => void;
+  handleTableRowClick: (_query: string) => void;
   propConfigList: PropConfig<DataEntry>[];
   emptyRows: number;
   addRightPadding: boolean;
@@ -29,6 +29,7 @@ const CustomTableBody: React.FC<CustomTableBodyProps<DataEntry>> = ({
             onClick={() => handleTableRowClick(data.transaction_id)}
             key={data.transaction_id}
             maxRowHeight={maxRowHeight}
+            isheader={false}
           >
             {propConfigList.map((config) => (
               <StyledTableCell
@@ -48,6 +49,7 @@ const CustomTableBody: React.FC<CustomTableBodyProps<DataEntry>> = ({
           style={{
             height: 13 * emptyRows,
           }}
+          isheader={false}
         >
           <StyledTableCell
             addRightPadding={addRightPadding}

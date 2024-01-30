@@ -1,4 +1,4 @@
-import React, { FC } from 'react';
+import React from 'react';
 import Button from '@mui/material/Button';
 import Dialog from '@mui/material/Dialog';
 import DialogTitle from '@mui/material/DialogTitle';
@@ -12,7 +12,11 @@ interface ErrorDialogProps {
   errorMessage: string;
 }
 
-const ErrorDialog: FC<ErrorDialogProps> = ({ open, onClose, errorMessage }) => {
+const ErrorDialog: React.FC<ErrorDialogProps> = ({
+  open,
+  onClose,
+  errorMessage,
+}) => {
   const handleClose = () => {
     onClose();
   };

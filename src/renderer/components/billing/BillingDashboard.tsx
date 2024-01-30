@@ -4,9 +4,9 @@ import reduxStore from 'renderer/redux/store';
 import CurrentBillingCard from './components/cards/CurrentBillingCard';
 import PastBillingCard from './components/cards/PastBillingCard';
 import PastBillingList from './components/list/PastBillingList';
-import { DataEntry, GroupedDataEntry } from '../common/dataTypes';
-import groupData from '../common/groupData';
-import fetchTransactionHistory from '../common/fetchTransactionHistory';
+import { DataEntry, GroupedDataEntry } from '../../utils/dataTypes';
+import groupData from '../componentsCommon/groupData';
+import fetchTransactionHistory from '../componentsCommon/fetchTransactionHistory';
 
 const BillingDashboard: React.FC = () => {
   const did = window.electron.store.get('did');

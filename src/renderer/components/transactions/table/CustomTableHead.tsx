@@ -3,11 +3,11 @@ import TableHead from '@mui/material/TableHead';
 import TableSortLabel from '@mui/material/TableSortLabel';
 import Box from '@mui/material/Box';
 import { visuallyHidden } from '@mui/utils';
-import useIsLightTheme from 'renderer/components/common/useIsLightTheme';
+import useIsLightTheme from 'renderer/utils/useIsLightTheme';
 import StyledTableCell from './StyledTableCell';
 import StyledTableRow from './StyledTableRow';
 import { Order } from './comparatorUtils';
-import { DataEntry } from '../../common/dataTypes';
+import { DataEntry } from '../../../utils/dataTypes';
 import { PropConfig } from '../propConfig';
 
 interface CustomTableHeadProps {

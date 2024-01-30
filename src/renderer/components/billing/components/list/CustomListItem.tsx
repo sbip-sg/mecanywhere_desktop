@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { Grid } from '@mui/material';
+import { EditedDataEntry } from 'renderer/utils/dataTypes';
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 import Accordion from '@mui/material/Accordion';
 import AccordionSummary from '@mui/material/AccordionSummary';
@@ -10,7 +11,21 @@ import SummaryColumn from './customListItemComponents/SummaryColumn';
 import UtilizationColumn from './customListItemComponents/UtilizationColumn';
 import AccordionHeader from './customListItemComponents/AccordionHeader';
 
-const CustomListItem = ({ item, onAccordionChange, columnWidths }) => {
+interface ColumnWidths {
+  [key: string]: number;
+}
+
+interface CustomListItemProps {
+  item: EditedDataEntry;
+  onAccordionChange: (_isExpanded: boolean) => void;
+  columnWidths: ColumnWidths;
+}
+
+const CustomListItem: React.FC<CustomListItemProps> = ({
+  item,
+  onAccordionChange,
+  columnWidths,
+}) => {
   const [isExpanded, setIsExpanded] = useState(false);
   const handleExpansion = () => {
     const newExpandedState = !isExpanded;

@@ -6,7 +6,7 @@ import Typography from '@mui/material/Typography';
 import Box from '@mui/material/Box';
 import Button from '@mui/material/Button';
 import AccountCircleIcon from '@mui/icons-material/AccountCircle';
-import useIsLightTheme from 'renderer/components/common/useIsLightTheme';
+import useIsLightTheme from 'renderer/utils/useIsLightTheme';
 import { RightDrawerComponent } from '../rightDrawer';
 import { ReactComponent as Logo } from '../../../../../assets/LogoColor.svg';
 

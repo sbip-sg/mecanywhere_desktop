@@ -27,7 +27,6 @@ const handleAccountRegistration = async (
       if (typeof MnemonicAndKeyPair === 'undefined') {
         throw new Error('Key pair generation failed.');
       }
-      console.log('MnemonicAndKeyPair.publicKey', MnemonicAndKeyPair.publicKey);
       const { did, credential } = await createAccount({
         publicKey: uint8ArrayToDecimal(MnemonicAndKeyPair.publicKey),
       });

@@ -1,4 +1,4 @@
-import React, { useState, useRef } from 'react';
+import React, { useRef } from 'react';
 import Button from '@mui/material/Button';
 import Dialog from '@mui/material/Dialog';
 import DialogContent from '@mui/material/DialogContent';
@@ -9,13 +9,14 @@ import 'react-datepicker/dist/react-datepicker.css';
 import Box from '@mui/material/Box';
 import Typography from '@mui/material/Typography';
 import { Formik, Form, FormikHelpers, FormikProps } from 'formik';
-import { WithdrawalFormSchema } from '../common/FormSchema';
-import TextFieldWrapper from '../common/TextField';
+import { WithdrawalFormSchema } from '../componentsCommon/FormSchema';
+import TextFieldWrapper from '../componentsCommon/TextField';
 import handleWithdraw from './handleWithdraw';
 
 interface FormValues {
   amount: number;
 }
+
 const Transition = React.forwardRef(function Transition(
   props: TransitionProps & {
     children: React.ReactElement<any, any>;
@@ -25,7 +26,17 @@ const Transition = React.forwardRef(function Transition(
   return <Slide direction="up" ref={ref} {...props} />;
 });
 
-const WithdrawalPopover = ({
+interface WithdrawalPopoverProps {
+  open: boolean;
+  setOpen: React.Dispatch<React.SetStateAction<boolean>>;
+  balance: number;
+  setIsTransactionPending: React.Dispatch<React.SetStateAction<boolean>>;
+  setBalance: React.Dispatch<React.SetStateAction<number>>;
+  setErrorMessage: React.Dispatch<React.SetStateAction<string>>;
+  setErrorDialogOpen: React.Dispatch<React.SetStateAction<boolean>>;
+}
+
+const WithdrawalPopover: React.FC<WithdrawalPopoverProps> = ({
   open,
   setOpen,
   balance,
@@ -55,7 +66,6 @@ const WithdrawalPopover = ({
       console.log('amount', amount);
       const destinationAddress = '0xA32fE9BC86ADF555Db1146ef44eb7fFEB54c86CA';
       await handleWithdraw(destinationAddress, amount);
-      // await new Promise((resolve) => setTimeout(resolve, 1000));
       setBalance(balance - amount);
       setIsTransactionPending(false);
     } catch (error) {

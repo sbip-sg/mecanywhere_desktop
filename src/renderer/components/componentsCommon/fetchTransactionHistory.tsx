@@ -2,13 +2,12 @@ import {
   findHostHistory,
   findClientHistory,
 } from '../../services/TransactionServices';
-import { DataEntry, DataEntryWithoutRole } from './dataTypes';
+import { DataEntry, DataEntryWithoutRole } from '../../utils/dataTypes';
 
 function combineHistories(
   hostDidHistory: DataEntryWithoutRole[],
   clientDidHistory: DataEntryWithoutRole[]
 ): DataEntry[] {
-  console.log('hostDidHistory', hostDidHistory);
   const hostWithRole = hostDidHistory.map((item) => ({
     ...item,
     role: 'host',

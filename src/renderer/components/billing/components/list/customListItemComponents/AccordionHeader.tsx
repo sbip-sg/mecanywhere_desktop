@@ -1,8 +1,28 @@
+import React from 'react';
 import { Grid } from '@mui/material';
 import Typography from '@mui/material/Typography';
 import Status from './Status';
+import { EditedDataEntry } from '../../../../../utils/dataTypes';
 
-const CustomTypography = ({ children, isExpanded }) => {
+interface ColumnWidths {
+  [key: string]: number;
+}
+
+interface AccordionHeaderProps {
+  isExpanded: boolean;
+  item: EditedDataEntry;
+  columnWidths: ColumnWidths;
+}
+
+interface CustomTypographyProps {
+  children: React.ReactNode;
+  isExpanded: boolean;
+}
+
+const CustomTypography: React.FC<CustomTypographyProps> = ({
+  children,
+  isExpanded,
+}) => {
   return (
     <Typography
       style={{
@@ -18,7 +38,11 @@ const CustomTypography = ({ children, isExpanded }) => {
   );
 };
 
-const AccordionHeader = ({ isExpanded, item, columnWidths }) => {
+const AccordionHeader: React.FC<AccordionHeaderProps> = ({
+  isExpanded,
+  item,
+  columnWidths,
+}) => {
   return (
     <Grid container>
       <Grid

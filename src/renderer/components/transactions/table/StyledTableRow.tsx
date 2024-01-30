@@ -1,3 +1,4 @@
+import React from 'react';
 import TableRow, { tableRowClasses } from '@mui/material/TableRow';
 import { styled } from '@mui/material/styles';
 
@@ -8,7 +9,7 @@ interface StyledTableRowProps extends React.ComponentPropsWithoutRef<'tr'> {
 
 const StyledTableRow = styled(TableRow, {
   shouldForwardProp: (prop) => prop !== 'maxRowHeight',
-})<StyledTableRowProps>(({ theme, maxRowHeight, isheader = false }) => ({
+})<StyledTableRowProps>(({ theme, maxRowHeight, isheader }) => ({
   '&:last-child td, &:last-child th': {
     border: 0,
   },

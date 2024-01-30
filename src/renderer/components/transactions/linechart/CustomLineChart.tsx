@@ -21,8 +21,8 @@ import AddIcon from '@mui/icons-material/Add';
 import CustomTooltip from './CustomTooltip';
 import DatePickerPopover from './DatePickerPopover';
 import DataKeySelectorPopover from './DataKeySelectorPopover';
-import { DataEntry } from '../../common/dataTypes';
-import groupData from '../../common/groupData';
+import { DataEntry } from '../../../utils/dataTypes';
+import groupData from '../../componentsCommon/groupData';
 import { getLabelForDataKey } from './dataKeys';
 
 interface CustomLineChartProps {

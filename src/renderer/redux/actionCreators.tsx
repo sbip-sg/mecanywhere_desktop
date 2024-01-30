@@ -47,8 +47,8 @@ const setImportingAccount: ActionCreator<AnyAction> = (payload: any) => ({
   payload,
 });
 
-const setTransactionDetails: ActionCreator<AnyAction> = (payload: any) => ({
-  type: 'setTransactionDetails',
+const setDataEntry: ActionCreator<AnyAction> = (payload: any) => ({
+  type: 'setDataEntry',
   payload,
 });
 
@@ -67,7 +67,7 @@ const boundToDoActions = bindActionCreators(
     addJobResults,
     setJobResults,
     setColor,
-    setTransactionDetails,
+    setDataEntry,
     setImportingAccount,
     setDeviceStats,
   },

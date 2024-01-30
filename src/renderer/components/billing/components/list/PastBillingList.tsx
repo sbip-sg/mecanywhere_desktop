@@ -3,7 +3,7 @@ import React, { useState } from 'react';
 import {
   GroupedDataEntry,
   EditedDataEntry,
-} from 'renderer/components/common/dataTypes';
+} from 'renderer/utils/dataTypes';
 import CustomListHeader from './CustomListHeader';
 import CustomListItem from './CustomListItem';
 

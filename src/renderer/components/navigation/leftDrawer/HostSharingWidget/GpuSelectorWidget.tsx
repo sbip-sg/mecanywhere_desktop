@@ -1,3 +1,4 @@
+import React from 'react';
 import {
   Typography,
   ButtonGroup,
@@ -12,8 +13,17 @@ import KeyboardArrowDownIcon from '@mui/icons-material/KeyboardArrowDown';
 import KeyboardArrowUpIcon from '@mui/icons-material/KeyboardArrowUp';
 import ErrorIcon from '@mui/icons-material/Error';
 import { useTheme } from '@mui/material/styles';
+import { ExecutorSettings } from 'renderer/utils/dataTypes';
 
-const GpuSelectorWidget = ({ executorSettings, setExecutorSettings }) => {
+interface GpuSelectorWidgetProps {
+  executorSettings: ExecutorSettings;
+  setExecutorSettings: React.Dispatch<React.SetStateAction<ExecutorSettings>>;
+}
+
+const GpuSelectorWidget: React.FC<GpuSelectorWidgetProps> = ({
+  executorSettings,
+  setExecutorSettings,
+}) => {
   const theme = useTheme();
   const totalGpus = useSelector(
     (state: RootState) => state.deviceStatsReducer.totalGpus

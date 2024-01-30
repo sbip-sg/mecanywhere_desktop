@@ -1,3 +1,4 @@
+import React from 'react';
 import TableCell, { tableCellClasses } from '@mui/material/TableCell';
 import { styled } from '@mui/material/styles';
 
@@ -5,9 +6,9 @@ interface StyledTableCellProps extends React.ComponentProps<typeof TableCell> {
   addRightPadding: boolean;
 }
 
-const StyledTableCell = styled(({ addRightPadding, ...otherProps }) => (
+const StyledTableCell = styled(({ ...otherProps }) => (
   <TableCell {...otherProps} />
-))<StyledTableCellProps>(({ theme, addRightPadding }) => ({
+))<StyledTableCellProps>(({ addRightPadding }) => ({
   [`&.${tableCellClasses.head}`]: {
     backgroundColor: 'primary.dark',
     color: 'primary.main',

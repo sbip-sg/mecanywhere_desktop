@@ -1,6 +1,16 @@
 import React from 'react';
-import { convertEpochToStandardTimeWithDate } from 'renderer/components/common/unitConversion';
-import { DataEntry } from '../common/dataTypes';
+import { DataEntry } from '../../utils/dataTypes';
+
+const convertEpochToStandardTimeWithDate = (epochTimeInSeconds: number) => {
+  const dateObj = new Date(epochTimeInSeconds * 1000);
+  const year = dateObj.getUTCFullYear().toString().slice(-2);
+  const month = (dateObj.getUTCMonth() + 1).toString().padStart(2, '0');
+  const day = dateObj.getUTCDate().toString().padStart(2, '0');
+  const hours = dateObj.getUTCHours().toString().padStart(2, '0');
+  const minutes = dateObj.getUTCMinutes().toString().padStart(2, '0');
+
+  return `${day}/${month}/${year} ${hours}:${minutes}`;
+};
 
 export interface PropConfig<T> {
   property: keyof T;
@@ -15,7 +25,7 @@ export const renderWithOptionalSlice = (
   return shouldSlice ? `${value.slice(0, 10)}...` : value;
 };
 
-export const ExternalPropConfigList: PropConfig<DataEntry>[] = [
+export const PropConfigList: PropConfig<DataEntry>[] = [
   {
     property: 'transaction_id',
     renderer: (data: DataEntry, shouldSlice?: boolean) =>

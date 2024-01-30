@@ -8,12 +8,12 @@ import reduxStore from 'renderer/redux/store';
 import RefreshIcon from '@mui/icons-material/Refresh';
 import { scrollbarHeight } from 'renderer/utils/constants';
 import CustomLineChart from './linechart/CustomLineChart';
-import { DataEntry } from '../common/dataTypes';
-import { ExternalPropConfigList } from './propConfig';
+import { DataEntry } from '../../utils/dataTypes';
+import { PropConfigList } from './propConfig';
 import Datagrid from './table/Datagrid';
 import { addDummyHistory } from '../../services/TransactionServices';
-import Transitions from '../transitions/Transition';
-import fetchTransactionHistory from '../common/fetchTransactionHistory';
+import Transitions from '../../utils/Transition';
+import fetchTransactionHistory from '../componentsCommon/fetchTransactionHistory';
 import {
   tablePaginationMinHeight,
   maxRowHeight,
@@ -230,7 +230,7 @@ const TxnDashboard: React.FC = () => {
               data={data}
               isTableExpanded={isTableExpanded}
               setIsTableExpanded={setIsTableExpanded}
-              propConfigList={ExternalPropConfigList}
+              propConfigList={PropConfigList}
             />
           </motion.div>
         )}

@@ -7,10 +7,10 @@ interface CustomTablePaginationProps {
   rowsPerPage: number;
   page: number;
   onPageChange: (
-    event: React.MouseEvent<HTMLButtonElement, MouseEvent> | null,
-    page: number
+    _event: React.MouseEvent<HTMLButtonElement, MouseEvent> | null,
+    _page: number
   ) => void;
-  onRowsPerPageChange: (event: React.ChangeEvent<HTMLInputElement>) => void;
+  onRowsPerPageChange: (_event: React.ChangeEvent<HTMLInputElement>) => void;
 }
 
 const CustomTablePagination: React.FC<CustomTablePaginationProps> = ({

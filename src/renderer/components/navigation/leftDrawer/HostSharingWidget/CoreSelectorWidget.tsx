@@ -1,3 +1,4 @@
+import React from 'react';
 import {
   Typography,
   ButtonGroup,
@@ -11,11 +12,16 @@ import KeyboardArrowUpIcon from '@mui/icons-material/KeyboardArrowUp';
 import { useTheme } from '@mui/material/styles';
 import { useSelector } from 'react-redux';
 import { RootState } from 'renderer/redux/store';
+import { ExecutorSettings } from 'renderer/utils/dataTypes';
 
-const CoreSelectorWidget = ({
+interface CoreSelectorWidgetProps {
+  executorSettings: ExecutorSettings;
+  setExecutorSettings: React.Dispatch<React.SetStateAction<ExecutorSettings>>;
+}
+
+const CoreSelectorWidget: React.FC<CoreSelectorWidgetProps> = ({
   executorSettings,
   setExecutorSettings,
-  // totalCpuCores,
 }) => {
   const theme = useTheme();
   const totalCpuCores = useSelector(

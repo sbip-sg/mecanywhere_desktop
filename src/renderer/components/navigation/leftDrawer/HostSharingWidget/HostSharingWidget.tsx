@@ -5,18 +5,18 @@ import { styled } from '@mui/material/styles';
 import {
   handleRegisterHost,
   handleDeregisterHost,
-} from 'renderer/components/common/handleRegistration';
+} from 'renderer/components/componentsCommon/handleRegistration';
 import {
   updateConfig,
   getResourceStats,
   unpauseExecutor,
   pauseExecutor,
 } from 'renderer/services/ExecutorServices';
-import Transitions from '../../../transitions/Transition';
+import Transitions from '../../../../utils/Transition';
 import PreSharingEnabledComponent from './PreSharingEnabledComponent';
 import PostSharingEnabledComponent from './PostSharingEnabledComponent';
 import actions from '../../../../redux/actionCreators';
-import ErrorDialog from '../../../common/ErrorDialogue';
+import ErrorDialog from '../../../componentsCommon/ErrorDialogue';
 
 const HostSharingWidget = () => {
   const [isLoading, setIsLoading] = useState(false);
@@ -71,12 +71,10 @@ const HostSharingWidget = () => {
       try {
         await unpauseExecutor();
         const resourceStats = await getResourceStats();
-        console.log('resourceStats', resourceStats);
         const totalCpuCores = resourceStats.total_cpu;
         const totalMem = resourceStats.total_mem;
         const totalGpus = resourceStats.task_gpu;
         const gpuModel = resourceStats.gpu_model;
-        console.log("gpuModel", gpuModel)
         actions.setDeviceStats({
           totalCpuCores,
           totalMem,
@@ -90,7 +88,9 @@ const HostSharingWidget = () => {
         console.error('Error retrieving device stats: ', error);
         if (i < maxRetries - 1) {
           console.log(`Retrying in ${retryInterval / 1000} seconds...`);
-          await new Promise((resolve) => setTimeout(resolve, retryInterval));
+          await new Promise((resolve) => {
+            setTimeout(resolve, retryInterval);
+          });
         }
       }
     }
@@ -218,7 +218,6 @@ const HostSharingWidget = () => {
           <PostSharingEnabledComponent
             handleDisableResourceSharing={handleDisableResourceSharing}
             isLoading={isLoading}
-            setIsLoading={setIsLoading}
             initialResourcesLog={initialResourcesLog}
           />
         )}

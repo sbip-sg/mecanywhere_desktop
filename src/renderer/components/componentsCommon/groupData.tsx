@@ -1,4 +1,4 @@
-import { DataEntry, AccumulatorType } from './dataTypes';
+import { DataEntry, AccumulatorType } from '../../utils/dataTypes';
 
 const filterByDate = (entries: DataEntry[], startDate: Date, endDate: Date) => {
   return entries.filter((entry: DataEntry) => {

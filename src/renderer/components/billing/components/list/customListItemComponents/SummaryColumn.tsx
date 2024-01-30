@@ -1,5 +1,5 @@
-import { Grid, Typography, Box } from '@mui/material';
 import React from 'react';
+import { Grid, Typography, Box } from '@mui/material';
 import { CaptionTypography, DetailTypography } from './CustomTypography';
 
 interface ColumnProps {
@@ -7,7 +7,17 @@ interface ColumnProps {
   columnWidth: any;
 }
 
-const CenteredGridItem = ({ xs, children, alignItems }) => (
+interface CenteredGridItemProps {
+  xs: number;
+  children: React.ReactNode;
+  alignItems: string;
+}
+
+const CenteredGridItem: React.FC<CenteredGridItemProps> = ({
+  xs,
+  children,
+  alignItems,
+}) => (
   <Grid
     item
     container

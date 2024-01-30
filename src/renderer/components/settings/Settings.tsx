@@ -1,14 +1,6 @@
-import {
-  Stack,
-  Box,
-  Button,
-  Typography,
-  useTheme,
-  Switch,
-} from '@mui/material';
+import { Stack, Box, Typography } from '@mui/material';
 
 const Settings = () => {
-  const theme = useTheme();
   return (
     <Stack
       sx={{

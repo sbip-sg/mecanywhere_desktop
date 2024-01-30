@@ -13,7 +13,7 @@ import {
   Tooltip,
 } from 'recharts';
 import CustomTooltip from '../../../transactions/linechart/CustomTooltip';
-import { GroupedDataEntry } from '../../../common/dataTypes';
+import { GroupedDataEntry } from '../../../../utils/dataTypes';
 
 interface PastBillingCardProps {
   groupedData: GroupedDataEntry[];

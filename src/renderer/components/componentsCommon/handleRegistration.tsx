@@ -3,7 +3,6 @@ import {
   pauseExecutor,
 } from 'renderer/services/ExecutorServices';
 import log from 'electron-log/renderer';
-import actions from '../../redux/actionCreators';
 import {
   registerHost,
   deregisterHost,
@@ -40,7 +39,6 @@ export const handleDeregisterHost = async () => {
   log.info('in deregister');
   const response = await deregisterHost(accessToken, did);
   if (response) {
-    // actions.setAccessToken('');
     window.electron.stopConsumer(did);
     log.info('successfully deregistered');
   } else {
@@ -67,7 +65,6 @@ export const handleDeregisterClient = async () => {
   const { accessToken } = reduxStore.getState().userReducer;
   const response = await deregisterClient(accessToken, did);
   if (response) {
-    // actions.setAccessToken('');
     log.info('successfully deregistered as client');
   } else {
     throw new Error('Deregistration failed');

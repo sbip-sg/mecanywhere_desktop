@@ -1,16 +1,24 @@
 import React from 'react';
-import TextField from '@mui/material/TextField';
+import TextField, { TextFieldProps } from '@mui/material/TextField';
 import { useField } from 'formik';
 
-const TextFieldWrapper = ({ name, ...otherProps }) => {
+interface TextFieldWrapperProps
+  extends Omit<TextFieldProps, 'name' | 'value' | 'onChange'> {
+  name: string;
+}
+
+const TextFieldWrapper: React.FC<TextFieldWrapperProps> = ({
+  name,
+  ...otherProps
+}) => {
   const [field, meta] = useField(name);
 
-  const configTextField = {
+  const configTextField: TextFieldProps = {
+    ...field,
     fullWidth: true,
     variant: 'outlined',
     margin: 'dense',
     autoComplete: 'off',
-    ...field,
     ...otherProps,
   };
 

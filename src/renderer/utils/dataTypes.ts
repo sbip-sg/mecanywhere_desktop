@@ -56,3 +56,57 @@ export type AccumulatorType = {
     host_count: number;
   };
 };
+
+export interface ExecutorSettings {
+  option: string;
+  cpu_cores: number;
+  memory_mb: number;
+  gpus: number;
+}
+
+export interface ResourcesLog {
+  total_cpu: number;
+  total_mem: number;
+  used_cpu: number;
+  used_mem: number;
+  task_cpu: number;
+  task_mem: number;
+  task_used_cpu: number;
+  task_used_mem: number;
+}
+
+export interface UserState {
+  authenticated: boolean;
+  accessToken: string;
+  refreshToken: string;
+}
+
+export interface ThemeState {
+  color: string;
+}
+
+export interface ImportingAccountState {
+  importingAccount: boolean;
+}
+
+type Job = {
+  id: string;
+  content: string;
+};
+
+type JobResult = {
+  id: string;
+  content: string;
+};
+
+export interface JobsState {
+  jobs: Job[];
+  jobResults: JobResult[];
+}
+
+export interface DeviceStats {
+  totalCpuCores: number;
+  totalMem: number;
+  totalGpus: number;
+  gpuModel: string;
+}

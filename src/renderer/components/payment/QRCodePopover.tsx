@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useRef } from 'react';
 import Button from '@mui/material/Button';
 import Dialog from '@mui/material/Dialog';
 import DialogContent from '@mui/material/DialogContent';
@@ -8,9 +8,6 @@ import { TransitionProps } from '@mui/material/transitions';
 import 'react-datepicker/dist/react-datepicker.css';
 import Box from '@mui/material/Box';
 import Typography from '@mui/material/Typography';
-// import VisibilityIcon from '@mui/icons-material/Visibility';
-// import IconButton from '@mui/material/IconButton';
-import { useEffect, useRef } from 'react';
 import QRCode from 'qrcode';
 
 const Transition = React.forwardRef(function Transition(

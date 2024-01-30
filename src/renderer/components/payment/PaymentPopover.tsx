@@ -1,4 +1,4 @@
-import React, { useState, useRef } from 'react';
+import React, { useRef } from 'react';
 import Button from '@mui/material/Button';
 import Stack from '@mui/material/Stack';
 import Dialog from '@mui/material/Dialog';
@@ -10,9 +10,10 @@ import 'react-datepicker/dist/react-datepicker.css';
 import Box from '@mui/material/Box';
 import Typography from '@mui/material/Typography';
 import { Formik, Form, FormikHelpers, FormikProps } from 'formik';
-import { PaymentFormSchema } from '../common/FormSchema';
-import TextFieldWrapper from '../common/TextField';
+import { PaymentFormSchema } from '../componentsCommon/FormSchema';
+import TextFieldWrapper from '../componentsCommon/TextField';
 import handlePay from './handlePay';
+import { SDKProvider } from '../../../node_modules/@metamask/sdk';
 
 interface FormValues {
   amount: number;
@@ -26,17 +27,23 @@ const Transition = React.forwardRef(function Transition(
   return <Slide direction="up" ref={ref} {...props} />;
 });
 
-// interface PaymentPopoverProps {
-//   open: boolean;
-//   setOpen: (_value: boolean) => void;
-//   balance: number;
-//   isTransactionPending: boolean;
-//   setIsTransactionPending: (_value: boolean) => void;
-// }
-// const PaymentPopover: React.FC<PaymentPopoverProps> = ({
-const PaymentPopover = ({
+interface PaymentPopoverProps {
+  open: boolean;
+  setOpen: React.Dispatch<React.SetStateAction<boolean>>;
+  account: string;
+  balance: number;
+  clientBalance: number;
+  provider: SDKProvider | undefined;
+  setIsTransactionPending: React.Dispatch<React.SetStateAction<boolean>>;
+  setBalance: React.Dispatch<React.SetStateAction<number>>;
+  setErrorMessage: React.Dispatch<React.SetStateAction<string>>;
+  setErrorDialogOpen: React.Dispatch<React.SetStateAction<boolean>>;
+}
+
+const PaymentPopover: React.FC<PaymentPopoverProps> = ({
   open,
   setOpen,
+  account,
   balance,
   clientBalance,
   provider,
@@ -63,11 +70,9 @@ const PaymentPopover = ({
       setOpen(false);
       formActions.resetForm();
       const { amount } = values;
-      console.log('amount', amount);
-      const senderAddress = '0xA32fE9BC86ADF555Db1146ef44eb7fFEB54c86CA';
+      const senderAddress = account;
       const contractAddress = '0xe3ed4fd891fEf89Cb5ED7f609fEDEB87ddcC864c';
       await handlePay(provider, senderAddress, contractAddress, amount);
-      // await new Promise((resolve) => setTimeout(resolve, 1000));
       setBalance(balance - amount);
       setIsTransactionPending(false);
     } catch (error) {
@@ -100,7 +105,7 @@ const PaymentPopover = ({
           Please input the amount you would like to pay or stake to the
           MECAnywhere Smart Contract:
         </Typography>
-        <Stack sx={{ alignItems: 'center', padding: "1.5rem 0" }}>
+        <Stack sx={{ alignItems: 'center', padding: '1.5rem 0' }}>
           <Typography variant="subtitle1" textAlign="center">
             Your MECAnywhere balance: {balance}
           </Typography>
