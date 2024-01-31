@@ -6,7 +6,7 @@ import { visuallyHidden } from '@mui/utils';
 import useIsLightTheme from 'renderer/utils/useIsLightTheme';
 import StyledTableCell from './StyledTableCell';
 import StyledTableRow from './StyledTableRow';
-import { Order } from './comparatorUtils';
+import { Order } from './datagridUtils/comparatorUtils';
 import { DataEntry } from '../../../utils/dataTypes';
 import { PropConfig } from '../propConfig';
 

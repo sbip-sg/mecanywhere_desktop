@@ -1,6 +1,6 @@
 import React from 'react';
 import TablePagination from '@mui/material/TablePagination';
-import { tablePaginationMinHeight } from './TableParams';
+import { tablePaginationMinHeight } from './datagridUtils/TableParams';
 
 interface CustomTablePaginationProps {
   totalRows: number;

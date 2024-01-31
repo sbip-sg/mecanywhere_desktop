@@ -10,7 +10,7 @@ import { scrollbarHeight } from 'renderer/utils/constants';
 import CustomLineChart from './linechart/CustomLineChart';
 import { DataEntry } from '../../utils/dataTypes';
 import { PropConfigList } from './propConfig';
-import Datagrid from './table/Datagrid';
+import Datagrid from './datagrid/Datagrid';
 import { addDummyHistory } from '../../services/TransactionServices';
 import Transitions from '../../utils/Transition';
 import fetchTransactionHistory from '../componentsCommon/fetchTransactionHistory';
@@ -19,7 +19,7 @@ import {
   maxRowHeight,
   toolbarMinHeight,
   unexpandedRowPerPage,
-} from './table/TableParams';
+} from './datagrid/datagridUtils/TableParams';
 
 const TxnDashboard: React.FC = () => {
   const did = window.electron.store.get('did');

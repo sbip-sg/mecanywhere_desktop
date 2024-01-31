@@ -12,8 +12,8 @@ import {
   CartesianGrid,
   Tooltip,
 } from 'recharts';
-import CustomTooltip from '../../../transactions/linechart/CustomTooltip';
-import { GroupedDataEntry } from '../../../../utils/dataTypes';
+import CustomTooltip from '../../transactions/linechart/CustomTooltip';
+import { GroupedDataEntry } from '../../../utils/dataTypes';
 
 interface PastBillingCardProps {
   groupedData: GroupedDataEntry[];

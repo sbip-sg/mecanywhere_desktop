@@ -10,7 +10,7 @@ import Typography from '@mui/material/Typography';
 import Divider from '@mui/material/Divider';
 import ListItemButton from '@mui/material/ListItemButton';
 import { useNavigate } from 'react-router-dom';
-import HostSharingWidget from './HostSharingWidget/HostSharingWidget';
+import HostSharingWidget from './HostSharingWidget';
 
 const LeftDrawerComponent = () => {
   const navigate = useNavigate();
@@ -32,7 +32,7 @@ const LeftDrawerComponent = () => {
         scrollbarGutter: 'stable',
       }}
     >
-      <Toolbar sx={{ backgroundColor: 'red' }} />
+      <Toolbar />
       <Box
         id="drawerlist-wrapper"
         sx={{

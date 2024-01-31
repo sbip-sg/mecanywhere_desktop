@@ -2,7 +2,7 @@ import React from 'react';
 import { Grid } from '@mui/material';
 import Typography from '@mui/material/Typography';
 import Status from './Status';
-import { EditedDataEntry } from '../../../../../utils/dataTypes';
+import { EditedDataEntry } from '../../../../utils/dataTypes';
 
 interface ColumnWidths {
   [key: string]: number;

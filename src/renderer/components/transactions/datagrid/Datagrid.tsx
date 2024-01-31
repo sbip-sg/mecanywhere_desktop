@@ -7,12 +7,12 @@ import actions from 'renderer/redux/actionCreators';
 import { useNavigate } from 'react-router-dom';
 import { DataEntry } from '../../../utils/dataTypes';
 import { PropConfig } from '../propConfig';
-import { Order, stableSort, getComparator } from './comparatorUtils';
+import { Order, stableSort, getComparator } from './datagridUtils/comparatorUtils';
 import CustomTableHead from './CustomTableHead';
 import CustomTableBody from './CustomTableBody';
 import CustomTablePagination from './CustomTablePagination';
 import CustomToolbar from './CustomToolbar';
-import { maxRowHeight, expandedRowPerPage } from './TableParams';
+import { maxRowHeight, expandedRowPerPage } from './datagridUtils/TableParams';
 
 interface DatagridProps {
   data: DataEntry[];

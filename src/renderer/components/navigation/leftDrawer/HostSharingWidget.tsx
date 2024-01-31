@@ -12,11 +12,11 @@ import {
   unpauseExecutor,
   pauseExecutor,
 } from 'renderer/services/ExecutorServices';
-import Transitions from '../../../../utils/Transition';
-import PreSharingEnabledComponent from './PreSharingEnabledComponent';
-import PostSharingEnabledComponent from './PostSharingEnabledComponent';
-import actions from '../../../../redux/actionCreators';
-import ErrorDialog from '../../../componentsCommon/ErrorDialogue';
+import Transitions from '../../../utils/Transition';
+import PreSharingEnabledComponent from './HostSharingWidgetComponent/PreSharingEnabledComponent';
+import PostSharingEnabledComponent from './HostSharingWidgetComponent/PostSharingEnabledComponent';
+import actions from '../../../redux/actionCreators';
+import ErrorDialog from '../../componentsCommon/ErrorDialogue';
 
 const HostSharingWidget = () => {
   const [isLoading, setIsLoading] = useState(false);

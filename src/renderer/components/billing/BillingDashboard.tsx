@@ -1,9 +1,9 @@
 import React, { useState, useEffect } from 'react';
 import { Grid, Typography, Box } from '@mui/material';
 import reduxStore from 'renderer/redux/store';
-import CurrentBillingCard from './components/cards/CurrentBillingCard';
-import PastBillingCard from './components/cards/PastBillingCard';
-import PastBillingList from './components/list/PastBillingList';
+import CurrentBillingCard from './cards/CurrentBillingCard';
+import PastBillingCard from './cards/PastBillingCard';
+import PastBillingList from './list/PastBillingList';
 import { DataEntry, GroupedDataEntry } from '../../utils/dataTypes';
 import groupData from '../componentsCommon/groupData';
 import fetchTransactionHistory from '../componentsCommon/fetchTransactionHistory';
