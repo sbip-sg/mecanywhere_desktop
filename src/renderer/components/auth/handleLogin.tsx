@@ -24,17 +24,24 @@ const handleLogin = async (password: string): Promise<boolean | undefined> => {
   actions.setAccessToken(access_token);
   actions.setRefreshToken(refresh_token);
   try {
+    console.log('dockerDaemonIsRunningssss');
+
     const dockerDaemonIsRunning =
       await window.electron.checkDockerDaemonRunning();
+    console.log('dockerDaemonIsRunning', dockerDaemonIsRunning);
     if (!dockerDaemonIsRunning) {
       throw new Error('Docker daemon is not running');
     }
     try {
+      console.log('aaaa');
       await handleStartExecutor('meca_executor_test');
+      console.log('bbbb');
     } catch (executorError) {
       console.error('Error starting executor:', executorError);
       throw executorError;
     }
+    console.log('cccc');
+
     return true; // should only return true if signed VP is verified
   } catch (error) {
     console.error('Error in login process:', error);
@@ -43,9 +50,13 @@ const handleLogin = async (password: string): Promise<boolean | undefined> => {
 };
 
 const handleStartExecutor = async (containerName: string) => {
+  console.log('dddd');
+
   const containerExist = await window.electron.checkContainerExist(
     containerName
   );
+  console.log('ccccaaa', containerExist);
+
   if (containerExist) {
     const hasGpuSupport = await window.electron.checkContainerGpuSupport(
       containerName
