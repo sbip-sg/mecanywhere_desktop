@@ -111,6 +111,7 @@
     "@mui/icons-material": "^5.11.16",
     "@mui/material": "^5.14.1",
     "@reduxjs/toolkit": "^1.9.5",
+    "@types/dockerode": "^3.3.23",
     "amqplib": "^0.10.3",
     "bip39": "^3.1.0",
     "buffer": "^6.0.3",

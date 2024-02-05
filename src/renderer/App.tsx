@@ -28,6 +28,7 @@ import TxnDashboard from './components/transactions/TxnDashboard';
 import BillingDashboard from './components/billing/BillingDashboard';
 import TransactionDetails from './components/transactions/TransactionDetails';
 import Payment from './components/payment/Payment';
+import TasksManagement from './components/tasks/TasksManagement';
 import Settings from './components/settings/Settings';
 import { getDesignTokens } from './utils/theme';
 import useHandleAppExitHook from './utils/useHandleAppExitHook';
@@ -137,6 +138,14 @@ const Animated = () => {
           element={
             <Transitions>
               <TransactionDetails />
+            </Transitions>
+          }
+        />
+        <Route
+          path="/tasksmanagement"
+          element={
+            <Transitions>
+              <TasksManagement />
             </Transitions>
           }
         />

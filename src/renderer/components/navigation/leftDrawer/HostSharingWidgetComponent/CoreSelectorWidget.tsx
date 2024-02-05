@@ -19,6 +19,9 @@ interface CoreSelectorWidgetProps {
   setExecutorSettings: React.Dispatch<React.SetStateAction<ExecutorSettings>>;
 }
 
+/**
+ * Adds two values together and returns the result.
+ */
 const CoreSelectorWidget: React.FC<CoreSelectorWidgetProps> = ({
   executorSettings,
   setExecutorSettings,

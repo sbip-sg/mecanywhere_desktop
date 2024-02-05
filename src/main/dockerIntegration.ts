@@ -1,72 +1,85 @@
-import { ipcMain } from 'electron';
-import Channels from '../common/channels';
+import Dockerode, { ContainerInfo } from 'dockerode';
 import log from 'electron-log/main';
+import path from 'path';
+import fs from 'fs';
+import os from 'os';
+import Channels from '../common/channels';
 
-const fs = require('fs');
-const os = require('os');
-const Docker = require('dockerode');
-const docker = new Docker();
+const docker = new Dockerode();
 
-export const removeExecutorContainer = async (event, containerName) => {
-  docker.listContainers({ all: true }, (err, containers) => {
-    if (err) {
-      console.error(err);
-      event.reply(
-        Channels.REMOVE_EXECUTOR_CONTAINER_RESPONSE,
-        false,
-        err.message
-      );
-      return;
-    }
+interface Event {
+  reply(_channel: string, _success: boolean, _message?: string): void;
+}
 
-    const containerInfo = containers.find((c) =>
-      c.Names.some((n) => n === `/${containerName}`)
-    );
-
-    if (containerInfo) {
-      const container = docker.getContainer(containerInfo.Id);
-
-      const removeContainer = () => {
-        container.remove((err) => {
-          if (err) {
-            console.error(err);
-            event.reply(
-              Channels.REMOVE_EXECUTOR_CONTAINER_RESPONSE,
-              false,
-              err.message
-            );
-          } else {
-            event.reply(Channels.REMOVE_EXECUTOR_CONTAINER_RESPONSE, true);
-            console.log(`Container ${containerName} removed successfully.`);
-          }
-        });
-      };
-
-      // Check if the container is already stopped
-      if (containerInfo.State === 'running') {
-        container.stop((err) => {
-          if (err) {
-            console.error(err);
-            event.reply(
-              Channels.REMOVE_EXECUTOR_CONTAINER_RESPONSE,
-              false,
-              err.message
-            );
-            return;
-          }
-          removeContainer();
-        });
-      } else {
-        removeContainer();
+export const removeExecutorContainer = async (
+  event: Event,
+  containerName: string
+) => {
+  docker.listContainers(
+    { all: true },
+    (err: Error, containers?: ContainerInfo[]) => {
+      if (err) {
+        console.error(err);
+        event.reply(
+          Channels.REMOVE_EXECUTOR_CONTAINER_RESPONSE,
+          false,
+          err.message
+        );
+        return;
       }
-    } else {
-      console.log(`Container ${containerName} not found.`);
-      event.reply(Channels.REMOVE_EXECUTOR_CONTAINER_RESPONSE, true);
+
+      const containerInfo = containers?.find((c) =>
+        c.Names.some((n) => n === `/${containerName}`)
+      );
+
+      if (containerInfo) {
+        const container = docker.getContainer(containerInfo.Id);
+
+        const removeContainer = () => {
+          container.remove((err: Error) => {
+            if (err) {
+              console.error(err);
+              event.reply(
+                Channels.REMOVE_EXECUTOR_CONTAINER_RESPONSE,
+                false,
+                err.message
+              );
+            } else {
+              event.reply(Channels.REMOVE_EXECUTOR_CONTAINER_RESPONSE, true);
+              console.log(`Container ${containerName} removed successfully.`);
+            }
+          });
+        };
+
+        // Check if the container is already stopped
+        if (containerInfo.State === 'running') {
+          container.stop((err: Error) => {
+            if (err) {
+              console.error(err);
+              event.reply(
+                Channels.REMOVE_EXECUTOR_CONTAINER_RESPONSE,
+                false,
+                err.message
+              );
+              return;
+            }
+            removeContainer();
+          });
+        } else {
+          removeContainer();
+        }
+      } else {
+        console.log(`Container ${containerName} not found.`);
+        event.reply(Channels.REMOVE_EXECUTOR_CONTAINER_RESPONSE, true);
+      }
     }
-  });
+  );
 };
 
-export const runExecutorContainer = async (event, containerName) => {
+export const runExecutorContainer = async (
+  event: Event,
+  containerName: string
+) => {
   try {
     docker.listContainers({ all: true }, (err, containers) => {
       if (err) {
@@ -74,21 +87,23 @@ export const runExecutorContainer = async (event, containerName) => {
         return;
       }
 
-      const existingContainer = containers.find((c) =>
-        c.Names.includes('/' + containerName)
+      const existingContainer = containers?.find((c) =>
+        c.Names.includes(`/${containerName}`)
       );
 
       if (existingContainer) {
         // Container exists, start it if it's not running
         if (existingContainer.State !== 'running') {
-          docker.getContainer(existingContainer.Id).start((err, data) => {
-            if (err) {
-              console.error(err);
-            } else {
-              log.info('Existing container started');
-              event.reply(Channels.RUN_EXECUTOR_CONTAINER_RESPONSE, true);
-            }
-          });
+          docker
+            .getContainer(existingContainer.Id)
+            .start((err: Error, _data) => {
+              if (err) {
+                console.error(err);
+              } else {
+                log.info('Existing container started');
+                event.reply(Channels.RUN_EXECUTOR_CONTAINER_RESPONSE, true);
+              }
+            });
         } else {
           log.info('Container is already running');
           event.reply(Channels.RUN_EXECUTOR_CONTAINER_RESPONSE, true);
@@ -115,13 +130,13 @@ export const runExecutorContainer = async (event, containerName) => {
           },
         };
 
-        docker.createContainer(containerOptions, (err, container) => {
+        docker.createContainer(containerOptions, (err: Error, container) => {
           if (err) {
             console.error(err);
             return;
           }
 
-          container.start((err, data) => {
+          container?.start((err: Error, _data) => {
             if (err) {
               console.error(err);
             } else {
@@ -133,11 +148,15 @@ export const runExecutorContainer = async (event, containerName) => {
       }
     });
   } catch (error) {
-    event.reply(Channels.RUN_EXECUTOR_CONTAINER_RESPONSE, false, error.message);
+    event.reply(
+      Channels.RUN_EXECUTOR_CONTAINER_RESPONSE,
+      false,
+      (error as Error).message
+    );
   }
 };
 
-const checkIfContainerHasGpu = (containerId, callback) => {
+const checkIfContainerHasGpu = (containerId: string, callback) => {
   const container = docker.getContainer(containerId);
   container.inspect((err, data) => {
     if (err) {
@@ -230,13 +249,8 @@ export const runExecutorGPUContainer = async (event, containerName) => {
   }
 };
 
-export const checkDockerDaemonRunning1 = (event) => {
-  console.log('daemonnnn');
-  log.info('daemonnnn');
+export const checkDockerDaemonRunning = (event: Event) => {
   docker.ping((err, data) => {
-    console.log('daemonnnn2');
-    log.info('daemonnnn2');
-
     if (err) {
       console.error('Docker daemon is not running', err);
       event.reply(
@@ -251,7 +265,7 @@ export const checkDockerDaemonRunning1 = (event) => {
   });
 };
 
-export const checkContainerExists = (event, containerName) => {
+export const checkContainerExists = (event: Event, containerName: string) => {
   docker.listContainers({ all: true }, (err, containers) => {
     if (err) {
       console.error('Error listing containers:', err);
@@ -259,7 +273,7 @@ export const checkContainerExists = (event, containerName) => {
       return;
     }
 
-    const containerExists = containers.some((container) =>
+    const containerExists = containers?.some((container) =>
       container.Names.some((name) => name === `/${containerName}`)
     );
 
@@ -267,7 +281,7 @@ export const checkContainerExists = (event, containerName) => {
   });
 };
 
-export const checkContainerGPUSupport = (event, containerName) => {
+export const checkContainerGPUSupport = (event: Event, containerName: string) => {
   docker.listContainers({ all: true }, (err, containers) => {
     if (err) {
       console.error('Error listing containers:', err);
@@ -279,7 +293,7 @@ export const checkContainerGPUSupport = (event, containerName) => {
       return;
     }
 
-    const containerInfo = containers.find((c) =>
+    const containerInfo = containers?.find((c) =>
       c.Names.includes('/' + containerName)
     );
 
@@ -305,14 +319,4 @@ export const checkContainerGPUSupport = (event, containerName) => {
       event.reply(Channels.CHECK_CONTAINER_GPU_SUPPORT_RESPONSE, true, false);
     }
   });
-};
-
-// Register IPC handlers
-export const registerDockerIpcHandlers = () => {
-  ipcMain.on('REMOVE_EXECUTOR_CONTAINER', removeExecutorContainer);
-  ipcMain.on('RUN_EXECUTOR_CONTAINER', runExecutorContainer);
-  ipcMain.on('RUN_EXECUTOR_GPU_CONTAINER', runExecutorGPUContainer);
-//   ipcMain.on('CHECK_DOCKER_DAEMON_RUNNING', checkDockerDaemonRunning1);
-  ipcMain.on('CHECK_CONTAINER_EXIST', checkContainerExists);
-  ipcMain.on('CHECK_CONTAINER_GPU_SUPPORT', checkContainerGPUSupport);
 };
