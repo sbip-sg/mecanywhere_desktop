@@ -8,13 +8,7 @@
  * When running `npm run build` or `npm run build:main`, this file is compiled to
  * `./src/main.js` using webpack. This gives us some performance wins.
  */
-<<<<<<< HEAD
 import { app, BrowserWindow, ipcMain, Tray, Menu } from 'electron';
-=======
-import path from 'path';
-import { app, BrowserWindow, ipcMain, Tray, Menu, nativeImage } from 'electron';
-import { performance } from 'perf_hooks';
->>>>>>> 2d892c914eec575d25df0eb335e52e4df31c1035
 import log from 'electron-log/main';
 import path from 'path';
 import { performance } from 'perf_hooks';
@@ -101,7 +95,6 @@ ipcMain.on(Channels.JOB_RECEIVED, (event, id, result) => {
 ipcMain.on(Channels.START_CONSUMER, (event, queueName) => {
   startConsumer(workerWindow, event, queueName);
 });
-<<<<<<< HEAD
 
 ipcMain.on(Channels.STOP_CONSUMER, (event, queueName) => {
   stopConsumer(workerWindow, event, queueName);
@@ -156,65 +149,6 @@ const createMainWindow = async () => {
   });
   mainWindow.loadURL(resolveHtmlPath('index.html'));
 
-=======
-
-ipcMain.on(Channels.STOP_CONSUMER, (event, queueName) => {
-  stopConsumer(workerWindow, event, queueName);
-});
-
-ipcMain.on(Channels.APP_CLOSE_CONFIRMED, () => {
-  if (mainWindow) mainWindow.destroy();
-});
-
-ipcMain.on(Channels.APP_RELOAD_CONFIRMED, () => {
-  if (mainWindow) mainWindow.reload();
-});
-
-ipcMain.on(Channels.REMOVE_EXECUTOR_CONTAINER, removeExecutorContainer);
-
-ipcMain.on(Channels.RUN_EXECUTOR_CONTAINER, runExecutorContainer);
-
-ipcMain.on(Channels.RUN_EXECUTOR_GPU_CONTAINER, runExecutorGPUContainer);
-
-ipcMain.on(Channels.CHECK_DOCKER_DAEMON_RUNNING, checkDockerDaemonRunning);
-
-ipcMain.on(Channels.CHECK_CONTAINER_EXIST, checkContainerExists);
-
-ipcMain.on(Channels.CHECK_CONTAINER_GPU_SUPPORT, checkContainerGPUSupport);
-
-const createWorkerWindow = async () => {
-  workerWindow = new BrowserWindow({
-    show: false,
-    webPreferences: {
-      sandbox: false,
-      nodeIntegration: true,
-      contextIsolation: false,
-    },
-  });
-  workerWindow.loadFile('src/worker_renderer/worker.html');
-};
-
-const createMainWindow = async () => {
-  mainWindow = new BrowserWindow({
-    // frame: false,
-    // titleBarStyle: 'hidden',
-    show: false,
-    width: 1440,
-    height: 900,
-    webPreferences: {
-      preload: app.isPackaged
-        ? path.join(__dirname, 'preload.js')
-        : path.join(__dirname, '../../.erb/dll/preload.js'),
-      webSecurity: false,
-    },
-  });
-  mainWindow.loadURL(resolveHtmlPath('index.html'));
-  mainWindow.once('focus', () => {
-    const focusMs = performance.now() - start;
-    console.log(`Window created in ${focusMs} ms`);
-  });
-
->>>>>>> 2d892c914eec575d25df0eb335e52e4df31c1035
   mainWindow.on('ready-to-show', () => {
     if (!mainWindow) {
       throw new Error('"mainWindow" is not defined');
@@ -230,17 +164,10 @@ const createMainWindow = async () => {
   mainWindow.on('close', (event) => {
     log.info('attempt close');
     event.preventDefault();
-<<<<<<< HEAD
     // mainWindow?.webContents.send('app-close-initiated');
     if (mainWindow) {
       mainWindow.hide();
     }
-=======
-    mainWindow?.webContents.send('app-close-initiated');
-    // if (mainWindow) {
-    //   mainWindow.hide();
-    // }
->>>>>>> 2d892c914eec575d25df0eb335e52e4df31c1035
   });
 
   // signify app successfully closed
@@ -299,13 +226,8 @@ app
   .then(() => {
     createMainWindow();
     createWorkerWindow();
-<<<<<<< HEAD
     const appReadyTimeTaken = performance.now() - start;
     console.log(`App ready in ${appReadyTimeTaken} ms`);
-=======
-    const appReadyMs = performance.now() - start;
-    console.log(`App ready in ${appReadyMs} ms`);
->>>>>>> 2d892c914eec575d25df0eb335e52e4df31c1035
     app.on('activate', () => {
       // On macOS it's common to re-create a window in the app when the
       // dock icon is clicked and there are no other windows open.

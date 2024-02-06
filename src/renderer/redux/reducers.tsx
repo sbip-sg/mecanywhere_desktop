@@ -6,6 +6,7 @@ import {
   ImportingAccountState,
   JobsState,
   DeviceStats,
+  TaskList,
 } from 'renderer/utils/dataTypes';
 
 const initialUserState: UserState = {
@@ -45,6 +46,11 @@ const initialDataEntry: DataEntry = {
   transaction_end_datetime: 0,
   transaction_start_datetime: 0,
   transaction_id: '',
+};
+
+const initialTaskList: TaskList = {
+  tested: [],
+  activated: [],
 };
 
 export const dataEntryReducer = (
@@ -166,6 +172,76 @@ const jobsReducer = (
   }
 };
 
+export const taskListReducer = (
+  state: TaskList = initialTaskList,
+  action: any
+): TaskList => {
+  switch (action.type) {
+    case 'addToDownloaded':
+      if (!state.downloaded.includes(action.payload)) {
+        return {
+          ...state,
+          downloaded: [...state.downloaded, action.payload],
+        };
+      }
+      return state;
+    case 'removeFromDownloaded':
+      return {
+        ...state,
+        downloaded: state.downloaded.filter(
+          (taskName) => taskName !== action.payload
+        ),
+      };
+    case 'addToBuilt':
+      if (!state.built.includes(action.payload)) {
+        return {
+          ...state,
+          built: [...state.built, action.payload],
+        };
+      }
+      return state;
+    case 'removeFromBuilt':
+      return {
+        ...state,
+        built: state.built.filter((taskName) => taskName !== action.payload),
+      };
+    case 'addToTested':
+      if (!state.tested.includes(action.payload)) {
+        return {
+          ...state,
+          tested: [...state.tested, action.payload],
+        };
+      }
+      return state;
+
+    case 'removeFromTested':
+      return {
+        ...state,
+        tested: state.tested.filter((taskName) => taskName !== action.payload),
+      };
+
+    case 'addToActivated':
+      if (!state.activated.includes(action.payload)) {
+        return {
+          ...state,
+          activated: [...state.activated, action.payload],
+        };
+      }
+      return state;
+
+    case 'removeFromActivated':
+      return {
+        ...state,
+        activated: state.activated.filter(
+          (taskName) => taskName !== action.payload
+        ),
+      };
+
+    default:
+      return state;
+  }
+};
+
 const reducers = combineReducers({
   jobs: jobsReducer,
   dataEntryReducer,
@@ -173,6 +249,7 @@ const reducers = combineReducers({
   themeReducer,
   importingAccountReducer,
   deviceStatsReducer,
+  taskList: taskListReducer,
 });
 
 export default reducers;

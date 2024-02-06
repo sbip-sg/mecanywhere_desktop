@@ -62,6 +62,15 @@ const handleAccountRegistration = async (
           gpus: 0,
         })
       );
+      window.electron.store.set(
+        'taskList',
+        JSON.stringify({
+          downloaded: [],
+          built: [],
+          tested: [],
+          activated: [],
+        })
+      );
     }
   } catch (keyPairGenerationError) {
     throw keyPairGenerationError;

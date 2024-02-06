@@ -110,3 +110,10 @@ export interface DeviceStats {
   totalGpus: number;
   gpuModel: string;
 }
+
+export interface TaskList {
+  downloaded: string[];
+  built: string[];
+  tested: string[];
+  activated: string[];
+}

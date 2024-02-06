@@ -102,13 +102,15 @@ export const getDesignTokens = (mode: PaletteMode) => ({
       fontSize: '14px',
       letterSpacing: `0.1em`,
     },
+    subtitle2: {
+      fontSize: '12px',
+    },
     body1: {
       fontSize: '16px',
     },
     body2: {
       fontSize: '14px',
     },
-
     button: {
       fontWeight: 500,
       letterSpacing: `0.15em`,

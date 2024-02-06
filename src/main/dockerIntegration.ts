@@ -1,23 +1,11 @@
-<<<<<<< HEAD
 import Dockerode, { ContainerInfo } from 'dockerode';
-=======
-import Channels from '../common/channels';
->>>>>>> 2d892c914eec575d25df0eb335e52e4df31c1035
 import log from 'electron-log/main';
 import path from 'path';
 import fs from 'fs';
 import os from 'os';
 import Channels from '../common/channels';
 
-<<<<<<< HEAD
 const docker = new Dockerode();
-=======
-const fs = require('fs');
-const os = require('os');
-const Docker = require('dockerode');
-const docker = new Docker();
-import path from 'path';
->>>>>>> 2d892c914eec575d25df0eb335e52e4df31c1035
 
 interface Event {
   reply(_channel: string, _success: boolean, _message?: string): void;
@@ -261,11 +249,7 @@ export const runExecutorGPUContainer = async (event, containerName) => {
   }
 };
 
-<<<<<<< HEAD
 export const checkDockerDaemonRunning = (event: Event) => {
-=======
-export const checkDockerDaemonRunning = (event) => {
->>>>>>> 2d892c914eec575d25df0eb335e52e4df31c1035
   docker.ping((err, data) => {
     if (err) {
       console.error('Docker daemon is not running', err);
@@ -335,8 +319,4 @@ export const checkContainerGPUSupport = (event: Event, containerName: string) =>
       event.reply(Channels.CHECK_CONTAINER_GPU_SUPPORT_RESPONSE, true, false);
     }
   });
-<<<<<<< HEAD
 };
-=======
-};
->>>>>>> 2d892c914eec575d25df0eb335e52e4df31c1035
