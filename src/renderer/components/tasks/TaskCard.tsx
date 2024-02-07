@@ -1,29 +1,28 @@
 import { Card, Typography, Grid, Stack } from '@mui/material';
-import { useSelector } from 'react-redux';
-import { CustomButton } from './TaskCardComponents';
 import React, { useState, useEffect } from 'react';
+import { useSelector } from 'react-redux';
+import { Task } from 'renderer/utils/dataTypes';
+import CustomButton from './CustomButton';
 import {
   addToDownloaded,
-  removeFromDownloaded,
   hasBeenDownloaded,
   addToBuilt,
-  removeFromBuilt,
   hasBeenBuilt,
   addToTested,
-  removeFromTested,
   hasBeenTested,
   addToActivated,
   removeFromActivated,
   hasBeenActivated,
+  removeFromDownloaded,
+  removeFromBuilt,
+  removeFromTested,
 } from './TaskListOperations';
-import BlockIcon from '@mui/icons-material/Block';
-
 import actions from '../../redux/actionCreators';
 import { RootState } from '../../redux/store';
 import CardDetail from './CardDetail';
 
 interface TaskCardProps {
-  task: any;
+  task: Task;
 }
 
 const TaskCard: React.FC<TaskCardProps> = ({ task }) => {
@@ -109,10 +108,17 @@ const TaskCard: React.FC<TaskCardProps> = ({ task }) => {
     };
   };
 
-  const determineTestLabel = () => {
+  const getTestLabel = () => {
     if (isTesting) return 'Running Test...';
     if (isTested) return 'Rerun Test';
     return 'Run Test';
+  };
+
+  const getActivateButtonColor = () => {
+    if (!isTested) return 'background.disabled';
+    if (isActivated) return 'secondary.contrastText';
+    if (!isActivated) return 'secondary.main';
+    return 'error.main';
   };
 
   return (
@@ -161,7 +167,7 @@ const TaskCard: React.FC<TaskCardProps> = ({ task }) => {
             {currentPhase === 'toTestOrActivate' && (
               <>
                 <CustomButton
-                  label={determineTestLabel()}
+                  label={getTestLabel()}
                   onClick={handleRunTest}
                   color="text.primary"
                   backgroundColor="primary.main"
@@ -171,30 +177,31 @@ const TaskCard: React.FC<TaskCardProps> = ({ task }) => {
                   label={isActivated ? 'Deactivate' : 'Activate'}
                   onClick={isActivated ? handleDeactivate : handleActivate}
                   color={isTested ? 'text.primary' : 'text.secondary'}
-                  backgroundColor={
-                    isTested ? 'secondary.main' : 'background.disabled'
-                  }
-                  isLoading={false}
-                  disabled={!isTested}
-                  startIcon={!isTested ? <BlockIcon /> : null}
-                  sx={{
-                    ...(isTested
-                      ? {}
-                      : {
-                          '&:hover': {
-                            backgroundColor: 'background.disabledHover', // Add custom hover color when button is disabled
-                            cursor: 'not-allowed',
-                          },
-                        }),
-                  }}
+                  backgroundColor={getActivateButtonColor()}
+                  showBlockIcon={!isTested}
                 />
                 {!isTested && (
                   <Typography
                     variant="subtitle2"
                     sx={{ display: 'flex', alignItems: 'center' }}
                   >
-                    <BlockIcon sx={{ marginRight: '0.5rem' }} /> Compatibility
-                    test required before Task Activation.
+                    Compatibility test required before Task Activation.
+                  </Typography>
+                )}
+                {isTested && isActivated && (
+                  <Typography
+                    variant="subtitle2"
+                    sx={{ display: 'flex', alignItems: 'center' }}
+                  >
+                    Task activated and available for resource sharing.
+                  </Typography>
+                )}
+                {isTested && !isActivated && (
+                  <Typography
+                    variant="subtitle2"
+                    sx={{ display: 'flex', alignItems: 'center' }}
+                  >
+                    Task currently excluded from resource sharing.
                   </Typography>
                 )}
               </>

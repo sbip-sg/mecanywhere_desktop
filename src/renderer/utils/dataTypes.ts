@@ -117,3 +117,16 @@ export interface TaskList {
   tested: string[];
   activated: string[];
 }
+
+export interface Task {
+  taskName: string;
+  dockerFileCID: string;
+  objectFileCID: string;
+  exampleInputCID: string;
+  inputSizeLimit: string;
+  outputSizeLimit: string;
+  cpuGas: number;
+  gpuGas: number;
+  blockTimeOut: number;
+  fee: number;
+}

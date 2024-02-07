@@ -1,5 +1,17 @@
 import { CardContent, Typography, Grid, Divider } from '@mui/material';
-import { LabelWithValue } from './TaskCardComponents';
+
+interface LabelWithValueProps {
+  label: string;
+  value: string;
+}
+
+const LabelWithValue: React.FC<LabelWithValueProps> = ({ label, value }) => {
+  return (
+    <Typography variant="subtitle2" sx={{ margin: '0 0 0.2rem 0' }}>
+      <span style={{ fontWeight: 600 }}>{label}</span>: {value}
+    </Typography>
+  );
+};
 
 const CardDetail = ({ task, testData, isTested }) => {
   return (
