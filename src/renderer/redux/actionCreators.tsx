@@ -57,6 +57,16 @@ const setDeviceStats: ActionCreator<AnyAction> = (payload: any) => ({
   payload,
 });
 
+const setSDKProvider: ActionCreator<AnyAction> = (payload: any) => ({
+  type: 'setSDKProvider',
+  payload,
+});
+
+const setSDKProviderConnected: ActionCreator<AnyAction> = (payload: any) => ({
+  type: 'setSDKProviderConnected',
+  payload,
+});
+
 const boundToDoActions = bindActionCreators(
   {
     setAuthenticated,
@@ -70,6 +80,8 @@ const boundToDoActions = bindActionCreators(
     setTransactionDetails,
     setImportingAccount,
     setDeviceStats,
+    setSDKProvider,
+    setSDKProviderConnected,
   },
   reduxStore.dispatch
 );

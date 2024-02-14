@@ -3,7 +3,6 @@ import {
   pauseExecutor,
 } from 'renderer/services/ExecutorServices';
 import log from 'electron-log/renderer';
-import actions from '../../redux/actionCreators';
 import {
   registerHost,
   deregisterHost,
@@ -12,11 +11,16 @@ import {
 } from '../../services/RegistrationServices';
 import reduxStore from '../../redux/store';
 
-export const handleRegisterHost = async (cpu: number, memory: number) => {
+export const handleRegisterHost = async () => {
+  const paymentProvider = reduxStore.getState().SDKProviderReducer.sdkProvider;
+  if (!paymentProvider || reduxStore.getState().SDKProviderReducer.connected) {
+    throw new Error('Payment provider not connected');
+  }
   const did = window.electron.store.get('did');
   const { accessToken } = reduxStore.getState().userReducer;
+  const publicKey = window.electron.store.get('publicKey');
   if (did && accessToken) {
-    const response = await registerHost(accessToken, did, cpu, memory);
+    const response = await registerHost(publicKey, 1, 1, paymentProvider);
     if (response) {
       const unpauseResponse = await unpauseExecutor();
       if (!unpauseResponse) {
@@ -30,17 +34,20 @@ export const handleRegisterHost = async (cpu: number, memory: number) => {
     throw new Error('Credential not found');
   }
 };
+
 export const handleDeregisterHost = async () => {
-  const did = window.electron.store.get('did');
-  const { accessToken } = reduxStore.getState().userReducer;
+  const paymentProvider = reduxStore.getState().SDKProviderReducer.sdkProvider;
+  if (!paymentProvider || reduxStore.getState().SDKProviderReducer.connected) {
+    throw new Error('Payment provider not connected');
+  }
   const pauseResponse = await pauseExecutor();
   if (!pauseResponse) {
     console.error('Pause failed.');
   }
   log.info('in deregister');
-  const response = await deregisterHost(accessToken, did);
+  const response = await deregisterHost(paymentProvider);
   if (response) {
-    // actions.setAccessToken('');
+    const did = window.electron.store.get('did');
     window.electron.stopConsumer(did);
     log.info('successfully deregistered');
   } else {

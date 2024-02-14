@@ -1,5 +1,6 @@
 import { combineReducers } from 'redux';
 import { Job, JobResult } from 'renderer/utils/jobs';
+import { SDKProvider } from '../../node_modules/@metamask/sdk';
 
 interface UserState {
   authenticated: boolean;
@@ -51,6 +52,16 @@ const initialDeviceStats: DeviceStats = {
   totalMem: 8192,
   totalGpus: 0,
   gpuModel: '',
+};
+
+interface SDKProviderState {
+  sdkProvider: SDKProvider | null;
+  connected: boolean;
+}
+
+const initialSDKProviderState: SDKProviderState = {
+  sdkProvider: null,
+  connected: false,
 };
 
 export const transactionDetailsReducer = (state = {}, action: any) => {
@@ -170,6 +181,26 @@ const jobsReducer = (
   }
 };
 
+const SDKProviderReducer = (
+  state: SDKProviderState = initialSDKProviderState,
+  action: any
+): SDKProviderState => {
+  switch (action.type) {
+    case 'setSDKProvider':
+      return {
+        ...state,
+        sdkProvider: action.payload,
+      };
+    case 'setConnected':
+      return {
+        ...state,
+        connected: action.payload,
+      };
+    default:
+      return state;
+  }
+};
+
 const reducers = combineReducers({
   jobs: jobsReducer,
   transactionDetailsReducer: transactionDetailsReducer,
@@ -177,6 +208,7 @@ const reducers = combineReducers({
   themeReducer: themeReducer,
   importingAccountReducer: importingAccountReducer,
   deviceStatsReducer: deviceStatsReducer,
+  SDKProviderReducer: SDKProviderReducer,
 });
 
 export default reducers;

@@ -1,4 +1,6 @@
 import { handle401Error } from './TokenRefreshServices';
+import Web3 from '../../node_modules/web3';
+import { MetaMaskSDK, SDKProvider } from '../../node_modules/@metamask/sdk';
 
 const url = process.env.REGISTRATION_SERVICE_API_URL;
 
@@ -16,39 +18,16 @@ export async function createAccount(data: any): Promise<any> {
       throw new Error('Network response not ok');
     }
     const res = await response.json();
-    console.log("account res", res)
+    console.log('account res', res);
     return res;
   } catch (error) {
     throw error;
   }
 }
 
-export async function heartbeat(token: string, did: string, retryCount = 0) {
-  try {
-    const response = await fetch(`${url}/heartbeat`, {
-      method: 'POST',
-      headers: {
-        'content-type': 'application/json',
-        Authorization: `Bearer ${token}`,
-      },
-      body: JSON.stringify({ did }),
-    });
-    if (!response.ok) {
-      if (response.status === 401 && retryCount < 1) {
-        const newToken = await handle401Error();
-        return heartbeat(newToken, did, retryCount + 1);
-      }
-      throw new Error('Network response not ok');
-    }
-    return response.ok;
-  } catch (error) {
-    console.error('There was a problem with the fetch operation:', error);
-  }
-}
-
 export async function authenticate(did: string, credential: object) {
-  console.log("did", did)
-  console.log("credential", credential)
+  console.log('did', did);
+  console.log('credential', credential);
   try {
     const response = await fetch(`${url}/authentication/authenticate`, {
       method: 'POST',
@@ -69,59 +48,65 @@ export async function authenticate(did: string, credential: object) {
 }
 
 export async function registerHost(
-  token: string,
-  did: string,
-  cpu: number,
-  memory: number,
+  publicKey: string,
+  publicKeyType: number,
+  blockTimeoutLimit: number,
+  provider: any,
   retryCount = 0
 ) {
   try {
-    const response = await fetch(`${url}/registration/register_host`, {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-        Authorization: `Bearer ${token}`,
-      },
-      body: JSON.stringify({ did, resources: { cpu, memory } }),
-    });
-
-    if (!response.ok) {
-      if (response.status === 401 && retryCount < 1) {
-        const newToken = await handle401Error();
-        return registerHost(newToken, did, cpu, memory, retryCount + 1);
-      }
-      throw new Error('Network response not ok');
-    }
+    const web3 = new Web3(provider);
+    const hostContract = hostContractAbi;
+    const contract = new web3.eth.Contract(
+      hostContract,
+      '0x77FBb5565331b0d4c8E5A6F40181F95239fcaA16'
+    );
+    // const amountToSend = web3.utils.toWei(amount.toString(), 'ether');
+    await contract.methods
+      .registerHost(publicKey, publicKeyType, blockTimeoutLimit)
+      .send({ from: '0x67c9badC4765ff6bF78130D559315854379f8a00' })
+      .on('transactionHash', (hash: any) => {
+        console.log('Transaction Hash:', hash);
+      })
+      .on('receipt', (receipt: any) => {
+        console.log('Transaction Receipt:', receipt);
+      })
+      .on('error', (error: any) => {
+        console.error('Transaction Error:', error);
+        throw new Error(error);
+      });
+    console.log('Register successful.');
     return true;
   } catch (error) {
-    console.error('There was a problem with the fetch operation:', error);
+    console.error('Register error', error);
   }
 }
 
-export async function deregisterHost(
-  token: string,
-  did: string,
-  retryCount = 0
-) {
+export async function deregisterHost(provider: any, retryCount = 0) {
   try {
-    const response = await fetch(`${url}/registration/deregister_host`, {
-      method: 'POST',
-      headers: {
-        'content-type': 'application/json',
-        Authorization: `Bearer ${token}`,
-      },
-      body: JSON.stringify({ did }),
-    });
-    if (!response.ok) {
-      if (response.status === 401 && retryCount < 1) {
-        const newToken = await handle401Error();
-        return deregisterHost(newToken, did, retryCount + 1);
-      }
-      throw new Error('Network response not ok');
-    }
+    const web3 = new Web3(provider);
+    const hostContract = hostContractAbi;
+    const contract = new web3.eth.Contract(
+      hostContract,
+      '0x77FBb5565331b0d4c8E5A6F40181F95239fcaA16'
+    );
+    await contract.methods
+      .deleteHost('0x67c9badC4765ff6bF78130D559315854379f8a00')
+      .send({ from: '0x67c9badC4765ff6bF78130D559315854379f8a00' })
+      .on('transactionHash', (hash: any) => {
+        console.log('Transaction Hash:', hash);
+      })
+      .on('receipt', (receipt: any) => {
+        console.log('Transaction Receipt:', receipt);
+      })
+      .on('error', (error: any) => {
+        console.error('Transaction Error:', error);
+        throw new Error(error);
+      });
+    console.log('Deregister successful.');
     return true;
   } catch (error) {
-    console.error('There was a problem with the fetch operation:', error);
+    console.error('Deregister error', error);
   }
 }
 
@@ -163,44 +148,3 @@ export async function deregisterClient(token: string, did: string) {
     console.error('There was a problem with the fetch operation:', error);
   }
 }
-
-// export async function createChallenge(data: any): Promise<any> {
-//   try {
-//     const response = await fetch(`${url}/create_challenge/`, {
-//       method: 'POST',
-//       credentials: 'include',
-//       headers: {
-//         'Content-Type': 'application/json',
-//       },
-//       body: JSON.stringify(data),
-//     });
-//     if (!response.ok) {
-//       throw new Error('Network response not ok');
-//     }
-//     const res = await response.json();
-//     return res;
-//   } catch (error) {
-//     throw new Error('Network error occurred');
-//   }
-// }
-
-// export async function verifyResponse(data: any): Promise<any> {
-//   try {
-//     const response = await fetch(`${url}/verify_response/`, {
-//       method: 'POST',
-//       credentials: 'include',
-//       headers: {
-//         'Content-Type': 'application/json',
-//       },
-//       body: JSON.stringify(data),
-//     });
-
-//     if (!response.ok) {
-//       throw new Error('Network response not ok');
-//     }
-//     const res = await response.json();
-//     return res;
-//   } catch (error) {
-//     console.error('There was a problem with the fetch operation:', error);
-//   }
-// }

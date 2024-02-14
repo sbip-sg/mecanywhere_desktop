@@ -1,5 +1,7 @@
 import { useEffect, useState } from 'react';
 import { Box, Typography } from '@mui/material';
+import { useSelector } from 'react-redux';
+import { RootState } from 'renderer/redux/store';
 import { MetaMaskSDK, SDKProvider } from '../../../node_modules/@metamask/sdk';
 import Web3 from '../../../node_modules/web3';
 import QRCodePopover from './QRCodePopover';
@@ -8,14 +10,19 @@ import WalletConnected from './WalletConnected';
 import PaymentPopover from './PaymentPopover';
 import WithdrawalPopover from './WithdrawalPopover';
 import ErrorDialog from '../common/ErrorDialogue';
+import actions from '../../redux/actionCreators';
 
 const Payment = () => {
-  const [connected, setConnected] = useState(false);
+  const provider = useSelector(
+    (state: RootState) => state.SDKProviderReducer.sdkProvider
+  );
+  const connected = useSelector(
+    (state: RootState) => state.SDKProviderReducer.connected
+  );
   const [account, setAccount] = useState('placeholderplaceholder');
   const [chainId, setChainId] = useState('placeholder');
   const [balance, setBalance] = useState(0.5);
   const [clientBalance, setClientBalance] = useState(0);
-  const [provider, setProvider] = useState<SDKProvider>();
   const [sdk, setSDK] = useState<MetaMaskSDK>();
   const [openQR, setOpenQR] = useState(false);
   const [openPayment, setOpenPayment] = useState(false);
@@ -73,7 +80,7 @@ const Payment = () => {
     setSDK(clientSdk);
     await clientSdk.init();
     const clientProvider = clientSdk.getProvider();
-    setProvider(clientProvider);
+    actions.setSDKProvider(clientProvider);
 
     clientProvider.on('chainChanged', (args) => {
       const argsArray = args as string[];
@@ -99,7 +106,7 @@ const Payment = () => {
     clientProvider.on('connect', () => {
       console.log('connected');
       setOpenQR(false);
-      setConnected(true);
+      actions.setSDKProviderConnected(true);
       setIsReversed(true);
       setQrCodeUrl('');
     });
@@ -145,7 +152,7 @@ const Payment = () => {
     sdk?.terminate();
     setAccount('');
     setChainId('');
-    setConnected(false);
+    actions.setSDKProviderConnected(false);
     setIsReversed(false);
     console.log('disconnected');
   };
