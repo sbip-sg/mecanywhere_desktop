@@ -2,12 +2,12 @@ FROM python:3.9-slim
 
 WORKDIR /app
 
-COPY requirements.txt requirements.txt
+COPY /src/requirements.txt requirements.txt
 
 RUN pip install torch==2.0.1+cpu --index-url https://download.pytorch.org/whl/cpu
 RUN pip install -r requirements.txt
 
-COPY app.py app.py
+COPY /src/app.py app.py
 
 EXPOSE 8080
 
