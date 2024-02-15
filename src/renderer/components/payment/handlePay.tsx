@@ -2,7 +2,7 @@
 // import { AbiItem } from '../../../node_modules/web3-utils';
 // import { AbiItem } from '../../../node_modules/web3-utils';
 import Web3 from '../../../node_modules/web3';
-import paymentContractAbi from './PaymentContract.json';
+import paymentContractAbi from '../../contracts/PaymentContract.json';
 
 const handlePay = async (
   provider: any,

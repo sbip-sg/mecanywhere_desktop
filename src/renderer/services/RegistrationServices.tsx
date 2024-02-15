@@ -1,7 +1,3 @@
-import { handle401Error } from './TokenRefreshServices';
-import Web3 from '../../node_modules/web3';
-import { MetaMaskSDK, SDKProvider } from '../../node_modules/@metamask/sdk';
-
 const url = process.env.REGISTRATION_SERVICE_API_URL;
 
 export async function createAccount(data: any): Promise<any> {
@@ -52,62 +48,19 @@ export async function registerHost(
   publicKeyType: number,
   blockTimeoutLimit: number,
   provider: any,
+  sender: string,
   retryCount = 0
 ) {
-  try {
-    const web3 = new Web3(provider);
-    const hostContract = hostContractAbi;
-    const contract = new web3.eth.Contract(
-      hostContract,
-      '0x77FBb5565331b0d4c8E5A6F40181F95239fcaA16'
-    );
-    // const amountToSend = web3.utils.toWei(amount.toString(), 'ether');
-    await contract.methods
-      .registerHost(publicKey, publicKeyType, blockTimeoutLimit)
-      .send({ from: '0x67c9badC4765ff6bF78130D559315854379f8a00' })
-      .on('transactionHash', (hash: any) => {
-        console.log('Transaction Hash:', hash);
-      })
-      .on('receipt', (receipt: any) => {
-        console.log('Transaction Receipt:', receipt);
-      })
-      .on('error', (error: any) => {
-        console.error('Transaction Error:', error);
-        throw new Error(error);
-      });
-    console.log('Register successful.');
-    return true;
-  } catch (error) {
-    console.error('Register error', error);
-  }
+  return false;
 }
 
-export async function deregisterHost(provider: any, retryCount = 0) {
-  try {
-    const web3 = new Web3(provider);
-    const hostContract = hostContractAbi;
-    const contract = new web3.eth.Contract(
-      hostContract,
-      '0x77FBb5565331b0d4c8E5A6F40181F95239fcaA16'
-    );
-    await contract.methods
-      .deleteHost('0x67c9badC4765ff6bF78130D559315854379f8a00')
-      .send({ from: '0x67c9badC4765ff6bF78130D559315854379f8a00' })
-      .on('transactionHash', (hash: any) => {
-        console.log('Transaction Hash:', hash);
-      })
-      .on('receipt', (receipt: any) => {
-        console.log('Transaction Receipt:', receipt);
-      })
-      .on('error', (error: any) => {
-        console.error('Transaction Error:', error);
-        throw new Error(error);
-      });
-    console.log('Deregister successful.');
-    return true;
-  } catch (error) {
-    console.error('Deregister error', error);
-  }
+export async function deregisterHost(
+  provider: any,
+  host: string,
+  sender: string,
+  retryCount = 0
+) {
+  return false;
 }
 
 export async function registerClient(token: string, did: string) {

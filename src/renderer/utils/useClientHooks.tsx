@@ -48,17 +48,18 @@ const useClientHooks = () => {
     const did = window.electron.store.get('did');
 
     const offloadJob = async (jobJson: string) => {
+      // post task on chain
       const jobJsonWithDid = `${jobJson.slice(0, -1)},"did":"${did}"}`;
       const reply = await offloadTask(accessToken, jobJsonWithDid);
       const { status, response, error, task_id, transaction_id } = reply;
 
-      window.electron.jobResultsReceived(
-        status,
-        response,
-        error,
-        task_id,
-        transaction_id
-      );
+      // window.electron.jobResultsReceived(
+      //   status,
+      //   response,
+      //   error,
+      //   task_id,
+      //   transaction_id
+      // );
       // actions.addJob(id, status);
     };
 

@@ -2,13 +2,15 @@ import {
   unpauseExecutor,
   pauseExecutor,
 } from 'renderer/services/ExecutorServices';
-import log from 'electron-log/renderer';
 import {
   registerHost,
   deregisterHost,
+} from 'renderer/services/HostContractService';
+import {
   registerClient,
   deregisterClient,
-} from '../../services/RegistrationServices';
+} from 'renderer/services/RegistrationServices';
+import log from 'electron-log/renderer';
 import reduxStore from '../../redux/store';
 
 export const handleRegisterHost = async () => {
@@ -20,7 +22,14 @@ export const handleRegisterHost = async () => {
   const { accessToken } = reduxStore.getState().userReducer;
   const publicKey = window.electron.store.get('publicKey');
   if (did && accessToken) {
-    const response = await registerHost(publicKey, 1, 1, paymentProvider);
+    const response = await registerHost(
+      publicKey,
+      1,
+      1,
+      1,
+      paymentProvider,
+      did
+    );
     if (response) {
       const unpauseResponse = await unpauseExecutor();
       if (!unpauseResponse) {
@@ -44,10 +53,9 @@ export const handleDeregisterHost = async () => {
   if (!pauseResponse) {
     console.error('Pause failed.');
   }
-  log.info('in deregister');
-  const response = await deregisterHost(paymentProvider);
+  const did = window.electron.store.get('did');
+  const response = await deregisterHost(paymentProvider, did, did);
   if (response) {
-    const did = window.electron.store.get('did');
     window.electron.stopConsumer(did);
     log.info('successfully deregistered');
   } else {
