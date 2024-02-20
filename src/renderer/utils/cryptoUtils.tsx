@@ -106,3 +106,22 @@ export const signMessage = (privateKey: string, message: string) => {
   }
   return utf8ToHex(signature.signature);
 };
+
+export const splitHexByByteSize = (hex: string, size: number) => {
+  if (!isHexString(hex)) {
+    throw new Error('Input is not a valid hex string');
+  }
+  if (size <= 0) {
+    throw new Error('Size must be greater than 0');
+  }
+  const charSize = size * 2;
+  const paddedHex = hex.padEnd(
+    hex.length + charSize - (hex.length % charSize),
+    '0'
+  );
+  const hexArray = [];
+  for (let i = 0; i < paddedHex.length; i += charSize) {
+    hexArray.push(paddedHex.slice(i, i + charSize));
+  }
+  return hexArray;
+};

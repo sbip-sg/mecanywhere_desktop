@@ -1,11 +1,12 @@
-import Web3 from '../../node_modules/web3';
+import Web3 from 'web3';
 import hostContract from '../contracts/artifacts/contracts/HostContract.sol/MecaHostContract.json';
 
 const hostContractAddr = process.env.HOST_CONTRACT_ADDRESS;
 const hostContractAbi = hostContract.abi;
 
-export async function registerHost(
-  publicKeyByteArray: string[],
+export async function registerHostForTower(
+  publicKey: string,
+  publicKeyType: number,
   blockTimeoutLimit: number,
   stake: number,
   provider: any,
@@ -14,9 +15,9 @@ export async function registerHost(
   try {
     const web3 = new Web3(provider);
     const contract = new web3.eth.Contract(hostContractAbi, hostContractAddr);
-    const amountToSend = web3.utils.toWei(stake, 'ether');
+    const amountToSend = web3.utils.toWei(stake.toString(), 'ether');
     await contract.methods
-      .registerAsHost(publicKeyByteArray, blockTimeoutLimit)
+      .registerHostForTower(publicKey, publicKeyType, blockTimeoutLimit)
       .send({ from: sender, value: amountToSend })
       .on('transactionHash', (hash: any) => {
         console.log('Transaction Hash:', hash);

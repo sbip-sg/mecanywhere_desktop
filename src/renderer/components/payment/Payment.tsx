@@ -14,13 +14,17 @@ import actions from '../../redux/actionCreators';
 
 const Payment = () => {
   const provider = useSelector(
-    (state: RootState) => state.SDKProviderReducer.sdkProvider
+    (state: RootState) => state.paymentProviderReducer.sdkProvider
   );
-  const connected = useSelector(
-    (state: RootState) => state.SDKProviderReducer.connected
+  const providerConnected = useSelector(
+    (state: RootState) => state.paymentProviderReducer.connected
   );
-  const [account, setAccount] = useState('placeholderplaceholder');
-  const [chainId, setChainId] = useState('placeholder');
+  const account = useSelector(
+    (state: RootState) => state.paymentProviderReducer.accounts[0]
+  );
+  const chainId = useSelector(
+    (state: RootState) => state.paymentProviderReducer.chainId
+  );
   const [balance, setBalance] = useState(0.5);
   const [clientBalance, setClientBalance] = useState(0);
   const [sdk, setSDK] = useState<MetaMaskSDK>();
@@ -39,15 +43,12 @@ const Payment = () => {
 
   useEffect(()=>{
     console.log("sdk", sdk)
-  }, [sdk])
-
-  useEffect(()=>{
     console.log("provider", provider)
-  }, [provider])
+  }, [providerConnected]);
 
   useEffect(() => {
     const getClientBalance = async () => {
-      if (provider && account.length === 42) {
+      if (provider && account && account.length === 42) {
         const clientBalanceHex = await provider.request({
           method: 'eth_getBalance',
           params: [account, 'latest'],
@@ -87,7 +88,7 @@ const Payment = () => {
       const chain = argsArray[0];
       if (chain) {
         console.log(`chainChanged ${chain}`);
-        setChainId(chain);
+        actions.setPaymentChainId(chain);
       } else {
         console.error('chainChanged event did not provide a string argument');
       }
@@ -100,7 +101,7 @@ const Payment = () => {
         return;
       }
       console.log(`accountsChanged ${accounts}`);
-      setAccount(accounts[0]);
+      actions.setPaymentAccounts(accounts);
     });
 
     clientProvider.on('connect', () => {
@@ -121,11 +122,11 @@ const Payment = () => {
       .request({ method: 'eth_requestAccounts' })
       .then((accounts) => {
         const accountsArray = accounts as string[];
-        const acc = accountsArray[0];
+        // const acc = accountsArray[0];
         const chain = clientProvider.chainId;
-        setAccount(acc);
+        actions.setPaymentAccounts(accountsArray);
         if (chain !== null) {
-          setChainId(chain);
+          actions.setPaymentChainId(chain);
         } else {
           console.log('Chain ID is null');
         }
@@ -150,8 +151,8 @@ const Payment = () => {
 
   const handleDisconnect = () => {
     sdk?.terminate();
-    setAccount('');
-    setChainId('');
+    actions.setPaymentAccounts([]);
+    actions.setPaymentChainId('');
     actions.setSDKProviderConnected(false);
     setIsReversed(false);
     console.log('disconnected');
@@ -168,7 +169,7 @@ const Payment = () => {
         Payment
       </Typography>
 
-      {connected ? (
+      {providerConnected ? (
         <WalletConnected
           handleDisconnect={handleDisconnect}
           account={account}

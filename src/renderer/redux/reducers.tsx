@@ -54,14 +54,18 @@ const initialDeviceStats: DeviceStats = {
   gpuModel: '',
 };
 
-interface SDKProviderState {
+interface PaymentProviderState {
   sdkProvider: SDKProvider | null;
   connected: boolean;
+  accounts: string[];
+  chainId: string;
 }
 
-const initialSDKProviderState: SDKProviderState = {
+const initialPaymentProviderState: PaymentProviderState = {
   sdkProvider: null,
   connected: false,
+  accounts: [],
+  chainId: '',
 };
 
 export const transactionDetailsReducer = (state = {}, action: any) => {
@@ -181,20 +185,30 @@ const jobsReducer = (
   }
 };
 
-const SDKProviderReducer = (
-  state: SDKProviderState = initialSDKProviderState,
+const paymentProviderReducer = (
+  state: PaymentProviderState = initialPaymentProviderState,
   action: any
-): SDKProviderState => {
+): PaymentProviderState => {
   switch (action.type) {
     case 'setSDKProvider':
       return {
         ...state,
         sdkProvider: action.payload,
       };
-    case 'setConnected':
+    case 'setSDKProviderConnected':
       return {
         ...state,
         connected: action.payload,
+      };
+    case 'setPaymentAccounts':
+      return {
+        ...state,
+        accounts: action.payload,
+      };
+    case 'setPaymentChainId':
+      return {
+        ...state,
+        chainId: action.payload,
       };
     default:
       return state;
@@ -208,7 +222,7 @@ const reducers = combineReducers({
   themeReducer: themeReducer,
   importingAccountReducer: importingAccountReducer,
   deviceStatsReducer: deviceStatsReducer,
-  SDKProviderReducer: SDKProviderReducer,
+  paymentProviderReducer: paymentProviderReducer,
 });
 
 export default reducers;

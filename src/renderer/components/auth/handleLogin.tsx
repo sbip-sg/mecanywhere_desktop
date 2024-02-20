@@ -13,7 +13,7 @@ const handleLogin = async (password: string): Promise<boolean> => {
     console.error('Error starting executor:', executorError);
     throw executorError;
   }
-  return true; // should only return true if signed VP is verified
+  return true;
 };
 
 const startExecutor = async (containerName: string) => {

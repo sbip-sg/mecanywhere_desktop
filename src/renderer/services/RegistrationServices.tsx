@@ -1,26 +1,5 @@
 const url = process.env.REGISTRATION_SERVICE_API_URL;
 
-export async function createAccount(data: any): Promise<any> {
-  try {
-    const response = await fetch(`${url}/create_account/`, {
-      method: 'POST',
-      credentials: 'include',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify(data),
-    });
-    if (!response.ok) {
-      throw new Error('Network response not ok');
-    }
-    const res = await response.json();
-    console.log('account res', res);
-    return res;
-  } catch (error) {
-    throw error;
-  }
-}
-
 export async function authenticate(did: string, credential: object) {
   console.log('did', did);
   console.log('credential', credential);

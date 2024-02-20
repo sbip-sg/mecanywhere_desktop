@@ -130,17 +130,14 @@ const HostSharingWidget = () => {
             cpu: executorSettings.cpu_cores,
             mem: executorSettings.memory_mb,
           });
-          await handleRegisterHost(
-            executorSettings.cpu_cores,
-            executorSettings.memory_mb
-          );
+          await handleRegisterHost();
           const initialResources = await getResourceStats();
           setInitialResourcesLog(initialResources);
           setResourceSharingEnabled(true);
         }
       }
     } catch (error) {
-      setErrorMessage("Container is not valid or doesn't exist");
+      setErrorMessage(`${error}`);
       setErrorDialogOpen(true);
       console.error('Error:', error);
     } finally {

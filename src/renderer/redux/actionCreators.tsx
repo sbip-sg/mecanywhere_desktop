@@ -67,6 +67,16 @@ const setSDKProviderConnected: ActionCreator<AnyAction> = (payload: any) => ({
   payload,
 });
 
+const setPaymentAccounts: ActionCreator<AnyAction> = (payload: any) => ({
+  type: 'setPaymentAccounts',
+  payload,
+});
+
+const setPaymentChainId: ActionCreator<AnyAction> = (payload: any) => ({
+  type: 'setPaymentChainId',
+  payload,
+});
+
 const boundToDoActions = bindActionCreators(
   {
     setAuthenticated,
@@ -82,6 +92,8 @@ const boundToDoActions = bindActionCreators(
     setDeviceStats,
     setSDKProvider,
     setSDKProviderConnected,
+    setPaymentAccounts,
+    setPaymentChainId,
   },
   reduxStore.dispatch
 );
