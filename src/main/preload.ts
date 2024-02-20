@@ -16,6 +16,9 @@ const electronHandler = {
     get(key) {
       return ipcRenderer.sendSync(Channels.STORE_GET, key);
     },
+    equals(key, val) {
+      return ipcRenderer.sendSync(Channels.STORE_EQUALS, key, val);
+    },
     set(property, val) {
       ipcRenderer.send(Channels.STORE_SET, property, val);
     },

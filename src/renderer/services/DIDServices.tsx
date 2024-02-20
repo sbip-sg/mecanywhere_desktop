@@ -1,38 +1,24 @@
 const verifier_url = process.env.DID_VERIFIER_SERVICE_API_URL;
 const issuer_url = process.env.DID_ISSUER_SERVICE_API_URL;
 
-export async function createKeyPair() {
+export async function createDID(publicKey: string): Promise<any> {
   try {
-    const response = await fetch(`${verifier_url}/api/v1/did/genkey`, {
-      method: 'GET',
+    const response = await fetch(`${verifier_url}/api/v1/did/create`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({ publicKey }),
     });
-
     if (!response.ok) {
-      throw new Error('Network response not ok');
+      throw new Error(`HTTP error! Status: ${response.status}`);
     }
-
     const data = await response.json();
-    console.log('keypair', data);
     return data;
   } catch (error) {
-    console.error('There was a problem with the fetch operation:', error);
+    console.error('Error creating DID:', error);
     throw error;
   }
-}
-
-export async function addPublicKey(publicKey: string): Promise<string> {
-  const response = await fetch(`${verifier_url}/api/v1/did/addPublicKey`, {
-    method: 'POST',
-    headers: {
-      'Content-Type': 'application/json',
-    },
-    body: JSON.stringify(publicKey),
-  });
-  if (!response.ok) {
-    throw new Error('Network response not ok');
-  }
-  const data = await response.json();
-  return data as string; // contains DID
 }
 
 export async function verifyCredential(
@@ -47,7 +33,7 @@ export async function verifyCredential(
   });
 
   if (!response.ok) {
-    throw new Error('Network response not ok');
+    throw new Error(`HTTP error! Status: ${response.status}`);
   }
 
   const data = await response.json();

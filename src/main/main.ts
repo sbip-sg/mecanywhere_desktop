@@ -23,13 +23,14 @@ import log from 'electron-log/main';
 import MenuBuilder from './menu';
 import { resolveHtmlPath } from './util';
 import Channels from '../common/channels';
+
 const fs = require('fs');
 const os = require('os');
 const Store = require('electron-store');
 const io = require('socket.io')();
 const Docker = require('dockerode');
 
-process.env['ELECTRON_DISABLE_SECURITY_WARNINGS'] = 'true';
+process.env.ELECTRON_DISABLE_SECURITY_WARNINGS = 'true';
 
 log.initialize({ preload: true });
 // log.info('Log from the main process');
@@ -123,6 +124,15 @@ appdev_server.on('connection', (socket) => {
   }
 });
 
+ipcMain.on(Channels.STORE_EQUALS, async (event, key, value) => {
+  const encryptedKey = store.get(key);
+  if (encryptedKey !== undefined) {
+    event.returnValue = safeStorage.decryptString(Buffer.from(encryptedKey, 'latin1')) === value;
+  } else {
+    event.returnValue = false;
+  }
+});
+
 ipcMain.on(Channels.STORE_GET, async (event, key) => {
   try {
     const encryptedKey = store.get(key);
@@ -213,7 +223,7 @@ ipcMain.on(Channels.RUN_EXECUTOR_CONTAINER, async (event, containerName) => {
       }
 
       const existingContainer = containers.find((c) =>
-        c.Names.includes('/' + containerName)
+        c.Names.includes(`/${containerName}`)
       );
 
       if (existingContainer) {
@@ -416,7 +426,7 @@ ipcMain.on(Channels.CHECK_CONTAINER_GPU_SUPPORT, (event, containerName) => {
     }
 
     const containerInfo = containers.find((c) =>
-      c.Names.includes('/' + containerName)
+      c.Names.includes(`/${containerName}`)
     );
 
     if (containerInfo) {

@@ -39,6 +39,8 @@ const Login = () => {
         if (userIsAuthenticated) {
           actions.setAuthenticated(true);
           navigate('/txndashboard');
+        } else {
+          throw new Error('Wrong password');
         }
       } catch (error) {
         if (error instanceof Error) {

@@ -1,3 +1,4 @@
+import { createDID } from 'renderer/services/DIDServices';
 import {
   generateMnemonicAndKeyPair,
   uint8ArrayToDecimal,
@@ -5,7 +6,6 @@ import {
   encryptWithPassword,
   generateKeyPair,
 } from '../../utils/cryptoUtils';
-import { createAccount } from '../../services/RegistrationServices';
 
 const handleAccountRegistration = async (
   password: string,
@@ -14,32 +14,26 @@ const handleAccountRegistration = async (
   try {
     let MnemonicAndKeyPair;
     let didToSet;
-    let credentialToSet;
     if (skipRegenerateMnemonics) {
       // importing account
       const mnemonics = window.electron.store.get('mnemonic');
       MnemonicAndKeyPair = await generateKeyPair(mnemonics);
       didToSet = window.electron.store.get('did-temp');
-      credentialToSet = window.electron.store.get('credential-temp');
     } else {
       // create entirely new account
       MnemonicAndKeyPair = await generateMnemonicAndKeyPair();
       if (typeof MnemonicAndKeyPair === 'undefined') {
         throw new Error('Key pair generation failed.');
       }
-      console.log("MnemonicAndKeyPair.publicKey", MnemonicAndKeyPair.publicKey)
-      const { did, credential } = await createAccount({
-        publicKey: uint8ArrayToDecimal(MnemonicAndKeyPair.publicKey),
-      });
-      if (!credential.result) {
-        throw new Error(`error${credential.errorMessage}`);
-      }
+      const did = await createDID(
+        uint8ArrayToDecimal(MnemonicAndKeyPair.publicKey)
+      );
       didToSet = did;
-      credentialToSet = JSON.stringify({ credential: credential.result });
     }
     const { mnemonic, publicKey, privateKey, publicKeyCompressed } =
       MnemonicAndKeyPair;
 
+    window.electron.store.set('password', password);
     window.electron.store.set('mnemonic', mnemonic); // need to save mnemonic?
     window.electron.store.set(
       'publicKeyCompressed',
@@ -51,7 +45,6 @@ const handleAccountRegistration = async (
       encryptWithPassword(utf8ToHex(privateKey), password)
     );
     window.electron.store.set('did', didToSet);
-    window.electron.store.set('credential', credentialToSet);
     window.electron.store.set('isExecutorSettingsSaved', 'true');
     window.electron.store.set(
       'executorSettings',
