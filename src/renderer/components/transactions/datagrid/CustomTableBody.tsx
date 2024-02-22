@@ -10,7 +10,7 @@ interface CustomTableBodyProps<T> {
   handleTableRowClick: (_query: string) => void;
   propConfigList: PropConfig<DataEntry>[];
   emptyRows: number;
-  addRightPadding: boolean;
+  addRightPadding: number;
   maxRowHeight: number;
 }
 const CustomTableBody: React.FC<CustomTableBodyProps<DataEntry>> = ({
@@ -29,11 +29,11 @@ const CustomTableBody: React.FC<CustomTableBodyProps<DataEntry>> = ({
             onClick={() => handleTableRowClick(data.transaction_id)}
             key={data.transaction_id}
             maxRowHeight={maxRowHeight}
-            isheader={false}
+            isheader={0}
           >
             {propConfigList.map((config) => (
               <StyledTableCell
-                addRightPadding={addRightPadding}
+                addrightpadding={addRightPadding}
                 key={config.property}
               >
                 {config.renderer(data as any)}
@@ -49,10 +49,10 @@ const CustomTableBody: React.FC<CustomTableBodyProps<DataEntry>> = ({
           style={{
             height: 13 * emptyRows,
           }}
-          isheader={false}
+          isheader={0}
         >
           <StyledTableCell
-            addRightPadding={addRightPadding}
+            addrightpadding={addRightPadding}
             colSpan={propConfigList.length}
           />
         </StyledTableRow>

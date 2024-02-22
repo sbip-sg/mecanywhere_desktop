@@ -18,7 +18,7 @@ interface CustomTableHeadProps {
   order: Order;
   orderBy: string;
   propConfigList: PropConfig<DataEntry>[] | PropConfig<DataEntry>[];
-  addRightPadding: boolean;
+  addRightPadding: number;
   maxRowHeight: number;
 }
 
@@ -39,10 +39,10 @@ const CustomTableHead = (props: CustomTableHeadProps) => {
 
   return (
     <TableHead>
-      <StyledTableRow maxRowHeight={maxRowHeight} isheader>
+      <StyledTableRow maxRowHeight={maxRowHeight} isheader={1}>
         {propConfigList.map((config) => (
           <StyledTableCell
-            addRightPadding={addRightPadding}
+            addrightpadding={addRightPadding}
             key={config.property}
             sortDirection={orderBy === config.property ? order : false}
           >

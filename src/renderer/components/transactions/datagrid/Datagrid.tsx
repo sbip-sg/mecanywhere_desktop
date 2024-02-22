@@ -128,7 +128,7 @@ const Datagrid: React.FC<DatagridProps> = ({
             orderBy={orderBy}
             onRequestSort={handleRequestSort}
             propConfigList={propConfigList}
-            addRightPadding={addRightPadding}
+            addRightPadding={addRightPadding ? 1 : 0}
             maxRowHeight={maxRowHeight}
           />
           <CustomTableBody
@@ -136,7 +136,7 @@ const Datagrid: React.FC<DatagridProps> = ({
             handleTableRowClick={handleTableRowClick}
             propConfigList={propConfigList}
             emptyRows={emptyRows}
-            addRightPadding={addRightPadding}
+            addRightPadding={addRightPadding ? 1 : 0}
             maxRowHeight={maxRowHeight}
           />
         </Table>

@@ -3,12 +3,12 @@ import TableCell, { tableCellClasses } from '@mui/material/TableCell';
 import { styled } from '@mui/material/styles';
 
 interface StyledTableCellProps extends React.ComponentProps<typeof TableCell> {
-  addRightPadding: boolean;
+  addrightpadding: number;
 }
 
 const StyledTableCell = styled(({ ...otherProps }) => (
   <TableCell {...otherProps} />
-))<StyledTableCellProps>(({ addRightPadding }) => ({
+))<StyledTableCellProps>(({ addrightpadding }) => ({
   [`&.${tableCellClasses.head}`]: {
     backgroundColor: 'primary.dark',
     color: 'primary.main',
@@ -18,7 +18,8 @@ const StyledTableCell = styled(({ ...otherProps }) => (
     whiteSpace: 'nowrap',
     padding: '0 0.3rem',
     '&:last-child': {
-      padding: addRightPadding ? '0rem 1rem 0rem 0rem' : '0rem 0rem 0rem 0rem',
+      padding:
+        addrightpadding === 1 ? '0rem 1rem 0rem 0rem' : '0rem 0rem 0rem 0rem',
     },
   },
   [`&.${tableCellClasses.body}`]: {
@@ -27,7 +28,8 @@ const StyledTableCell = styled(({ ...otherProps }) => (
     padding: '0 0.3rem',
     whiteSpace: 'nowrap',
     '&:last-child': {
-      padding: addRightPadding ? '0rem 1rem 0rem 0rem' : '0rem 0rem 0rem 0rem',
+      padding:
+        addrightpadding === 1 ? '0rem 1rem 0rem 0rem' : '0rem 0rem 0rem 0rem',
     },
     borderColor: 'text.secondary',
   },

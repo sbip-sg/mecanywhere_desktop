@@ -4,7 +4,7 @@ import { styled } from '@mui/material/styles';
 
 interface StyledTableRowProps extends React.ComponentPropsWithoutRef<'tr'> {
   maxRowHeight: number;
-  isheader: boolean;
+  isheader: number;
 }
 
 const StyledTableRow = styled(TableRow, {
@@ -13,7 +13,7 @@ const StyledTableRow = styled(TableRow, {
   '&:last-child td, &:last-child th': {
     border: 0,
   },
-  ...(isheader && {
+  ...(isheader === 1 && {
     '&:hover': {
       backgroundColor: `${theme.palette.background.default} !important`,
     },
