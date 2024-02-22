@@ -26,6 +26,7 @@ const ImportSeedPhrase = () => {
 
   const handlePasteMnemonics = async () => {
     const pastedText = await navigator.clipboard.readText();
+    console.log("pastedText", pastedText)
     const pastedWords = pastedText.split(/\s+/).slice(0, 12);
     setWords(pastedWords.concat(Array(12 - pastedWords.length).fill('')));
   };

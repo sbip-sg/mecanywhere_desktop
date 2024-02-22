@@ -5,6 +5,7 @@
 // import { signMessage, decryptWithPassword } from '../../utils/cryptoUtils';
 import { authenticate } from 'renderer/services/RegistrationServices';
 import actions from '../../redux/actionCreators';
+import { error } from 'console';
 
 const handleLogin = async (password: string): Promise<boolean | undefined> => {
   const did = window.electron.store.get('did');

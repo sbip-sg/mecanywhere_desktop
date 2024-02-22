@@ -1,10 +1,24 @@
 # Example task containers
 
-This folder contains example task containers showing how to build your own task container. Each folder contains a Dockerfile and an entrypoint file that handles the request, which is all that is needed for building the task container.
+This folder contains example task containers showing how to build your own task container. Each folder contains a Dockerfile and an entrypoint file that handles the request, which is all that is needed for building the task container. 
+
+## Structure
+
+The structure of the task container is as follows:
+
+```
+- template
+  - Dockerfile
+  - src
+    - app.py
+  - description.txt
+  - name.txt
+  - example_input.bin
+  - example_output.bin
+
+```
 
 ## Building a task container
-
-You only need 2 files.
 
 ### 1. App that handles requests
 
@@ -45,6 +59,8 @@ CMD ["python", "-m", "flask", "--app", "flask_app.py", "run", "--host=0.0.0.0", 
 ```
 
 ### 3. Using the container
+
+> ! UNDER CONSTRUCTION
 
 Build the image and push it to a image repository that the host has access to (which may be public).
 

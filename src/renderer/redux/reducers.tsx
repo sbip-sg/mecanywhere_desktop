@@ -49,6 +49,8 @@ const initialDataEntry: DataEntry = {
 };
 
 const initialTaskList: TaskList = {
+  downloaded: [],
+  built: [],
   tested: [],
   activated: [],
 };

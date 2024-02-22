@@ -16,6 +16,7 @@ export async function createAccount(data: any): Promise<any> {
       throw new Error('Network response not ok');
     }
     const res = await response.json();
+    console.log("account res", res)
     return res;
   } catch (error) {
     throw error;
@@ -46,6 +47,8 @@ export async function heartbeat(token: string, did: string, retryCount = 0) {
 }
 
 export async function authenticate(did: string, credential: object) {
+  console.log("did", did)
+  console.log("credential", credential)
   try {
     const response = await fetch(`${url}/authentication/authenticate`, {
       method: 'POST',

@@ -17,11 +17,15 @@ const handleAccountRegistration = async (
     let credentialToSet;
     if (skipRegenerateMnemonics) {
       // importing account
+      // importing account
       const mnemonics = window.electron.store.get('mnemonic');
       MnemonicAndKeyPair = await generateKeyPair(mnemonics);
       didToSet = window.electron.store.get('did-temp');
       credentialToSet = window.electron.store.get('credential-temp');
+      didToSet = window.electron.store.get('did-temp');
+      credentialToSet = window.electron.store.get('credential-temp');
     } else {
+      // create entirely new account
       // create entirely new account
       MnemonicAndKeyPair = await generateMnemonicAndKeyPair();
       if (typeof MnemonicAndKeyPair === 'undefined') {

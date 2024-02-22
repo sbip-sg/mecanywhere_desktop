@@ -44,7 +44,8 @@ async def load_image():
     if not connected:
       await connect()
 
-    args = input_field.get()
+    prompt = prompt_field.get()
+    steps = steps_field.get()
 
     button.config(state=tk.DISABLED)
     label.config(text="Offoading task ...", image="")
@@ -52,7 +53,7 @@ async def load_image():
     await meca_api.offload_task(
       str(101),
       'sdtest:latest',
-      '{' + args + '}',
+      '{\"prompt\": \"' + prompt + '\", \"num_inference_steps\": ' + steps + '}',
       callback=callback_on_receive,
       resource={'cpu': 8, 'memory': 8192},
     )
@@ -61,15 +62,28 @@ async def load_image():
 
     await meca_api.join(500, 500)
 
-root = tk.Tk("Image generator")
+root = tk.Tk()
+root.title("Image generator")
 root.geometry("800x640")
 
-input_field = tk.Entry(root, width=100)
-input_field.insert(0, "\"prompt\": \"cute cat 4k, high-res, masterpiece, best quality, soft lighting, dynamic angle\", \"num_inference_steps\": 8")
-input_field.pack()
-input_field.focus()
+prompt = tk.Label(root, text="prompt")
+prompt.pack()
+
+prompt_field = tk.Entry(root, width=100)
+prompt_field.insert(0, "cute cat 4k, high-res, masterpiece, best quality, soft lighting, dynamic angle")
+prompt_field.pack(padx=10, pady=10)
+prompt_field.focus()
+
+steps = tk.Label(root, text="inference steps")
+steps.pack()
+
+steps_field = tk.Entry(root, width=100)
+steps_field.insert(0, "8")
+steps_field.pack(padx=10, pady=10)
+steps_field.focus()
 
 button = tk.Button(root, text="Load image", command=async_handler(load_image))
+button.config(bd=1, bg="#66cdaa", relief="ridge", fg="white", padx=10, pady=10)
 button.pack()
 
 label = tk.Label(root)
