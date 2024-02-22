@@ -1,5 +1,5 @@
 import Web3 from '../../node_modules/web3';
-import hostContract from '../contracts/artifacts/contracts/HostContract.sol/MecaHostContract.json';
+import hostContract from '../contracts/MecaHostContract.json';
 
 const hostContractAddr = process.env.HOST_CONTRACT_ADDRESS;
 const hostContractAbi = hostContract.abi;

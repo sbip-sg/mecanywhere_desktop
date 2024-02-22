@@ -1,5 +1,5 @@
 import Web3 from 'web3';
-import towerContract from '../contracts/artifacts/contracts/TowerContract.sol/MecaTowerContract.json';
+import towerContract from '../contracts/MecaTowerContract.json';
 
 const towerContractAddr = process.env.TOWER_CONTRACT_ADDRESS;
 const towerContractAbi = towerContract.abi;
