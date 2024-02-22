@@ -1,3 +1,5 @@
+import { SDKProvider } from '../../node_modules/@metamask/sdk';
+
 export interface DataEntry {
   duration: number;
   network_reliability: number;
@@ -129,4 +131,11 @@ export interface Task {
   gpuGas: number;
   blockTimeOut: number;
   fee: number;
+}
+
+export interface PaymentProviderState {
+  sdkProvider: SDKProvider | null;
+  connected: boolean;
+  accounts: string[];
+  chainId: string;
 }
