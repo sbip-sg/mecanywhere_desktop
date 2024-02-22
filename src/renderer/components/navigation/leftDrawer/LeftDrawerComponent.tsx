@@ -1,16 +1,17 @@
 import Box from '@mui/material/Box';
 import Drawer from '@mui/material/Drawer';
 import Toolbar from '@mui/material/Toolbar';
-import useIsLightTheme from 'renderer/components/common/useIsLightTheme';
+import useIsLightTheme from 'renderer/utils/useIsLightTheme';
 import List from '@mui/material/List';
 import DashboardIcon from '@mui/icons-material/Dashboard';
 import AccountBalanceIcon from '@mui/icons-material/AccountBalance';
 import MonetizationOnIcon from '@mui/icons-material/MonetizationOn';
+import ListAltIcon from '@mui/icons-material/ListAlt';
 import Typography from '@mui/material/Typography';
 import Divider from '@mui/material/Divider';
 import ListItemButton from '@mui/material/ListItemButton';
 import { useNavigate } from 'react-router-dom';
-import HostSharingWidget from './HostSharingWidget/HostSharingWidget';
+import HostSharingWidget from './HostSharingWidget';
 
 const LeftDrawerComponent = () => {
   const navigate = useNavigate();
@@ -32,7 +33,7 @@ const LeftDrawerComponent = () => {
         scrollbarGutter: 'stable',
       }}
     >
-      <Toolbar sx={{ backgroundColor: 'red' }} />
+      <Toolbar />
       <Box
         id="drawerlist-wrapper"
         sx={{
@@ -48,6 +49,9 @@ const LeftDrawerComponent = () => {
             onClick={() => navigate('/txndashboard')}
             key="hosttxn"
           >
+            {/* 
+              
+            */}
             <DashboardIcon
               sx={{ marginRight: listItemSpacing, color: 'text.primary' }}
             />
@@ -92,6 +96,25 @@ const LeftDrawerComponent = () => {
               sx={{ color: 'text.primary' }}
             >
               Payment
+            </Typography>
+          </ListItemButton>
+        </List>
+        <Divider />
+        <List disablePadding component="li">
+          <ListItemButton
+            onClick={() => {
+              navigate('/tasksmanagement');
+            }}
+            key="tasks"
+          >
+            <ListAltIcon
+              sx={{ marginRight: listItemSpacing, color: 'text.primary' }}
+            />
+            <Typography
+              margin={`${listTopBottomMargin} 0 ${listTopBottomMargin} 0`}
+              sx={{ color: 'text.primary' }}
+            >
+              Tasks Management
             </Typography>
           </ListItemButton>
         </List>

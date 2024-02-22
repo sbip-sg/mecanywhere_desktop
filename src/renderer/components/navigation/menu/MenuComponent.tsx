@@ -1,20 +1,19 @@
 import { useNavigate } from 'react-router-dom';
-import { useState } from 'react';
+import React, { useState } from 'react';
 import AppBar from '@mui/material/AppBar';
 import Toolbar from '@mui/material/Toolbar';
 import Typography from '@mui/material/Typography';
 import Box from '@mui/material/Box';
 import Button from '@mui/material/Button';
 import AccountCircleIcon from '@mui/icons-material/AccountCircle';
-import useIsLightTheme from 'renderer/components/common/useIsLightTheme';
-import { RightDrawerComponent } from '../rightDrawer';
+import useIsLightTheme from 'renderer/utils/useIsLightTheme';
 import { ReactComponent as Logo } from '../../../../../assets/LogoColor.svg';
 
-const MenuComponent = () => {
-  const [isRightDrawerOpen, setRightDrawerOpen] = useState(false);
-  const toggleRightDrawer = (open: boolean) => () => {
-    setRightDrawerOpen(open);
-  };
+interface MenuComponentProps {
+  toggleRightDrawer: (_open: boolean) => void;
+}
+
+const MenuComponent: React.FC<MenuComponentProps> = ({ toggleRightDrawer }) => {
   const isLightTheme = useIsLightTheme();
   const [isHovered, setIsHovered] = useState(false);
   const navigate = useNavigate();
@@ -38,10 +37,6 @@ const MenuComponent = () => {
         backgroundColor: 'primary.dark',
       }}
     >
-      <RightDrawerComponent
-        isOpen={isRightDrawerOpen}
-        onClose={toggleRightDrawer(false)}
-      />
       <Toolbar
         sx={{
           display: 'flex',

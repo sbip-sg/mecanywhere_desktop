@@ -17,6 +17,10 @@ module.exports = {
     'no-use-before-define': 'off',
     'no-await-in-loop': 'off',
     "no-unused-vars": ["error", { "argsIgnorePattern": "^_" }],
+    "react/jsx-props-no-spreading": "off",
+    "react/destructuring-assignment": "off",
+    'no-plusplus': "off",
+    'react/require-default-props': 'off',
     'react/function-component-definition': [
       2,
       {

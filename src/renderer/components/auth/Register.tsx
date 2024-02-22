@@ -4,10 +4,10 @@ import { Formik, Form, FormikHelpers } from 'formik';
 import CircularProgress from '@mui/material/CircularProgress';
 import { useSelector } from 'react-redux';
 import { useNavigate } from 'react-router-dom';
-import TextFieldWrapper from '../common/TextField';
-import { RegisterFormSchema } from '../common/FormSchema';
-import Transitions from '../transitions/Transition';
-import ErrorDialog from '../common/ErrorDialogue';
+import TextFieldWrapper from '../componentsCommon/TextField';
+import { RegisterFormSchema } from '../componentsCommon/FormSchema';
+import Transitions from '../../utils/Transition';
+import ErrorDialog from '../componentsCommon/ErrorDialogue';
 import { ReactComponent as Logo } from '../../../../assets/LogoColor.svg';
 import { RootState } from '../../redux/store';
 import handleAccountRegistration from './handleAccountRegistration';
@@ -34,10 +34,8 @@ const Register = () => {
       try {
         formActions.resetForm();
         const { password } = values;
-
         await handleAccountRegistration(password, isImportingAccount);
         navigate(isImportingAccount === true ? '/login' : '/mnemonics');
-        // navigate('/mnemonics', { state: { password } });
       } catch (error) {
         setErrorMessage(String(error));
         setErrorDialogOpen(true);

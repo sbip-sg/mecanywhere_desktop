@@ -1,8 +1,16 @@
-import { useEffect, useRef } from 'react';
+import React, { useEffect, useRef } from 'react';
 import lottie from 'lottie-web';
 import foxAnimation from './fox-in.json';
 
-const MetamaskAnimation = ({ useGrayscale, isReversed }) => {
+interface MetamaskAnimationProps {
+  useGrayscale: boolean;
+  isReversed: boolean;
+}
+
+const MetamaskAnimation: React.FC<MetamaskAnimationProps> = ({
+  useGrayscale,
+  isReversed,
+}) => {
   const animationContainer = useRef(null);
   const containerStyle = {
     width: '150px',

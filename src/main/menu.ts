@@ -76,7 +76,7 @@ export default class MenuBuilder {
         { label: 'Show All', selector: 'unhideAllApplications:' },
         { type: 'separator' },
         {
-          label: 'Quit',
+          label: 'Quits',
           accelerator: 'Command+Q',
           click: () => {
             app.quit();

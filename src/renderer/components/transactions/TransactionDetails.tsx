@@ -9,10 +9,9 @@ import {
   Card,
   CardContent,
 } from '@mui/material';
-import { useSelector } from 'react-redux';
 import ArrowBackIcon from '@mui/icons-material/ArrowBack';
-import { ExternalPropConfigList, InternalPropConfigList } from './propConfig';
-import reduxStore, { RootState } from '../../redux/store';
+import { PropConfigList } from './propConfig';
+import reduxStore from '../../redux/store';
 
 interface TitleTypographyProps {
   title: string;
@@ -34,6 +33,7 @@ const TitleTypography: React.FC<TitleTypographyProps> = ({ title }) => {
     </Typography>
   );
 };
+
 const DataTypography: React.FC<DataTypographyProps> = ({ data }) => {
   return (
     <Typography
@@ -47,14 +47,9 @@ const DataTypography: React.FC<DataTypographyProps> = ({ data }) => {
 };
 
 const TransactionDetails: React.FC = () => {
-  const propConfigList = ExternalPropConfigList;
+  const propConfigList = PropConfigList;
   const navigate = useNavigate();
-  const data =
-    reduxStore.getState().transactionDetailsReducer.transactionDetails;
-  console.log('transaction', data);
-  if (!data) {
-    return <div>Loading...</div>;
-  }
+  const dataEntry = reduxStore.getState().dataEntryReducer;
 
   return (
     <Stack
@@ -65,7 +60,6 @@ const TransactionDetails: React.FC = () => {
         display: 'flex',
         justifyContent: 'center',
         alignItems: 'center',
-        // overflow: 'auto !important',
       }}
     >
       <Stack
@@ -74,7 +68,6 @@ const TransactionDetails: React.FC = () => {
           width: '80%',
           display: 'flex',
           justifyContent: 'center',
-          // overflow: 'auto !important',
         }}
       >
         <Button
@@ -112,7 +105,7 @@ const TransactionDetails: React.FC = () => {
                   sx={{ color: 'secondary.contrastText', whiteSpace: 'pre' }}
                 >
                   {'   #'}
-                  {data.transaction_id}
+                  {dataEntry.transaction_id}
                 </Typography>
               </Grid>
               <Grid
@@ -126,12 +119,18 @@ const TransactionDetails: React.FC = () => {
               >
                 <Grid item xs={4.5} sx={{}}>
                   {propConfigList.map((config) => (
-                    <TitleTypography title={config.label} />
+                    <TitleTypography
+                      key={`title-${config.label}`}
+                      title={config.label}
+                    />
                   ))}
                 </Grid>
                 <Grid item xs={7.5}>
                   {propConfigList.map((config) => (
-                    <DataTypography data={config.renderer(data as any)} />
+                    <DataTypography
+                      key={`data-${config.label}`}
+                      data={config.renderer(dataEntry as any)}
+                    />
                   ))}
                 </Grid>
               </Grid>

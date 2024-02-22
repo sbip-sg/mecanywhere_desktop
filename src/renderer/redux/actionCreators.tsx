@@ -47,8 +47,8 @@ const setImportingAccount: ActionCreator<AnyAction> = (payload: any) => ({
   payload,
 });
 
-const setTransactionDetails: ActionCreator<AnyAction> = (payload: any) => ({
-  type: 'setTransactionDetails',
+const setDataEntry: ActionCreator<AnyAction> = (payload: any) => ({
+  type: 'setDataEntry',
   payload,
 });
 
@@ -77,6 +77,46 @@ const setPaymentChainId: ActionCreator<AnyAction> = (payload: any) => ({
   payload,
 });
 
+const addToDownloaded: ActionCreator<AnyAction> = (payload: any) => ({
+  type: 'addToDownloaded',
+  payload,
+});
+
+const removeFromDownloaded: ActionCreator<AnyAction> = (payload: any) => ({
+  type: 'removeFromDownloaded',
+  payload,
+});
+
+const addToBuilt: ActionCreator<AnyAction> = (payload: any) => ({
+  type: 'addToBuilt',
+  payload,
+});
+
+const removeFromBuilt: ActionCreator<AnyAction> = (payload: any) => ({
+  type: 'removeFromBuilt',
+  payload,
+});
+
+const addToTested: ActionCreator<AnyAction> = (payload: any) => ({
+  type: 'addToTested',
+  payload,
+});
+
+const removeFromTested: ActionCreator<AnyAction> = (payload: any) => ({
+  type: 'removeFromTested',
+  payload,
+});
+
+const addToActivated: ActionCreator<AnyAction> = (payload: any) => ({
+  type: 'addToActivated',
+  payload,
+});
+
+const removeFromActivated: ActionCreator<AnyAction> = (payload: any) => ({
+  type: 'removeFromActivated',
+  payload,
+});
+
 const boundToDoActions = bindActionCreators(
   {
     setAuthenticated,
@@ -87,13 +127,21 @@ const boundToDoActions = bindActionCreators(
     addJobResults,
     setJobResults,
     setColor,
-    setTransactionDetails,
+    setDataEntry,
     setImportingAccount,
     setDeviceStats,
     setSDKProvider,
     setSDKProviderConnected,
     setPaymentAccounts,
     setPaymentChainId,
+    addToDownloaded,
+    removeFromDownloaded,
+    addToBuilt,
+    removeFromBuilt,
+    addToTested,
+    removeFromTested,
+    addToActivated,
+    removeFromActivated,
   },
   reduxStore.dispatch
 );

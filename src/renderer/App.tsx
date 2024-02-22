@@ -17,7 +17,7 @@ import { useMemo } from 'react';
 import { useSelector } from 'react-redux';
 import { RootState } from 'renderer/redux/store';
 import NavigationLayout from './components/navigation/NavigationLayout';
-import Transitions from './components/transitions/Transition';
+import Transitions from './utils/Transition';
 import Register from './components/auth/Register';
 import Login from './components/auth/Login';
 import ImportSeedPhrase from './components/auth/ImportSeedPhrase';
@@ -25,13 +25,15 @@ import Mnemonics from './components/auth/Mnemonics';
 import Profile from './components/profile/Profile';
 import NavigationLayoutTransitionWrapper from './components/navigation/NavigationLayoutTransitionWrapper';
 import TxnDashboard from './components/transactions/TxnDashboard';
-import BillingDashboard from './components/billing/dashboard/BillingDashboard';
+import BillingDashboard from './components/billing/BillingDashboard';
 import TransactionDetails from './components/transactions/TransactionDetails';
 import Payment from './components/payment/Payment';
+import TasksManagement from './components/tasks/TasksManagement';
 import Settings from './components/settings/Settings';
 import { getDesignTokens } from './utils/theme';
 import useHandleAppExitHook from './utils/useHandleAppExitHook';
 import useClientHooks from './utils/useClientHooks';
+// import useHeartbeatHook from './utils/useHeartbeatHook';
 
 const PrivateRoutes = () => {
   const isAuthenticated = useSelector(
@@ -136,6 +138,14 @@ const Animated = () => {
           element={
             <Transitions>
               <TransactionDetails />
+            </Transitions>
+          }
+        />
+        <Route
+          path="/tasksmanagement"
+          element={
+            <Transitions>
+              <TasksManagement />
             </Transitions>
           }
         />

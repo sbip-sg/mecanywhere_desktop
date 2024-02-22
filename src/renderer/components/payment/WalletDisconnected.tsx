@@ -1,7 +1,16 @@
+import React from 'react';
 import { Button, Box, Typography, Stack } from '@mui/material';
 import MetamaskAnimation from './MetamaskAnimation';
 
-const WalletDisconnected = ({ handleConnect, isReversed }) => {
+interface WalletDisconnectedProps {
+  handleConnect: () => void;
+  isReversed: boolean;
+}
+
+const WalletDisconnected: React.FC<WalletDisconnectedProps> = ({
+  handleConnect,
+  isReversed,
+}) => {
   return (
     <Box
       sx={{

@@ -1,7 +1,7 @@
 const handleLogin = async (password: string): Promise<boolean> => {
   const did = window.electron.store.get('did');
   if (!did) {
-    throw new Error("No account detected on this device!")
+    throw new Error('No account detected on this device!');
   }
   const isCorrectPassword = window.electron.store.equals('password', password);
   if (!isCorrectPassword) {

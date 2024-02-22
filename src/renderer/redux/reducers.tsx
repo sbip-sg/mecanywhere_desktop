@@ -1,12 +1,14 @@
 import { combineReducers } from 'redux';
-import { Job, JobResult } from 'renderer/utils/jobs';
-import { SDKProvider } from '../../node_modules/@metamask/sdk';
-
-interface UserState {
-  authenticated: boolean;
-  accessToken: string;
-  refreshToken: string;
-}
+import {
+  DataEntry,
+  UserState,
+  ThemeState,
+  ImportingAccountState,
+  JobsState,
+  DeviceStats,
+  TaskList,
+  PaymentProviderState,
+} from 'renderer/utils/dataTypes';
 
 const initialUserState: UserState = {
   authenticated: false,
@@ -14,38 +16,18 @@ const initialUserState: UserState = {
   refreshToken: '',
 };
 
-interface ThemeState {
-  color: string;
-}
-
 const initialThemeState: ThemeState = {
   color: 'light',
 };
-
-interface ImportingAccountState {
-  importingAccount: boolean;
-}
 
 const initialImportingAccountState: ImportingAccountState = {
   importingAccount: false,
 };
 
-interface JobsState {
-  jobs: Job[];
-  jobResults: JobResult[];
-}
-
 const initialJobsState: JobsState = {
   jobs: [],
   jobResults: [],
 };
-
-interface DeviceStats {
-  totalCpuCores: number;
-  totalMem: number;
-  totalGpus: number;
-  gpuModel: string;
-}
 
 const initialDeviceStats: DeviceStats = {
   totalCpuCores: 4,
@@ -54,13 +36,6 @@ const initialDeviceStats: DeviceStats = {
   gpuModel: '',
 };
 
-interface PaymentProviderState {
-  sdkProvider: SDKProvider | null;
-  connected: boolean;
-  accounts: string[];
-  chainId: string;
-}
-
 const initialPaymentProviderState: PaymentProviderState = {
   sdkProvider: null,
   connected: false,
@@ -68,13 +43,33 @@ const initialPaymentProviderState: PaymentProviderState = {
   chainId: '',
 };
 
-export const transactionDetailsReducer = (state = {}, action: any) => {
+const initialDataEntry: DataEntry = {
+  duration: 0,
+  network_reliability: 0,
+  price: 0,
+  resource_cpu: 0,
+  resource_memory: 0,
+  role: '',
+  task_name: '',
+  transaction_end_datetime: 0,
+  transaction_start_datetime: 0,
+  transaction_id: '',
+};
+
+const initialTaskList: TaskList = {
+  downloaded: [],
+  built: [],
+  tested: [],
+  activated: [],
+};
+
+export const dataEntryReducer = (
+  state: DataEntry = initialDataEntry,
+  action: any
+) => {
   switch (action.type) {
-    case 'setTransactionDetails':
-      return {
-        ...state,
-        transactionDetails: action.payload,
-      };
+    case 'setDataEntry':
+      return action.payload;
     default:
       return state;
   }
@@ -152,7 +147,7 @@ const jobsReducer = (
   action: any
 ): JobsState => {
   switch (action.type) {
-    case 'addJob':
+    case 'addJob': {
       const newJob = {
         id: action.id,
         content: action.content,
@@ -161,12 +156,13 @@ const jobsReducer = (
         ...state,
         jobs: [...state.jobs, newJob],
       };
+    }
     case 'setJobs':
       return {
         ...state,
         jobs: [action.payload],
       };
-    case 'addJobResults':
+    case 'addJobResults': {
       const newJobResult = {
         id: action.id,
         content: action.content,
@@ -175,6 +171,7 @@ const jobsReducer = (
         ...state,
         jobResults: [...state.jobResults, newJobResult],
       };
+    }
     case 'setJobResults':
       return {
         ...state,
@@ -213,16 +210,87 @@ const paymentProviderReducer = (
     default:
       return state;
   }
+}
+
+export const taskListReducer = (
+  state: TaskList = initialTaskList,
+  action: any
+): TaskList => {
+  switch (action.type) {
+    case 'addToDownloaded':
+      if (!state.downloaded.includes(action.payload)) {
+        return {
+          ...state,
+          downloaded: [...state.downloaded, action.payload],
+        };
+      }
+      return state;
+    case 'removeFromDownloaded':
+      return {
+        ...state,
+        downloaded: state.downloaded.filter(
+          (taskName) => taskName !== action.payload
+        ),
+      };
+    case 'addToBuilt':
+      if (!state.built.includes(action.payload)) {
+        return {
+          ...state,
+          built: [...state.built, action.payload],
+        };
+      }
+      return state;
+    case 'removeFromBuilt':
+      return {
+        ...state,
+        built: state.built.filter((taskName) => taskName !== action.payload),
+      };
+    case 'addToTested':
+      if (!state.tested.includes(action.payload)) {
+        return {
+          ...state,
+          tested: [...state.tested, action.payload],
+        };
+      }
+      return state;
+
+    case 'removeFromTested':
+      return {
+        ...state,
+        tested: state.tested.filter((taskName) => taskName !== action.payload),
+      };
+
+    case 'addToActivated':
+      if (!state.activated.includes(action.payload)) {
+        return {
+          ...state,
+          activated: [...state.activated, action.payload],
+        };
+      }
+      return state;
+
+    case 'removeFromActivated':
+      return {
+        ...state,
+        activated: state.activated.filter(
+          (taskName) => taskName !== action.payload
+        ),
+      };
+
+    default:
+      return state;
+  }
 };
 
 const reducers = combineReducers({
   jobs: jobsReducer,
-  transactionDetailsReducer: transactionDetailsReducer,
-  userReducer: userReducer,
-  themeReducer: themeReducer,
-  importingAccountReducer: importingAccountReducer,
-  deviceStatsReducer: deviceStatsReducer,
+  dataEntryReducer,
+  userReducer,
+  themeReducer,
+  importingAccountReducer,
+  deviceStatsReducer,
   paymentProviderReducer: paymentProviderReducer,
+  taskList: taskListReducer,
 });
 
 export default reducers;

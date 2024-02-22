@@ -1,9 +1,33 @@
+import React from 'react';
 import { Button, Box, Typography, Stack, Grid } from '@mui/material';
-import MetamaskAnimation from './MetamaskAnimation';
-import handlePay from './handlePay';
 import CircularProgress from '@mui/material/CircularProgress';
+import MetamaskAnimation from './MetamaskAnimation';
 
-const InfoItem = ({
+interface InfoItemProps {
+  label: string;
+  value: string | number;
+  hasProgressCircle?: boolean;
+  isTransactionPending?: boolean;
+}
+
+interface CustomButtonProps {
+  text: string;
+  onClick: () => void;
+  backgroundColor?: string;
+  color?: string;
+}
+
+interface WalletConnectedProps {
+  handleDisconnect: () => void;
+  account: string;
+  chainId: string;
+  balance: number;
+  setOpenPayment: React.Dispatch<React.SetStateAction<boolean>>;
+  setOpenWithdrawal: React.Dispatch<React.SetStateAction<boolean>>;
+  isTransactionPending: boolean;
+}
+
+const InfoItem: React.FC<InfoItemProps> = ({
   label,
   value,
   hasProgressCircle = false,
@@ -66,7 +90,12 @@ const InfoItem = ({
   </>
 );
 
-const CustomButton = ({ text, onClick, backgroundColor = '', color = '' }) => (
+const CustomButton: React.FC<CustomButtonProps> = ({
+  text,
+  onClick,
+  backgroundColor = '',
+  color = '',
+}) => (
   <Button
     sx={{
       minWidth: '10rem',
@@ -80,7 +109,7 @@ const CustomButton = ({ text, onClick, backgroundColor = '', color = '' }) => (
   </Button>
 );
 
-const WalletConnected = ({
+const WalletConnected: React.FC<WalletConnectedProps> = ({
   handleDisconnect,
   account,
   chainId,
