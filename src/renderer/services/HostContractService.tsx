@@ -35,6 +35,34 @@ export async function registerHost(
   }
 }
 
+export async function updateBlockTimeoutLimit(
+  blockTimeoutLimit: number,
+  provider: any,
+  sender: string
+) {
+  try {
+    const web3 = new Web3(provider);
+    const contract = new web3.eth.Contract(hostContractAbi, hostContractAddr);
+    await contract.methods
+      .updateBlockTimeoutLimit(blockTimeoutLimit)
+      .send({ from: sender })
+      .on('transactionHash', (hash: any) => {
+        console.log('Transaction Hash:', hash);
+      })
+      .on('receipt', (receipt: any) => {
+        console.log('Transaction Receipt:', receipt);
+      })
+      .on('error', (error: any) => {
+        console.error('Transaction Error:', error);
+        throw new Error(error);
+      });
+    console.log('Update successful.');
+    return true;
+  } catch (error) {
+    console.error('Update error', error);
+  }
+}
+
 export async function deregisterHost(
   provider: any,
   host: string,

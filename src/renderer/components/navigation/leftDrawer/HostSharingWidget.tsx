@@ -131,7 +131,7 @@ const HostSharingWidget = () => {
             cpu: executorSettings.cpu_cores,
             mem: executorSettings.memory_mb,
           });
-          await handleRegisterHost();
+          await handleRegisterHost(1, 0.01);
           const initialResources = await getResourceStats();
           setInitialResourcesLog(initialResources);
           setResourceSharingEnabled(true);

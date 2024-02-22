@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import { Box, Typography } from '@mui/material';
+import { Box, Button, Typography } from '@mui/material';
 import { useSelector } from 'react-redux';
 import { RootState } from 'renderer/redux/store';
 import { MetaMaskSDK } from '../../../node_modules/@metamask/sdk';
@@ -10,6 +10,9 @@ import PaymentPopover from './PaymentPopover';
 import WithdrawalPopover from './WithdrawalPopover';
 import ErrorDialog from '../componentsCommon/ErrorDialogue';
 import actions from '../../redux/actionCreators';
+import { getTowers, registerMeForTower } from 'renderer/services/TowerContractService';
+
+const LOCAL_BLOCKCHAIN_URL = 'http://localhost:8545';
 
 const Payment = () => {
   const provider = useSelector(
@@ -42,7 +45,7 @@ const Payment = () => {
 
   useEffect(() => {
     const getClientBalance = async () => {
-      if (provider && account && account.length === 42) {
+      if (provider && account) {
         const clientBalanceHex = await provider.request({
           method: 'eth_getBalance',
           params: [account, 'latest'],
@@ -141,6 +144,23 @@ const Payment = () => {
     console.log('metamask disconnected');
   };
 
+  const handleLocalConnect = async () => {
+    const localProvider = new Web3.providers.HttpProvider(LOCAL_BLOCKCHAIN_URL);
+    const localWeb3 = new Web3(localProvider);
+    const accounts = await localWeb3.eth.getAccounts();
+    const chain = await localWeb3.eth.getChainId();
+    actions.setPaymentAccounts(accounts);
+    actions.setPaymentChainId(chain.toString());
+    actions.setSDKProvider(localProvider);
+    actions.setSDKProviderConnected(true);
+  };
+
+  const handleRegisterFirstTower = async () => {
+    const tower = ((await getTowers(provider)) as any[])[0];
+    const towerAddress = tower.address;
+    registerMeForTower(towerAddress, provider, account);
+  };
+
   return (
     <Box sx={{ height: '100%', padding: '3rem' }}>
       <Typography
@@ -151,7 +171,24 @@ const Payment = () => {
       >
         Payment
       </Typography>
-
+      {/* <Button
+        sx={{
+          padding: '0.5rem 1rem',
+          margin: '3rem 0',
+        }}
+        onClick={handleLocalConnect}
+      >
+        Connect locally
+      </Button>
+      <Button
+        sx={{
+          padding: '0.5rem 1rem',
+          margin: '3rem 0',
+        }}
+        onClick={handleRegisterFirstTower}
+      >
+        Register to the first tower
+      </Button> */}
       {providerConnected ? (
         <WalletConnected
           handleDisconnect={handleDisconnect}
