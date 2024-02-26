@@ -20,7 +20,20 @@ const electronHandler = {
       ipcRenderer.send(Channels.STORE_SET, property, val);
     },
   },
+  
+  openFileDialog: () => ipcRenderer.send('open-file-dialog'),
+  openDirectoryDialog: () => ipcRenderer.send('open-directory-dialog'),
+  onFileSelected: (callback) => ipcRenderer.on('selected-file', callback),
+  onDirectorySelected: (callback) => ipcRenderer.on('selected-directory', callback),
 
+  addDataToIPFS: (data) => {
+    return ipcRenderer.invoke(Channels.IPFS_ADD, data);
+  },
+  fetchDataFromIPFS: (cid) => ipcRenderer.invoke(Channels.IPFS_CAT, cid),
+  uploadFileToIPFS: (filePath) => ipcRenderer.invoke('upload-file-to-ipfs', filePath),
+  uploadFolderToIPFS: (folderPath) => ipcRenderer.invoke('upload-folder-to-ipfs', folderPath),
+  
+  downloadFromIPFS: (cid) => ipcRenderer.invoke('download-from-ipfs', cid),
   checkDockerDaemonRunning: () => {
     return new Promise<boolean>((resolve, reject) => {
       ipcRenderer.send(Channels.CHECK_DOCKER_DAEMON_RUNNING);
@@ -36,8 +49,18 @@ const electronHandler = {
       );
     });
   },
-
-
+  generateLargeFile: (sizeInMB) => {
+    return new Promise((resolve, reject) => {
+        ipcRenderer.send('IPFS_ADD_LARGE_FILE', sizeInMB);
+        ipcRenderer.once('IPFS_ADD_LARGE_FILE_RESPONSE', (event, success, filePath, error) => {
+            if (success) {
+                resolve(filePath);
+            } else {
+                reject(new Error(error));
+            }
+        });
+    });
+},
   removeExecutorContainer: (containerName: string) => {
     return new Promise<void>((resolve, reject) => {
       ipcRenderer.send(Channels.REMOVE_EXECUTOR_CONTAINER, containerName);

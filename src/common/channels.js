@@ -25,6 +25,12 @@ const Channels = {
   CLIENT_REGISTERED: 'client-registered',
   DEREGISTER_CLIENT: 'deregister-client',
   OFFLOAD_JOB: 'offload-job',
+  IPFS_ADD: 'ipfs-add',
+  IPFS_ADD_RESPONSE: 'ipfs-add-response',
+  IPFS_CAT: 'ipfs-cat',
+  IPFS_CAT_RESPONSE: 'ipfs-cat-response',
+  IPFS_ADD_LARGE_FILE: 'ipfs-add-large-file',
+  IPFS_ADD_LARGE_FILE_RESPONSE: 'ipfs-add-large-file-response'
 };
 
 export default Channels;

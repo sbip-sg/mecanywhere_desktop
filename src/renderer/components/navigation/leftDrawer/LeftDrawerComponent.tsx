@@ -119,6 +119,26 @@ const LeftDrawerComponent = () => {
           </ListItemButton>
         </List>
         <Divider />
+        <List disablePadding component="li">
+          <ListItemButton
+            onClick={() => {
+              navigate('/test');
+              console.log("aaa")
+            }}
+            key="test"
+          >
+            <ListAltIcon
+              sx={{ marginRight: listItemSpacing, color: 'text.primary' }}
+            />
+            <Typography
+              margin={`${listTopBottomMargin} 0 ${listTopBottomMargin} 0`}
+              sx={{ color: 'text.primary' }}
+            >
+              Test
+            </Typography>
+          </ListItemButton>
+        </List>
+        <Divider />
       </Box>
     </Drawer>
   );
