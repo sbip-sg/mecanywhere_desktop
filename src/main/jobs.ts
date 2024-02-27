@@ -28,33 +28,36 @@ export const stopConsumer = async (workerWindow, event, queueName) => {
   workerWindow.webContents.send(Channels.STOP_CONSUMER, queueName);
 };
 
-export const onClientRegistered = (socket) => async (event: IpcMainEvent, registered: boolean) => {
+export const onClientRegistered =
+  (socket) => async (event: IpcMainEvent, registered: boolean) => {
     console.log('Client registered: ', registered);
     socket.emit('registered', registered);
-};
+  };
 
-export const onJobResultsReceived = (socket) => async (
+export const onJobResultsReceived =
+  (socket) =>
+  async (
     event: IpcMainEvent,
     status: Number,
     response: String,
     error: String,
     taskId: String,
     transactionId: String
-) => {
+  ) => {
     console.log(
-        'Sending job results to client... ',
-        status,
-        response,
-        error,
-        taskId,
-        transactionId
+      'Sending job results to client... ',
+      status,
+      response,
+      error,
+      taskId,
+      transactionId
     );
     socket.emit(
-        'job_results_received',
-        status,
-        response,
-        error,
-        taskId,
-        transactionId
+      'job_results_received',
+      status,
+      response,
+      error,
+      taskId,
+      transactionId
     );
-};
+  };

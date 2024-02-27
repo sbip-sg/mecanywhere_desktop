@@ -37,7 +37,7 @@ const PastBillingCard: React.FC<PastBillingCardProps> = ({ groupedData }) => {
               color="text.primary"
               gutterBottom
             >
-              Past 6 Month Payouts
+              Past 6 Month Billing History
             </Typography>
           </Grid>
           <Grid xs={12}>
