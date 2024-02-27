@@ -16,6 +16,7 @@
   },
   "dependencies": {
     "@metamask/sdk": "^0.14.1",
+    "@types/dockerode": "^3.3.23",
     "dockerode": "^4.0.2",
     "secp256k1": "^5.0.0",
     "socket.io": "^4.7.4",
