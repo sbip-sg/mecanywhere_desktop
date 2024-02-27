@@ -7,6 +7,7 @@ import DashboardIcon from '@mui/icons-material/Dashboard';
 import AccountBalanceIcon from '@mui/icons-material/AccountBalance';
 import MonetizationOnIcon from '@mui/icons-material/MonetizationOn';
 import ListAltIcon from '@mui/icons-material/ListAlt';
+import FileUploadIcon from '@mui/icons-material/FileUpload';
 import Typography from '@mui/material/Typography';
 import Divider from '@mui/material/Divider';
 import ListItemButton from '@mui/material/ListItemButton';
@@ -122,19 +123,18 @@ const LeftDrawerComponent = () => {
         <List disablePadding component="li">
           <ListItemButton
             onClick={() => {
-              navigate('/test');
-              console.log("aaa")
+              navigate('/uploadtask');
             }}
-            key="test"
+            key="uploadtask"
           >
-            <ListAltIcon
+            <FileUploadIcon
               sx={{ marginRight: listItemSpacing, color: 'text.primary' }}
             />
             <Typography
               margin={`${listTopBottomMargin} 0 ${listTopBottomMargin} 0`}
               sx={{ color: 'text.primary' }}
             >
-              Test
+              Upload Task
             </Typography>
           </ListItemButton>
         </List>

@@ -29,7 +29,7 @@ import BillingDashboard from './components/billing/BillingDashboard';
 import TransactionDetails from './components/transactions/TransactionDetails';
 import Payment from './components/payment/Payment';
 import TasksManagement from './components/tasks/TasksManagement';
-import Test from './components/tasks/Test';
+import UploadTask from './components/tasks/UploadTask';
 import Settings from './components/settings/Settings';
 import { getDesignTokens } from './utils/theme';
 import useHandleAppExitHook from './utils/useHandleAppExitHook';
@@ -168,10 +168,10 @@ const Animated = () => {
         }
       />
       <Route
-        path="/test"
+        path="/uploadtask"
         element={
           <Transitions>
-            <Test />
+            <UploadTask />
           </Transitions>
         }
       />

@@ -25,7 +25,7 @@ const CustomButton: React.FC<CustomButtonProps> = ({
       sx={{
         color,
         backgroundColor,
-        width: '12rem',
+        width: '14rem',
         margin: '0 0 0.3rem 0',
         position: 'relative',
         '&:disabled': {

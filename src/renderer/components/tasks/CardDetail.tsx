@@ -1,4 +1,4 @@
-import { CardContent, Typography, Grid, Divider } from '@mui/material';
+import { CardContent, Typography, Grid, Divider, Typography  } from '@mui/material';
 
 interface LabelWithValueProps {
   label: string;
@@ -13,7 +13,7 @@ const LabelWithValue: React.FC<LabelWithValueProps> = ({ label, value }) => {
   );
 };
 
-const CardDetail = ({ task, testData, isTested }) => {
+const CardDetail = ({ task, isTested }) => {
   return (
     <CardContent>
       <Typography variant="h4" margin="0 0 0.5rem 0">
@@ -21,8 +21,8 @@ const CardDetail = ({ task, testData, isTested }) => {
       </Typography>
       <Grid container spacing={2}>
         <Grid item xs={12} md={3}>
-          <LabelWithValue label="Docker File CID" value={task.dockerFileCID} />
-          <LabelWithValue label="Object File CID" value={task.objectFileCID} />
+          <LabelWithValue label="Docker File CID" value={task.dockerFileCID.slice(0, 10)} />
+          <LabelWithValue label="Object File CID" value={task.objectFileCID.slice(0, 10)} />
         </Grid>
         <Grid item xs={12} md={3}>
           <LabelWithValue
@@ -43,7 +43,8 @@ const CardDetail = ({ task, testData, isTested }) => {
         {isTested && (
           <>
             <Divider orientation="vertical" flexItem />
-            <Grid item xs={12} md={3}>
+            <Typography variant="subtitle1" padding="0.5rem 0 0 0.5rem">File tested</Typography >
+            {/* <Grid item xs={12} md={3}>
               <LabelWithValue
                 label="Tested CPU Gas"
                 value={testData.TestedCpuGas}
@@ -53,7 +54,7 @@ const CardDetail = ({ task, testData, isTested }) => {
                 value={testData.TestedGpuGas}
               />
               <LabelWithValue label="Tested Fee" value={testData.TestedFee} />
-            </Grid>
+            </Grid> */}
           </>
         )}
       </Grid>

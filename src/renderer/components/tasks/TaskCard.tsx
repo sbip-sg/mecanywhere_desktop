@@ -1,3 +1,7 @@
+// add a method for checking locally if file has downloaded already
+// task fields: CID, Fee, Computing Type (gpu/cpu etc), size_io, size_folder (see if possible to check), name will be CID
+// test actual template, and integrate with docker
+
 import { Card, Typography, Grid, Stack } from '@mui/material';
 import React, { useState, useEffect } from 'react';
 import { useSelector } from 'react-redux';
@@ -30,11 +34,11 @@ const TaskCard: React.FC<TaskCardProps> = ({ task }) => {
   const [isDownloading, setIsDownloading] = useState(false);
   const [isBuilding, setIsBuilding] = useState(false);
   const [isTesting, setIsTesting] = useState(false);
-  const [testData, setTestData] = useState({
-    TestedCpuGas: 0,
-    TestedGpuGas: 0,
-    TestedFee: 0,
-  });
+  // const [testData, setTestData] = useState({
+  //   TestedCpuGas: 0,
+  //   TestedGpuGas: 0,
+  //   TestedFee: 0,
+  // });
 
   useEffect(() => {
     if (hasBeenTested(task.taskName)) {
@@ -66,11 +70,18 @@ const TaskCard: React.FC<TaskCardProps> = ({ task }) => {
   );
 
   const handleDownload = async () => {
-    setIsDownloading(true);
-    await new Promise((resolve) => setTimeout(resolve, 1000));
-    addToDownloaded(task.taskName);
-    setCurrentPhase('toBuild');
-    setIsDownloading(false);
+    try {
+      setIsDownloading(true);
+      console.log("handleDownload", task.objectFileCID)
+      await window.electron.downloadFromIPFS(task.objectFileCID);
+      addToDownloaded(task.taskName);
+      actions.addToDownloaded(task.taskName)
+      setCurrentPhase('toBuild');
+      setIsDownloading(false);
+    } catch (err) {
+      console.error('Error downloading from IPFS:', err);
+    }
+    // await new Promise((resolve) => setTimeout(resolve, 1000));
   };
 
   const handleBuild = async () => {
@@ -83,8 +94,10 @@ const TaskCard: React.FC<TaskCardProps> = ({ task }) => {
 
   const handleRunTest = async () => {
     setIsTesting(true);
-    await new Promise((resolve) => setTimeout(resolve, 1000));
-    setTestData(getTestData());
+    // await new Promise((resolve) => setTimeout(resolve, 1000));
+    const testRes = await window.electron.testReadFile(task.objectFileCID);
+    console.log("testRes", testRes)
+    // setTestData(getTestData());
     addToTested(task.taskName);
     actions.addToTested(task.taskName);
     setIsTesting(false);
@@ -100,13 +113,20 @@ const TaskCard: React.FC<TaskCardProps> = ({ task }) => {
     actions.removeFromActivated(task.taskName);
   };
 
-  const getTestData = () => {
-    return {
-      TestedCpuGas: Math.floor(Math.random() * (1000 - 100 + 1)) + 100,
-      TestedGpuGas: Math.floor(Math.random() * (1000 - 100 + 1)) + 100,
-      TestedFee: parseFloat((Math.random() * (1 - 0.5) + 0.5).toFixed(2)),
-    };
-  };
+  const handleDelete = async () => {
+    await window.electron.deleteFolder(task.objectFileCID)
+    removeFromDownloaded(task.taskName)
+    actions.removeFromDownloaded(task.taskName)
+    setCurrentPhase("toDownload")
+  }
+
+  // const getTestData = () => {
+  //   return {
+  //     TestedCpuGas: Math.floor(Math.random() * (1000 - 100 + 1)) + 100,
+  //     TestedGpuGas: Math.floor(Math.random() * (1000 - 100 + 1)) + 100,
+  //     TestedFee: parseFloat((Math.random() * (1 - 0.5) + 0.5).toFixed(2)),
+  //   };
+  // };
 
   const getTestLabel = () => {
     if (isTesting) return 'Running Test...';
@@ -125,7 +145,7 @@ const TaskCard: React.FC<TaskCardProps> = ({ task }) => {
     <Card sx={{ marginBottom: 2, minWidth: '10rem' }}>
       <Grid container>
         <Grid item xs={12} md={8}>
-          <CardDetail task={task} testData={testData} isTested={isTested} />
+          <CardDetail task={task} isTested={isTested} />
         </Grid>
         <Grid item container xs={12} md={4}>
           <Stack
@@ -172,6 +192,12 @@ const TaskCard: React.FC<TaskCardProps> = ({ task }) => {
                   color="text.primary"
                   backgroundColor="primary.main"
                   isLoading={isTesting}
+                />
+                 <CustomButton
+                  label='Purge'
+                  onClick={handleDelete}
+                  color='text.primary'
+                  backgroundColor='error.main'
                 />
                 <CustomButton
                   label={isActivated ? 'Deactivate' : 'Activate'}
