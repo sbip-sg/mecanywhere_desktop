@@ -7,8 +7,10 @@ const fs = require('fs-extra');
 
 let ipfsFilesDir: string
 if (process.platform === 'win32') {
-  // ipfsFilesDir = path.join(baseDir, 'ipfsFiles');
-  console.error("decide on window's baseDir")
+  const baseDir = path.join(process.env.LOCALAPPDATA, '.MECA'); // Use LOCALAPPDATA for Windows
+  ipfsFilesDir = path.join(baseDir, 'ipfsFiles');
+  fs.ensureDirSync(ipfsFilesDir);
+  console.log("ipfsFilesDir", ipfsFilesDir);  console.error("decide on window's baseDir")
 } else {
   const baseDir = path.join(os.homedir(), '.MECA');
   ipfsFilesDir = path.join(baseDir, 'ipfsFiles');
@@ -66,13 +68,10 @@ export const testGenerateLargeFile = async (event, sizeInMB: number) => {
   
 export const uploadFileToIPFS = async (event, filePath: string) => {
     try {
-        // Read the file content
         const content = await fs.promises.readFile(filePath);
-        // Extract the file name
         const fileName = path.basename(filePath);
-        // Construct a virtual directory structure by specifying a path
         const files = [{
-            path: fileName, // Adjust 'wrapped' to your preferred directory name
+            path: fileName,
             content
         }];
         
@@ -80,14 +79,14 @@ export const uploadFileToIPFS = async (event, filePath: string) => {
         const addOptions = { 
             pin: true, 
             wrapWithDirectory: true, 
-            timeout: 10000 // Adjust the timeout as necessary
+            timeout: 10000
         };
         let cid;
         for await (const file of client.addAll(files, addOptions)) {
             console.log(file);
             cid = file.cid.toString(); // This will update with each file, ending with the CID of the directory
         }
-        return cid; // Return the CID of the wrapping directory
+        return cid;
     } catch (error) {
         console.error('Error uploading file to IPFS:', error);
         throw error;
@@ -99,18 +98,18 @@ export const uploadFolderToIPFS = async (event, folderPath: string) => {
     const addOptions = { 
         pin: true, 
         wrapWithDirectory: true, 
-        timeout: 10000 // Adjust the timeout as necessary
+        timeout: 10000 
     };
     try {
-        let cid; // Variable to hold the CID of the last item, which is the wrapping directory
+        let cid;
         for await (const file of client.addAll(globSource(folderPath, globSourceOptions), addOptions)) {
             console.log(file);
             cid = file.cid.toString(); // Update cid with each file, the last one will be the wrapping directory
         }
-        return cid; // Return the CID of the wrapping directory
+        return cid;
     } catch (error) {
         console.error('Error uploading folder to IPFS:', error);
-        throw error;  // Properly throw the error to propagate it back to the renderer process
+        throw error; 
     }
 }
   
@@ -125,28 +124,27 @@ export const downloadFromIPFS = async (event, cid: string) => {
   
         if (file.content) {
                 console.log("file.content", file.content)
-                await fs.ensureDir(path.dirname(outputPath)); // Ensure the output directory exists
+                await fs.ensureDir(path.dirname(outputPath)); 
                 const writable = fs.createWriteStream(outputPath);
                 for await (const chunk of file.content) {
-                    writable.write(chunk); // Write each chunk directly to the file
+                    writable.write(chunk); 
                 }
-                writable.end(); // Ensure the stream is properly closed after writing
+                writable.end(); 
             } else {
-                await fs.ensureDir(outputPath); // Ensure directory for directories
+                await fs.ensureDir(outputPath); 
             }
         }
         console.log("Download complete");
         return `Content downloaded to ${ipfsFilesDir}`;
     } catch (error) {
       console.error('Error downloading content from IPFS:', error);
-      throw error; // Propagate the error back to the renderer
+      throw error;
     }
 }
 
 
 export const readFirstLineOfFileInFolder = async (event, cid: string) => {
     try {
-      // Retrieve the list of files in the folder
       const files = [];
       for await (const file of client.ls(cid)) {
         files.push(file);
@@ -157,7 +155,6 @@ export const readFirstLineOfFileInFolder = async (event, cid: string) => {
       if (files.length > 0) {
         const fileCid = files[0].cid.toString();
         
-        // Retrieve the content of the file
         const chunks = [];
         for await (const chunk of client.cat(fileCid)) {
           chunks.push(chunk);
@@ -168,14 +165,14 @@ export const readFirstLineOfFileInFolder = async (event, cid: string) => {
         const firstLine = content.split('\n')[0];
         console.log(`First line of the file: ${firstLine}`);
         
-        return "OK"; // Indicate success
+        return "OK";
       } else {
         console.log("No files found in the folder.");
         return "No files found in the folder.";
       }
     } catch (error) {
       console.error(`Error reading file from IPFS:`, error);
-      return "Error"; // Indicate failure
+      return "Error"; 
     }
   };
   export const deleteFolder = async (event, cid: string) => {
@@ -184,10 +181,10 @@ export const readFirstLineOfFileInFolder = async (event, cid: string) => {
     try {
       await fs.remove(folderPath);
       console.log(`Successfully deleted local folder at ${folderPath}`);
-      return true; // Indicate success
+      return true; 
     } catch (error) {
       console.error(`Error deleting local folder at ${folderPath}:`, error);
-      return false; // Indicate failure
+      return false;
     }
   };
 
@@ -196,27 +193,6 @@ const generateLargeFile = async (filePath: string, sizeInMB: number) => {
     await fs.remove(filePath);
   
     return new Promise((resolve, reject) => {
-        // const stream = fs.createWriteStream(filePath);
-        // const oneMB = 1024 * 1024; // Bytes
-        // const chunkSize = 1024; // Adjust chunk size as needed
-        // const totalChunks = (sizeInMB * oneMB) / chunkSize;
-        // let written = 0;
-        // const dataChunk = '1'.repeat(chunkSize - 1) + '\n'; // Ending each chunk with a newline
-    
-        // stream.on('error', reject);
-    
-        // const writeChunk = () => {
-        //     while (written < totalChunks) {
-        //     if (!stream.write(dataChunk)) {
-        //         written++;
-        //         return stream.once('drain', writeChunk);
-        //     }
-        //     written++;
-        //     }
-        //     if (written >= totalChunks) {
-        //     stream.end();
-        //     }
-        // };
         const stream = fs.createWriteStream(filePath);
         const oneMB = 1024 * 1024; // Bytes
         const chunkSize = 1024; // Adjust chunk size as needed
@@ -242,7 +218,7 @@ const generateLargeFile = async (filePath: string, sizeInMB: number) => {
     
         stream.on('finish', () => {
             console.log(`Finished writing ${sizeInMB}MB to ${filePath}`);
-            resolve(filePath); // Resolve the promise with the filePath
+            resolve(filePath);
         });
     
         writeChunk();
@@ -252,13 +228,13 @@ const generateLargeFile = async (filePath: string, sizeInMB: number) => {
 const generateRandomNumbers = (length: number): string => {
     let result = '';
     for (let i = 0; i < length; i++) {
-      const randomDigit = Math.floor(Math.random() * 10); // Generates a random number between 0 and 9
+      const randomDigit = Math.floor(Math.random() * 10);
       result += randomDigit.toString();
     }
     return result;
   };
-// unused
 
+// unused
 
 // // Handler to add data to IPFS
 // ipcMain.handle(Channels.IPFS_ADD, async (event, data) => {

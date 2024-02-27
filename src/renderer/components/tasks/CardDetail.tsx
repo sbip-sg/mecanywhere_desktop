@@ -1,4 +1,4 @@
-import { CardContent, Typography, Grid, Divider, Typography  } from '@mui/material';
+import { CardContent, Grid, Divider, Typography  } from '@mui/material';
 
 interface LabelWithValueProps {
   label: string;
