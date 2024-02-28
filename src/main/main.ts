@@ -41,7 +41,8 @@ import {
   downloadFromIPFS,
   testGenerateLargeFile,
   readFirstLineOfFileInFolder,
-  deleteFolder
+  deleteFolder,
+  checkFolderExists
 } from  './ipfsIntegration'
 
 const start = performance.now();
@@ -136,6 +137,7 @@ ipcMain.handle(Channels.DOWNLOAD_FROM_IPFS, downloadFromIPFS);
 ipcMain.on(Channels.TEST_GENERATE_LARGE_FILE, testGenerateLargeFile);
 ipcMain.handle(Channels.TEST_READ_FILE, readFirstLineOfFileInFolder);
 ipcMain.handle(Channels.DELETE_FOLDER, deleteFolder);
+ipcMain.handle(Channels.CHECK_FOLDER_EXISTS, checkFolderExists);
 
 const createWorkerWindow = async () => {
   workerWindow = new BrowserWindow({
@@ -242,7 +244,6 @@ app.on('window-all-closed', () => {
 app
   .whenReady()
   .then(() => {
-    // startIPFS()
     createMainWindow();
     createWorkerWindow();
     const appReadyTimeTaken = (performance.now() - start).toFixed(2);

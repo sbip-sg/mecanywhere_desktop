@@ -6,27 +6,32 @@ The desktop app for interacting with MECA ecosystem. Uses Electron-React Boilerp
 
 1. Clone the repo and install dependencies:
 
-```bash
-git clone https://github.com/sbip-sg/mec_anywhere_desktop.git
-npm install
-```
+    ```bash
+    git clone https://github.com/sbip-sg/mec_anywhere_desktop.git
+    npm install
+    ```
 
 2. Install Docker Engine at https://docs.docker.com/engine/install/.
 
 3. Build the Task Executor's docker image with: 
-```bash
-docker build -t meca-executor -f task_executor/docker/Dockerfile .
-```
+
+    ```bash
+    docker build -t meca-executor -f task_executor/docker/Dockerfile .
+    ```
+
+4. Install IPFS Kubo from https://github.com/ipfs/kubo.git
 
 ### Starting Development
 
-Ensure that Docker Engine is installed and Docker Daemon is started.
+1. Ensure that Docker Engine is installed and Docker Daemon is started.
 
-Start the app in the `dev` environment:
+2. Ensure that IPFS is installed and IPFS Daemon is started.
 
-```bash
-npm start
-```
+3. Start the app in the `dev` environment:
+
+    ```bash
+    npm start
+    ```
 
 ### Packaging for Production
 
@@ -36,13 +41,28 @@ To package apps for the local platform (Docker Daemon require separate installat
 npm run package
 ```
 
+Note:
+- In Windows environments, the packaged application is output as an .exe file within the /release/build directory. It is important to highlight that, in the absence of code signing, the application may not execute as intended on distribution due to Windows security protocols.
+- In Linux, the packaged app is output as an AppImage. First, grant execution permissions to the AppImage file
+  ```bash
+  chmod +x MECAnywhere-4.6.0.AppImage
+  ```
+  Then, install FUSE to enable AppImage support.:
+  ```bash
+  sudo apt update
+  sudo apt install libfuse2
+  ```
+
 # Main
 
 The main process executes the entry point script defined in the package.json (as 'main'). It manages the application's lifecycle, and has native access to desktop functionality, such as menus, dialogs, and tray icons. More specifically, the main process for this app is responsible for the following:
 - Manage lifecycle events (e.g. 'ready', 'closed'. Refer to the official docs for a complete list: *https://www.electronjs.org/docs/latest/api/app*)
 - Create BrowserWindows (see *Renderer* below), Menu, Tray.
-- Communicating with the MECA SDK to handle task processing via sockets (See ```sdk\README.md```).
-- Communicating with the Docker Daemon to orchestrate the execution of Task Executor containers.
+- Communicating with the MECA SDK to handle task processing via sockets (see ```sdk\README.md```).
+- Communicating with the Docker Daemon with Dockerode to orchestrate the execution of Task Executor containers during Node.js runtime (see ```task_executor\README.md```).
+- Communicating with IPFS to upload and download tasks.
+  - In Linux, the default download directory is `/home/$USER/.MECA/ipfsFiles`
+  - In Windows, the default download directory is `%LOCALAPPDATA%\.MECA\ipfsFiles`
 - Handle persistent storage (mnemonics, keypairs, settings etc) with electron-store and safeStorage.
 
 ### Some technical notes:
@@ -61,9 +81,30 @@ The main process executes the entry point script defined in the package.json (as
     import secp256k1 from '../../node_modules/secp256k1';
     ```
 
+    Read more about the rationale behind native modules here:
+    https://github.com/electron-react-boilerplate/electron-react-boilerplate/issues/1042
+
 - **Inter-Process Communication**
 
     In general, for security purpose, Inter-process communication (IPC) is required to communicate between the main process and the renderer process. The general idea involves establishing dedicated channels for these processes to monitor. Through the use of a preload script, we can then safely expose privileged APIs to the renderer process.
+
+
+- **Installation issues**
+
+  Sometimes post installation complains about react-redux being a native module and should be in ```/release/app```. This error might only surface when doing a fresh ```npm install``` instead of doing a single ```npm install```. It could be due:
+  - newly installed module(s) being a native module instead of react-redux. In this case try moving the newly added modules into /release/app and do a clean reinstall.
+  - some unknown dependency issues. In this case, delete package.lock and do a clean reinstall.
+
+
+- **ESM incompatiblity**
+
+  When installing a new module and using it in main process, sometimes one might face: 
+  ```bash
+  Error [ERR_REQUIRE_ESM]: require() of ES Module fix-path/index.js from main.ts not supported.
+  ``````
+  
+  My understanding is that in development, instead of using webpack (which allows usage of *import* in renderer process), electronmon is used to run Electron in the main process. (This is why we don't have a `webpack.config.main.dev.ts` but only `webpack.config.main.prod.ts`.) Under the hood, electronmon will convert all *import* to *require*. Thus if the installed module is purely ESM, the above error will pop. While Electron itself has started supporting ESM since v28, this feature is still not made compatible with this our electron-react-boilerplate at the point of writing this. One solution is to downgrade the  module, for example now we are using a downgraded version of *ipfs-http-client* v50 (commonJS) instead of v60 (ESM only).
+
 
 
 # Renderer
@@ -73,7 +114,7 @@ Each Electron app spawns a separate renderer process for each open BrowserWindow
 - WorkerWindow: This window is hidden and is solely responsible for task processing logic.
 
 Routes are managed under App.tsx. Each route is wrapped with a Transition component for smooth transition animation.
-```
+```bash
 <Route
   path="/login"
   element={
@@ -135,7 +176,7 @@ Currently the listed tasks are placeholders, future implementation require readi
 The main layout, which can be viewed after logging into the app, consists of the top menu bar, the left drawer, and the right drawer. We will discuss some key components below.
 
 - **Host Sharing Widget**: Responsible for allowing host to select settings for resource allocation (e.g. number of cores and memory) as well as option whether to allocate GPU. The widget view comprises *PreSharingEnabledComponent* and *PostSharingEnabledComponent*, which are respectively responsible for the states before and after resource sharing is enabled.
-- **Export Key**: Reveals the mnemonics and allows copy to clipboard.
+- **Export Key**: Reveals the mnemonics and allows copy to clipboard. Might be removed in the future due to deprecation of ```did```
 - **Light/Dark Mode**: Toggles between light and dark theme. Theming is based on Material UI and is set in ```src\renderer\utils\theme.tsx```.
 
 
@@ -170,3 +211,9 @@ const dataEntry = reduxStore.getState().dataEntryReducer;
 ### services
 
 This directory simple handles the external api calls.
+
+
+## Other notes
+- When developing in linux, sometimes closing the app doesn't completely shut down the electron processes, thus requiring one to manually kill the processes.
+- Use electron-store for persistent storage, redux for global state management, and React's useState() hook for component-level state.
+- Under `webpack.config.base.ts`, there is an alias of react pointing to `./src/node_modules/react'`. This is because the *@metamask/sdk* introduces another instance of React, causing conflicts. The alias ensures the project uses only one instance of React. 

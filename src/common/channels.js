@@ -36,6 +36,7 @@ const Channels = {
   SELECTED_FOLDER: 'selected-folder',
   TEST_READ_FILE: 'test-read-file',
   DELETE_FOLDER: 'delete-folder',
+  CHECK_FOLDER_EXISTS: 'check-folder-exists'
 };
 
 export default Channels;

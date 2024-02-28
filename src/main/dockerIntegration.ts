@@ -7,12 +7,12 @@ import Channels from '../common/channels';
 
 const docker = new Dockerode();
 
-interface Event {
-  reply(_channel: string, _success: boolean, _message?: string): void;
-}
+// interface Event {
+//   reply(_channel: string, _success: boolean, _message?: string): void;
+// }
 
 export const removeExecutorContainer = async (
-  event: Event,
+  event,
   containerName: string
 ) => {
   docker.listContainers(
@@ -77,7 +77,7 @@ export const removeExecutorContainer = async (
 };
 
 export const runExecutorContainer = async (
-  event: Event,
+  event,
   containerName: string
 ) => {
   try {
@@ -249,7 +249,7 @@ export const runExecutorGPUContainer = async (event, containerName) => {
   }
 };
 
-export const checkDockerDaemonRunning = (event: Event) => {
+export const checkDockerDaemonRunning = (event) => {
   docker.ping((err, data) => {
     if (err) {
       console.error('Docker daemon is not running', err);
@@ -265,7 +265,7 @@ export const checkDockerDaemonRunning = (event: Event) => {
   });
 };
 
-export const checkContainerExists = (event: Event, containerName: string) => {
+export const checkContainerExists = (event, containerName: string) => {
   docker.listContainers({ all: true }, (err, containers) => {
     if (err) {
       console.error('Error listing containers:', err);
@@ -281,7 +281,7 @@ export const checkContainerExists = (event: Event, containerName: string) => {
   });
 };
 
-export const checkContainerGPUSupport = (event: Event, containerName: string) => {
+export const checkContainerGPUSupport = (event, containerName: string) => {
   docker.listContainers({ all: true }, (err, containers) => {
     if (err) {
       console.error('Error listing containers:', err);

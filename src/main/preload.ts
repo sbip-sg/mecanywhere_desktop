@@ -30,6 +30,7 @@ const electronHandler = {
   downloadFromIPFS: (cid: string) => ipcRenderer.invoke(Channels.DOWNLOAD_FROM_IPFS, cid),
   testReadFile: (cid: string) => ipcRenderer.invoke(Channels.TEST_READ_FILE, cid),
   deleteFolder: (cid: string) => ipcRenderer.invoke(Channels.DELETE_FOLDER, cid),
+  checkFolderExists: (cid: string) => ipcRenderer.invoke(Channels.CHECK_FOLDER_EXISTS, cid),
   generateLargeFile: (sizeInMB: number) => {
     return new Promise((resolve, reject) => {
         ipcRenderer.send(Channels.TEST_GENERATE_LARGE_FILE, sizeInMB);

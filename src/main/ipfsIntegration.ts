@@ -26,7 +26,7 @@ const client = create({ url });
 export const openFileDialog = async (event) => {
     let win = BrowserWindow.fromWebContents(event.sender);
     if (win) {
-        const { canceled, filePaths } = await dialog.showOpenDialog(win, {
+        const { canceled, filePaths } = await dialog.showOpenDialog(win, { // win here is to ensure user can only interact with the dialog
           properties: ['openFile'] // Allows users to select files only
         });
         if (canceled) {
@@ -175,27 +175,42 @@ export const readFirstLineOfFileInFolder = async (event, cid: string) => {
       return "Error"; 
     }
   };
-  export const deleteFolder = async (event, cid: string) => {
-    const folderPath = `${ipfsFilesDir}/${cid}`;
 
-    try {
-      await fs.remove(folderPath);
-      console.log(`Successfully deleted local folder at ${folderPath}`);
-      return true; 
-    } catch (error) {
-      console.error(`Error deleting local folder at ${folderPath}:`, error);
-      return false;
-    }
-  };
+export const deleteFolder = async (event, cid: string) => {
+  const folderPath = `${ipfsFilesDir}/${cid}`;
+
+  try {
+    await fs.remove(folderPath);
+    console.log(`Successfully deleted local folder at ${folderPath}`);
+    return true; 
+  } catch (error) {
+    console.error(`Error deleting local folder at ${folderPath}:`, error);
+    return false;
+  }
+};
+
+export const checkFolderExists = async (event, cid: string) => {
+  // Construct the full path to the folder
+  const folderPath = `${ipfsFilesDir}/${cid}`;
+
+  try {
+    const exists = await fs.pathExists(folderPath);
+    console.log(`Folder ${cid} exists: ${exists}`);
+    return exists;
+  } catch (error) {
+    console.error(`Error checking existence of folder ${cid}:`, error);
+    return false;
+  }
+};
 
 const generateLargeFile = async (filePath: string, sizeInMB: number) => {
     // Delete the file first if it exists
-    await fs.remove(filePath);
+    // await fs.remove(filePath);
   
     return new Promise((resolve, reject) => {
         const stream = fs.createWriteStream(filePath);
-        const oneMB = 1024 * 1024; // Bytes
-        const chunkSize = 1024; // Adjust chunk size as needed
+        const oneMB = 1024 * 1024; 
+        const chunkSize = 1024;
         const totalChunks = (sizeInMB * oneMB) / chunkSize;
         let written = 0;
     

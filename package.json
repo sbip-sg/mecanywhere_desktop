@@ -1,36 +1,39 @@
 {
+  "name": "mecanywhere", 
   "description": "A foundation for scalable desktop apps",
   "keywords": [
+    "MEC",
+    "multi-access edge computing",
+    "blockchain",
     "electron",
-    "boilerplate",
     "react",
     "typescript",
-    "ts",
-    "sass",
-    "webpack",
-    "hot",
-    "reload"
+    "go"
   ],
-  "homepage": "https://github.com/electron-react-boilerplate/electron-react-boilerplate#readme",
-  "bugs": {
-    "url": "https://github.com/electron-react-boilerplate/electron-react-boilerplate/issues"
-  },
-  "repository": {
-    "type": "git",
-    "url": "git+https://github.com/electron-react-boilerplate/electron-react-boilerplate.git"
-  },
   "license": "MIT",
   "author": {
-    "name": "Electron React Boilerplate Maintainers",
-    "email": "electronreactboilerplate@gmail.com",
-    "url": "https://electron-react-boilerplate.js.org"
+    "name": "Singapore Blockchain Innovation Programme",
+    "email": "contact@sbip.sg",
+    "url": "https://sbip.sg"
   },
   "contributors": [
     {
-      "name": "Amila Welihinda",
-      "email": "amilajack@gmail.com",
-      "url": "https://github.com/amilajack"
+      "name": "Chan Jer Yong",
+      "email": "jeryong@outlook.com"
+    },
+    {
+      "name": "Lim Jun Xue",
+      "email": "jxlim@nus.edu.sg"
+    },
+    {
+      "name": "Hu Guo Yu",
+      "email": "guoyu.hu@u.nus.edu"
+    },
+    {
+      "name": "Ștefan-Dan Ciocîrlan",
+      "email": "stefandan.ciocirlan@gmail.com"
     }
+
   ],
   "main": "./src/main/main.ts",
   "scripts": {
@@ -288,15 +291,7 @@
     },
     "extraResources": [
       "./assets/**"
-    ],
-    "publish": {
-      "provider": "github",
-      "owner": "electron-react-boilerplate",
-      "repo": "electron-react-boilerplate"
-    }
-  },
-  "collective": {
-    "url": "https://opencollective.com/electron-react-boilerplate-594"
+    ]
   },
   "devEngines": {
     "node": ">=14.x",
