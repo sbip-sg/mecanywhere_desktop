@@ -43,9 +43,7 @@ npm run package
 
 Note:
 - In Windows environments, the packaged application is output as an .exe file within the /release/build directory. It is important to highlight that, in the absence of code signing, the application may not execute as intended on distribution due to Windows security protocols.
-- In Linux, the packaged app is output as an AppImage. 
-  ```
-  Then, install FUSE to enable AppImage support.:
+- In Linux, the packaged app is output as an AppImage. Then, install FUSE to enable AppImage support:
   ```bash
   sudo apt update
   sudo apt install libfuse2
