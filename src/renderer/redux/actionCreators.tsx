@@ -57,16 +57,6 @@ const setDeviceStats: ActionCreator<AnyAction> = (payload: any) => ({
   payload,
 });
 
-const addToDownloaded: ActionCreator<AnyAction> = (payload: any) => ({
-  type: 'addToDownloaded',
-  payload,
-});
-
-const removeFromDownloaded: ActionCreator<AnyAction> = (payload: any) => ({
-  type: 'removeFromDownloaded',
-  payload,
-});
-
 const addToBuilt: ActionCreator<AnyAction> = (payload: any) => ({
   type: 'addToBuilt',
   payload,
@@ -110,8 +100,6 @@ const boundToDoActions = bindActionCreators(
     setDataEntry,
     setImportingAccount,
     setDeviceStats,
-    addToDownloaded,
-    removeFromDownloaded,
     addToBuilt,
     removeFromBuilt,
     addToTested,

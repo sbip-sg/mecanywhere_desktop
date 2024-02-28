@@ -1,4 +1,6 @@
 import { CardContent, Grid, Divider, Typography  } from '@mui/material';
+import React from 'react';
+import { Task } from 'renderer/utils/dataTypes';
 
 interface LabelWithValueProps {
   label: string;
@@ -13,51 +15,43 @@ const LabelWithValue: React.FC<LabelWithValueProps> = ({ label, value }) => {
   );
 };
 
-const CardDetail = ({ task, isTested }) => {
+interface CardDetailProps {
+  task: Task;
+  isTested: boolean;
+}
+
+const CardDetail: React.FC<CardDetailProps> = ({ task, isTested }) => {
   return (
     <CardContent>
       <Typography variant="h4" margin="0 0 0.5rem 0">
         {task.taskName}
       </Typography>
-      <Grid container spacing={2}>
-        <Grid item xs={12} md={3}>
-          <LabelWithValue label="Docker File CID" value={task.dockerFileCID.slice(0, 10)} />
-          <LabelWithValue label="Object File CID" value={task.objectFileCID.slice(0, 10)} />
+        <Grid item xs={12} md={12} marginBottom="0.5rem">
+          <LabelWithValue label="CID" value={task.cid} />
         </Grid>
-        <Grid item xs={12} md={3}>
+      <Grid container>
+        <Grid item xs={12} md={4}>
           <LabelWithValue
-            label="Input Size Limit"
-            value={task.inputSizeLimit}
+            label="I/O Size"
+            value={task.size_io.toString()}
           />
           <LabelWithValue
-            label="Output Size Limit"
-            value={task.outputSizeLimit}
+            label="Folder Size"
+            value={task.size_folder.toString()}
           />
-          <LabelWithValue label="Block Time Out" value={task.blockTimeOut} />
         </Grid>
-        <Grid item xs={12} md={2.5}>
-          <LabelWithValue label="CPU Gas" value={task.cpuGas} />
-          <LabelWithValue label="GPU Gas" value={task.gpuGas} />
-          <LabelWithValue label="Fee" value={task.fee} />
+        <Grid item xs={12} md={4}>
+          <LabelWithValue label="Computing Type" value={task.computing_type} />
+          <LabelWithValue label="Fee" value={task.fee.toString()} />
         </Grid>
+
+      </Grid>
         {isTested && (
           <>
-            <Divider orientation="vertical" flexItem />
-            <Typography variant="subtitle1" padding="0.5rem 0 0 0.5rem">File tested</Typography >
-            {/* <Grid item xs={12} md={3}>
-              <LabelWithValue
-                label="Tested CPU Gas"
-                value={testData.TestedCpuGas}
-              />
-              <LabelWithValue
-                label="Tested GPU Gas"
-                value={testData.TestedGpuGas}
-              />
-              <LabelWithValue label="Tested Fee" value={testData.TestedFee} />
-            </Grid> */}
+            {/* <Divider orientation="vertical" flexItem /> */}
+            <Typography variant="subtitle2" sx={{fontWeight: 600, color: "primary.main", paddingTop: "0.5rem"}}>File tested, no issue.</Typography >
           </>
         )}
-      </Grid>
     </CardContent>
   );
 };

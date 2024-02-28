@@ -43,9 +43,7 @@ npm run package
 
 Note:
 - In Windows environments, the packaged application is output as an .exe file within the /release/build directory. It is important to highlight that, in the absence of code signing, the application may not execute as intended on distribution due to Windows security protocols.
-- In Linux, the packaged app is output as an AppImage. First, grant execution permissions to the AppImage file
-  ```bash
-  chmod +x MECAnywhere-4.6.0.AppImage
+- In Linux, the packaged app is output as an AppImage. 
   ```
   Then, install FUSE to enable AppImage support.:
   ```bash
@@ -214,6 +212,5 @@ This directory simple handles the external api calls.
 
 
 ## Other notes
-- When developing in linux, sometimes closing the app doesn't completely shut down the electron processes, thus requiring one to manually kill the processes.
 - Use electron-store for persistent storage, redux for global state management, and React's useState() hook for component-level state.
 - Under `webpack.config.base.ts`, there is an alias of react pointing to `./src/node_modules/react'`. This is because the *@metamask/sdk* introduces another instance of React, causing conflicts. The alias ensures the project uses only one instance of React. 

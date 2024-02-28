@@ -75,14 +75,16 @@ const TasksManagement: React.FC = () => {
           flexDirection: { xs: 'column', md: 'row' },
           alignItems: 'end',
           marginBottom: '1rem',
+          width: "100%"
         }}
       >
         <Box
           sx={{
             display: 'flex',
             justifyContent: 'start',
-            alignItems: 'end',
+            alignItems: { xs: 'normal', md: 'end' },
             flexDirection: { xs: 'column', md: 'row' },
+            width: "100%"
           }}
         >
           <TextField
@@ -92,7 +94,7 @@ const TasksManagement: React.FC = () => {
             fullWidth
             value={searchQuery}
             onChange={handleSearchChange}
-            sx={{ minWidth: { md: '20rem' }, margin: '0 1rem 0 0' }}
+            sx={{ minWidth: { md: '20rem', xs: "100%" }, margin: { xs: '0 1rem 2rem 0', md: "0" } }}
             inputProps={{
               sx: { fontSize: '13px', padding: '1rem' },
             }}

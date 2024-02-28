@@ -9,6 +9,8 @@ interface CustomButtonProps {
   backgroundColor: string;
   isLoading?: boolean;
   showBlockIcon?: boolean;
+  fullWidth?: boolean;
+  fontSize? : string;
 }
 
 const CustomButton: React.FC<CustomButtonProps> = ({
@@ -18,6 +20,8 @@ const CustomButton: React.FC<CustomButtonProps> = ({
   backgroundColor,
   isLoading = false,
   showBlockIcon = false,
+  fullWidth = true,
+  fontSize = '1rem',
 }) => {
   return (
     <Button
@@ -25,7 +29,6 @@ const CustomButton: React.FC<CustomButtonProps> = ({
       sx={{
         color,
         backgroundColor,
-        width: '14rem',
         margin: '0 0 0.3rem 0',
         position: 'relative',
         '&:disabled': {
@@ -33,6 +36,7 @@ const CustomButton: React.FC<CustomButtonProps> = ({
           color: 'grey',
         },
         fontWeight: 600,
+        fontSize, 
         opacity: isLoading ? 0.7 : 1,
         ...(showBlockIcon
           ? {
@@ -45,6 +49,7 @@ const CustomButton: React.FC<CustomButtonProps> = ({
       }}
       disabled={showBlockIcon}
       startIcon={showBlockIcon ? <BlockIcon /> : null}
+      fullWidth={fullWidth}
     >
       <Box
         sx={{ display: 'flex', alignItems: 'center', justifyContent: 'center' }}
@@ -54,7 +59,7 @@ const CustomButton: React.FC<CustomButtonProps> = ({
             size={24}
             sx={{
               color,
-              marginRight: '8px',
+              marginRight: '4px',
             }}
           />
         )}

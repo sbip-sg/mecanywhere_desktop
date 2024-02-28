@@ -1,22 +1,9 @@
-const addToDownloaded = (taskName: string) => {
-  const taskList = JSON.parse(window.electron.store.get('taskList'));
-  if (!taskList.downloaded.includes(taskName)) {
-    taskList.downloaded.push(taskName);
-    window.electron.store.set('taskList', JSON.stringify(taskList));
-  }
-};
-
-const removeFromDownloaded = (taskName: string) => {
-  const taskList = JSON.parse(window.electron.store.get('taskList'));
-  taskList.downloaded = taskList.downloaded.filter(
-    (name: string) => name !== taskName
-  );
-  window.electron.store.set('taskList', JSON.stringify(taskList));
-};
-
-const hasBeenDownloaded = (taskName: string) => {
-  const taskList = JSON.parse(window.electron.store.get('taskList'));
-  return taskList.downloaded.includes(taskName);
+const hasBeenDownloaded = async (cid: string) => {
+  // const taskList = JSON.parse(window.electron.store.get('taskList'));
+  // return taskList.downloaded.includes(taskName);
+  const folderExists = await window.electron.checkFolderExists(cid)
+  console.log("folderExists", folderExists)
+  return folderExists
 };
 
 const addToBuilt = (taskName: string) => {
@@ -79,8 +66,6 @@ const hasBeenActivated = (taskName: string) => {
 };
 
 export {
-  addToDownloaded,
-  removeFromDownloaded,
   hasBeenDownloaded,
   addToBuilt,
   removeFromBuilt,

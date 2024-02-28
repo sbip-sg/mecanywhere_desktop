@@ -3,11 +3,10 @@ import React from 'react';
 
 const sortOptions = [
   { value: 'taskName', label: 'Task Name' },
-  { value: 'inputSizeLimit', label: 'Input Size Limit' },
-  { value: 'outputSizeLimit', label: 'Output Size Limit' },
-  { value: 'cpuGas', label: 'CPU Gas' },
-  { value: 'gpuGas', label: 'GPU Gas' },
-  { value: 'blockTimeOut', label: 'Block Timeout' },
+  { value: 'cid', label: 'CID' },
+  { value: 'size_folder', label: 'Folder Size' },
+  { value: 'size_io', label: 'I/O Size' },
+  { value: 'computing_type', label: 'Computing Type' },
   { value: 'fee', label: 'Fee' },
 ];
 
@@ -29,14 +28,14 @@ const CustomFormControl: React.FC<CustomFormControlProps> = ({
   handleSortByChange,
   options,
 }) => {
-  console.log('sortBy', sortBy);
   return (
     <FormControl
       variant="outlined"
       sx={{
         minWidth: '9rem',
         '& .MuiSelect-nativeInput': { display: 'none' },
-      }}
+        margin: { xs: '0 0 2rem 0', md: "0" }
+            }}
     >
       <InputLabel
         shrink

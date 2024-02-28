@@ -49,7 +49,6 @@ const initialDataEntry: DataEntry = {
 };
 
 const initialTaskList: TaskList = {
-  downloaded: [],
   built: [],
   tested: [],
   activated: [],
@@ -179,21 +178,6 @@ export const taskListReducer = (
   action: any
 ): TaskList => {
   switch (action.type) {
-    case 'addToDownloaded':
-      if (!state.downloaded.includes(action.payload)) {
-        return {
-          ...state,
-          downloaded: [...state.downloaded, action.payload],
-        };
-      }
-      return state;
-    case 'removeFromDownloaded':
-      return {
-        ...state,
-        downloaded: state.downloaded.filter(
-          (taskName) => taskName !== action.payload
-        ),
-      };
     case 'addToBuilt':
       if (!state.built.includes(action.payload)) {
         return {
