@@ -68,7 +68,7 @@ const CurrentBillingCard = () => {
                 textAlign="end"
                 width="100%"
               >
-                Settle Payment
+                Settle Billing
               </Typography>
             </Button>
           </Grid>

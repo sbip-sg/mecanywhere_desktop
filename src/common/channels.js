@@ -26,6 +26,18 @@ const Channels = {
   CLIENT_REGISTERED: 'client-registered',
   DEREGISTER_CLIENT: 'deregister-client',
   OFFLOAD_JOB: 'offload-job',
+  OPEN_FILE_DIALOG: 'open-file-dialog',
+  OPEN_FOLDER_DIALOG: 'open-folder-dialog',
+  UPLOAD_FILE_TO_IPFS: 'upload-file-to-ipfs',
+  UPLOAD_FOLDER_TO_IPFS: 'upload-folder-to-ipfs',
+  DOWNLOAD_FROM_IPFS: 'download-from-ipfs',
+  TEST_GENERATE_LARGE_FILE: 'test-generate-large-file',
+  TEST_GENERATE_LARGE_FILE_RESPONSE: 'test-generate-large-file-response',
+  SELECTED_FILE: 'selected-file',
+  SELECTED_FOLDER: 'selected-folder',
+  TEST_READ_FILE: 'test-read-file',
+  DELETE_FOLDER: 'delete-folder',
+  CHECK_FOLDER_EXISTS: 'check-folder-exists'
 };
 
 export default Channels;

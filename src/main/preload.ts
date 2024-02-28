@@ -24,6 +24,29 @@ const electronHandler = {
     },
   },
 
+  openFileDialog: () => ipcRenderer.send(Channels.OPEN_FILE_DIALOG),
+  openFolderDialog: () => ipcRenderer.send(Channels.OPEN_FOLDER_DIALOG),
+  onFileSelected: (callback: (...args: any[]) => void) => ipcRenderer.on(Channels.SELECTED_FILE, callback),
+  onFolderSelected: (callback: (...args: any[]) => void) => ipcRenderer.on(Channels.SELECTED_FOLDER, callback),
+  uploadFileToIPFS: (filePath: string) => ipcRenderer.invoke(Channels.UPLOAD_FILE_TO_IPFS, filePath),
+  uploadFolderToIPFS: (folderPath: string) => ipcRenderer.invoke(Channels.UPLOAD_FOLDER_TO_IPFS, folderPath),
+  downloadFromIPFS: (cid: string) => ipcRenderer.invoke(Channels.DOWNLOAD_FROM_IPFS, cid),
+  testReadFile: (cid: string) => ipcRenderer.invoke(Channels.TEST_READ_FILE, cid),
+  deleteFolder: (cid: string) => ipcRenderer.invoke(Channels.DELETE_FOLDER, cid),
+  checkFolderExists: (cid: string) => ipcRenderer.invoke(Channels.CHECK_FOLDER_EXISTS, cid),
+  generateLargeFile: (sizeInMB: number) => {
+    return new Promise((resolve, reject) => {
+        ipcRenderer.send(Channels.TEST_GENERATE_LARGE_FILE, sizeInMB);
+        ipcRenderer.once(Channels.TEST_GENERATE_LARGE_FILE_RESPONSE, (event, success, filePath, error) => {
+            if (success) {
+                resolve(filePath);
+            } else {
+                reject(new Error(error));
+            }
+        });
+    });
+  },
+
   checkDockerDaemonRunning: () => {
     return new Promise<boolean>((resolve, reject) => {
       ipcRenderer.send(Channels.CHECK_DOCKER_DAEMON_RUNNING);
@@ -39,8 +62,6 @@ const electronHandler = {
       );
     });
   },
-
-
   removeExecutorContainer: (containerName: string) => {
     return new Promise<void>((resolve, reject) => {
       ipcRenderer.send(Channels.REMOVE_EXECUTOR_CONTAINER, containerName);

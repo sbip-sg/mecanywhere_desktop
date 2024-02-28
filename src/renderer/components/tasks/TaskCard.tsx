@@ -1,10 +1,13 @@
+// add a method for checking locally if file has downloaded already - done
+// task fields: CID, Fee, Computing Type (gpu/cpu etc), size_io, size_folder (see if possible to check), name will be CID
+// test actual template, and integrate with docker
+
 import { Card, Typography, Grid, Stack } from '@mui/material';
 import React, { useState, useEffect } from 'react';
 import { useSelector } from 'react-redux';
 import { Task } from 'renderer/utils/dataTypes';
 import CustomButton from './CustomButton';
 import {
-  addToDownloaded,
   hasBeenDownloaded,
   addToBuilt,
   hasBeenBuilt,
@@ -13,7 +16,6 @@ import {
   addToActivated,
   removeFromActivated,
   hasBeenActivated,
-  removeFromDownloaded,
   removeFromBuilt,
   removeFromTested,
 } from './TaskListOperations';
@@ -30,33 +32,32 @@ const TaskCard: React.FC<TaskCardProps> = ({ task }) => {
   const [isDownloading, setIsDownloading] = useState(false);
   const [isBuilding, setIsBuilding] = useState(false);
   const [isTesting, setIsTesting] = useState(false);
-  const [testData, setTestData] = useState({
-    TestedCpuGas: 0,
-    TestedGpuGas: 0,
-    TestedFee: 0,
-  });
+  const [isDeleting, setIsDeleting] = useState(false);
 
   useEffect(() => {
-    if (hasBeenTested(task.taskName)) {
-      actions.addToTested(task.taskName);
+    const checkAndSetPhase = async () => {
+      const downloaded = await hasBeenDownloaded(task.cid);
+      if (!downloaded) {
+        setCurrentPhase('toDownload');
+      } else {
+        const built = await hasBeenBuilt(task.taskName);
+        if (!built) {
+          setCurrentPhase('toBuild');
+        } else {
+          setCurrentPhase('toTestOrActivate');
+        }
+      }
+    };
+  
+    checkAndSetPhase();
+    if (hasBeenTested(task.taskName)){
+      actions.addToTested()
     }
-    if (hasBeenActivated(task.taskName)) {
-      actions.addToActivated(task.taskName);
+    if (hasBeenTested(task.taskName)){
+      actions.addToTested()
     }
-    if (!hasBeenDownloaded(task.taskName)) {
-      setCurrentPhase('toDownload');
-    } else if (
-      hasBeenDownloaded(task.taskName) &&
-      !hasBeenBuilt(task.taskName)
-    ) {
-      setCurrentPhase('toBuild');
-    } else if (
-      hasBeenDownloaded(task.taskName) &&
-      hasBeenBuilt(task.taskName)
-    ) {
-      setCurrentPhase('toTestOrActivate');
-    }
-  }, [task.taskName]);
+
+    }, [task.taskName, task.cid]);
 
   const isTested = useSelector((state: RootState) =>
     state.taskList.tested.includes(task.taskName)
@@ -66,16 +67,21 @@ const TaskCard: React.FC<TaskCardProps> = ({ task }) => {
   );
 
   const handleDownload = async () => {
-    setIsDownloading(true);
-    await new Promise((resolve) => setTimeout(resolve, 1000));
-    addToDownloaded(task.taskName);
-    setCurrentPhase('toBuild');
-    setIsDownloading(false);
+    try {
+      setIsDownloading(true);
+      console.log("handleDownload", task.cid)
+      await window.electron.downloadFromIPFS(task.cid);
+      await new Promise((resolve) => setTimeout(resolve, 500));
+      setCurrentPhase('toBuild');
+      setIsDownloading(false);
+    } catch (err) {
+      console.error('Error downloading from IPFS:', err);
+    }
   };
 
   const handleBuild = async () => {
     setIsBuilding(true);
-    await new Promise((resolve) => setTimeout(resolve, 1000));
+    await new Promise((resolve) => setTimeout(resolve, 500));
     setCurrentPhase('toTestOrActivate');
     addToBuilt(task.taskName);
     setIsBuilding(false);
@@ -83,8 +89,9 @@ const TaskCard: React.FC<TaskCardProps> = ({ task }) => {
 
   const handleRunTest = async () => {
     setIsTesting(true);
-    await new Promise((resolve) => setTimeout(resolve, 1000));
-    setTestData(getTestData());
+    await new Promise((resolve) => setTimeout(resolve, 500));
+    const testRes = await window.electron.testReadFile(task.cid);
+    console.log("testRes", testRes)
     addToTested(task.taskName);
     actions.addToTested(task.taskName);
     setIsTesting(false);
@@ -100,16 +107,22 @@ const TaskCard: React.FC<TaskCardProps> = ({ task }) => {
     actions.removeFromActivated(task.taskName);
   };
 
-  const getTestData = () => {
-    return {
-      TestedCpuGas: Math.floor(Math.random() * (1000 - 100 + 1)) + 100,
-      TestedGpuGas: Math.floor(Math.random() * (1000 - 100 + 1)) + 100,
-      TestedFee: parseFloat((Math.random() * (1 - 0.5) + 0.5).toFixed(2)),
-    };
-  };
+  const handleDelete = async () => {
+    setIsDeleting(true);
+    await window.electron.deleteFolder(task.cid)
+    removeFromTested(task.taskName);
+    actions.removeFromTested(task.taskName);
+    removeFromBuilt(task.taskName);
+    actions.removeFromBuilt(task.taskName);
+    removeFromActivated(task.taskName);
+    actions.removeFromActivated(task.taskName);
+    await new Promise((resolve) => setTimeout(resolve, 500));
+    setCurrentPhase("toDownload")
+    setIsDeleting(false);
+  }
 
   const getTestLabel = () => {
-    if (isTesting) return 'Running Test...';
+    if (isTesting) return 'Testing';
     if (isTested) return 'Rerun Test';
     return 'Run Test';
   };
@@ -124,10 +137,10 @@ const TaskCard: React.FC<TaskCardProps> = ({ task }) => {
   return (
     <Card sx={{ marginBottom: 2, minWidth: '10rem' }}>
       <Grid container>
-        <Grid item xs={12} md={8}>
-          <CardDetail task={task} testData={testData} isTested={isTested} />
+        <Grid item xs={12} md={7.5}>
+          <CardDetail task={task} isTested={isTested} />
         </Grid>
-        <Grid item container xs={12} md={4}>
+        <Grid item container xs={12} md={4.5}>
           <Stack
             sx={{
               alignItems: { xs: 'center', md: 'end' },
@@ -139,21 +152,21 @@ const TaskCard: React.FC<TaskCardProps> = ({ task }) => {
             {currentPhase === 'toDownload' && (
               <>
                 <CustomButton
-                  label={isDownloading ? 'Downloading...' : 'Download'}
+                  label={isDownloading ? 'Downloading' : 'Download'}
                   onClick={handleDownload}
                   color="text.primary"
                   backgroundColor="primary.main"
                   isLoading={isDownloading}
                 />
                 <Typography variant="subtitle2">
-                  {`Disk Space Required: ${task.inputSizeLimit}`}
+                  {`Disk Space Required: ${task.size_folder}`}
                 </Typography>
               </>
             )}
             {currentPhase === 'toBuild' && (
               <>
                 <CustomButton
-                  label={isBuilding ? 'Building...' : 'Build'}
+                  label={isBuilding ? 'Building' : 'Build'}
                   onClick={handleBuild}
                   color="text.secondary"
                   backgroundColor="secondary.contrastText"
@@ -165,7 +178,8 @@ const TaskCard: React.FC<TaskCardProps> = ({ task }) => {
               </>
             )}
             {currentPhase === 'toTestOrActivate' && (
-              <>
+              <Grid container spacing={1} alignItems={"center"}> 
+              <Grid item xs={6} > 
                 <CustomButton
                   label={getTestLabel()}
                   onClick={handleRunTest}
@@ -173,13 +187,26 @@ const TaskCard: React.FC<TaskCardProps> = ({ task }) => {
                   backgroundColor="primary.main"
                   isLoading={isTesting}
                 />
+              </Grid>
+              <Grid item xs={6}> 
+                <CustomButton
+                  label={isDeleting ? 'Purging' : 'Purge'}
+                  onClick={handleDelete}
+                  color="text.primary"
+                  backgroundColor="secondary.contrastText"
+                  isLoading={isDeleting}
+                />
+              </Grid>
+              <Grid item xs={12}>
                 <CustomButton
                   label={isActivated ? 'Deactivate' : 'Activate'}
                   onClick={isActivated ? handleDeactivate : handleActivate}
                   color={isTested ? 'text.primary' : 'text.secondary'}
                   backgroundColor={getActivateButtonColor()}
                   showBlockIcon={!isTested}
+                  fullWidth
                 />
+              </Grid>
                 {!isTested && (
                   <Typography
                     variant="subtitle2"
@@ -204,7 +231,7 @@ const TaskCard: React.FC<TaskCardProps> = ({ task }) => {
                     Task currently excluded from resource sharing.
                   </Typography>
                 )}
-              </>
+              </Grid>
             )}
           </Stack>
         </Grid>

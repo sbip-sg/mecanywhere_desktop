@@ -1,12 +1,12 @@
 {
-  "name": "electron-react-boilerplate",
-  "version": "4.6.0",
-  "description": "A foundation for scalable desktop apps",
+  "name": "mecanywhere", 
+  "version": "1.0.0",
+  "description": "A blockchain-based edge computing platform",
   "license": "MIT",
   "author": {
-    "name": "Electron React Boilerplate Maintainers",
-    "email": "electronreactboilerplate@gmail.com",
-    "url": "https://github.com/electron-react-boilerplate"
+    "name": "Singapore Blockchain Innovation Programme",
+    "email": "contact@sbip.sg",
+    "url": "https://sbip.sg"
   },
   "main": "./dist/main/main.js",
   "scripts": {
@@ -16,6 +16,7 @@
   },
   "dependencies": {
     "@metamask/sdk": "^0.14.1",
+    "@types/dockerode": "^3.3.23",
     "dockerode": "^4.0.2",
     "secp256k1": "^5.0.0",
     "socket.io": "^4.7.4",

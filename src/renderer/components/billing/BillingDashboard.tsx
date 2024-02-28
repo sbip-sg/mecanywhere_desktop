@@ -112,7 +112,7 @@ const BillingDashboard: React.FC = () => {
             padding: '1rem 1rem 0.5rem 2rem',
           }}
         >
-          Payout History
+          Billing History
         </Typography>
       </Box>
       <Box sx={{ padding: '1rem 1rem 0.5rem 2rem' }}>

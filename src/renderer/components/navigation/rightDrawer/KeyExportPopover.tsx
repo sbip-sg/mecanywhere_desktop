@@ -91,16 +91,16 @@ const KeyExportPopover: React.FC<KeyExportPopoverProps> = ({
               .trim()
               .split(' ')
               .map((word: string) => (
-                <Typography key={word} variant="body1" mr="1rem">
+                <Typography key={word}  color="primary.dark" variant="body1" mr="1rem">
                   {word}
                 </Typography>
               ))
           ) : (
-            <Typography variant="body1">Click to reveal</Typography>
+            <Typography variant="body1" color="primary.dark">Click to reveal</Typography>
           )}
           {!reveal && (
             <IconButton size="small" onClick={handleRevealClick}>
-              <VisibilityIcon fontSize="small" />
+              <VisibilityIcon fontSize="small" sx={{color:"primary.dark"}}/>
             </IconButton>
           )}
         </Box>

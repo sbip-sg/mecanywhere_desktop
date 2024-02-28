@@ -8,7 +8,7 @@
  * When running `npm run build` or `npm run build:main`, this file is compiled to
  * `./src/main.js` using webpack. This gives us some performance wins.
  */
-import { app, BrowserWindow, ipcMain, Tray, Menu } from 'electron';
+import { app, BrowserWindow, ipcMain, Tray, Menu, dialog } from 'electron';
 import log from 'electron-log/main';
 import path from 'path';
 import { performance } from 'perf_hooks';
@@ -36,6 +36,18 @@ import {
   onClientRegistered,
   onJobResultsReceived,
 } from './jobs';
+
+import {
+  openFileDialog,
+  openFolderDialog,
+  uploadFileToIPFS,
+  uploadFolderToIPFS,
+  downloadFromIPFS,
+  testGenerateLargeFile,
+  readFirstLineOfFileInFolder,
+  deleteFolder,
+  checkFolderExists
+} from  './ipfsIntegration'
 
 const start = performance.now();
 
@@ -114,17 +126,24 @@ ipcMain.on(Channels.APP_RELOAD_CONFIRMED, () => {
   if (mainWindow) mainWindow.reload();
 });
 
+// docker integration
 ipcMain.on(Channels.REMOVE_EXECUTOR_CONTAINER, removeExecutorContainer);
-
 ipcMain.on(Channels.RUN_EXECUTOR_CONTAINER, runExecutorContainer);
-
 ipcMain.on(Channels.RUN_EXECUTOR_GPU_CONTAINER, runExecutorGPUContainer);
-
 ipcMain.on(Channels.CHECK_DOCKER_DAEMON_RUNNING, checkDockerDaemonRunning);
-
 ipcMain.on(Channels.CHECK_CONTAINER_EXIST, checkContainerExists);
-
 ipcMain.on(Channels.CHECK_CONTAINER_GPU_SUPPORT, checkContainerGPUSupport);
+
+// ipfs integration
+ipcMain.on(Channels.OPEN_FILE_DIALOG, openFileDialog);
+ipcMain.on(Channels.OPEN_FOLDER_DIALOG, openFolderDialog);
+ipcMain.handle(Channels.UPLOAD_FILE_TO_IPFS, uploadFileToIPFS);
+ipcMain.handle(Channels.UPLOAD_FOLDER_TO_IPFS, uploadFolderToIPFS);
+ipcMain.handle(Channels.DOWNLOAD_FROM_IPFS, downloadFromIPFS);
+ipcMain.on(Channels.TEST_GENERATE_LARGE_FILE, testGenerateLargeFile);
+ipcMain.handle(Channels.TEST_READ_FILE, readFirstLineOfFileInFolder);
+ipcMain.handle(Channels.DELETE_FOLDER, deleteFolder);
+ipcMain.handle(Channels.CHECK_FOLDER_EXISTS, checkFolderExists);
 
 const createWorkerWindow = async () => {
   workerWindow = new BrowserWindow({
@@ -227,12 +246,13 @@ app.on('window-all-closed', () => {
   }
 });
 
+
 app
   .whenReady()
   .then(() => {
     createMainWindow();
     createWorkerWindow();
-    const appReadyTimeTaken = performance.now() - start;
+    const appReadyTimeTaken = (performance.now() - start).toFixed(2);
     console.log(`App ready in ${appReadyTimeTaken} ms`);
     app.on('activate', () => {
       // On macOS it's common to re-create a window in the app when the

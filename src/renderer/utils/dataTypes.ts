@@ -114,7 +114,6 @@ export interface DeviceStats {
 }
 
 export interface TaskList {
-  downloaded: string[];
   built: string[];
   tested: string[];
   activated: string[];
@@ -122,14 +121,10 @@ export interface TaskList {
 
 export interface Task {
   taskName: string;
-  dockerFileCID: string;
-  objectFileCID: string;
-  exampleInputCID: string;
-  inputSizeLimit: string;
-  outputSizeLimit: string;
-  cpuGas: number;
-  gpuGas: number;
-  blockTimeOut: number;
+  cid: string;
+  size_folder: number;
+  size_io: number;
+  computing_type: string;
   fee: number;
 }
 
