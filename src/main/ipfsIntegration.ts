@@ -10,12 +10,10 @@ if (process.platform === 'win32') {
   const baseDir = path.join(process.env.LOCALAPPDATA, '.MECA'); // Use LOCALAPPDATA for Windows
   ipfsFilesDir = path.join(baseDir, 'ipfsFiles');
   fs.ensureDirSync(ipfsFilesDir);
-  console.log("ipfsFilesDir", ipfsFilesDir);  console.error("decide on window's baseDir")
 } else {
   const baseDir = path.join(os.homedir(), '.MECA');
   ipfsFilesDir = path.join(baseDir, 'ipfsFiles');
   fs.ensureDirSync(ipfsFilesDir);
-  console.log("ipfsFilesDir", ipfsFilesDir)
 }
 
 const url = 'http://localhost:5001'

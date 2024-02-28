@@ -214,3 +214,11 @@ This directory simple handles the external api calls.
 ## Other notes
 - Use electron-store for persistent storage, redux for global state management, and React's useState() hook for component-level state.
 - Under `webpack.config.base.ts`, there is an alias of react pointing to `./src/node_modules/react'`. This is because the *@metamask/sdk* introduces another instance of React, causing conflicts. The alias ensures the project uses only one instance of React. 
+
+
+## To do list
+- Building docker image within the downloaded task folder. This could be done with Dockerode, which is already used for other docker orchestration tasks (see *handleBuild*).
+- Task testing. Docker run can be done with Dockerode as well (see *handleRunTest*).
+- Fetching tasks data and transaction data from blockchain. Currently the data are still coming from the fullnode database.
+- Put forward a solution for the inconvenience caused by the requirement of accessing Metamask for every blockchain call due to gas fee. 
+- Potentially remove the account recovery functionality.   
