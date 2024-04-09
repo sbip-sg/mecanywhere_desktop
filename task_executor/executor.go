@@ -316,6 +316,10 @@ func (meca *MecaExecutor) handleOneRequest(req *MecaRequestHandle) {
 			return
 		}
 		log.Printf("task with config %v added: %v ", req.taskCfg, h.task)
+		// if cleared cache, we add back the reference
+		if retryDueToResourceShortage > 0 {
+			meca.tracker.add(taskId, h.task)
+		}
 		go func() {
 			defer req.Done()
 			req.output, req.err = h.task.Execute(req.ctx, req.input)
