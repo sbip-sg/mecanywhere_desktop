@@ -229,6 +229,7 @@ type ResourceManager interface {
 	UpdateConfig(cpu float64, mem int) string
 	Reserve(cpu float64, mem int) error
 	Release(cpu float64, mem int) error
+	GetMaxCPUAndMem() (float64, uint64)
 	GetGPUCount() int
 	ReserveGPU(count int, utilLimit int) ([]int, error)
 	ReleaseGPU([]int) error
@@ -342,6 +343,10 @@ func (m *resourceManager) Release(cpu float64, mem int) error {
 	m.taskAvailMEM.Add(uint64(mem))
 	log.Printf("released cpu %.2f, mem %d; now task cpu %d, task mem %d", cpu, mem, m.taskAvailCPU.Load(), m.taskAvailMEM.Load())
 	return nil
+}
+
+func (m *resourceManager) GetMaxCPUAndMem() (float64, uint64) {
+	return float64(m.taskTotalCPU) / 10, m.taskTotalMEM
 }
 
 func (m *resourceManager) GetGPUCount() int {

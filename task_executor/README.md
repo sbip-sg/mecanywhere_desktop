@@ -60,7 +60,7 @@ docker run --name meca_executor_test --gpus=all  -v /var/run/docker.sock:/var/ru
 Retrieve stats
 
 ```sh
-curl http://172.18.0.255:2591/stats -X POST
+curl http://172.18.0.255:2591/stats
 ```
 
 Provide resource limit for the task
