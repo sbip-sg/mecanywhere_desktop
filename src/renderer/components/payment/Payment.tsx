@@ -2,7 +2,12 @@ import { useEffect, useState } from 'react';
 import { Box, Button, Typography } from '@mui/material';
 import { useSelector } from 'react-redux';
 import { RootState } from 'renderer/redux/store';
+import {
+  getTowers,
+  registerMeForTower,
+} from 'renderer/services/TowerContractService';
 import { MetaMaskSDK } from '../../../node_modules/@metamask/sdk';
+import Web3 from '../../../node_modules/web3';
 import QRCodePopover from './QRCodePopover';
 import WalletDisconnected from './WalletDisconnected';
 import WalletConnected from './WalletConnected';
@@ -10,7 +15,6 @@ import PaymentPopover from './PaymentPopover';
 import WithdrawalPopover from './WithdrawalPopover';
 import ErrorDialog from '../componentsCommon/ErrorDialogue';
 import actions from '../../redux/actionCreators';
-import { getTowers, registerMeForTower } from 'renderer/services/TowerContractService';
 
 const LOCAL_BLOCKCHAIN_URL = 'http://localhost:8545';
 
@@ -54,7 +58,8 @@ const Payment = () => {
           const clientBalanceDecimal = parseInt(clientBalanceHex, 16);
           setClientBalance(clientBalanceDecimal / 1e18);
         } else {
-          console.error('clientBalanceHex is not a string');
+          console.error('clientBalanceHex is not a string', clientBalanceHex);
+          setClientBalance(-1);
         }
       }
     };
@@ -132,6 +137,7 @@ const Payment = () => {
       })
       .catch((error) => {
         console.error(error);
+        handleDisconnect();
       });
   };
 
@@ -156,8 +162,9 @@ const Payment = () => {
   };
 
   const handleRegisterFirstTower = async () => {
+    console.log(await getTowers(provider));
     const tower = ((await getTowers(provider)) as any[])[0];
-    const towerAddress = tower.address;
+    const towerAddress = tower.owner;
     registerMeForTower(towerAddress, provider, account);
   };
 
@@ -174,7 +181,7 @@ const Payment = () => {
       {/* <Button
         sx={{
           padding: '0.5rem 1rem',
-          margin: '3rem 0',
+          margin: '1rem 0',
         }}
         onClick={handleLocalConnect}
       >
@@ -183,7 +190,6 @@ const Payment = () => {
       <Button
         sx={{
           padding: '0.5rem 1rem',
-          margin: '3rem 0',
         }}
         onClick={handleRegisterFirstTower}
       >

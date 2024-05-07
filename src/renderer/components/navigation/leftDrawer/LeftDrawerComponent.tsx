@@ -50,8 +50,8 @@ const LeftDrawerComponent = () => {
             onClick={() => navigate('/txndashboard')}
             key="hosttxn"
           >
-            {/* 
-              
+            {/*
+
             */}
             <DashboardIcon
               sx={{ marginRight: listItemSpacing, color: 'text.primary' }}
@@ -121,7 +121,7 @@ const LeftDrawerComponent = () => {
         </List>
         <Divider />
         <List disablePadding component="li">
-          <ListItemButton
+          {/* <ListItemButton
             onClick={() => {
               navigate('/uploadtask');
             }}
@@ -136,7 +136,7 @@ const LeftDrawerComponent = () => {
             >
               Upload Task
             </Typography>
-          </ListItemButton>
+          </ListItemButton> */}
         </List>
         <Divider />
       </Box>

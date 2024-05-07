@@ -142,17 +142,6 @@ const WalletConnected: React.FC<WalletConnectedProps> = ({
         >
           You are connected to MetaMask.
         </Typography>
-        <Typography
-          variant="body1"
-          sx={{
-            padding: '0.5rem 0',
-            maxWidth: '70%',
-            textAlign: 'center',
-          }}
-        >
-          Please note that all transactions will be processed through the
-          MECAnywhere Smart Contract, which serves as an intermediary.
-        </Typography>
       </Stack>
       <Grid
         container

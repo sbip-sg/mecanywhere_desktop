@@ -37,7 +37,7 @@ const initialDeviceStats: DeviceStats = {
 };
 
 const initialPaymentProviderState: PaymentProviderState = {
-  sdkProvider: null,
+  sdkProvider: undefined,
   connected: false,
   accounts: [],
   chainId: '',
@@ -273,7 +273,7 @@ const reducers = combineReducers({
   themeReducer,
   importingAccountReducer,
   deviceStatsReducer,
-  paymentProviderReducer: paymentProviderReducer,
+  paymentProviderReducer,
   taskList: taskListReducer,
 });
 

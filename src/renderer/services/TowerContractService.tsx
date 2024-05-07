@@ -1,8 +1,13 @@
-import Web3 from 'web3';
-import towerContract from '../contracts/MecaTowerContract.json';
+import sendRequest from './PymecaService';
 
-const towerContractAddr = process.env.TOWER_CONTRACT_ADDRESS;
-const towerContractAbi = towerContract.abi;
+export async function getHostRequestFee() {
+  try {
+    const response = await sendRequest('get_host_request_fee', {});
+    return response;
+  } catch (error) {
+    console.error('There was a problem with the fetch operation:', error);
+  }
+}
 
 export async function registerMeForTower(
   towerAddress: string,
@@ -10,21 +15,9 @@ export async function registerMeForTower(
   sender: string
 ) {
   try {
-    const web3 = new Web3(provider);
-    const contract = new web3.eth.Contract(towerContractAbi, towerContractAddr);
-    await contract.methods
-      .registerMeForTower(towerAddress)
-      .send({ from: sender })
-      .on('transactionHash', (hash: any) => {
-        console.log('Transaction Hash:', hash);
-      })
-      .on('receipt', (receipt: any) => {
-        console.log('Transaction Receipt:', receipt);
-      })
-      .on('error', (error: any) => {
-        console.error('Transaction Error:', error);
-        throw new Error(error);
-      });
+    await sendRequest('register_me_for_tower', {
+      towerAddress,
+    });
     console.log('Register successful.');
     return true;
   } catch (error) {
@@ -34,10 +27,8 @@ export async function registerMeForTower(
 
 export async function getTowers(provider: any) {
   try {
-    const web3 = new Web3(provider);
-    const contract = new web3.eth.Contract(towerContractAbi, towerContractAddr);
-    const towers = await contract.methods.getTowers().call();
-    return towers;
+    const response = await sendRequest('get_towers', {});
+    return response;
   } catch (error) {
     console.error('Get towers error', error);
   }

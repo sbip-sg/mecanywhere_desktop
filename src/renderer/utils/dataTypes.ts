@@ -122,14 +122,16 @@ export interface TaskList {
 export interface Task {
   taskName: string;
   cid: string;
-  size_folder: number;
-  size_io: number;
-  computing_type: string;
+  cidBytes: string;
+  sizeFolder: number;
+  sizeIo: number;
+  computingType: string;
   fee: number;
+  description: string;
 }
 
 export interface PaymentProviderState {
-  sdkProvider: SDKProvider | null;
+  sdkProvider: SDKProvider | undefined;
   connected: boolean;
   accounts: string[];
   chainId: string;

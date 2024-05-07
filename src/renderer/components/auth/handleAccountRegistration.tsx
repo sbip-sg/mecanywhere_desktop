@@ -1,7 +1,5 @@
-import { createDID } from 'renderer/services/DIDServices';
 import {
   generateMnemonicAndKeyPair,
-  uint8ArrayToDecimal,
   utf8ToHex,
   encryptWithPassword,
   generateKeyPair,
@@ -13,24 +11,16 @@ const handleAccountRegistration = async (
 ) => {
   try {
     let MnemonicAndKeyPair;
-    let didToSet;
     if (skipRegenerateMnemonics) {
-      // importing account
       // importing account
       const mnemonics = window.electron.store.get('mnemonic');
       MnemonicAndKeyPair = await generateKeyPair(mnemonics);
-      didToSet = window.electron.store.get('did-temp');
     } else {
-      // create entirely new account
       // create entirely new account
       MnemonicAndKeyPair = await generateMnemonicAndKeyPair();
       if (typeof MnemonicAndKeyPair === 'undefined') {
         throw new Error('Key pair generation failed.');
       }
-      const did = await createDID(
-        uint8ArrayToDecimal(MnemonicAndKeyPair.publicKey)
-      );
-      didToSet = did;
     }
     if (MnemonicAndKeyPair) {
       const { mnemonic, publicKey, privateKey, publicKeyCompressed } =
@@ -47,7 +37,6 @@ const handleAccountRegistration = async (
         'privateKey',
         encryptWithPassword(utf8ToHex(privateKey), password)
       );
-      window.electron.store.set('did', didToSet);
       window.electron.store.set('isExecutorSettingsSaved', 'true');
       window.electron.store.set(
         'executorSettings',

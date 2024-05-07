@@ -46,7 +46,8 @@ import {
   testGenerateLargeFile,
   readFirstLineOfFileInFolder,
   deleteFolder,
-  checkFolderExists
+  checkFolderExists,
+  catFile,
 } from  './ipfsIntegration'
 
 const start = performance.now();
@@ -144,6 +145,7 @@ ipcMain.on(Channels.TEST_GENERATE_LARGE_FILE, testGenerateLargeFile);
 ipcMain.handle(Channels.TEST_READ_FILE, readFirstLineOfFileInFolder);
 ipcMain.handle(Channels.DELETE_FOLDER, deleteFolder);
 ipcMain.handle(Channels.CHECK_FOLDER_EXISTS, checkFolderExists);
+ipcMain.handle(Channels.IPFS_CAT, catFile);
 
 const createWorkerWindow = async () => {
   workerWindow = new BrowserWindow({

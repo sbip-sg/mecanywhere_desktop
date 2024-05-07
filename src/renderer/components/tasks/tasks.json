@@ -2,33 +2,33 @@
     {
       "taskName": "DreamShaper",
       "cid": "QmUebLadMAAuPsnYrXbg1Sk2eyJ1Rgm4BMSUedW1XKrdMS",
-      "size_folder": 161,
-      "size_io": 212,
-      "computing_type": "CPU only",
+      "sizeFolder": 161,
+      "sizeIo": 212,
+      "computingType": "CPU only",
       "fee": 0.89
     },
     {
       "taskName": "Elldreths Retro Mix",
       "cid": "QmPdFohRXQi7adaVUMCMDuaiFtwfMsQVWd6puNzAUNYaZX",
-      "size_folder": 115,
-      "size_io": 322,
-      "computing_type": "CPU only",
+      "sizeFolder": 115,
+      "sizeIo": 322,
+      "computingType": "CPU only",
       "fee": 0.66
     },
     {
       "taskName": "AbyssOrangeMix3",
       "cid": "QmVGy2kEtAqeYiSZuaTebahokQEKXaJFoXRzzWdEKJjnLT",
-      "size_folder": 211,
-      "size_io": 112,
-      "computing_type": "CPU only",
+      "sizeFolder": 211,
+      "sizeIo": 112,
+      "computingType": "CPU only",
       "fee": 0.37
     },
     {
       "taskName": "OpenJourney",
       "cid": "QmcqVHDaBZ5j87WFQJuNjpCnuLvN1rjx5RQYQFvXXjLmR4",
-      "size_folder": 121,
-      "size_io": 232,
-      "computing_type": "CPU only",
+      "sizeFolder": 121,
+      "sizeIo": 232,
+      "computingType": "CPU only",
       "fee": 0.2
     }
   ]

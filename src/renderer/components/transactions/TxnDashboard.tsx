@@ -11,7 +11,6 @@ import CustomLineChart from './linechart/CustomLineChart';
 import { DataEntry } from '../../utils/dataTypes';
 import { PropConfigList } from './propConfig';
 import Datagrid from './datagrid/Datagrid';
-import { addDummyHistory } from '../../services/TransactionServices';
 import Transitions from '../../utils/Transition';
 import fetchTransactionHistory from '../componentsCommon/fetchTransactionHistory';
 import {
@@ -20,6 +19,7 @@ import {
   toolbarMinHeight,
   unexpandedRowPerPage,
 } from './datagrid/datagridUtils/TableParams';
+import dummyData from './dummyData';
 
 const TxnDashboard: React.FC = () => {
   const did = window.electron.store.get('did');
@@ -65,34 +65,17 @@ const TxnDashboard: React.FC = () => {
   };
 
   const handleAddDummyData = async () => {
-    const { accessToken } = reduxStore.getState().userReducer;
-    if (accessToken) {
-      const addDummyClientResponse = await addDummyHistory(accessToken, {
-        client_did: did,
-      });
-      if (!addDummyClientResponse) {
-        console.error('Invalid dummy history response');
-        return;
-      }
-      const addDummyHostResponse = await addDummyHistory(accessToken, {
-        host_did: did,
-      });
-      if (!addDummyHostResponse) {
-        console.error('Invalid dummy history response');
-        return;
-      }
-      await fetchAndSetData(accessToken);
-    } else {
-      console.error('Invalid access token or did');
-    }
+    setIsLoading(true);
+    setData(dummyData);
+    setHasData(true);
+    setIsLoading(false);
   };
 
   useEffect(() => {
     const credential = JSON.parse(window.electron.store.get('credential'));
     const retrieveData = async () => {
       if (credential) {
-        const { accessToken } = reduxStore.getState().userReducer;
-        await fetchAndSetData(accessToken);
+        handleRefresh();
       } else {
         console.error('Credential or DID is missing');
       }

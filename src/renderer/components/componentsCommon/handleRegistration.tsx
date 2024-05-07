@@ -27,6 +27,7 @@ export const handleRegisterHost = async (blockTimeoutLimit: number, stake: numbe
     (byte) => `0x${byte}`
   );
 
+  // TODO: check host registered and edit block timeout limit
   const response = await registerHost(
     publicKeyByteArray,
     blockTimeoutLimit,

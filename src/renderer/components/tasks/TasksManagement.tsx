@@ -8,6 +8,10 @@ import {
   TextField,
 } from '@mui/material';
 import { Task } from 'renderer/utils/dataTypes';
+import reduxStore, { RootState } from 'renderer/redux/store';
+import { useSelector } from 'react-redux';
+import { getTaskListFromContract } from 'renderer/services/TaskContractService';
+import { retrieveIPFSFolderMetadata } from 'renderer/services/IPFSService';
 import mockTasks from './tasks.json';
 import TaskCard from './TaskCard';
 import SortWidget from './SortWidget';
@@ -25,11 +29,54 @@ const sortTasks = (
 };
 
 const TasksManagement: React.FC = () => {
-  const [tasks, setTasks] = useState<Task[]>(mockTasks);
+  const [tasks, setTasks] = useState<Task[]>([]);
   const [sortField, setSortField] = useState<keyof Task>('taskName');
   const [sortDirection, setSortDirection] = useState<'asc' | 'desc'>('asc');
   const [searchQuery, setSearchQuery] = useState('');
   const [currentPage, setCurrentPage] = useState(1);
+
+  const paymentProviderConnected = useSelector(
+    (state: RootState) => state.paymentProviderReducer.connected
+  );
+
+  useEffect(() => {
+    if (paymentProviderConnected) {
+      const paymentProvider = reduxStore.getState().paymentProviderReducer.sdkProvider;
+      const account = reduxStore.getState().paymentProviderReducer.accounts[0];
+      getTaskListFromContract(paymentProvider, account)
+        .then((retrievedTasks) => {
+          if (!retrievedTasks || retrievedTasks.length === 0) {
+            return [];
+          }
+          const tasksWithMetadataPromises = retrievedTasks.map((task) => {
+            return retrieveIPFSFolderMetadata(task.cid)
+              .then((metadata) => {
+                if (!metadata) {
+                  return null;
+                }
+                task.taskName = metadata.name;
+                task.description = metadata.description;
+                task.sizeFolder = metadata.sizeFolder;
+                return task;
+              })
+              .catch((error) => {
+                console.error(error);
+                return null;
+              });
+          });
+          return Promise.all(tasksWithMetadataPromises);
+        })
+        .then((retrievedTasks) => {
+          const filteredTasks = retrievedTasks.filter((task) => task !== null);
+          setTasks(filteredTasks);
+          return true;
+        })
+        .catch((error) => console.error(error));
+    } else {
+      setTasks(mockTasks);
+    }
+
+  }, []);
 
   const tasksPerPage = 10;
   const indexOfLastTask = currentPage * tasksPerPage;
@@ -46,9 +93,11 @@ const TasksManagement: React.FC = () => {
   const handleSortDirectionChange = (event: SelectChangeEvent) => {
     setSortDirection(event.target.value as 'asc' | 'desc');
   };
+
   const handleSearchChange = (event) => {
     setSearchQuery(event.target.value);
   };
+
   const filteredTasks = tasks.filter((task) =>
     task.taskName.toLowerCase().includes(searchQuery.toLowerCase())
   );

@@ -37,7 +37,8 @@ const Channels = {
   SELECTED_FOLDER: 'selected-folder',
   TEST_READ_FILE: 'test-read-file',
   DELETE_FOLDER: 'delete-folder',
-  CHECK_FOLDER_EXISTS: 'check-folder-exists'
+  CHECK_FOLDER_EXISTS: 'check-folder-exists',
+  IPFS_CAT: 'ipfs-cat',
 };
 
 export default Channels;

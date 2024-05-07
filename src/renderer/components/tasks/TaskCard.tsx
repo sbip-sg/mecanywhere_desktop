@@ -20,8 +20,9 @@ import {
   removeFromTested,
 } from './TaskListOperations';
 import actions from '../../redux/actionCreators';
-import { RootState } from '../../redux/store';
+import reduxStore, { RootState } from '../../redux/store';
 import CardDetail from './CardDetail';
+import { addTaskToHost } from 'renderer/services/HostContractService';
 
 interface TaskCardProps {
   task: Task;
@@ -48,7 +49,7 @@ const TaskCard: React.FC<TaskCardProps> = ({ task }) => {
         }
       }
     };
-  
+
     checkAndSetPhase();
     if (hasBeenTested(task.taskName)){
       actions.addToTested()
@@ -70,7 +71,7 @@ const TaskCard: React.FC<TaskCardProps> = ({ task }) => {
     try {
       setIsDownloading(true);
       console.log("handleDownload", task.cid)
-      await window.electron.downloadFromIPFS(task.cid);
+      // await window.electron.downloadFromIPFS(task.cid);
       await new Promise((resolve) => setTimeout(resolve, 500));
       setCurrentPhase('toBuild');
       setIsDownloading(false);
@@ -98,6 +99,18 @@ const TaskCard: React.FC<TaskCardProps> = ({ task }) => {
   };
 
   const handleActivate = () => {
+    const paymentProviderConnected = reduxStore.getState().paymentProviderReducer.connected;
+    if (!paymentProviderConnected) {
+      console.error('Payment provider not connected');
+      return;
+    }
+    const paymentProvider = reduxStore.getState().paymentProviderReducer.sdkProvider;
+    const account = reduxStore.getState().paymentProviderReducer.accounts[0];
+    try {
+      addTaskToHost(task.cidBytes, 10, 10, paymentProvider, account);
+    } catch (err) {
+      console.error('Error adding task to host:', err);
+    }
     addToActivated(task.taskName);
     actions.addToActivated(task.taskName);
   };
@@ -159,7 +172,7 @@ const TaskCard: React.FC<TaskCardProps> = ({ task }) => {
                   isLoading={isDownloading}
                 />
                 <Typography variant="subtitle2">
-                  {`Disk Space Required: ${task.size_folder}`}
+                  {`Disk Space Required: ${task.sizeFolder}`}
                 </Typography>
               </>
             )}
@@ -178,8 +191,8 @@ const TaskCard: React.FC<TaskCardProps> = ({ task }) => {
               </>
             )}
             {currentPhase === 'toTestOrActivate' && (
-              <Grid container spacing={1} alignItems={"center"}> 
-              <Grid item xs={6} > 
+              <Grid container spacing={1} alignItems={"center"}>
+              <Grid item xs={6} >
                 <CustomButton
                   label={getTestLabel()}
                   onClick={handleRunTest}
@@ -188,7 +201,7 @@ const TaskCard: React.FC<TaskCardProps> = ({ task }) => {
                   isLoading={isTesting}
                 />
               </Grid>
-              <Grid item xs={6}> 
+              <Grid item xs={6}>
                 <CustomButton
                   label={isDeleting ? 'Purging' : 'Purge'}
                   onClick={handleDelete}

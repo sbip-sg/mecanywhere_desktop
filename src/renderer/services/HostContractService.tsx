@@ -1,8 +1,4 @@
-import Web3 from '../../node_modules/web3';
-import hostContract from '../contracts/MecaHostContract.json';
-
-const hostContractAddr = process.env.HOST_CONTRACT_ADDRESS;
-const hostContractAbi = hostContract.abi;
+import sendRequest from './PymecaService';
 
 export async function registerHost(
   publicKeyByteArray: string[],
@@ -12,22 +8,11 @@ export async function registerHost(
   sender: string
 ) {
   try {
-    const web3 = new Web3(provider);
-    const contract = new web3.eth.Contract(hostContractAbi, hostContractAddr);
-    const amountToSend = web3.utils.toWei(stake, 'ether');
-    await contract.methods
-      .registerAsHost(publicKeyByteArray, blockTimeoutLimit)
-      .send({ from: sender, value: amountToSend })
-      .on('transactionHash', (hash: any) => {
-        console.log('Transaction Hash:', hash);
-      })
-      .on('receipt', (receipt: any) => {
-        console.log('Transaction Receipt:', receipt);
-      })
-      .on('error', (error: any) => {
-        console.error('Transaction Error:', error);
-        throw new Error(error);
-      });
+    await sendRequest('register', {
+      publicKeyByteArray,
+      blockTimeoutLimit,
+      stake,
+    });
     console.log('Register successful.');
     return true;
   } catch (error) {
@@ -41,21 +26,9 @@ export async function updateBlockTimeoutLimit(
   sender: string
 ) {
   try {
-    const web3 = new Web3(provider);
-    const contract = new web3.eth.Contract(hostContractAbi, hostContractAddr);
-    await contract.methods
-      .updateBlockTimeoutLimit(blockTimeoutLimit)
-      .send({ from: sender })
-      .on('transactionHash', (hash: any) => {
-        console.log('Transaction Hash:', hash);
-      })
-      .on('receipt', (receipt: any) => {
-        console.log('Transaction Receipt:', receipt);
-      })
-      .on('error', (error: any) => {
-        console.error('Transaction Error:', error);
-        throw new Error(error);
-      });
+    await sendRequest('update_block_timeout_limit', {
+      blockTimeoutLimit,
+    });
     console.log('Update successful.');
     return true;
   } catch (error) {
@@ -69,21 +42,9 @@ export async function deregisterHost(
   sender: string
 ) {
   try {
-    const web3 = new Web3(provider);
-    const contract = new web3.eth.Contract(hostContractAbi, hostContractAddr);
-    await contract.methods
-      .deleteHost(host)
-      .send({ from: sender })
-      .on('transactionHash', (hash: any) => {
-        console.log('Transaction Hash:', hash);
-      })
-      .on('receipt', (receipt: any) => {
-        console.log('Transaction Receipt:', receipt);
-      })
-      .on('error', (error: any) => {
-        console.error('Transaction Error:', error);
-        throw new Error(error);
-      });
+    await sendRequest('deregister', {
+      host,
+    });
     console.log('Deregister successful.');
     return true;
   } catch (error) {
@@ -91,7 +52,16 @@ export async function deregisterHost(
   }
 }
 
-export async function addTask(
+export async function getTaskRegisterFee() {
+  try {
+    const response = await sendRequest('get_task_register_fee', {});
+    return response;
+  } catch (error) {
+    console.error('Get task register fee error', error);
+  }
+}
+
+export async function addTaskToHost(
   ipfs_hash: string,
   block_timeout: number,
   task_fee: number,
@@ -99,21 +69,11 @@ export async function addTask(
   sender: string
 ) {
   try {
-    const web3 = new Web3(provider);
-    const contract = new web3.eth.Contract(hostContractAbi, hostContractAddr);
-    await contract.methods
-      .addTask(ipfs_hash, block_timeout, task_fee)
-      .send({ from: sender })
-      .on('transactionHash', (hash: any) => {
-        console.log('Transaction Hash:', hash);
-      })
-      .on('receipt', (receipt: any) => {
-        console.log('Transaction Receipt:', receipt);
-      })
-      .on('error', (error: any) => {
-        console.error('Transaction Error:', error);
-        throw new Error(error);
-      });
+    await sendRequest('add_task', {
+      ipfs_hash,
+      block_timeout,
+      task_fee,
+    });
     console.log('Add task successful.');
     return true;
   } catch (error) {
@@ -127,21 +87,9 @@ export async function deleteTask(
   sender: string
 ) {
   try {
-    const web3 = new Web3(provider);
-    const contract = new web3.eth.Contract(hostContractAbi, hostContractAddr);
-    await contract.methods
-      .deleteTask(task_hash)
-      .send({ from: sender })
-      .on('transactionHash', (hash: any) => {
-        console.log('Transaction Hash:', hash);
-      })
-      .on('receipt', (receipt: any) => {
-        console.log('Transaction Receipt:', receipt);
-      })
-      .on('error', (error: any) => {
-        console.error('Transaction Error:', error);
-        throw new Error(error);
-      });
+    await sendRequest('delete_task', {
+      task_hash,
+    });
     console.log('Delete task successful.');
     return true;
   } catch (error) {
