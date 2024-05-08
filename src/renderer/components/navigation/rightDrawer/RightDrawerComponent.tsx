@@ -58,7 +58,7 @@ const RightDrawerComponent: React.FC<RightDrawerComponentProps> = ({
 
   const handleSignOut = () => {
     actions.setAuthenticated(false);
-    navigate('/login');
+    navigate('/');
   };
 
   const handleDeleteAccount = () => {

@@ -1,5 +1,5 @@
 import { Task } from '../utils/dataTypes';
-import sendRequest from './PymecaService';
+import { sendRequest } from './PymecaService';
 
 export async function getTaskListFromContract(provider: any, sender: string) {
   try {

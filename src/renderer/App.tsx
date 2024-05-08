@@ -34,7 +34,7 @@ import Settings from './components/settings/Settings';
 import { getDesignTokens } from './utils/theme';
 import useHandleAppExitHook from './utils/useHandleAppExitHook';
 import useClientHooks from './utils/useClientHooks';
-// import useHeartbeatHook from './utils/useHeartbeatHook';
+import usePymecaAccountHook from './utils/usePymecaAccountHook';
 
 const PrivateRoutes = () => {
   const isAuthenticated = useSelector(
@@ -186,6 +186,7 @@ const App = () => {
   const theme = useMemo(() => createTheme(getDesignTokens(mode)), [mode]);
   useHandleAppExitHook();
   useClientHooks();
+  usePymecaAccountHook();
   return (
     <StyledEngineProvider injectFirst>
       <ThemeProvider theme={theme}>

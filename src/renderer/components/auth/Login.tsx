@@ -13,6 +13,7 @@ import { ReactComponent as Logo } from '../../../../assets/LogoColor.svg';
 import Transitions from '../../utils/Transition';
 import { LoginFormSchema } from '../componentsCommon/FormSchema';
 import handleLogin from './handleLogin';
+import { getAccount } from 'renderer/services/PymecaService';
 
 interface FormValues {
   password: string;
@@ -26,9 +27,11 @@ const Login = () => {
   const handleCloseErrorDialog = () => {
     setErrorDialogOpen(false);
   };
+
   useEffect(() => {
     actions.setImportingAccount(false);
   }, []);
+
   const handleSubmit = useCallback(
     async (values: FormValues, formActions: FormikHelpers<FormValues>) => {
       setIsLoading(true);
@@ -56,6 +59,16 @@ const Login = () => {
     },
     [navigate]
   );
+
+  const fetchAccount = async () => {
+    try {
+      const account = await getAccount();
+      actions.setAuthenticated(true);
+      window.electron.store.set('did', account);
+    } catch (error) {
+      console.error('Error fetching account:', error);
+    }
+  };
 
   return isLoading ? (
     <Transitions duration={2}>
@@ -113,15 +126,6 @@ const Login = () => {
                 label="Password"
                 type="password"
               />
-              <Typography
-                fontSize="12px"
-                maxWidth="22rem"
-                textAlign="center"
-                marginTop="0.5rem"
-              >
-                You have previously registered an account on this device. Please
-                log in to continue.
-              </Typography>
               <Box sx={{ maxWidth: '22rem', width: '100%' }}>
                 <Box
                   sx={{
@@ -134,7 +138,7 @@ const Login = () => {
                     variant="contained"
                     type="submit"
                     sx={{
-                      width: '35%',
+                      width: '45%',
                       color: 'text.primary',
                       backgroundColor: 'primary.main',
                       fontWeight: '600',
@@ -144,37 +148,17 @@ const Login = () => {
                   </Button>
                   <Button
                     variant="contained"
-                    onClick={() => navigate('/register')}
+                    onClick={() => fetchAccount()}
                     sx={{
-                      width: '60%',
+                      width: '50%',
                       color: 'text.primary',
                       backgroundColor: 'primary.main',
                       fontWeight: '600',
                     }}
                   >
-                    Create Account
+                    Use secret
                   </Button>
                 </Box>
-                <Box
-                  sx={{
-                    display: 'flex',
-                    justifyContent: 'center',
-                    py: '0.5rem',
-                    alignItems: 'center',
-                  }}
-                >
-                  <Typography>OR</Typography>
-                </Box>
-                <Button
-                  variant="contained"
-                  onClick={() => navigate('/import-seed-phrase')}
-                  sx={{
-                    maxWidth: '22rem',
-                    width: '100%',
-                  }}
-                >
-                  Import With Seed Phrase
-                </Button>
               </Box>
               <ErrorDialog
                 open={errorDialogOpen}

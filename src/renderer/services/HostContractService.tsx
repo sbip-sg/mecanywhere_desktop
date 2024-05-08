@@ -1,4 +1,4 @@
-import sendRequest from './PymecaService';
+import { sendRequest } from './PymecaService';
 
 export async function registerHost(
   publicKeyByteArray: string[],

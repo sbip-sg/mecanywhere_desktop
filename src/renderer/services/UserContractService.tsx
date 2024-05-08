@@ -1,4 +1,4 @@
-import sendRequest from './PymecaService';
+import { sendRequest } from './PymecaService';
 
 export default async function sendTask(
   ipfsSha256: string,
