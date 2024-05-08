@@ -14,6 +14,7 @@ import (
 	"github.com/docker/cli/opts"
 	"github.com/docker/docker/api/types"
 	"github.com/docker/docker/api/types/container"
+	"github.com/docker/docker/api/types/mount"
 	"github.com/docker/docker/api/types/network"
 	"github.com/docker/docker/client"
 )
@@ -23,6 +24,7 @@ const (
 	dockerInitMark   = "meca-init-done"
 	dockerReadyRetry = 5
 	mecaVnet         = "meca"
+	SGXRAREQUEST     = "SGXRAREQUEST"
 )
 
 var (
@@ -41,6 +43,8 @@ type DockerTask struct {
 	vIP         string
 	resource    ResourceLimit
 	runtime     string
+	useSGX      bool
+	sgxCfg      *SGXConfig
 	cli         *client.Client
 }
 
@@ -50,6 +54,8 @@ func NewDockerTask(taskId string, cfg TaskConfig, cli *client.Client) *DockerTas
 		taskId:   taskId,
 		runtime:  cfg.Runtime,
 		resource: cfg.Rsrc,
+		useSGX:   cfg.UseSGX,
+		sgxCfg:   cfg.sgxCfg,
 		cli:      cli,
 	}
 }
@@ -125,7 +131,21 @@ func (t *DockerTask) Init(ctx context.Context, _ string, _ int, gpus []int) erro
 		Memory:   t.resource.MEM << 10 << 10,
 	}
 
-	if t.resource.UseGPU {
+	// set mounts
+	var Mounts []mount.Mount
+
+	if t.useSGX {
+		resources.Devices = append(resources.Devices, container.DeviceMapping{
+			PathOnHost:        t.sgxCfg.SGXDevice,
+			PathInContainer:   SGXBindDevice,
+			CgroupPermissions: "mrw",
+		})
+		Mounts = append(Mounts, mount.Mount{
+			Type:   mount.TypeBind,
+			Source: t.sgxCfg.AesmdPath,
+			Target: SGXBindAesmd,
+		})
+	} else if t.resource.UseGPU {
 		gpuOpts := opts.GpuOpts{}
 		deviceOpts := "\"device="
 		for _, gpu := range gpus {
@@ -136,7 +156,7 @@ func (t *DockerTask) Init(ctx context.Context, _ string, _ int, gpus []int) erro
 		gpuOpts.Set(deviceOpts)
 		resources.DeviceRequests = gpuOpts.Value()
 	}
-	resp, err := t.cli.ContainerCreate(ctx, &container.Config{Image: t.imageId}, &container.HostConfig{Resources: resources, Runtime: t.runtime}, networkConfig, nil, containerName)
+	resp, err := t.cli.ContainerCreate(ctx, &container.Config{Image: t.imageId}, &container.HostConfig{Resources: resources, Runtime: t.runtime, Mounts: Mounts}, networkConfig, nil, containerName)
 	if err != nil {
 		return err
 	}
@@ -146,6 +166,7 @@ func (t *DockerTask) Init(ctx context.Context, _ string, _ int, gpus []int) erro
 	t.containerId = resp.ID
 	if err := t.cli.ContainerStart(ctx, resp.ID, types.ContainerStartOptions{}); err != nil {
 		// TODO: check port is already allocated error here
+		log.Printf("init container failed to start %v", err)
 		return err
 	}
 	log.Printf("init container started %d", time.Now().UnixMicro())
@@ -168,11 +189,36 @@ func (t *DockerTask) Init(ctx context.Context, _ string, _ int, gpus []int) erro
 	return nil
 }
 
-// pass the input to the container
-func (t *DockerTask) Execute(ctx context.Context, input []byte) ([]byte, error) {
+func (t *DockerTask) ra(_ context.Context) ([]byte, error) {
 	// send the request to the task server
 	cli := http.DefaultClient
 	url := fmt.Sprintf("http://%s:8080", t.vIP)
+	if t.useSGX {
+		url = fmt.Sprintf("http://%s:8080/ra", t.vIP)
+	}
+	if resp, err := cli.Get(url); err != nil {
+		return nil, err
+	} else {
+		defer resp.Body.Close()
+		if body, err := io.ReadAll(resp.Body); err != nil {
+			return nil, ErrFailedToDecodeTaskResponse
+		} else {
+			return body, nil
+		}
+	}
+}
+
+// pass the input to the container
+func (t *DockerTask) Execute(ctx context.Context, input []byte) ([]byte, error) {
+	if t.useSGX && bytes.Equal(input, []byte(SGXRAREQUEST)) {
+		return t.ra(ctx)
+	}
+	// send the request to the task server
+	cli := http.DefaultClient
+	url := fmt.Sprintf("http://%s:8080", t.vIP)
+	if t.useSGX {
+		url = fmt.Sprintf("http://%s:8080/run", t.vIP)
+	}
 	if resp, err := cli.Post(url, "application/json", bytes.NewReader(input)); err != nil {
 		return nil, err
 	} else {

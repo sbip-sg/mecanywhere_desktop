@@ -6,13 +6,25 @@ import (
 	"gopkg.in/yaml.v3"
 )
 
+const (
+	SGXBindDevice = "/dev/sgx/enclave"
+	SGXBindAesmd  = "/var/run/aesmd"
+)
+
+type SGXConfig struct {
+	Enable    bool   `yaml:"enable"`
+	SGXDevice string `yaml:"sgx_device"`
+	AesmdPath string `yaml:"aesmd_path"`
+}
+
 type MecaExecutorConfig struct {
-	Type           string  `yaml:"type"`
-	Timeout        int     `yaml:"timeout"`
-	Cpu            float64 `yaml:"cpu"`
-	Mem            int     `yaml:"mem"`
-	HasGPU         bool    `yaml:"has_gpu"`
-	MicroVMRuntime string  `yaml:"microVM_runtime"`
+	Type           string    `yaml:"type"`
+	Timeout        int       `yaml:"timeout"`
+	Cpu            float64   `yaml:"cpu"`
+	Mem            int       `yaml:"mem"`
+	HasGPU         bool      `yaml:"has_gpu"`
+	MicroVMRuntime string    `yaml:"microVM_runtime"`
+	SGX            SGXConfig `yaml:"sgx"`
 }
 
 func ParseMecaExecutorConfig(filename string) (MecaExecutorConfig, error) {
