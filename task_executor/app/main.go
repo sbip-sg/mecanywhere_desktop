@@ -22,6 +22,7 @@ type Request struct {
 	Resource executor.ResourceLimit `json:"resource"`
 	Runtime  string                 `json:"runtime"` // refer to TaskType in task.go
 	Input    string                 `json:"input"`
+	UseSGX   bool                   `json:"use_sgx"`
 }
 
 type Response struct {
@@ -71,7 +72,8 @@ func main() {
 			return
 		}
 		var ret Response
-		taskCfg := executor.NewTaskConfig(req.ID, req.Runtime, req.Resource)
+		log.Printf("request: %v", req)
+		taskCfg := executor.NewTaskConfig(req.ID, req.Runtime, req.Resource, req.UseSGX, &cfg.SGX)
 		if resp, err := mecaExecutor.Execute(c, taskCfg, []byte(req.Input)); err != nil {
 			ret.Success = false
 			ret.Msg = err.Error()

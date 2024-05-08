@@ -9,7 +9,7 @@ It receives the task definition including the image id, resource limit and the i
 ```json
 {
   "id": "task-name",
-  "resource": {"cpu":1, "mem":128},
+  "resource": {"cpu":1, "mem":128}
   "input": "input accepted by the task codes"
 }
 ```
@@ -80,3 +80,18 @@ Specify GPU
 ```sh
 curl http://172.18.0.255:2591 -X POST -H "Content-Type: application/json" -d '{"id": "meca-python-task:1227", "resource": {"cpu":1, "mem":256, "use_gpu": true, "gpu_count": 3}, "input": "{\"name\": \"sbip\"}"}'
 ```
+
+use sgx
+
+```sh
+curl http://172.18.0.255:2591 -X POST -H "Content-Type: application/json" -d '{"id": "sgx-task:latest", "resource": {"cpu":2, "mem":256}, "input": "{\"value\": \"sbip\"}", "use_sgx": true}'
+```
+
+Perform RA then send encrypted request
+
+```sh
+curl http://172.18.0.255:2591 -X POST -H "Content-Type: application/json" -d '{"id": "mock-sgx-task:latest", "resource": {"cpu":2, "mem":256}, "input": "SGXRAREQUEST", "use_sgx": true}'
+curl http://172.18.0.255:2591 -X POST -H "Content-Type: application/json" -d '{"id": "mock-sgx-task:latest", "resource": {"cpu":2, "mem":256}, "input": "{\"value\": \"<the-encrypted-task-input>\"}", "use_sgx": true}'
+```
+
+Can use the meca sample repo sgx task direct client to interact with a running mock server task to get a valid encryted input sample for testing.

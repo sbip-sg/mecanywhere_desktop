@@ -1,0 +1,33 @@
+enclave {
+  include "stdint.h"
+
+  from "sgx_tstdc.edl" import *; // needed for mutex and lock_guard use
+  from "sgx_tsgxssl.edl" import *; // needed for sgxssl
+  from "sgx_pthread.edl" import*; // needed for sgxssl
+
+  include "sgx_report.h"
+  include "sgx_ql_lib_common.h"
+
+  trusted {
+    public sgx_status_t enc_get_key_and_report(
+      [in] const sgx_target_info_t* qe_target_info,
+      [out] sgx_report_t* app_report,
+      [out, size=key_size] uint8_t* key, size_t key_size);
+    public sgx_status_t enc_run(
+      [in, size=input_data_size] const char* input_data, size_t input_data_size,
+      [out] size_t* output_size);
+    public sgx_status_t enc_get_output(
+      [out, size=prediction_size] uint8_t* prediction,
+      size_t prediction_size);
+    public void enc_clear_exec_context();
+  };
+
+  untrusted {
+#ifndef NDEBUG
+    void ocall_debug_print([in, size=len] const void* s, size_t len);
+    void ocall_debug_print_string([in, string] const char* str);
+    void ocall_debug_print_hex([in, size=len] const void* str, size_t len);
+    void ocall_debug_print_hexstring([in, string] const char* str);
+#endif // NDEBUG
+  };
+};
