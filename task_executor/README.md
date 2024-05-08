@@ -75,6 +75,12 @@ Pick the microVM runtime if the host has it.
 curl http://172.18.0.255:2591 -X POST -H "Content-Type: application/json" -d '{"id": "hugy718/sample:v1","runtime": "microVM", "resource": {"cpu":1, "mem":128}, "input": "{\"name\": \"sbip\"}"}'
 ```
 
+Specify GPU
+
+```sh
+curl http://172.18.0.255:2591 -X POST -H "Content-Type: application/json" -d '{"id": "meca-python-task:1227", "resource": {"cpu":1, "mem":256, "use_gpu": true, "gpu_count": 3}, "input": "{\"name\": \"sbip\"}"}'
+```
+
 use sgx
 
 ```sh
