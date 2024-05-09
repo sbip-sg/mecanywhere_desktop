@@ -24,7 +24,6 @@ import NavigationLayoutTransitionWrapper from './components/navigation/Navigatio
 import TxnDashboard from './components/transactions/TxnDashboard';
 import BillingDashboard from './components/billing/BillingDashboard';
 import TransactionDetails from './components/transactions/TransactionDetails';
-import Payment from './components/payment/Payment';
 import TasksManagement from './components/tasks/TasksManagement';
 import UploadTask from './components/tasks/UploadTask';
 import Settings from './components/settings/Settings';
@@ -131,14 +130,6 @@ const Animated = () => {
           }
         />
       </Route>
-      <Route
-        path="/payment"
-        element={
-          <Transitions>
-            <Payment />
-          </Transitions>
-        }
-      />
       <Route
         path="/uploadtask"
         element={

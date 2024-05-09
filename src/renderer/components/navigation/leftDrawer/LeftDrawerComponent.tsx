@@ -85,25 +85,6 @@ const LeftDrawerComponent = () => {
         <List disablePadding component="li">
           <ListItemButton
             onClick={() => {
-              navigate('/payment');
-            }}
-            key="payment"
-          >
-            <MonetizationOnIcon
-              sx={{ marginRight: listItemSpacing, color: 'text.primary' }}
-            />
-            <Typography
-              margin={`${listTopBottomMargin} 0 ${listTopBottomMargin} 0`}
-              sx={{ color: 'text.primary' }}
-            >
-              Payment
-            </Typography>
-          </ListItemButton>
-        </List>
-        <Divider />
-        <List disablePadding component="li">
-          <ListItemButton
-            onClick={() => {
               navigate('/tasksmanagement');
             }}
             key="tasks"
