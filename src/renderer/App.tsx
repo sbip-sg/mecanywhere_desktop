@@ -18,10 +18,7 @@ import { useSelector } from 'react-redux';
 import { RootState } from 'renderer/redux/store';
 import NavigationLayout from './components/navigation/NavigationLayout';
 import Transitions from './utils/Transition';
-import Register from './components/auth/Register';
 import Login from './components/auth/Login';
-import ImportSeedPhrase from './components/auth/ImportSeedPhrase';
-import Mnemonics from './components/auth/Mnemonics';
 import Profile from './components/profile/Profile';
 import NavigationLayoutTransitionWrapper from './components/navigation/NavigationLayoutTransitionWrapper';
 import TxnDashboard from './components/transactions/TxnDashboard';
@@ -34,7 +31,6 @@ import Settings from './components/settings/Settings';
 import { getDesignTokens } from './utils/theme';
 import useHandleAppExitHook from './utils/useHandleAppExitHook';
 import useClientHooks from './utils/useClientHooks';
-import usePymecaAccountHook from './utils/usePymecaAccountHook';
 
 const PrivateRoutes = () => {
   const isAuthenticated = useSelector(
@@ -74,30 +70,6 @@ const Animated = () => {
         element={
           <Transitions>
             <Login />
-          </Transitions>
-        }
-      />
-      <Route
-        path="/register"
-        element={
-          <Transitions>
-            <Register />
-          </Transitions>
-        }
-      />
-      <Route
-        path="/mnemonics"
-        element={
-          <Transitions>
-            <Mnemonics />
-          </Transitions>
-        }
-      />
-      <Route
-        path="/import-seed-phrase"
-        element={
-          <Transitions>
-            <ImportSeedPhrase />
           </Transitions>
         }
       />
@@ -186,7 +158,6 @@ const App = () => {
   const theme = useMemo(() => createTheme(getDesignTokens(mode)), [mode]);
   useHandleAppExitHook();
   useClientHooks();
-  usePymecaAccountHook();
   return (
     <StyledEngineProvider injectFirst>
       <ThemeProvider theme={theme}>
