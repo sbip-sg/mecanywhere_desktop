@@ -128,11 +128,5 @@ export interface Task {
   computingType: string;
   fee: number;
   description: string;
-}
-
-export interface PaymentProviderState {
-  sdkProvider: SDKProvider | undefined;
-  connected: boolean;
-  accounts: string[];
-  chainId: string;
+  owner: string;
 }

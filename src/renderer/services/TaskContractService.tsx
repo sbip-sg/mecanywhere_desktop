@@ -1,32 +1,20 @@
-import { Task } from '../utils/dataTypes';
 import { sendRequest } from './PymecaService';
 
-export async function getTaskListFromContract(provider: any, sender: string) {
+export async function getTaskListFromContract() {
   try {
     const rawTasks = await sendRequest('get_tasks', {});
-    if (!rawTasks) {
-      return [];
-    }
-    const tasks = rawTasks.map((task: any) => {
-      const newTask = {} as Task;
-      // TODO: convert sha to cid somewhere
-      newTask.cidBytes = task.ipfsSha256;
-      newTask.cid = "bafybeial4lhhaemhueafsxlra3sg6a5qo6sxvjiubp3pzlpbgh6w3r3psq";
-      newTask.fee = task.fee;
-      newTask.sizeIo = task.size;
-      const computingTypeNumber = Number(task.computingType);
-      if (computingTypeNumber === 0) {
-        newTask.computingType = 'CPU';
-      } else if (computingTypeNumber === 1) {
-        newTask.computingType = 'GPU';
-      } else {
-        newTask.computingType = 'Unknown';
-      }
-      return newTask;
-    });
-    return tasks;
+    return rawTasks;
   } catch (error) {
     console.error('Get tasks error', error);
+  }
+}
+
+export async function cid_from_sha256(sha256: string) {
+  try {
+    const response = await sendRequest('cid_from_sha256', { sha256 });
+    return response;
+  } catch (error) {
+    console.error('Get cid from sha256 error', error);
   }
 }
 
@@ -43,9 +31,7 @@ export async function addTaskByDeveloper(
   ipfsSha256: string,
   fee: number,
   computingType: number,
-  size: number,
-  provider: any,
-  sender: string
+  size: number
 ) {
   try {
     await sendRequest('add_task', {

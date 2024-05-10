@@ -9,7 +9,7 @@ export async function sendRequest(functionName: string, args: any) {
   if (!response.ok) {
     throw new Error('Network response not ok');
   }
-  return response;
+  return response.json();
 }
 
 export async function initActor(actorName: string) {

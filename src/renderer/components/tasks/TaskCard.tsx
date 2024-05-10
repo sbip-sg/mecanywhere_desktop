@@ -20,7 +20,7 @@ import {
   removeFromTested,
 } from './TaskListOperations';
 import actions from '../../redux/actionCreators';
-import reduxStore, { RootState } from '../../redux/store';
+import { RootState } from '../../redux/store';
 import CardDetail from './CardDetail';
 import { addTaskToHost } from 'renderer/services/HostContractService';
 
@@ -99,15 +99,8 @@ const TaskCard: React.FC<TaskCardProps> = ({ task }) => {
   };
 
   const handleActivate = () => {
-    const paymentProviderConnected = reduxStore.getState().paymentProviderReducer.connected;
-    if (!paymentProviderConnected) {
-      console.error('Payment provider not connected');
-      return;
-    }
-    const paymentProvider = reduxStore.getState().paymentProviderReducer.sdkProvider;
-    const account = reduxStore.getState().paymentProviderReducer.accounts[0];
     try {
-      addTaskToHost(task.cidBytes, 10, 10, paymentProvider, account);
+      addTaskToHost(task.cidBytes, 10, 10);
     } catch (err) {
       console.error('Error adding task to host:', err);
     }

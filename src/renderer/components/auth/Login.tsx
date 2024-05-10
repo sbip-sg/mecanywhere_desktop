@@ -3,27 +3,17 @@ import Typography from '@mui/material/Typography';
 import Button from '@mui/material/Button';
 import Container from '@mui/material/Container';
 import CircularProgress from '@mui/material/CircularProgress';
-import { useState, useCallback, useEffect } from 'react';
-import { Formik, Form, FormikHelpers } from 'formik';
-import { useNavigate } from 'react-router-dom';
+import { useState, useEffect } from 'react';
+import { getAccount } from 'renderer/services/PymecaService';
 import ErrorDialog from '../componentsCommon/ErrorDialogue';
-import TextFieldWrapper from '../componentsCommon/TextField';
 import actions from '../../redux/actionCreators';
 import { ReactComponent as Logo } from '../../../../assets/LogoColor.svg';
 import Transitions from '../../utils/Transition';
-import { LoginFormSchema } from '../componentsCommon/FormSchema';
-import handleLogin from './handleLogin';
-import { getAccount } from 'renderer/services/PymecaService';
-
-interface FormValues {
-  password: string;
-}
 
 const Login = () => {
   const [isLoading, setIsLoading] = useState(false);
   const [errorDialogOpen, setErrorDialogOpen] = useState(false);
   const [errorMessage, setErrorMessage] = useState('');
-  const navigate = useNavigate();
   const handleCloseErrorDialog = () => {
     setErrorDialogOpen(false);
   };

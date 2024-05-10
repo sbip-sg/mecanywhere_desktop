@@ -16,12 +16,6 @@ import { splitHexByByteSize } from 'renderer/utils/cryptoUtils';
 import reduxStore from '../../redux/store';
 
 export const handleRegisterHost = async (blockTimeoutLimit: number, stake: number) => {
-  const paymentProvider = reduxStore.getState().paymentProviderReducer.sdkProvider;
-  if (!paymentProvider || !reduxStore.getState().paymentProviderReducer.connected) {
-    throw new Error('Payment provider not connected');
-  }
-
-  const account = reduxStore.getState().paymentProviderReducer.accounts[0];
   const publicKeyCompressed = window.electron.store.get('publicKeyCompressed');
   const publicKeyByteArray = splitHexByByteSize(publicKeyCompressed, 32).map(
     (byte) => `0x${byte}`
@@ -31,9 +25,7 @@ export const handleRegisterHost = async (blockTimeoutLimit: number, stake: numbe
   const response = await registerHost(
     publicKeyByteArray,
     blockTimeoutLimit,
-    stake,
-    paymentProvider,
-    account
+    stake
   );
   if (response) {
     const unpauseResponse = await unpauseExecutor();
@@ -48,18 +40,11 @@ export const handleRegisterHost = async (blockTimeoutLimit: number, stake: numbe
 };
 
 export const handleDeregisterHost = async () => {
-  const paymentProvider = reduxStore.getState().paymentProviderReducer.sdkProvider;
-  if (!paymentProvider || !reduxStore.getState().paymentProviderReducer.connected) {
-    throw new Error('Payment provider not connected');
-  }
   const pauseResponse = await pauseExecutor();
   if (!pauseResponse) {
     console.error('Pause failed.');
   }
-  const account = reduxStore.getState().paymentProviderReducer.accounts[0];
-  await updateBlockTimeoutLimit(0, paymentProvider, account);
-  const response = await deregisterHost(paymentProvider, account, account);
-  if (response) {
+  if (await updateBlockTimeoutLimit(0)) {
     const did = window.electron.store.get('did');
     window.electron.stopConsumer(did);
     log.info('successfully deregistered');

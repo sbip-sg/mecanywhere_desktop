@@ -2,33 +2,45 @@
     {
       "taskName": "DreamShaper",
       "cid": "QmUebLadMAAuPsnYrXbg1Sk2eyJ1Rgm4BMSUedW1XKrdMS",
+      "cidBytes": "0x1220a0b4",
       "sizeFolder": 161,
       "sizeIo": 212,
-      "computingType": "CPU only",
-      "fee": 0.89
+      "computingType": "CPU",
+      "fee": 0.89,
+      "description": "This is a description of the task",
+      "owner": "0x1234567890123456789012345678901234567890"
     },
     {
       "taskName": "Elldreths Retro Mix",
       "cid": "QmPdFohRXQi7adaVUMCMDuaiFtwfMsQVWd6puNzAUNYaZX",
+      "cidBytes": "0x1220a0b4",
       "sizeFolder": 115,
       "sizeIo": 322,
-      "computingType": "CPU only",
-      "fee": 0.66
+      "computingType": "CPU",
+      "fee": 0.66,
+      "description": "This is a description of the task",
+      "owner": "0x1234567890123456789012345678901234567890"
     },
     {
       "taskName": "AbyssOrangeMix3",
       "cid": "QmVGy2kEtAqeYiSZuaTebahokQEKXaJFoXRzzWdEKJjnLT",
+      "cidBytes": "0x1220a0b4",
       "sizeFolder": 211,
       "sizeIo": 112,
-      "computingType": "CPU only",
-      "fee": 0.37
+      "computingType": "CPU",
+      "fee": 0.37,
+      "description": "This is a description of the task",
+      "owner": "0x1234567890123456789012345678901234567890"
     },
     {
       "taskName": "OpenJourney",
       "cid": "QmcqVHDaBZ5j87WFQJuNjpCnuLvN1rjx5RQYQFvXXjLmR4",
+      "cidBytes": "0x1220a0b4",
       "sizeFolder": 121,
       "sizeIo": 232,
-      "computingType": "CPU only",
-      "fee": 0.2
+      "computingType": "CPU",
+      "fee": 0.2,
+      "description": "This is a description of the task",
+      "owner": "0x1234567890123456789012345678901234567890"
     }
   ]

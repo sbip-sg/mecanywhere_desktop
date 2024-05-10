@@ -7,7 +7,6 @@ import {
   JobsState,
   DeviceStats,
   TaskList,
-  PaymentProviderState,
 } from 'renderer/utils/dataTypes';
 
 const initialUserState: UserState = {
@@ -34,13 +33,6 @@ const initialDeviceStats: DeviceStats = {
   totalMem: 8192,
   totalGpus: 0,
   gpuModel: '',
-};
-
-const initialPaymentProviderState: PaymentProviderState = {
-  sdkProvider: undefined,
-  connected: false,
-  accounts: [],
-  chainId: '',
 };
 
 const initialDataEntry: DataEntry = {
@@ -181,36 +173,6 @@ const jobsReducer = (
   }
 };
 
-const paymentProviderReducer = (
-  state: PaymentProviderState = initialPaymentProviderState,
-  action: any
-): PaymentProviderState => {
-  switch (action.type) {
-    case 'setSDKProvider':
-      return {
-        ...state,
-        sdkProvider: action.payload,
-      };
-    case 'setSDKProviderConnected':
-      return {
-        ...state,
-        connected: action.payload,
-      };
-    case 'setPaymentAccounts':
-      return {
-        ...state,
-        accounts: action.payload,
-      };
-    case 'setPaymentChainId':
-      return {
-        ...state,
-        chainId: action.payload,
-      };
-    default:
-      return state;
-  }
-}
-
 export const taskListReducer = (
   state: TaskList = initialTaskList,
   action: any
@@ -273,7 +235,6 @@ const reducers = combineReducers({
   themeReducer,
   importingAccountReducer,
   deviceStatsReducer,
-  paymentProviderReducer,
   taskList: taskListReducer,
 });
 

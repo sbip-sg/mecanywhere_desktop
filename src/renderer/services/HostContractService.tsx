@@ -3,9 +3,7 @@ import { sendRequest } from './PymecaService';
 export async function registerHost(
   publicKeyByteArray: string[],
   blockTimeoutLimit: number,
-  stake: number,
-  provider: any,
-  sender: string
+  stake: number
 ) {
   try {
     await sendRequest('register', {
@@ -21,9 +19,7 @@ export async function registerHost(
 }
 
 export async function updateBlockTimeoutLimit(
-  blockTimeoutLimit: number,
-  provider: any,
-  sender: string
+  blockTimeoutLimit: number
 ) {
   try {
     await sendRequest('update_block_timeout_limit', {
@@ -33,22 +29,6 @@ export async function updateBlockTimeoutLimit(
     return true;
   } catch (error) {
     console.error('Update error', error);
-  }
-}
-
-export async function deregisterHost(
-  provider: any,
-  host: string,
-  sender: string
-) {
-  try {
-    await sendRequest('deregister', {
-      host,
-    });
-    console.log('Deregister successful.');
-    return true;
-  } catch (error) {
-    console.error('Deregister error', error);
   }
 }
 
@@ -64,9 +44,7 @@ export async function getTaskRegisterFee() {
 export async function addTaskToHost(
   ipfs_hash: string,
   block_timeout: number,
-  task_fee: number,
-  provider: any,
-  sender: string
+  task_fee: number
 ) {
   try {
     await sendRequest('add_task', {
@@ -82,9 +60,7 @@ export async function addTaskToHost(
 }
 
 export async function deleteTask(
-  task_hash: string,
-  provider: any,
-  sender: string
+  task_hash: string
 ) {
   try {
     await sendRequest('delete_task', {

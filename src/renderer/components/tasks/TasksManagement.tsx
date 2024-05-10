@@ -8,11 +8,11 @@ import {
   TextField,
 } from '@mui/material';
 import { Task } from 'renderer/utils/dataTypes';
-import reduxStore, { RootState } from 'renderer/redux/store';
-import { useSelector } from 'react-redux';
-import { getTaskListFromContract } from 'renderer/services/TaskContractService';
+import {
+  cid_from_sha256,
+  getTaskListFromContract,
+} from 'renderer/services/TaskContractService';
 import { retrieveIPFSFolderMetadata } from 'renderer/services/IPFSService';
-import mockTasks from './tasks.json';
 import TaskCard from './TaskCard';
 import SortWidget from './SortWidget';
 
@@ -35,47 +35,49 @@ const TasksManagement: React.FC = () => {
   const [searchQuery, setSearchQuery] = useState('');
   const [currentPage, setCurrentPage] = useState(1);
 
-  const paymentProviderConnected = useSelector(
-    (state: RootState) => state.paymentProviderReducer.connected
-  );
-
   useEffect(() => {
-    if (paymentProviderConnected) {
-      const paymentProvider = reduxStore.getState().paymentProviderReducer.sdkProvider;
-      const account = reduxStore.getState().paymentProviderReducer.accounts[0];
-      getTaskListFromContract(paymentProvider, account)
-        .then((retrievedTasks) => {
-          if (!retrievedTasks || retrievedTasks.length === 0) {
-            return [];
+    getTaskListFromContract()
+      .then(async (rawTasks) => {
+        if (!rawTasks || rawTasks.length === 0) {
+          return [];
+        }
+        console.log(rawTasks);
+        if (!rawTasks) {
+          return [];
+        }
+        const taskList = [];
+        for (let i = 0; i < rawTasks.length; i++) {
+          const task = rawTasks[i];
+          const newTask = {} as Task;
+          newTask.cidBytes = task.ipfsSha256;
+          newTask.cid = await cid_from_sha256(task.ipfsSha256);
+          newTask.fee = task.fee;
+          newTask.sizeIo = task.size;
+          newTask.owner = task.owner;
+          const computingTypeNumber = Number(task.computingType);
+          if (computingTypeNumber === 0) {
+            newTask.computingType = 'CPU';
+          } else if (computingTypeNumber === 1) {
+            newTask.computingType = 'GPU';
+          } else {
+            newTask.computingType = 'Unknown';
           }
-          const tasksWithMetadataPromises = retrievedTasks.map((task) => {
-            return retrieveIPFSFolderMetadata(task.cid)
-              .then((metadata) => {
-                if (!metadata) {
-                  return null;
-                }
-                task.taskName = metadata.name;
-                task.description = metadata.description;
-                task.sizeFolder = metadata.sizeFolder;
-                return task;
-              })
-              .catch((error) => {
-                console.error(error);
-                return null;
-              });
-          });
-          return Promise.all(tasksWithMetadataPromises);
-        })
-        .then((retrievedTasks) => {
-          const filteredTasks = retrievedTasks.filter((task) => task !== null);
-          setTasks(filteredTasks);
-          return true;
-        })
-        .catch((error) => console.error(error));
-    } else {
-      setTasks(mockTasks);
-    }
-
+          const metadata = await retrieveIPFSFolderMetadata(newTask.cid);
+          if (metadata) {
+            newTask.taskName = metadata.name;
+            newTask.description = metadata.description;
+            newTask.sizeFolder = metadata.sizeFolder;
+          }
+          taskList.push(newTask);
+        }
+        return taskList;
+      })
+      .then((retrievedTasks) => {
+        const filteredTasks = retrievedTasks.filter((task) => task !== null);
+        setTasks(filteredTasks);
+        return true;
+      })
+      .catch((error) => console.error(error));
   }, []);
 
   const tasksPerPage = 10;
@@ -124,7 +126,7 @@ const TasksManagement: React.FC = () => {
           flexDirection: { xs: 'column', md: 'row' },
           alignItems: 'end',
           marginBottom: '1rem',
-          width: "100%"
+          width: '100%',
         }}
       >
         <Box
@@ -133,7 +135,7 @@ const TasksManagement: React.FC = () => {
             justifyContent: 'start',
             alignItems: { xs: 'normal', md: 'end' },
             flexDirection: { xs: 'column', md: 'row' },
-            width: "100%"
+            width: '100%',
           }}
         >
           <TextField
@@ -143,7 +145,10 @@ const TasksManagement: React.FC = () => {
             fullWidth
             value={searchQuery}
             onChange={handleSearchChange}
-            sx={{ minWidth: { md: '20rem', xs: "100%" }, margin: { xs: '0 1rem 2rem 0', md: "0" } }}
+            sx={{
+              minWidth: { md: '20rem', xs: '100%' },
+              margin: { xs: '0 1rem 2rem 0', md: '0' },
+            }}
             inputProps={{
               sx: { fontSize: '13px', padding: '1rem' },
             }}
@@ -171,8 +176,8 @@ const TasksManagement: React.FC = () => {
       {currentTasks.length > 0 ? (
         <>
           <Grid container spacing={1}>
-            {currentTasks.map((task, index) => (
-              <Grid item xs={12} key={index}>
+            {currentTasks.map((task) => (
+              <Grid item xs={12} key={task.cid}>
                 <TaskCard task={task} />
               </Grid>
             ))}

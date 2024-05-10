@@ -10,17 +10,12 @@ import {
 import ClearIcon from '@mui/icons-material/Clear';
 import CheckIcon from '@mui/icons-material/Check';
 import { addTaskByDeveloper } from 'renderer/services/TaskContractService';
-import reduxStore, { RootState } from 'renderer/redux/store';
-import { useSelector } from 'react-redux';
 
 const UploadTask = () => {
   const [folderPath, setFolderPath] = useState('');
   const [uploaded, setUploaded] = useState(false);
   const [cid, setCid] = useState('');
   const [published, setPublished] = useState(false);
-  const paymentProviderConnected = useSelector(
-    (state: RootState) => state.paymentProviderReducer.connected
-  );
 
   const handleSelectFolder = () => {
     window.electron.openFolderDialog();
@@ -54,9 +49,7 @@ const UploadTask = () => {
       return;
     }
     try {
-      const paymentProvider = reduxStore.getState().paymentProviderReducer.sdkProvider;
-      const account = reduxStore.getState().paymentProviderReducer.accounts[0];
-      const res = await addTaskByDeveloper(cid, 1, 0, 100, paymentProvider, account);
+      const res = await addTaskByDeveloper(cid, 1, 0, 100);
       console.log(`Folder published to MECA Network: ${res}`);
       setPublished(true);
     } catch (error) {

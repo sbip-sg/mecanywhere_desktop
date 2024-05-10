@@ -86,7 +86,9 @@ const CustomFormControl: React.FC<CustomFormControlProps> = ({
         }}
       >
         {options.map((field) => (
-          <MenuItem value={field.value}>{field.label}</MenuItem>
+          <MenuItem value={field.value} key={field.value}>
+            {field.label}
+          </MenuItem>
         ))}{' '}
       </Select>
     </FormControl>
