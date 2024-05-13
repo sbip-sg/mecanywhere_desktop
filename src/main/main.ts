@@ -48,6 +48,7 @@ import {
   deleteFolder,
   checkFolderExists,
   catFile,
+  statObject,
 } from  './ipfsIntegration'
 
 const start = performance.now();
@@ -146,6 +147,7 @@ ipcMain.handle(Channels.TEST_READ_FILE, readFirstLineOfFileInFolder);
 ipcMain.handle(Channels.DELETE_FOLDER, deleteFolder);
 ipcMain.handle(Channels.CHECK_FOLDER_EXISTS, checkFolderExists);
 ipcMain.handle(Channels.IPFS_CAT, catFile);
+ipcMain.handle(Channels.IPFS_STAT, statObject);
 
 const createWorkerWindow = async () => {
   workerWindow = new BrowserWindow({

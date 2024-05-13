@@ -1,5 +1,5 @@
 import path from 'path';
-import { create, globSource } from 'ipfs-http-client';
+import { CID, create, globSource } from 'ipfs-http-client';
 import { BrowserWindow, dialog } from 'electron';
 import Channels from '../common/channels';
 const os = require('os');
@@ -262,6 +262,10 @@ export const catFile = async (event, cid: string, extension: string) => {
   }
 
   return null;
+};
+
+export const statObject = async (event, cid: string) => {
+  return client.object.stat(new CID(cid));
 };
 
 // unused

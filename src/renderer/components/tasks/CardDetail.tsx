@@ -33,16 +33,16 @@ const CardDetail: React.FC<CardDetailProps> = ({ task, isTested }) => {
         <Grid item xs={12} md={4}>
           <LabelWithValue
             label="I/O Size"
-            value={task.sizeIo.toString()}
+            value={task.sizeIo.toString() + 'B'}
           />
           <LabelWithValue
             label="Folder Size"
-            value={task.sizeFolder.toString()}
+            value={task.sizeFolder.toString() + 'B'}
           />
         </Grid>
         <Grid item xs={12} md={4}>
           <LabelWithValue label="Computing Type" value={task.computingType} />
-          <LabelWithValue label="Fee" value={task.fee.toString()} />
+          <LabelWithValue label="Fee" value={'$' + task.fee.toString()} />
         </Grid>
 
       </Grid>

@@ -3,7 +3,7 @@
 import { contextBridge, ipcRenderer, IpcRendererEvent } from 'electron';
 // import log from 'electron-log/preload';
 import Channels from '../common/channels';
-import { catFile } from './ipfsIntegration';
+import { statObject } from './ipfsIntegration';
 
 const subscribe = (channel: string, func: (...args: any[]) => void) => {
   const subscription = (_event: IpcRendererEvent, ...args: any[]) =>
@@ -48,6 +48,7 @@ const electronHandler = {
     });
   },
   catFile: (cid: string, fileName: string) => ipcRenderer.invoke(Channels.IPFS_CAT, cid, fileName),
+  statObject: (cid: string) => ipcRenderer.invoke(Channels.IPFS_STAT, cid),
 
   checkDockerDaemonRunning: () => {
     return new Promise<boolean>((resolve, reject) => {

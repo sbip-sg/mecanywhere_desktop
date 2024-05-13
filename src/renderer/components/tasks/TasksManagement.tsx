@@ -8,10 +8,8 @@ import {
   TextField,
 } from '@mui/material';
 import { Task } from 'renderer/utils/dataTypes';
-import {
-  cid_from_sha256,
-  getTaskListFromContract,
-} from 'renderer/services/TaskContractService';
+import { getTaskListFromContract } from 'renderer/services/TaskContractService';
+import { cid_from_sha256 } from 'renderer/services/PymecaService';
 import { retrieveIPFSFolderMetadata } from 'renderer/services/IPFSService';
 import TaskCard from './TaskCard';
 import SortWidget from './SortWidget';
@@ -41,7 +39,6 @@ const TasksManagement: React.FC = () => {
         if (!rawTasks || rawTasks.length === 0) {
           return [];
         }
-        console.log(rawTasks);
         if (!rawTasks) {
           return [];
         }

@@ -76,13 +76,7 @@ const BillingDashboard: React.FC = () => {
         Billing Overview
       </Typography>
 
-      <Grid
-        container
-        xs={12}
-        justifyContent="center"
-        alignItems="center"
-        height="40%"
-      >
+      <Grid container justifyContent="center" alignItems="center" height="40%">
         {/* Left card */}
         <Grid
           item

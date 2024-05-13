@@ -7,7 +7,9 @@ export async function sendRequest(functionName: string, args: any) {
     body: JSON.stringify(args),
   });
   if (!response.ok) {
-    throw new Error('Network response not ok');
+    return response.json().then((data: any) => {
+      throw new Error(data.detail);
+    });
   }
   return response.json();
 }
@@ -20,7 +22,9 @@ export async function initActor(actorName: string) {
     },
   });
   if (!response.ok) {
-    throw new Error('Network response not ok');
+    return response.json().then((data: any) => {
+      throw new Error(data.detail);
+    });
   }
   return response;
 }
@@ -33,7 +37,31 @@ export async function getAccount() {
     },
   });
   if (!response.ok) {
-    throw new Error('Network response not ok');
+    return response.json().then((data: any) => {
+      throw new Error(data.detail);
+    });
   }
   return response;
+}
+
+export async function cid_from_sha256(sha256: string) {
+  try {
+    const response = await fetch(
+      `http://localhost:5000/cid_from_sha256/${sha256}`,
+      {
+        method: 'GET',
+        headers: {
+          'content-type': 'application/json',
+        },
+      }
+    );
+    if (!response.ok) {
+      return response.json().then((data: any) => {
+        throw new Error(data.detail);
+      });
+    }
+    return response.json();
+  } catch (error) {
+    console.error('Get cid from sha256 error', error);
+  }
 }
