@@ -72,15 +72,7 @@ const TxnDashboard: React.FC = () => {
   };
 
   useEffect(() => {
-    const credential = JSON.parse(window.electron.store.get('credential'));
-    const retrieveData = async () => {
-      if (credential) {
-        handleRefresh();
-      } else {
-        console.error('Credential or DID is missing');
-      }
-    };
-    retrieveData();
+    handleRefresh();
   }, []); // eslint-disable-line react-hooks/exhaustive-deps
 
   return isLoading ? (

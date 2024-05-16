@@ -4,11 +4,15 @@ import Button from '@mui/material/Button';
 import Container from '@mui/material/Container';
 import CircularProgress from '@mui/material/CircularProgress';
 import { useState, useEffect } from 'react';
-import { getAccount } from 'renderer/services/PymecaService';
 import ErrorDialog from '../componentsCommon/ErrorDialogue';
 import actions from '../../redux/actionCreators';
 import { ReactComponent as Logo } from '../../../../assets/LogoColor.svg';
 import Transitions from '../../utils/Transition';
+import {
+  fetchAccount,
+  setStoreSettings,
+  startExecutor,
+} from './handleEnterApp';
 
 const Login = () => {
   const [isLoading, setIsLoading] = useState(false);
@@ -21,42 +25,19 @@ const Login = () => {
   useEffect(() => {
     actions.setImportingAccount(false);
     setIsLoading(true);
-    fetchAccount();
-    startExecutor('meca_executor_test');
-    setIsLoading(false);
-  }, []);
 
-  const fetchAccount = async () => {
     try {
-      const account = await getAccount();
-      actions.setAuthenticated(true);
-      window.electron.store.set('did', account);
+      setStoreSettings();
+      fetchAccount();
+      startExecutor('meca_executor_test');
     } catch (error) {
-      console.error('Error fetching account:', error);
-      setErrorMessage('Error fetching account');
+      console.error('Error starting:', error);
+      setErrorMessage('Error starting');
       setErrorDialogOpen(true);
     }
-  };
 
-  const startExecutor = async (containerName: string) => {
-    const dockerDaemonIsRunning =
-      await window.electron.checkDockerDaemonRunning();
-    if (!dockerDaemonIsRunning) {
-      throw new Error('Docker daemon is not running');
-    }
-    const containerExist = await window.electron.checkContainerExist(
-      containerName
-    );
-    if (containerExist) {
-      const hasGpuSupport = await window.electron.checkContainerGpuSupport(
-        containerName
-      );
-      if (hasGpuSupport) {
-        await window.electron.removeExecutorContainer(containerName);
-      }
-    }
-    await window.electron.runExecutorContainer(containerName);
-  };
+    setIsLoading(false);
+  }, []);
 
   return isLoading ? (
     <Transitions duration={2}>

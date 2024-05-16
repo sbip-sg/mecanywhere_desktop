@@ -47,14 +47,9 @@ const BillingDashboard: React.FC = () => {
   };
 
   useEffect(() => {
-    const credential = JSON.parse(window.electron.store.get('credential'));
     const retrieveData = async () => {
-      // if (credential) {
-        const { accessToken } = reduxStore.getState().userReducer;
-        await fetchAndSetData(accessToken);
-      // } else {
-      //   console.error('Credential or DID is missing');
-      // }
+      const { accessToken } = reduxStore.getState().userReducer;
+      await fetchAndSetData(accessToken);
     };
     retrieveData();
   }, []); // eslint-disable-line react-hooks/exhaustive-deps

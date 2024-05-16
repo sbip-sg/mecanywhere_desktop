@@ -131,19 +131,9 @@ const HostSharingWidget = () => {
             cpu: executorSettings.cpu_cores,
             mem: executorSettings.memory_mb,
           });
-          // await handleRegisterHost(1, 0.01);
+          await handleRegisterHost(1, 0.01);
           const initialResources = await getResourceStats();
-          const mockResources = {
-            total_cpu: 16,
-            total_mem: 32,
-            used_cpu: 0,
-            used_mem: 0,
-            task_cpu: 0,
-            task_mem: 0,
-            task_used_cpu: 0,
-            task_used_mem: 0,
-          };
-          setInitialResourcesLog(mockResources);
+          setInitialResourcesLog(initialResources);
           setResourceSharingEnabled(true);
         }
       }

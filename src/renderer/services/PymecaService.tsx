@@ -1,5 +1,7 @@
+const url = process.env.PYMECA_ACTOR_SERVER_URL;
+
 export async function sendRequest(functionName: string, args: any) {
-  const response = await fetch(`http://localhost:5000/${functionName}`, {
+  const response = await fetch(`${url}/${functionName}`, {
     method: 'POST',
     headers: {
       'content-type': 'application/json',
@@ -15,7 +17,22 @@ export async function sendRequest(functionName: string, args: any) {
 }
 
 export async function initActor(actorName: string) {
-  const response = await fetch(`http://localhost:5000/init_actor${actorName}`, {
+  const response = await fetch(`${url}/init_actor/${actorName}`, {
+    method: 'POST',
+    headers: {
+      'content-type': 'application/json',
+    },
+  });
+  if (!response.ok) {
+    return response.json().then((data: any) => {
+      throw new Error(data.detail);
+    });
+  }
+  return response;
+}
+
+export async function closeActor() {
+  const response = await fetch(`${url}/close_actor`, {
     method: 'POST',
     headers: {
       'content-type': 'application/json',
@@ -30,7 +47,7 @@ export async function initActor(actorName: string) {
 }
 
 export async function getAccount() {
-  const response = await fetch('http://localhost:5000/get_account', {
+  const response = await fetch(`${url}/get_account`, {
     method: 'GET',
     headers: {
       'content-type': 'application/json',
@@ -47,7 +64,7 @@ export async function getAccount() {
 export async function cid_from_sha256(sha256: string) {
   try {
     const response = await fetch(
-      `http://localhost:5000/cid_from_sha256/${sha256}`,
+      `${url}/cid_from_sha256/${sha256}`,
       {
         method: 'GET',
         headers: {

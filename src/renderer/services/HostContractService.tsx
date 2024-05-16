@@ -1,15 +1,24 @@
 import { sendRequest } from './PymecaService';
 
+export async function isRegistered() {
+  try {
+    const response = await sendRequest('is_registered', {});
+    return response;
+  } catch (error) {
+    console.error('Is registered error', error);
+  }
+}
+
 export async function registerHost(
-  publicKeyByteArray: string[],
+  publicKey: string[],
   blockTimeoutLimit: number,
   stake: number
 ) {
   try {
     await sendRequest('register', {
-      publicKeyByteArray,
-      blockTimeoutLimit,
-      stake,
+      public_key: publicKey,
+      block_timeout_limit: blockTimeoutLimit,
+      initial_deposit: stake,
     });
     console.log('Register successful.');
     return true;
@@ -18,12 +27,10 @@ export async function registerHost(
   }
 }
 
-export async function updateBlockTimeoutLimit(
-  blockTimeoutLimit: number
-) {
+export async function updateBlockTimeoutLimit(blockTimeoutLimit: number) {
   try {
     await sendRequest('update_block_timeout_limit', {
-      blockTimeoutLimit,
+      new_block_timeout_limit: blockTimeoutLimit,
     });
     console.log('Update successful.');
     return true;
