@@ -7,6 +7,7 @@ import {
   JobsState,
   DeviceStats,
   TaskList,
+  ExecutorStatus,
 } from 'renderer/utils/dataTypes';
 
 const initialUserState: UserState = {
@@ -52,6 +53,10 @@ const initialTaskList: TaskList = {
   built: [],
   tested: [],
   activated: [],
+};
+
+const initialExecutorStatus: ExecutorStatus = {
+  running: false,
 };
 
 export const dataEntryReducer = (
@@ -228,6 +233,18 @@ export const taskListReducer = (
   }
 };
 
+export const executorStatusReducer = (
+  state: ExecutorStatus = initialExecutorStatus,
+  action: any
+): any => {
+  switch (action.type) {
+    case 'setExecutorStatus':
+      return action.payload;
+    default:
+      return state;
+  }
+};
+
 const reducers = combineReducers({
   jobs: jobsReducer,
   dataEntryReducer,
@@ -236,6 +253,7 @@ const reducers = combineReducers({
   importingAccountReducer,
   deviceStatsReducer,
   taskList: taskListReducer,
+  executorStatusReducer,
 });
 
 export default reducers;

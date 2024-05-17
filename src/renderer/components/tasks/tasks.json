@@ -5,7 +5,7 @@
       "cidBytes": "0x1220a0b4",
       "sizeFolder": 161,
       "sizeIo": 212,
-      "computingType": "CPU",
+      "computingType": 0,
       "fee": 0.89,
       "description": "This is a description of the task",
       "owner": "0x1234567890123456789012345678901234567890"
@@ -16,7 +16,7 @@
       "cidBytes": "0x1220a0b4",
       "sizeFolder": 115,
       "sizeIo": 322,
-      "computingType": "CPU",
+      "computingType": 0,
       "fee": 0.66,
       "description": "This is a description of the task",
       "owner": "0x1234567890123456789012345678901234567890"
@@ -27,7 +27,7 @@
       "cidBytes": "0x1220a0b4",
       "sizeFolder": 211,
       "sizeIo": 112,
-      "computingType": "CPU",
+      "computingType": 0,
       "fee": 0.37,
       "description": "This is a description of the task",
       "owner": "0x1234567890123456789012345678901234567890"
@@ -38,7 +38,7 @@
       "cidBytes": "0x1220a0b4",
       "sizeFolder": 121,
       "sizeIo": 232,
-      "computingType": "CPU",
+      "computingType": 0,
       "fee": 0.2,
       "description": "This is a description of the task",
       "owner": "0x1234567890123456789012345678901234567890"

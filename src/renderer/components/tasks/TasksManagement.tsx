@@ -6,13 +6,17 @@ import {
   Pagination,
   SelectChangeEvent,
   TextField,
+  IconButton,
 } from '@mui/material';
-import { Task } from 'renderer/utils/dataTypes';
+import RefreshIcon from '@mui/icons-material/Refresh';
+import { ComputingType, Task } from 'renderer/utils/dataTypes';
 import { getTaskListFromContract } from 'renderer/services/TaskContractService';
 import { cid_from_sha256 } from 'renderer/services/PymecaService';
 import { retrieveIPFSFolderMetadata } from 'renderer/services/IPFSService';
 import TaskCard from './TaskCard';
 import SortWidget from './SortWidget';
+
+const CONTAINER_NAME_LIMIT = 10;
 
 const sortTasks = (
   tasks: Task[],
@@ -34,6 +38,14 @@ const TasksManagement: React.FC = () => {
   const [currentPage, setCurrentPage] = useState(1);
 
   useEffect(() => {
+    handleRefresh();
+  }, []);
+
+  const tasksPerPage = 10;
+  const indexOfLastTask = currentPage * tasksPerPage;
+  const indexOfFirstTask = indexOfLastTask - tasksPerPage;
+
+  const handleRefresh = () => {
     getTaskListFromContract()
       .then(async (rawTasks) => {
         if (!rawTasks || rawTasks.length === 0) {
@@ -48,17 +60,11 @@ const TasksManagement: React.FC = () => {
           const newTask = {} as Task;
           newTask.cidBytes = task.ipfsSha256;
           newTask.cid = await cid_from_sha256(task.ipfsSha256);
+          newTask.tag = `${newTask.cid.slice(-CONTAINER_NAME_LIMIT)}:latest`;
           newTask.fee = task.fee;
           newTask.sizeIo = task.size;
           newTask.owner = task.owner;
-          const computingTypeNumber = Number(task.computingType);
-          if (computingTypeNumber === 0) {
-            newTask.computingType = 'CPU';
-          } else if (computingTypeNumber === 1) {
-            newTask.computingType = 'GPU';
-          } else {
-            newTask.computingType = 'Unknown';
-          }
+          newTask.computingType = Object.values(ComputingType)[task.computingType];
           const metadata = await retrieveIPFSFolderMetadata(newTask.cid);
           if (metadata) {
             newTask.taskName = metadata.name;
@@ -75,11 +81,7 @@ const TasksManagement: React.FC = () => {
         return true;
       })
       .catch((error) => console.error(error));
-  }, []);
-
-  const tasksPerPage = 10;
-  const indexOfLastTask = currentPage * tasksPerPage;
-  const indexOfFirstTask = indexOfLastTask - tasksPerPage;
+  };
 
   const handleChange = (_event: React.ChangeEvent<unknown>, value: number) => {
     setCurrentPage(value);
@@ -170,33 +172,34 @@ const TasksManagement: React.FC = () => {
           />
         )}
       </Box>
-      {currentTasks.length > 0 ? (
-        <>
-          <Grid container spacing={1}>
-            {currentTasks.map((task) => (
-              <Grid item xs={12} key={task.cid}>
-                <TaskCard task={task} />
-              </Grid>
-            ))}
+      <Typography
+        variant="body1"
+        sx={{ textAlign: 'center', marginTop: '1rem', marginBottom: '1rem'}}
+      >
+        {currentTasks.length} results found.
+        <IconButton size="small" onClick={handleRefresh} >
+          <RefreshIcon
+            fontSize="small"
+            sx={{ color: 'text.primary'}}
+          />
+        </IconButton>
+      </Typography>
+      <Grid container spacing={1}>
+        {currentTasks.map((task) => (
+          <Grid item xs={12} key={task.cid}>
+            <TaskCard task={task} />
           </Grid>
-          <Box sx={{ display: 'flex', justifyContent: 'flex-end' }}>
-            <Pagination
-              count={totalPages}
-              page={currentPage}
-              onChange={handleChange}
-              variant="outlined"
-              shape="rounded"
-            />
-          </Box>
-        </>
-      ) : (
-        <Typography
-          variant="body1"
-          sx={{ textAlign: 'center', marginTop: '2rem' }}
-        >
-          No results found.
-        </Typography>
-      )}
+        ))}
+      </Grid>
+      <Box sx={{ display: 'flex', justifyContent: 'flex-end' }}>
+        <Pagination
+          count={totalPages}
+          page={currentPage}
+          onChange={handleChange}
+          variant="outlined"
+          shape="rounded"
+        />
+      </Box>
     </Box>
   );
 };

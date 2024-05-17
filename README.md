@@ -16,7 +16,7 @@ The desktop app for interacting with MECA ecosystem. Uses Electron-React Boilerp
 3. Build the Task Executor's docker image with: 
 
     ```bash
-    docker build -t meca-executor -f task_executor/docker/Dockerfile .
+    docker build -t meca-executor -f docker/Dockerfile .
     ```
 
 4. Install IPFS Kubo from https://github.com/ipfs/kubo.git

@@ -5,7 +5,7 @@
 import { Card, Typography, Grid, Stack } from '@mui/material';
 import React, { useState, useEffect } from 'react';
 import { useSelector } from 'react-redux';
-import { Task } from 'renderer/utils/dataTypes';
+import { ComputingType, Task } from 'renderer/utils/dataTypes';
 import CustomButton from './CustomButton';
 import {
   hasBeenDownloaded,
@@ -23,6 +23,7 @@ import actions from '../../redux/actionCreators';
 import { RootState } from '../../redux/store';
 import CardDetail from './CardDetail';
 import { addTaskToHost } from 'renderer/services/HostContractService';
+import { executeTask, getResourceStats, pauseExecutor, unpauseExecutor } from 'renderer/services/ExecutorServices';
 
 interface TaskCardProps {
   task: Task;
@@ -34,6 +35,14 @@ const TaskCard: React.FC<TaskCardProps> = ({ task }) => {
   const [isBuilding, setIsBuilding] = useState(false);
   const [isTesting, setIsTesting] = useState(false);
   const [isDeleting, setIsDeleting] = useState(false);
+
+  const isTested = useSelector((state: RootState) =>
+    state.taskList.tested.includes(task.taskName)
+  );
+  const isActivated = useSelector((state: RootState) =>
+    state.taskList.activated.includes(task.taskName)
+  );
+  const isExecutorRunning = useSelector((state: RootState) => state.executorStatusReducer.running);
 
   useEffect(() => {
     const checkAndSetPhase = async () => {
@@ -57,22 +66,13 @@ const TaskCard: React.FC<TaskCardProps> = ({ task }) => {
     if (hasBeenTested(task.taskName)){
       actions.addToTested()
     }
-
-    }, [task.taskName, task.cid]);
-
-  const isTested = useSelector((state: RootState) =>
-    state.taskList.tested.includes(task.taskName)
-  );
-  const isActivated = useSelector((state: RootState) =>
-    state.taskList.activated.includes(task.taskName)
-  );
+  }, [task.taskName, task.cid]);
 
   const handleDownload = async () => {
     try {
       setIsDownloading(true);
       console.log("handleDownload", task.cid)
-      // await window.electron.downloadFromIPFS(task.cid);
-      await new Promise((resolve) => setTimeout(resolve, 500));
+      await window.electron.downloadFromIPFS(task.cid);
       setCurrentPhase('toBuild');
       setIsDownloading(false);
     } catch (err) {
@@ -82,19 +82,47 @@ const TaskCard: React.FC<TaskCardProps> = ({ task }) => {
 
   const handleBuild = async () => {
     setIsBuilding(true);
-    await new Promise((resolve) => setTimeout(resolve, 500));
-    setCurrentPhase('toTestOrActivate');
-    addToBuilt(task.taskName);
+    const success = await window.electron.buildImage(task.tag, task.cid);
+    if (success) {
+      setCurrentPhase('toTestOrActivate');
+      addToBuilt(task.taskName);
+    } else {
+      console.error('Error building image');
+    }
     setIsBuilding(false);
   };
 
   const handleRunTest = async () => {
     setIsTesting(true);
-    await new Promise((resolve) => setTimeout(resolve, 500));
-    const testRes = await window.electron.testReadFile(task.cid);
-    console.log("testRes", testRes)
-    addToTested(task.taskName);
-    actions.addToTested(task.taskName);
+    const exampleInput = await window.electron.getLocalFile(task.cid, 'example_input.bin');
+    const exampleOutput = await window.electron.getLocalFile(task.cid, 'example_output.bin');
+    const decoder = new TextDecoder('utf-8');
+    const decodedExampleInput = decoder.decode(exampleInput);
+    const decodedExampleOutput = decoder.decode(exampleOutput);
+    const isExecutorRunningBefore = isExecutorRunning;
+    await unpauseExecutor();
+    const resources = await getResourceStats();
+    const maxResource = {
+      cpu: resources.task_cpu,
+      mem: resources.task_mem,
+    };
+    const testRes = await executeTask({
+      containerRef: task.tag,
+      input: decodedExampleInput,
+      resource: maxResource,
+      useGpu: task.computingType === ComputingType.GPU,
+      gpuCount: 1,
+      useSgx: task.computingType === ComputingType.SGX
+    });
+    if (!isExecutorRunningBefore) {
+      await pauseExecutor();
+    }
+    if (testRes.trim() === decodedExampleOutput.trim()) {
+      addToTested(task.taskName);
+      actions.addToTested(task.taskName);
+    } else {
+      console.error('Test failed');
+    }
     setIsTesting(false);
   };
 

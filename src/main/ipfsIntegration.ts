@@ -15,6 +15,7 @@ if (process.platform === 'win32') {
   ipfsFilesDir = path.join(baseDir, 'ipfsFiles');
   fs.ensureDirSync(ipfsFilesDir);
 }
+export const getIpfsFilesDir = ipfsFilesDir;
 
 const IPFS_NODE_URL = process.env.IPFS_NODE_URL || 'http://localhost:5001';
 const client = create({ IPFS_NODE_URL });
@@ -172,6 +173,17 @@ export const readFirstLineOfFileInFolder = async (event, cid: string) => {
   } catch (error) {
     console.error(`Error reading file from IPFS:`, error);
     return 'Error';
+  }
+};
+
+export const getLocalFile = async (event, cid: string, fileName: string) => {
+  const filePath = path.join(ipfsFilesDir, cid, fileName);
+  try {
+    const content = await fs.promises.readFile(filePath);
+    return content;
+  } catch (error) {
+    console.error(`Error reading local file ${filePath}:`, error);
+    return null;
   }
 };
 

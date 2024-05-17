@@ -19,7 +19,6 @@ export const handleRegisterHost = async (blockTimeoutLimit: number, stake: numbe
 
   await initActor("host");
   const isRegisteredResponse = await isRegistered();
-  console.log(isRegisteredResponse)
   let registrationSuccess;
   if (!isRegisteredResponse) {
     registrationSuccess = await registerHost(

@@ -33,6 +33,7 @@ const electronHandler = {
   uploadFolderToIPFS: (folderPath: string) => ipcRenderer.invoke(Channels.UPLOAD_FOLDER_TO_IPFS, folderPath),
   downloadFromIPFS: (cid: string) => ipcRenderer.invoke(Channels.DOWNLOAD_FROM_IPFS, cid),
   testReadFile: (cid: string) => ipcRenderer.invoke(Channels.TEST_READ_FILE, cid),
+  getLocalFile: (cid: string, fileName: string) => ipcRenderer.invoke(Channels.GET_LOCAL_FILE, cid, fileName),
   deleteFolder: (cid: string) => ipcRenderer.invoke(Channels.DELETE_FOLDER, cid),
   checkFolderExists: (cid: string) => ipcRenderer.invoke(Channels.CHECK_FOLDER_EXISTS, cid),
   generateLargeFile: (sizeInMB: number) => {
@@ -141,6 +142,22 @@ const electronHandler = {
             resolve(hasGpuSupport); // Assuming 'hasGpuSupport' is a boolean
           } else {
             reject(new Error('Failed to check GPU support'));
+          }
+        }
+      );
+    });
+  },
+
+  buildImage: (tag: string, dockerfilePath: string) => {
+    return new Promise<boolean>((resolve, reject) => {
+      ipcRenderer.send(Channels.BUILD_IMAGE, tag, dockerfilePath);
+      ipcRenderer.once(
+        Channels.BUILD_IMAGE_RESPONSE,
+        (event, success, error) => {
+          if (success) {
+            resolve(true);
+          } else {
+            reject(new Error(error));
           }
         }
       );

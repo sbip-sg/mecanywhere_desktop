@@ -42,7 +42,7 @@ const CardDetail: React.FC<CardDetailProps> = ({ task, isTested }) => {
         </Grid>
         <Grid item xs={12} md={4}>
           <LabelWithValue label="Computing Type" value={task.computingType} />
-          <LabelWithValue label="Fee" value={'$' + task.fee.toString()} />
+          <LabelWithValue label="Fee" value={task.fee.toString() + 'ETH'} />
         </Grid>
 
       </Grid>

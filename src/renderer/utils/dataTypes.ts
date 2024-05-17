@@ -1,5 +1,3 @@
-import { SDKProvider } from '../../node_modules/@metamask/sdk';
-
 export interface DataEntry {
   duration: number;
   network_reliability: number;
@@ -119,14 +117,25 @@ export interface TaskList {
   activated: string[];
 }
 
+export enum ComputingType {
+  CPU = 'CPU',
+  GPU = 'GPU',
+  SGX = 'SGX',
+}
+
 export interface Task {
+  tag: string;
   taskName: string;
   cid: string;
   cidBytes: string;
   sizeFolder: number;
   sizeIo: number;
-  computingType: string;
+  computingType: ComputingType;
   fee: number;
   description: string;
   owner: string;
+}
+
+export interface ExecutorStatus {
+  running: boolean;
 }

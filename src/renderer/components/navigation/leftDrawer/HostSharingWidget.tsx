@@ -148,7 +148,7 @@ const HostSharingWidget = () => {
 
   const handleDisableResourceSharing = async () => {
     setIsLoading(true);
-    // await handleDeregisterHost();
+    await handleDeregisterHost();
     setResourceSharingEnabled(false);
     setIsLoading(false);
   };

@@ -1,7 +1,7 @@
 const url = process.env.PYMECA_ACTOR_SERVER_URL;
 
 export async function sendRequest(functionName: string, args: any) {
-  const response = await fetch(`${url}/${functionName}`, {
+  const response = await fetch(`${url}/exec/${functionName}`, {
     method: 'POST',
     headers: {
       'content-type': 'application/json',

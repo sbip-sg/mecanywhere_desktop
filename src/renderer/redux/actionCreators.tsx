@@ -117,6 +117,11 @@ const removeFromActivated: ActionCreator<AnyAction> = (payload: any) => ({
   payload,
 });
 
+const setExecutorRunning: ActionCreator<AnyAction> = (payload: any) => ({
+  type: 'setExecutorRunning',
+  payload,
+});
+
 const boundToDoActions = bindActionCreators(
   {
     setAuthenticated,
@@ -142,6 +147,7 @@ const boundToDoActions = bindActionCreators(
     removeFromTested,
     addToActivated,
     removeFromActivated,
+    setExecutorRunning,
   },
   reduxStore.dispatch
 );
