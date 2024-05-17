@@ -22,7 +22,7 @@ import {
 import actions from '../../redux/actionCreators';
 import { RootState } from '../../redux/store';
 import CardDetail from './CardDetail';
-import { addTaskToHost } from 'renderer/services/HostContractService';
+import { addTaskToHost, deleteTaskFromHost } from 'renderer/services/HostContractService';
 import { executeTask, getResourceStats, pauseExecutor, unpauseExecutor } from 'renderer/services/ExecutorServices';
 
 interface TaskCardProps {
@@ -126,19 +126,32 @@ const TaskCard: React.FC<TaskCardProps> = ({ task }) => {
     setIsTesting(false);
   };
 
-  const handleActivate = () => {
+  const handleActivate = async () => {
     try {
-      addTaskToHost(task.cidBytes, 10, 10);
+      const success = await addTaskToHost(task.cidBytes, 10, 10);
+      if (!success) {
+        console.error('Error adding task to host');
+        return;
+      }
+      addToActivated(task.taskName);
+      actions.addToActivated(task.taskName);
     } catch (err) {
       console.error('Error adding task to host:', err);
     }
-    addToActivated(task.taskName);
-    actions.addToActivated(task.taskName);
   };
 
-  const handleDeactivate = () => {
-    removeFromActivated(task.taskName);
-    actions.removeFromActivated(task.taskName);
+  const handleDeactivate = async () => {
+    try {
+      const success = await deleteTaskFromHost(task.cidBytes);
+      if (!success) {
+        console.error('Error deleting task from host');
+        return;
+      }
+      actions.removeFromActivated(task.taskName);
+      removeFromActivated(task.taskName);
+    } catch (err) {
+      console.error('Error deleting task from host:', err);
+    }
   };
 
   const handleDelete = async () => {

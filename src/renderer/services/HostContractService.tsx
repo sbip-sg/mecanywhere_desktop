@@ -49,33 +49,33 @@ export async function getTaskRegisterFee() {
 }
 
 export async function addTaskToHost(
-  ipfs_hash: string,
+  ipfs_sha256: string,
   block_timeout: number,
-  task_fee: number
+  fee: number
 ) {
   try {
     await sendRequest('add_task', {
-      ipfs_hash,
+      ipfs_sha256,
       block_timeout,
-      task_fee,
+      fee,
     });
     console.log('Add task successful.');
     return true;
   } catch (error) {
     console.error('Add task error', error);
+    return false;
   }
 }
 
-export async function deleteTask(
-  task_hash: string
-) {
+export async function deleteTaskFromHost(ipfs_sha256: string) {
   try {
     await sendRequest('delete_task', {
-      task_hash,
+      ipfs_sha256,
     });
     console.log('Delete task successful.');
     return true;
   } catch (error) {
     console.error('Delete task error', error);
+    return false;
   }
 }
