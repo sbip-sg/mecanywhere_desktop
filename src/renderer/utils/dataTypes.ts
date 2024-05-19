@@ -139,3 +139,17 @@ export interface Task {
 export interface ExecutorStatus {
   running: boolean;
 }
+
+export interface Tower {
+  owner: string;
+  sizeLimit: number;
+  publicConnection: string;
+  feeType: number;
+  fee: number;
+  stake: number;
+}
+
+export interface TowerList {
+  unregistered: string[];
+  registered: string[];
+}

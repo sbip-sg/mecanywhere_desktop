@@ -30,6 +30,7 @@ import Settings from './components/settings/Settings';
 import { getDesignTokens } from './utils/theme';
 import useHandleAppExitHook from './utils/useHandleAppExitHook';
 import useClientHooks from './utils/useClientHooks';
+import TowerManagement from './components/tower/TowerManagement';
 
 const PrivateRoutes = () => {
   const isAuthenticated = useSelector(
@@ -126,6 +127,14 @@ const Animated = () => {
           element={
             <Transitions>
               <Settings />
+            </Transitions>
+          }
+        />
+        <Route
+          path="/towermanagement"
+          element={
+            <Transitions>
+              <TowerManagement />
             </Transitions>
           }
         />

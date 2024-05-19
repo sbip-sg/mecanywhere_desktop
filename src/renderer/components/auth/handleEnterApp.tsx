@@ -22,8 +22,8 @@ const setStoreSettings = async () => {
         'publicKeyCompressed',
         utf8ToHex(publicKeyCompressed)
       );
-      window.electron.store.set('publicKey', utf8ToHex(publicKey));
-      window.electron.store.set('privateKey', utf8ToHex(privateKey));
+      window.electron.store.set('publicKey', `0x${utf8ToHex(publicKey)}`);
+      window.electron.store.set('privateKey', `0x${utf8ToHex(privateKey)}`);
       window.electron.store.set('isExecutorSettingsSaved', 'true');
       window.electron.store.set(
         'executorSettings',

@@ -8,6 +8,7 @@ import {
   DeviceStats,
   TaskList,
   ExecutorStatus,
+  TowerList,
 } from 'renderer/utils/dataTypes';
 
 const initialUserState: UserState = {
@@ -57,6 +58,11 @@ const initialTaskList: TaskList = {
 
 const initialExecutorStatus: ExecutorStatus = {
   running: false,
+};
+
+const initialTowerList: TowerList = {
+  registered: [],
+  unregistered: [],
 };
 
 export const dataEntryReducer = (
@@ -245,6 +251,40 @@ export const executorStatusReducer = (
   }
 };
 
+export const towerListReducer = (
+  state: TowerList = initialTowerList,
+  action: any
+): TowerList => {
+  switch (action.type) {
+    case 'registerForTower':
+      return {
+        registered: [...state.registered, action.payload],
+        unregistered: state.unregistered.filter(
+          (tower) => tower !== action.payload
+        ),
+      };
+    case 'unregisterForTower':
+      return {
+        unregistered: [...state.unregistered, action.payload],
+        registered: state.registered.filter(
+          (tower) => tower !== action.payload
+        ),
+      };
+    case 'addUnregisteredTower':
+      return {
+        ...state,
+        unregistered: [...state.unregistered, action.payload],
+      };
+    case 'addRegisteredTower':
+      return {
+        ...state,
+        registered: [...state.registered, action.payload],
+      };
+    default:
+      return state;
+  }
+};
+
 const reducers = combineReducers({
   jobs: jobsReducer,
   dataEntryReducer,
@@ -254,6 +294,7 @@ const reducers = combineReducers({
   deviceStatsReducer,
   taskList: taskListReducer,
   executorStatusReducer,
+  towerListReducer,
 });
 
 export default reducers;

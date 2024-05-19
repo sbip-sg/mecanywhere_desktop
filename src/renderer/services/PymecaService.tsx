@@ -82,3 +82,36 @@ export async function cid_from_sha256(sha256: string) {
     console.error('Get cid from sha256 error', error);
   }
 }
+
+export async function waitForTask(
+  tower_address: string,
+  host_encryption_private_key: string,
+  container_name_limit: number,
+  resources: any,
+  task_executor_url: string
+) {
+  try {
+    const response = await fetch(`${url}/wait_for_task`, {
+      method: 'POST',
+      headers: {
+        'content-type': 'application/json',
+      },
+      body: JSON.stringify({
+        tower_address,
+        host_encryption_private_key,
+        container_name_limit,
+        resources,
+        task_executor_url,
+      }),
+    });
+    if (!response.ok) {
+      return response.json().then((data: any) => {
+        throw new Error(data.detail);
+      });
+    }
+    return response.json();
+  } catch (error) {
+    console.error('Wait for task error', error);
+    return false;
+  }
+}

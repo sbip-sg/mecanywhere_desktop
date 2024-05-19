@@ -122,11 +122,11 @@ export async function executeTask({
     id: containerRef,
     input,
     resource,
+    runtime,
     useGpu,
     gpuCount,
     useSgx,
   };
-  console.log('content', content);
   const requestOptions = {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },

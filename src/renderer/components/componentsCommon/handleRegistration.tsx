@@ -3,31 +3,41 @@ import {
   pauseExecutor,
 } from 'renderer/services/ExecutorServices';
 import {
+  getHostInitialStake,
   isRegistered,
   registerHost,
   updateBlockTimeoutLimit,
+  updatePublicKey,
 } from 'renderer/services/HostContractService';
 import log from 'electron-log/renderer';
-import { splitHexByByteSize } from 'renderer/utils/cryptoUtils';
 import { closeActor, initActor } from 'renderer/services/PymecaService';
 
-export const handleRegisterHost = async (blockTimeoutLimit: number, stake: number) => {
-  const publicKeyCompressed = window.electron.store.get('publicKeyCompressed');
-  const publicKeyByteArray = splitHexByByteSize(publicKeyCompressed, 32).map(
-    (byte) => `0x${byte}`
-  );
+export const handleRegisterHost = async (
+  blockTimeoutLimit: number,
+  stake?: number
+) => {
+  if (!stake) {
+    const stakeRes = await getHostInitialStake();
+    if (!stakeRes || stakeRes === undefined) {
+      throw new Error('Failed to get host initial stake');
+    }
+    stake = stakeRes;
+  }
 
+  const publicKey = window.electron.store.get('publicKey');
   await initActor("host");
   const isRegisteredResponse = await isRegistered();
   let registrationSuccess;
   if (!isRegisteredResponse) {
     registrationSuccess = await registerHost(
-      publicKeyByteArray,
+      publicKey,
       blockTimeoutLimit,
       stake
     );
   } else {
-    registrationSuccess = updateBlockTimeoutLimit(blockTimeoutLimit);
+    registrationSuccess =
+      (await updateBlockTimeoutLimit(blockTimeoutLimit)) &&
+      (await updatePublicKey(publicKey));
   }
   if (registrationSuccess) {
     const unpauseResponse = await unpauseExecutor();

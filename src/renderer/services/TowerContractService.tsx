@@ -1,3 +1,4 @@
+import { Tower } from 'renderer/utils/dataTypes';
 import { sendRequest } from './PymecaService';
 
 export async function getHostRequestFee() {
@@ -9,27 +10,12 @@ export async function getHostRequestFee() {
   }
 }
 
-export async function registerMeForTower(
-  towerAddress: string,
-  provider: any,
-  sender: string
-) {
-  try {
-    await sendRequest('register_me_for_tower', {
-      towerAddress,
-    });
-    console.log('Register successful.');
-    return true;
-  } catch (error) {
-    console.error('Register error', error);
-  }
-}
-
-export async function getTowers(provider: any) {
+export async function getTowers(): Promise<Tower[]> {
   try {
     const response = await sendRequest('get_towers', {});
     return response;
   } catch (error) {
     console.error('Get towers error', error);
   }
+  return [];
 }

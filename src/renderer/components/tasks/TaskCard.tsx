@@ -1,7 +1,3 @@
-// add a method for checking locally if file has downloaded already - done
-// task fields: CID, Fee, Computing Type (gpu/cpu etc), size_io, size_folder (see if possible to check), name will be CID
-// test actual template, and integrate with docker
-
 import { Card, Typography, Grid, Stack } from '@mui/material';
 import React, { useState, useEffect } from 'react';
 import { useSelector } from 'react-redux';
@@ -63,9 +59,6 @@ const TaskCard: React.FC<TaskCardProps> = ({ task }) => {
     if (hasBeenTested(task.taskName)){
       actions.addToTested()
     }
-    if (hasBeenTested(task.taskName)){
-      actions.addToTested()
-    }
   }, [task.taskName, task.cid]);
 
   const handleDownload = async () => {
@@ -121,7 +114,7 @@ const TaskCard: React.FC<TaskCardProps> = ({ task }) => {
       addToTested(task.taskName);
       actions.addToTested(task.taskName);
     } else {
-      console.error('Test failed');
+      console.error('Test failed', testRes, decodedExampleOutput);
     }
     setIsTesting(false);
   };

@@ -1,4 +1,5 @@
-import { sendRequest } from './PymecaService';
+import { Tower } from 'renderer/utils/dataTypes';
+import { sendRequest, waitForTask } from './PymecaService';
 
 export async function isRegistered() {
   try {
@@ -10,7 +11,7 @@ export async function isRegistered() {
 }
 
 export async function registerHost(
-  publicKey: string[],
+  publicKey: string,
   blockTimeoutLimit: number,
   stake: number
 ) {
@@ -31,6 +32,18 @@ export async function updateBlockTimeoutLimit(blockTimeoutLimit: number) {
   try {
     await sendRequest('update_block_timeout_limit', {
       new_block_timeout_limit: blockTimeoutLimit,
+    });
+    console.log('Update successful.');
+    return true;
+  } catch (error) {
+    console.error('Update error', error);
+  }
+}
+
+export async function updatePublicKey(publicKey: string) {
+  try {
+    await sendRequest('update_public_key', {
+      public_key: publicKey,
     });
     console.log('Update successful.');
     return true;
@@ -76,6 +89,67 @@ export async function deleteTaskFromHost(ipfs_sha256: string) {
     return true;
   } catch (error) {
     console.error('Delete task error', error);
+    return false;
+  }
+}
+
+export async function getMyTowers(): Promise<Tower[]> {
+  try {
+    const response = await sendRequest('get_my_towers', {});
+    return response;
+  } catch (error) {
+    console.error('Get my towers error', error);
+  }
+  return [];
+}
+
+export async function getHostInitialStake() {
+  try {
+    const response = await sendRequest('get_host_initial_stake', {});
+    return response;
+  } catch (error) {
+    console.error('Get host initial stake error', error);
+  }
+  return 0;
+}
+
+export async function registerForTower(tower_address: string) {
+  try {
+    await sendRequest('register_for_tower', {
+      tower_address,
+    });
+    console.log('Register successful.');
+    return true;
+  } catch (error) {
+    console.error('Register error', error);
+    return false;
+  }
+}
+
+export async function waitForTasks(
+  tower_addresses: string[],
+  host_encryption_private_key: string,
+  container_name_limit: number,
+  resources: any,
+  task_executor_url: string
+) {
+  try {
+    for (let i = 0; i < tower_addresses.length; i++) {
+      const success = await waitForTask(
+        tower_addresses[i],
+        host_encryption_private_key,
+        container_name_limit,
+        resources,
+        task_executor_url
+      );
+      if (!success) {
+        return false;
+      }
+    }
+    console.log('Wait for tasks successful.');
+    return true;
+  } catch (error) {
+    console.error('Wait for tasks error', error);
     return false;
   }
 }

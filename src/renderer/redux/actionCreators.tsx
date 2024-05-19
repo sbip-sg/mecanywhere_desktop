@@ -122,6 +122,26 @@ const setExecutorRunning: ActionCreator<AnyAction> = (payload: any) => ({
   payload,
 });
 
+const registerForTower: ActionCreator<AnyAction> = (payload: any) => ({
+  type: 'registerForTower',
+  payload,
+});
+
+const unregisterForTower: ActionCreator<AnyAction> = (payload: any) => ({
+  type: 'unregisterForTower',
+  payload,
+});
+
+const addUnregisteredTower: ActionCreator<AnyAction> = (payload: any) => ({
+  type: 'addUnregisteredTower',
+  payload,
+});
+
+const addRegisteredTower: ActionCreator<AnyAction> = (payload: any) => ({
+  type: 'addRegisteredTower',
+  payload,
+});
+
 const boundToDoActions = bindActionCreators(
   {
     setAuthenticated,
@@ -148,6 +168,10 @@ const boundToDoActions = bindActionCreators(
     addToActivated,
     removeFromActivated,
     setExecutorRunning,
+    registerForTower,
+    unregisterForTower,
+    addUnregisteredTower,
+    addRegisteredTower,
   },
   reduxStore.dispatch
 );
