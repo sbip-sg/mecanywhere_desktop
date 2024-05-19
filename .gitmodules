@@ -1,0 +1,6 @@
+[submodule "sdk/example_containers/sgx-task/deps/llhttp"]
+	path = sdk/example_containers/sgx-task/deps/llhttp
+	url = https://github.com/nodejs/llhttp.git
+[submodule "sdk/example_containers/sgx-task/deps/libuv"]
+	path = sdk/example_containers/sgx-task/deps/libuv
+	url = https://github.com/libuv/libuv.git

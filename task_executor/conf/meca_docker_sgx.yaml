@@ -1,0 +1,10 @@
+# now only support docker
+type: "docker"
+# timeout in minutes
+timeout: 1
+cpu: 2
+mem: 2048
+sgx:
+ enable: true
+ sgx_device: /dev/sgx_enclave
+ aesmd_path: /var/run/aesmd

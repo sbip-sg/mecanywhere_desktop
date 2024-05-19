@@ -14,17 +14,19 @@ type TaskConfig struct {
 	ImageId string        `json:"imageid"`
 	Runtime string        `json:"runtime"`
 	Rsrc    ResourceLimit `json:"resource_limit"`
+	UseSGX  bool          `json:"use_sgx"`
+	sgxCfg  *SGXConfig
 }
 
 func (c TaskConfig) String() string {
 	return fmt.Sprintf("image: %s runtime: %s (CPU: %d core, MEM %dMB)", c.ImageId, c.Runtime, c.Rsrc.CPU, c.Rsrc.MEM)
 }
 
-func NewTaskConfig(id, rt string, rsrc ResourceLimit) TaskConfig {
+func NewTaskConfig(id, rt string, rsrc ResourceLimit, sgx bool, sgxCfg *SGXConfig) TaskConfig {
 	if (rt == TaskTypeMicroVM) || (rt == TaskTypeContainer) {
-		return TaskConfig{id, rt, rsrc}
+		return TaskConfig{id, rt, rsrc, sgx, sgxCfg}
 	}
-	return TaskConfig{ImageId: id, Rsrc: rsrc}
+	return TaskConfig{ImageId: id, Rsrc: rsrc, UseSGX: sgx, sgxCfg: sgxCfg}
 }
 
 type ResourceLimit struct {
