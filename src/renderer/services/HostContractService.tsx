@@ -130,8 +130,7 @@ export async function waitForTasks(
   tower_addresses: string[],
   host_encryption_private_key: string,
   container_name_limit: number,
-  resources: any,
-  task_executor_url: string
+  resources: any
 ) {
   try {
     for (let i = 0; i < tower_addresses.length; i++) {
@@ -139,8 +138,7 @@ export async function waitForTasks(
         tower_addresses[i],
         host_encryption_private_key,
         container_name_limit,
-        resources,
-        task_executor_url
+        resources
       );
       if (!success) {
         return false;

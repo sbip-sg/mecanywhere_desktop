@@ -20,8 +20,6 @@ import actions from '../../../redux/actionCreators';
 import ErrorDialog from '../../componentsCommon/ErrorDialogue';
 import reduxStore from 'renderer/redux/store';
 
-const TASK_EXECUTOR_URL = process.env.TASK_EXECUTOR_URL || 'http://localhost:2591';
-
 const HostSharingWidget = () => {
   const [isLoading, setIsLoading] = useState(false);
   const [errorDialogOpen, setErrorDialogOpen] = useState(false);
@@ -149,8 +147,7 @@ const HostSharingWidget = () => {
               cpu: executorSettings.cpu_cores,
               mem: executorSettings.memory_mb,
               gpu: executorSettings.gpus,
-            },
-            TASK_EXECUTOR_URL
+            }
           );
           const initialResources = await getResourceStats();
           setInitialResourcesLog(initialResources);

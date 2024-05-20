@@ -87,8 +87,7 @@ export async function waitForTask(
   tower_address: string,
   host_encryption_private_key: string,
   container_name_limit: number,
-  resources: any,
-  task_executor_url: string
+  resources: any
 ) {
   try {
     const response = await fetch(`${url}/wait_for_task`, {
@@ -100,8 +99,7 @@ export async function waitForTask(
         tower_address,
         host_encryption_private_key,
         container_name_limit,
-        resources,
-        task_executor_url,
+        resources
       }),
     });
     if (!response.ok) {
