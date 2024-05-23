@@ -177,12 +177,6 @@ const electronHandler = {
     ipcRenderer.send(Channels.APP_RELOAD_CONFIRMED);
   },
 
-  // from host
-  startConsumer: (queueName: string) =>
-    ipcRenderer.send(Channels.START_CONSUMER, queueName),
-  // to host
-  stopConsumer: (queueName: string) =>
-    ipcRenderer.send(Channels.STOP_CONSUMER, queueName),
   onSubscribeJobs: (callback: (...args: any[]) => void) => {
     subscribe(Channels.JOB_RECEIVED, callback);
   },

@@ -15,19 +15,6 @@ export const jobReceived = async (mainWindow, event, id, result) => {
   mainWindow.webContents.send(Channels.JOB_RECEIVED, id, result);
 };
 
-export const startConsumer = async (workerWindow, event, queueName) => {
-  if (!workerWindow) {
-    throw new Error('"workerWindow" is not defined');
-  }
-  workerWindow.webContents.send(Channels.START_CONSUMER, queueName);
-};
-export const stopConsumer = async (workerWindow, event, queueName) => {
-  if (!workerWindow) {
-    throw new Error('"workerWindow" is not defined');
-  }
-  workerWindow.webContents.send(Channels.STOP_CONSUMER, queueName);
-};
-
 export const onClientRegistered =
   (socket) => async (event: IpcMainEvent, registered: boolean) => {
     console.log('Client registered: ', registered);

@@ -20,8 +20,6 @@ const Channels = {
   APP_CLOSE_CONFIRMED: 'app-close-confirmed',
   APP_RELOAD_INITIATED: 'app-reload-initiated',
   APP_RELOAD_CONFIRMED: 'app-reload-confirmed',
-  START_CONSUMER: 'start-consumer',
-  STOP_CONSUMER: 'stop-consumer',
   JOB_RECEIVED: 'job-received',
   JOB_RESULTS_RECEIVED: 'job-results-received',
   REGISTER_CLIENT: 'register-client',
