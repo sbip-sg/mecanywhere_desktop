@@ -1,5 +1,6 @@
 const Channels = {
   STORE_GET: 'electron-store-get',
+  STORE_EQUALS: 'electron-store-equals',
   STORE_SET: 'electron-store-set',
   CHECK_DOCKER_DAEMON_RUNNING: 'check-docker-daemon-running',
   CHECK_DOCKER_DAEMON_RUNNING_RESPONSE: 'check-docker-daemon-running-response',
@@ -13,6 +14,8 @@ const Channels = {
   CHECK_CONTAINER_GPU_SUPPORT_RESPONSE: 'check-container-gpu-support-response',
   CHECK_CONTAINER_EXIST: 'check-container-exist',
   CHECK_CONTAINER_EXIST_RESPONSE: 'check-container-exist-response',
+  BUILD_IMAGE: 'build-image',
+  BUILD_IMAGE_RESPONSE: 'build-image-response',
   APP_CLOSE_INITIATED: 'app-close-initiated',
   APP_CLOSE_CONFIRMED: 'app-close-confirmed',
   APP_RELOAD_INITIATED: 'app-reload-initiated',
@@ -35,8 +38,11 @@ const Channels = {
   SELECTED_FILE: 'selected-file',
   SELECTED_FOLDER: 'selected-folder',
   TEST_READ_FILE: 'test-read-file',
+  GET_LOCAL_FILE: 'get-local-file',
   DELETE_FOLDER: 'delete-folder',
-  CHECK_FOLDER_EXISTS: 'check-folder-exists'
+  CHECK_FOLDER_EXISTS: 'check-folder-exists',
+  IPFS_CAT: 'ipfs-cat',
+  IPFS_STAT: 'ipfs-stat',
 };
 
 export default Channels;

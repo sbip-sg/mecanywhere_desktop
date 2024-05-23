@@ -50,8 +50,8 @@ const LeftDrawerComponent = () => {
             onClick={() => navigate('/txndashboard')}
             key="hosttxn"
           >
-            {/* 
-              
+            {/*
+
             */}
             <DashboardIcon
               sx={{ marginRight: listItemSpacing, color: 'text.primary' }}
@@ -85,25 +85,6 @@ const LeftDrawerComponent = () => {
         <List disablePadding component="li">
           <ListItemButton
             onClick={() => {
-              navigate('/payment');
-            }}
-            key="payment"
-          >
-            <MonetizationOnIcon
-              sx={{ marginRight: listItemSpacing, color: 'text.primary' }}
-            />
-            <Typography
-              margin={`${listTopBottomMargin} 0 ${listTopBottomMargin} 0`}
-              sx={{ color: 'text.primary' }}
-            >
-              Payment
-            </Typography>
-          </ListItemButton>
-        </List>
-        <Divider />
-        <List disablePadding component="li">
-          <ListItemButton
-            onClick={() => {
               navigate('/tasksmanagement');
             }}
             key="tasks"
@@ -123,6 +104,24 @@ const LeftDrawerComponent = () => {
         <List disablePadding component="li">
           <ListItemButton
             onClick={() => {
+              navigate('/towermanagement');
+            }}
+            key="tower"
+          >
+            <ListAltIcon
+              sx={{ marginRight: listItemSpacing, color: 'text.primary' }}
+            />
+            <Typography
+              margin={`${listTopBottomMargin} 0 ${listTopBottomMargin} 0`}
+              sx={{ color: 'text.primary' }}
+            >
+              Tower Management
+            </Typography>
+          </ListItemButton>
+        </List>
+        <List disablePadding component="li">
+          {/* <ListItemButton
+            onClick={() => {
               navigate('/uploadtask');
             }}
             key="uploadtask"
@@ -136,7 +135,7 @@ const LeftDrawerComponent = () => {
             >
               Upload Task
             </Typography>
-          </ListItemButton>
+          </ListItemButton> */}
         </List>
         <Divider />
       </Box>

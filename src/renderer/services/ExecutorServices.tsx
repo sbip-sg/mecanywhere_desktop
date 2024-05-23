@@ -1,7 +1,11 @@
+import { ResourcesLog } from 'renderer/utils/dataTypes';
+import actions from '../redux/actionCreators';
+
 const url = process.env.TASK_EXECUTOR_URL;
 
 export async function stopExecutor() {
   try {
+    actions.setExecutorRunning(false);
     const response = await fetch(`${url}/stop`, {
       method: 'POST',
       headers: {
@@ -21,6 +25,7 @@ export async function stopExecutor() {
 
 export async function unpauseExecutor() {
   try {
+    actions.setExecutorRunning(true);
     const response = await fetch(`${url}/unpause`, {
       method: 'POST',
       headers: {
@@ -39,6 +44,7 @@ export async function unpauseExecutor() {
 
 export async function pauseExecutor() {
   try {
+    actions.setExecutorRunning(false);
     const response = await fetch(`${url}/pause`, {
       method: 'POST',
       headers: {
@@ -74,7 +80,7 @@ export async function updateConfig(config: any) {
   }
 }
 
-export async function getResourceStats() {
+export async function getResourceStats(): Promise<ResourcesLog> {
   try {
     const response = await fetch(`${url}/stats`, {
       method: 'GET',
@@ -92,4 +98,52 @@ export async function getResourceStats() {
   } catch (error) {
     console.error('There was a problem with the fetch operation:', error);
   }
+  return {} as ResourcesLog;
+}
+
+export async function executeTask({
+  containerRef,
+  input,
+  resource,
+  runtime,
+  useGpu,
+  gpuCount,
+  useSgx,
+}: {
+  containerRef: string;
+  input: string;
+  resource?: any;
+  runtime?: string;
+  useGpu?: boolean;
+  gpuCount?: number;
+  useSgx?: boolean;
+}) {
+  const content = {
+    id: containerRef,
+    input,
+    resource,
+    runtime,
+    useGpu,
+    gpuCount,
+    useSgx,
+  };
+  const requestOptions = {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify(content),
+  };
+  const msg = await fetch(`${url}`, requestOptions)
+    .then((res) => {
+      if (!res.ok) {
+        throw new Error(`Failed to execute task: ${res.statusText}`);
+      }
+      return res.json();
+    })
+    .then((res) => {
+      return res.msg;
+    })
+    .catch((e) => {
+      return e.toString();
+    });
+  return msg;
 }

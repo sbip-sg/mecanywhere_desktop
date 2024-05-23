@@ -18,23 +18,19 @@ import { useSelector } from 'react-redux';
 import { RootState } from 'renderer/redux/store';
 import NavigationLayout from './components/navigation/NavigationLayout';
 import Transitions from './utils/Transition';
-import Register from './components/auth/Register';
 import Login from './components/auth/Login';
-import ImportSeedPhrase from './components/auth/ImportSeedPhrase';
-import Mnemonics from './components/auth/Mnemonics';
 import Profile from './components/profile/Profile';
 import NavigationLayoutTransitionWrapper from './components/navigation/NavigationLayoutTransitionWrapper';
 import TxnDashboard from './components/transactions/TxnDashboard';
 import BillingDashboard from './components/billing/BillingDashboard';
 import TransactionDetails from './components/transactions/TransactionDetails';
-import Payment from './components/payment/Payment';
 import TasksManagement from './components/tasks/TasksManagement';
 import UploadTask from './components/tasks/UploadTask';
 import Settings from './components/settings/Settings';
 import { getDesignTokens } from './utils/theme';
 import useHandleAppExitHook from './utils/useHandleAppExitHook';
 import useClientHooks from './utils/useClientHooks';
-// import useHeartbeatHook from './utils/useHeartbeatHook';
+import TowerManagement from './components/tower/TowerManagement';
 
 const PrivateRoutes = () => {
   const isAuthenticated = useSelector(
@@ -74,30 +70,6 @@ const Animated = () => {
         element={
           <Transitions>
             <Login />
-          </Transitions>
-        }
-      />
-      <Route
-        path="/register"
-        element={
-          <Transitions>
-            <Register />
-          </Transitions>
-        }
-      />
-      <Route
-        path="/mnemonics"
-        element={
-          <Transitions>
-            <Mnemonics />
-          </Transitions>
-        }
-      />
-      <Route
-        path="/import-seed-phrase"
-        element={
-          <Transitions>
-            <ImportSeedPhrase />
           </Transitions>
         }
       />
@@ -158,15 +130,15 @@ const Animated = () => {
             </Transitions>
           }
         />
+        <Route
+          path="/towermanagement"
+          element={
+            <Transitions>
+              <TowerManagement />
+            </Transitions>
+          }
+        />
       </Route>
-      <Route
-        path="/payment"
-        element={
-          <Transitions>
-            <Payment />
-          </Transitions>
-        }
-      />
       <Route
         path="/uploadtask"
         element={
@@ -184,7 +156,6 @@ const App = () => {
     (state: RootState) => state.themeReducer.color
   ) as PaletteMode;
   const theme = useMemo(() => createTheme(getDesignTokens(mode)), [mode]);
-  // useHeartbeatHook();
   useHandleAppExitHook();
   useClientHooks();
   return (

@@ -6,11 +6,17 @@ import {
   Pagination,
   SelectChangeEvent,
   TextField,
+  IconButton,
 } from '@mui/material';
-import { Task } from 'renderer/utils/dataTypes';
-import mockTasks from './tasks.json';
+import RefreshIcon from '@mui/icons-material/Refresh';
+import { ComputingType, Task } from 'renderer/utils/dataTypes';
+import { getTaskListFromContract } from 'renderer/services/TaskContractService';
+import { cid_from_sha256 } from 'renderer/services/PymecaService';
+import { retrieveIPFSFolderMetadata } from 'renderer/services/IPFSService';
 import TaskCard from './TaskCard';
 import SortWidget from './SortWidget';
+
+const CONTAINER_NAME_LIMIT = 10;
 
 const sortTasks = (
   tasks: Task[],
@@ -25,15 +31,57 @@ const sortTasks = (
 };
 
 const TasksManagement: React.FC = () => {
-  const [tasks, setTasks] = useState<Task[]>(mockTasks);
+  const [tasks, setTasks] = useState<Task[]>([]);
   const [sortField, setSortField] = useState<keyof Task>('taskName');
   const [sortDirection, setSortDirection] = useState<'asc' | 'desc'>('asc');
   const [searchQuery, setSearchQuery] = useState('');
   const [currentPage, setCurrentPage] = useState(1);
 
+  useEffect(() => {
+    handleRefresh();
+  }, []);
+
   const tasksPerPage = 10;
   const indexOfLastTask = currentPage * tasksPerPage;
   const indexOfFirstTask = indexOfLastTask - tasksPerPage;
+
+  const handleRefresh = () => {
+    getTaskListFromContract()
+      .then(async (rawTasks) => {
+        if (!rawTasks || rawTasks.length === 0) {
+          return [];
+        }
+        if (!rawTasks) {
+          return [];
+        }
+        const taskList = [];
+        for (let i = 0; i < rawTasks.length; i++) {
+          const task = rawTasks[i];
+          const newTask = {} as Task;
+          newTask.cidBytes = task.ipfsSha256;
+          newTask.cid = await cid_from_sha256(task.ipfsSha256);
+          newTask.tag = `${newTask.cid.slice(-CONTAINER_NAME_LIMIT)}:latest`;
+          newTask.fee = task.fee;
+          newTask.sizeIo = task.size;
+          newTask.owner = task.owner;
+          newTask.computingType = Object.values(ComputingType)[task.computingType];
+          const metadata = await retrieveIPFSFolderMetadata(newTask.cid);
+          if (metadata) {
+            newTask.taskName = metadata.name;
+            newTask.description = metadata.description;
+            newTask.sizeFolder = metadata.sizeFolder;
+          }
+          taskList.push(newTask);
+        }
+        return taskList;
+      })
+      .then((retrievedTasks) => {
+        const filteredTasks = retrievedTasks.filter((task) => task !== null);
+        setTasks(filteredTasks);
+        return true;
+      })
+      .catch((error) => console.error(error));
+  };
 
   const handleChange = (_event: React.ChangeEvent<unknown>, value: number) => {
     setCurrentPage(value);
@@ -46,9 +94,11 @@ const TasksManagement: React.FC = () => {
   const handleSortDirectionChange = (event: SelectChangeEvent) => {
     setSortDirection(event.target.value as 'asc' | 'desc');
   };
+
   const handleSearchChange = (event) => {
     setSearchQuery(event.target.value);
   };
+
   const filteredTasks = tasks.filter((task) =>
     task.taskName.toLowerCase().includes(searchQuery.toLowerCase())
   );
@@ -75,7 +125,7 @@ const TasksManagement: React.FC = () => {
           flexDirection: { xs: 'column', md: 'row' },
           alignItems: 'end',
           marginBottom: '1rem',
-          width: "100%"
+          width: '100%',
         }}
       >
         <Box
@@ -84,7 +134,7 @@ const TasksManagement: React.FC = () => {
             justifyContent: 'start',
             alignItems: { xs: 'normal', md: 'end' },
             flexDirection: { xs: 'column', md: 'row' },
-            width: "100%"
+            width: '100%',
           }}
         >
           <TextField
@@ -94,7 +144,10 @@ const TasksManagement: React.FC = () => {
             fullWidth
             value={searchQuery}
             onChange={handleSearchChange}
-            sx={{ minWidth: { md: '20rem', xs: "100%" }, margin: { xs: '0 1rem 2rem 0', md: "0" } }}
+            sx={{
+              minWidth: { md: '20rem', xs: '100%' },
+              margin: { xs: '0 1rem 2rem 0', md: '0' },
+            }}
             inputProps={{
               sx: { fontSize: '13px', padding: '1rem' },
             }}
@@ -119,33 +172,34 @@ const TasksManagement: React.FC = () => {
           />
         )}
       </Box>
-      {currentTasks.length > 0 ? (
-        <>
-          <Grid container spacing={1}>
-            {currentTasks.map((task, index) => (
-              <Grid item xs={12} key={index}>
-                <TaskCard task={task} />
-              </Grid>
-            ))}
+      <Typography
+        variant="body1"
+        sx={{ textAlign: 'center', marginTop: '1rem', marginBottom: '1rem'}}
+      >
+        {currentTasks.length} results found.
+        <IconButton size="small" onClick={handleRefresh} >
+          <RefreshIcon
+            fontSize="small"
+            sx={{ color: 'text.primary'}}
+          />
+        </IconButton>
+      </Typography>
+      <Grid container spacing={1}>
+        {currentTasks.map((task) => (
+          <Grid item xs={12} key={task.cid}>
+            <TaskCard task={task} />
           </Grid>
-          <Box sx={{ display: 'flex', justifyContent: 'flex-end' }}>
-            <Pagination
-              count={totalPages}
-              page={currentPage}
-              onChange={handleChange}
-              variant="outlined"
-              shape="rounded"
-            />
-          </Box>
-        </>
-      ) : (
-        <Typography
-          variant="body1"
-          sx={{ textAlign: 'center', marginTop: '2rem' }}
-        >
-          No results found.
-        </Typography>
-      )}
+        ))}
+      </Grid>
+      <Box sx={{ display: 'flex', justifyContent: 'flex-end' }}>
+        <Pagination
+          count={totalPages}
+          page={currentPage}
+          onChange={handleChange}
+          variant="outlined"
+          shape="rounded"
+        />
+      </Box>
     </Box>
   );
 };

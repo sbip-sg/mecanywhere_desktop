@@ -7,6 +7,7 @@ import PastBillingList from './list/PastBillingList';
 import { DataEntry, GroupedDataEntry } from '../../utils/dataTypes';
 import groupData from '../componentsCommon/groupData';
 import fetchTransactionHistory from '../componentsCommon/fetchTransactionHistory';
+import dummyData from '../transactions/dummyData';
 
 const BillingDashboard: React.FC = () => {
   const did = window.electron.store.get('did');
@@ -34,10 +35,11 @@ const BillingDashboard: React.FC = () => {
 
   const fetchAndSetData = async (accessToken: string) => {
     try {
-      const transactionHistory = await fetchTransactionHistory(
-        accessToken,
-        did
-      );
+      // const transactionHistory = await fetchTransactionHistory(
+      //   accessToken,
+      //   did
+      // );
+      const transactionHistory = dummyData;
       setData(transactionHistory);
     } catch (error) {
       console.error('Error fetching data:', error);
@@ -45,14 +47,9 @@ const BillingDashboard: React.FC = () => {
   };
 
   useEffect(() => {
-    const credential = JSON.parse(window.electron.store.get('credential'));
     const retrieveData = async () => {
-      if (credential) {
-        const { accessToken } = reduxStore.getState().userReducer;
-        await fetchAndSetData(accessToken);
-      } else {
-        console.error('Credential or DID is missing');
-      }
+      const { accessToken } = reduxStore.getState().userReducer;
+      await fetchAndSetData(accessToken);
     };
     retrieveData();
   }, []); // eslint-disable-line react-hooks/exhaustive-deps
@@ -74,13 +71,7 @@ const BillingDashboard: React.FC = () => {
         Billing Overview
       </Typography>
 
-      <Grid
-        container
-        xs={12}
-        justifyContent="center"
-        alignItems="center"
-        height="40%"
-      >
+      <Grid container justifyContent="center" alignItems="center" height="40%">
         {/* Left card */}
         <Grid
           item

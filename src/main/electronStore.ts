@@ -25,3 +25,12 @@ export const setElectronStore = async (event, key, val) => {
   const buffer = safeStorage.encryptString(val);
   store.set(key, buffer.toString('latin1'));
 };
+
+export const equalsElectronStore = async (event, key, value) => {
+  const encryptedKey = store.get(key);
+  if (encryptedKey !== undefined) {
+    event.returnValue = safeStorage.decryptString(Buffer.from(encryptedKey, 'latin1')) === value;
+  } else {
+    event.returnValue = false;
+  }
+};

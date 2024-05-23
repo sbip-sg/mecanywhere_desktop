@@ -117,11 +117,39 @@ export interface TaskList {
   activated: string[];
 }
 
+export enum ComputingType {
+  CPU = 'CPU',
+  GPU = 'GPU',
+  SGX = 'SGX',
+}
+
 export interface Task {
+  tag: string;
   taskName: string;
   cid: string;
-  size_folder: number;
-  size_io: number;
-  computing_type: string;
+  cidBytes: string;
+  sizeFolder: number;
+  sizeIo: number;
+  computingType: ComputingType;
   fee: number;
+  description: string;
+  owner: string;
+}
+
+export interface ExecutorStatus {
+  running: boolean;
+}
+
+export interface Tower {
+  owner: string;
+  sizeLimit: number;
+  publicConnection: string;
+  feeType: number;
+  fee: number;
+  stake: number;
+}
+
+export interface TowerList {
+  unregistered: string[];
+  registered: string[];
 }

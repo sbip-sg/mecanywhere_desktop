@@ -57,6 +57,36 @@ const setDeviceStats: ActionCreator<AnyAction> = (payload: any) => ({
   payload,
 });
 
+const setSDKProvider: ActionCreator<AnyAction> = (payload: any) => ({
+  type: 'setSDKProvider',
+  payload,
+});
+
+const setSDKProviderConnected: ActionCreator<AnyAction> = (payload: any) => ({
+  type: 'setSDKProviderConnected',
+  payload,
+});
+
+const setPaymentAccounts: ActionCreator<AnyAction> = (payload: any) => ({
+  type: 'setPaymentAccounts',
+  payload,
+});
+
+const setPaymentChainId: ActionCreator<AnyAction> = (payload: any) => ({
+  type: 'setPaymentChainId',
+  payload,
+});
+
+const addToDownloaded: ActionCreator<AnyAction> = (payload: any) => ({
+  type: 'addToDownloaded',
+  payload,
+});
+
+const removeFromDownloaded: ActionCreator<AnyAction> = (payload: any) => ({
+  type: 'removeFromDownloaded',
+  payload,
+});
+
 const addToBuilt: ActionCreator<AnyAction> = (payload: any) => ({
   type: 'addToBuilt',
   payload,
@@ -87,6 +117,31 @@ const removeFromActivated: ActionCreator<AnyAction> = (payload: any) => ({
   payload,
 });
 
+const setExecutorRunning: ActionCreator<AnyAction> = (payload: any) => ({
+  type: 'setExecutorRunning',
+  payload,
+});
+
+const registerForTower: ActionCreator<AnyAction> = (payload: any) => ({
+  type: 'registerForTower',
+  payload,
+});
+
+const unregisterForTower: ActionCreator<AnyAction> = (payload: any) => ({
+  type: 'unregisterForTower',
+  payload,
+});
+
+const addUnregisteredTower: ActionCreator<AnyAction> = (payload: any) => ({
+  type: 'addUnregisteredTower',
+  payload,
+});
+
+const addRegisteredTower: ActionCreator<AnyAction> = (payload: any) => ({
+  type: 'addRegisteredTower',
+  payload,
+});
+
 const boundToDoActions = bindActionCreators(
   {
     setAuthenticated,
@@ -100,12 +155,23 @@ const boundToDoActions = bindActionCreators(
     setDataEntry,
     setImportingAccount,
     setDeviceStats,
+    setSDKProvider,
+    setSDKProviderConnected,
+    setPaymentAccounts,
+    setPaymentChainId,
+    addToDownloaded,
+    removeFromDownloaded,
     addToBuilt,
     removeFromBuilt,
     addToTested,
     removeFromTested,
     addToActivated,
     removeFromActivated,
+    setExecutorRunning,
+    registerForTower,
+    unregisterForTower,
+    addUnregisteredTower,
+    addRegisteredTower,
   },
   reduxStore.dispatch
 );

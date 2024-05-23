@@ -12,11 +12,13 @@ import {
   unpauseExecutor,
   pauseExecutor,
 } from 'renderer/services/ExecutorServices';
+import { waitForTasks } from 'renderer/services/HostContractService';
 import Transitions from '../../../utils/Transition';
 import PreSharingEnabledComponent from './HostSharingWidgetComponent/PreSharingEnabledComponent';
 import PostSharingEnabledComponent from './HostSharingWidgetComponent/PostSharingEnabledComponent';
 import actions from '../../../redux/actionCreators';
 import ErrorDialog from '../../componentsCommon/ErrorDialogue';
+import reduxStore from 'renderer/redux/store';
 
 const HostSharingWidget = () => {
   const [isLoading, setIsLoading] = useState(false);
@@ -101,12 +103,15 @@ const HostSharingWidget = () => {
       setIsLoading(false);
     }
   };
+
   const [isExecutorSettingsSaved, setIsExecutorSettingsSaved] = useState(
     initialIsExecutorSettingsSaved
   );
+
   const [executorSettings, setExecutorSettings] = useState(
     initialExecutorSettings
   );
+
   const [resourceSharingEnabled, setResourceSharingEnabled] =
     useState<Boolean>(false);
 
@@ -131,9 +136,18 @@ const HostSharingWidget = () => {
             cpu: executorSettings.cpu_cores,
             mem: executorSettings.memory_mb,
           });
-          await handleRegisterHost(
-            executorSettings.cpu_cores,
-            executorSettings.memory_mb
+          await handleRegisterHost(100);
+          const towerAddresses = reduxStore.getState().towerListReducer.registered;
+          const hostEncryptionPrivateKey = window.electron.store.get('privateKey');
+          await waitForTasks(
+            towerAddresses,
+            hostEncryptionPrivateKey,
+            10,
+            {
+              cpu: executorSettings.cpu_cores,
+              mem: executorSettings.memory_mb,
+              gpu: executorSettings.gpus,
+            }
           );
           const initialResources = await getResourceStats();
           setInitialResourcesLog(initialResources);
@@ -141,7 +155,7 @@ const HostSharingWidget = () => {
         }
       }
     } catch (error) {
-      setErrorMessage("Container is not valid or doesn't exist");
+      setErrorMessage(`${error}`);
       setErrorDialogOpen(true);
       console.error('Error:', error);
     } finally {

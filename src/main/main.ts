@@ -22,8 +22,13 @@ import {
   checkDockerDaemonRunning,
   checkContainerExists,
   checkContainerGPUSupport,
+  buildImage,
 } from './dockerIntegration';
-import { getElectronStore, setElectronStore } from './electronStore';
+import {
+  equalsElectronStore,
+  getElectronStore,
+  setElectronStore,
+} from './electronStore';
 import {
   jobResultsReceived,
   jobReceived,
@@ -42,7 +47,10 @@ import {
   testGenerateLargeFile,
   readFirstLineOfFileInFolder,
   deleteFolder,
-  checkFolderExists
+  checkFolderExists,
+  catFile,
+  statObject,
+  getLocalFile,
 } from  './ipfsIntegration'
 
 const start = performance.now();
@@ -96,6 +104,8 @@ ipcMain.on(Channels.STORE_GET, getElectronStore);
 
 ipcMain.on(Channels.STORE_SET, setElectronStore);
 
+ipcMain.on(Channels.STORE_EQUALS, equalsElectronStore);
+
 ipcMain.on(Channels.JOB_RESULTS_RECEIVED, (event, id, result) => {
   jobResultsReceived(mainWindow, event, id, result);
 });
@@ -127,6 +137,7 @@ ipcMain.on(Channels.RUN_EXECUTOR_GPU_CONTAINER, runExecutorGPUContainer);
 ipcMain.on(Channels.CHECK_DOCKER_DAEMON_RUNNING, checkDockerDaemonRunning);
 ipcMain.on(Channels.CHECK_CONTAINER_EXIST, checkContainerExists);
 ipcMain.on(Channels.CHECK_CONTAINER_GPU_SUPPORT, checkContainerGPUSupport);
+ipcMain.on(Channels.BUILD_IMAGE, buildImage);
 
 // ipfs integration
 ipcMain.on(Channels.OPEN_FILE_DIALOG, openFileDialog);
@@ -136,8 +147,11 @@ ipcMain.handle(Channels.UPLOAD_FOLDER_TO_IPFS, uploadFolderToIPFS);
 ipcMain.handle(Channels.DOWNLOAD_FROM_IPFS, downloadFromIPFS);
 ipcMain.on(Channels.TEST_GENERATE_LARGE_FILE, testGenerateLargeFile);
 ipcMain.handle(Channels.TEST_READ_FILE, readFirstLineOfFileInFolder);
+ipcMain.handle(Channels.GET_LOCAL_FILE, getLocalFile);
 ipcMain.handle(Channels.DELETE_FOLDER, deleteFolder);
 ipcMain.handle(Channels.CHECK_FOLDER_EXISTS, checkFolderExists);
+ipcMain.handle(Channels.IPFS_CAT, catFile);
+ipcMain.handle(Channels.IPFS_STAT, statObject);
 
 const createWorkerWindow = async () => {
   workerWindow = new BrowserWindow({

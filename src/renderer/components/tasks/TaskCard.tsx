@@ -1,11 +1,7 @@
-// add a method for checking locally if file has downloaded already - done
-// task fields: CID, Fee, Computing Type (gpu/cpu etc), size_io, size_folder (see if possible to check), name will be CID
-// test actual template, and integrate with docker
-
 import { Card, Typography, Grid, Stack } from '@mui/material';
 import React, { useState, useEffect } from 'react';
 import { useSelector } from 'react-redux';
-import { Task } from 'renderer/utils/dataTypes';
+import { ComputingType, Task } from 'renderer/utils/dataTypes';
 import CustomButton from './CustomButton';
 import {
   hasBeenDownloaded,
@@ -22,6 +18,8 @@ import {
 import actions from '../../redux/actionCreators';
 import { RootState } from '../../redux/store';
 import CardDetail from './CardDetail';
+import { addTaskToHost, deleteTaskFromHost } from 'renderer/services/HostContractService';
+import { executeTask, getResourceStats, pauseExecutor, unpauseExecutor } from 'renderer/services/ExecutorServices';
 
 interface TaskCardProps {
   task: Task;
@@ -33,6 +31,14 @@ const TaskCard: React.FC<TaskCardProps> = ({ task }) => {
   const [isBuilding, setIsBuilding] = useState(false);
   const [isTesting, setIsTesting] = useState(false);
   const [isDeleting, setIsDeleting] = useState(false);
+
+  const isTested = useSelector((state: RootState) =>
+    state.taskList.tested.includes(task.taskName)
+  );
+  const isActivated = useSelector((state: RootState) =>
+    state.taskList.activated.includes(task.taskName)
+  );
+  const isExecutorRunning = useSelector((state: RootState) => state.executorStatusReducer.running);
 
   useEffect(() => {
     const checkAndSetPhase = async () => {
@@ -48,30 +54,18 @@ const TaskCard: React.FC<TaskCardProps> = ({ task }) => {
         }
       }
     };
-  
+
     checkAndSetPhase();
     if (hasBeenTested(task.taskName)){
       actions.addToTested()
     }
-    if (hasBeenTested(task.taskName)){
-      actions.addToTested()
-    }
-
-    }, [task.taskName, task.cid]);
-
-  const isTested = useSelector((state: RootState) =>
-    state.taskList.tested.includes(task.taskName)
-  );
-  const isActivated = useSelector((state: RootState) =>
-    state.taskList.activated.includes(task.taskName)
-  );
+  }, [task.taskName, task.cid]);
 
   const handleDownload = async () => {
     try {
       setIsDownloading(true);
       console.log("handleDownload", task.cid)
       await window.electron.downloadFromIPFS(task.cid);
-      await new Promise((resolve) => setTimeout(resolve, 500));
       setCurrentPhase('toBuild');
       setIsDownloading(false);
     } catch (err) {
@@ -81,30 +75,76 @@ const TaskCard: React.FC<TaskCardProps> = ({ task }) => {
 
   const handleBuild = async () => {
     setIsBuilding(true);
-    await new Promise((resolve) => setTimeout(resolve, 500));
-    setCurrentPhase('toTestOrActivate');
-    addToBuilt(task.taskName);
+    const success = await window.electron.buildImage(task.tag, task.cid);
+    if (success) {
+      setCurrentPhase('toTestOrActivate');
+      addToBuilt(task.taskName);
+    } else {
+      console.error('Error building image');
+    }
     setIsBuilding(false);
   };
 
   const handleRunTest = async () => {
     setIsTesting(true);
-    await new Promise((resolve) => setTimeout(resolve, 500));
-    const testRes = await window.electron.testReadFile(task.cid);
-    console.log("testRes", testRes)
-    addToTested(task.taskName);
-    actions.addToTested(task.taskName);
+    const exampleInput = await window.electron.getLocalFile(task.cid, 'example_input.bin');
+    const exampleOutput = await window.electron.getLocalFile(task.cid, 'example_output.bin');
+    const decoder = new TextDecoder('utf-8');
+    const decodedExampleInput = decoder.decode(exampleInput);
+    const decodedExampleOutput = decoder.decode(exampleOutput);
+    const isExecutorRunningBefore = isExecutorRunning;
+    await unpauseExecutor();
+    const resources = await getResourceStats();
+    const maxResource = {
+      cpu: resources.task_cpu,
+      mem: resources.task_mem,
+    };
+    const testRes = await executeTask({
+      containerRef: task.tag,
+      input: decodedExampleInput,
+      resource: maxResource,
+      useGpu: task.computingType === ComputingType.GPU,
+      gpuCount: 1,
+      useSgx: task.computingType === ComputingType.SGX
+    });
+    if (!isExecutorRunningBefore) {
+      await pauseExecutor();
+    }
+    if (testRes.trim() === decodedExampleOutput.trim()) {
+      addToTested(task.taskName);
+      actions.addToTested(task.taskName);
+    } else {
+      console.error('Test failed', testRes, decodedExampleOutput);
+    }
     setIsTesting(false);
   };
 
-  const handleActivate = () => {
-    addToActivated(task.taskName);
-    actions.addToActivated(task.taskName);
+  const handleActivate = async () => {
+    try {
+      const success = await addTaskToHost(task.cidBytes, 10, 10);
+      if (!success) {
+        console.error('Error adding task to host');
+        return;
+      }
+      addToActivated(task.taskName);
+      actions.addToActivated(task.taskName);
+    } catch (err) {
+      console.error('Error adding task to host:', err);
+    }
   };
 
-  const handleDeactivate = () => {
-    removeFromActivated(task.taskName);
-    actions.removeFromActivated(task.taskName);
+  const handleDeactivate = async () => {
+    try {
+      const success = await deleteTaskFromHost(task.cidBytes);
+      if (!success) {
+        console.error('Error deleting task from host');
+        return;
+      }
+      actions.removeFromActivated(task.taskName);
+      removeFromActivated(task.taskName);
+    } catch (err) {
+      console.error('Error deleting task from host:', err);
+    }
   };
 
   const handleDelete = async () => {
@@ -159,7 +199,7 @@ const TaskCard: React.FC<TaskCardProps> = ({ task }) => {
                   isLoading={isDownloading}
                 />
                 <Typography variant="subtitle2">
-                  {`Disk Space Required: ${task.size_folder}`}
+                  {`Disk Space Required: ${task.sizeFolder}`}
                 </Typography>
               </>
             )}
@@ -178,8 +218,8 @@ const TaskCard: React.FC<TaskCardProps> = ({ task }) => {
               </>
             )}
             {currentPhase === 'toTestOrActivate' && (
-              <Grid container spacing={1} alignItems={"center"}> 
-              <Grid item xs={6} > 
+              <Grid container spacing={1} alignItems={"center"}>
+              <Grid item xs={6} >
                 <CustomButton
                   label={getTestLabel()}
                   onClick={handleRunTest}
@@ -188,7 +228,7 @@ const TaskCard: React.FC<TaskCardProps> = ({ task }) => {
                   isLoading={isTesting}
                 />
               </Grid>
-              <Grid item xs={6}> 
+              <Grid item xs={6}>
                 <CustomButton
                   label={isDeleting ? 'Purging' : 'Purge'}
                   onClick={handleDelete}

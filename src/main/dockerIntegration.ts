@@ -4,6 +4,7 @@ import path from 'path';
 import fs from 'fs';
 import os from 'os';
 import Channels from '../common/channels';
+import { getIpfsFilesDir } from './ipfsIntegration';
 
 const docker = new Dockerode();
 
@@ -319,4 +320,40 @@ export const checkContainerGPUSupport = (event, containerName: string) => {
       event.reply(Channels.CHECK_CONTAINER_GPU_SUPPORT_RESPONSE, true, false);
     }
   });
+};
+
+export const buildImage = (event, tag: string, dockerfilePath: string) => {
+  docker.buildImage(
+    {
+      context: `${getIpfsFilesDir}/${dockerfilePath}`,
+      src: ['Dockerfile', 'src/'],
+    },
+    {
+      t: tag,
+    },
+    (err, stream) => {
+      if (err) {
+        console.error(err);
+        event.reply(Channels.BUILD_IMAGE_RESPONSE, false, err.message);
+        return;
+      }
+
+      docker.modem.followProgress(stream, onFinished, onProgress);
+
+      function onFinished(err, output) {
+        if (err) {
+          console.error(err);
+          event.reply(Channels.BUILD_IMAGE_RESPONSE, false, err.message);
+          return;
+        }
+
+        console.log('Build complete:', output);
+        event.reply(Channels.BUILD_IMAGE_RESPONSE, true);
+      }
+
+      function onProgress(event) {
+        console.log('Build progress:', event);
+      }
+    }
+  );
 };

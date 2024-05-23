@@ -1,9 +1,6 @@
 const hasBeenDownloaded = async (cid: string) => {
-  // const taskList = JSON.parse(window.electron.store.get('taskList'));
-  // return taskList.downloaded.includes(taskName);
-  const folderExists = await window.electron.checkFolderExists(cid)
-  console.log("folderExists", folderExists)
-  return folderExists
+  const folderExists = await window.electron.checkFolderExists(cid);
+  return folderExists;
 };
 
 const addToBuilt = (taskName: string) => {
