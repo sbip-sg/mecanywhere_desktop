@@ -6,16 +6,6 @@ const setAuthenticated: ActionCreator<AnyAction> = (payload: boolean) => ({
   payload,
 });
 
-const setAccessToken: ActionCreator<AnyAction> = (payload: string) => ({
-  type: 'setAccessToken',
-  payload,
-});
-
-const setRefreshToken: ActionCreator<AnyAction> = (payload: string) => ({
-  type: 'setRefreshToken',
-  payload,
-});
-
 const addJob: ActionCreator<AnyAction> = (id: string, content: string) => ({
   type: 'addJob',
   id,
@@ -145,8 +135,6 @@ const addRegisteredTower: ActionCreator<AnyAction> = (payload: any) => ({
 const boundToDoActions = bindActionCreators(
   {
     setAuthenticated,
-    setAccessToken,
-    setRefreshToken,
     addJob,
     setJobs,
     addJobResults,

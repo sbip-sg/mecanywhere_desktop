@@ -77,8 +77,6 @@ export interface ResourcesLog {
 
 export interface UserState {
   authenticated: boolean;
-  accessToken: string;
-  refreshToken: string;
 }
 
 export interface ThemeState {

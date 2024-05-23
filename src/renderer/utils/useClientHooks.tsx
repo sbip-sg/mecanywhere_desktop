@@ -10,10 +10,7 @@ import Channels from '../../common/channels';
 
 const useClientHooks = () => {
   const isClient = useSelector(
-    (state: RootState) => state.userReducer.accessToken !== ''
-  );
-  const accessToken = useSelector(
-    (state: RootState) => state.userReducer.accessToken
+    (state: RootState) => state.userReducer.authenticated
   );
 
   useEffect(() => {
@@ -51,7 +48,7 @@ const useClientHooks = () => {
       // post task on chain
 
       const jobJsonWithDid = `${jobJson.slice(0, -1)},"did":"${did}"}`;
-      const reply = await offloadTask(accessToken, jobJsonWithDid);
+      const reply = await offloadTask(jobJsonWithDid);
       const { status, response, error, task_id, transaction_id } = reply;
 
       // window.electron.jobResultsReceived(
