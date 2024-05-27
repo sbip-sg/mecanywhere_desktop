@@ -44,8 +44,6 @@ export const handleRegisterHost = async (
     if (!unpauseResponse) {
       console.error('Unpause failed.');
     }
-    const did = window.electron.store.get('did');
-    window.electron.startConsumer(did);
   } else {
     throw new Error('Host registration failed');
   }
@@ -57,8 +55,6 @@ export const handleDeregisterHost = async () => {
     console.error('Pause failed.');
   }
   if ((await updateBlockTimeoutLimit(0)) && (await closeActor())) {
-    const did = window.electron.store.get('did');
-    window.electron.stopConsumer(did);
     log.info('successfully deregistered');
   } else {
     throw new Error('Deregistration failed');
