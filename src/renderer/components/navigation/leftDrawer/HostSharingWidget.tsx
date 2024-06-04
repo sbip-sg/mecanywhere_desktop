@@ -35,6 +35,9 @@ const HostSharingWidget = () => {
     task_mem: 0,
     task_used_cpu: 0,
     task_used_mem: 0,
+    gpu_model: '',
+    task_gpu: 0,
+    task_used_gpu: 0,
   });
   const handleCloseErrorDialog = () => {
     setErrorDialogOpen(false);

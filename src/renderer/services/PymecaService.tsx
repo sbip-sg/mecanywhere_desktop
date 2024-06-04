@@ -1,4 +1,6 @@
-const url = process.env.PYMECA_ACTOR_SERVER_URL;
+const url =
+  `${process.env.PYMECA_ACTOR_SERVER_HOST}:${process.env.PYMECA_ACTOR_SERVER_PORT}` ||
+  'http://localhost:9999';
 
 export async function sendRequest(functionName: string, args: any) {
   const response = await fetch(`${url}/exec/${functionName}`, {

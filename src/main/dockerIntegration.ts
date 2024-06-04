@@ -317,14 +317,15 @@ function getContainerCreateOptions(
 ): Dockerode.ContainerCreateOptions {
   let containerOptions: Dockerode.ContainerCreateOptions;
   switch (imageName) {
-    case ImageName.MECA_EXECUTOR:
+    case ImageName.MECA_EXECUTOR: {
+      const port = process.env.MECA_EXECUTOR_PORT || '2591';
       containerOptions = {
         name: containerName,
         Image: `${imageName}:latest`,
-        ExposedPorts: { '2591/tcp': {} },
+        ExposedPorts: { [`${port}/tcp`]: {} },
         HostConfig: {
           Binds: ['/var/run/docker.sock:/var/run/docker.sock'],
-          PortBindings: { '2591/tcp': [{ HostPort: '2591' }] },
+          PortBindings: { [`${port}/tcp`]: [{ HostPort: port }] },
           NetworkMode: 'meca',
         },
         NetworkingConfig: {
@@ -338,16 +339,20 @@ function getContainerCreateOptions(
         },
       };
       break;
-    case ImageName.PYMECA_SERVER:
+    }
+    case ImageName.PYMECA_SERVER: {
+      const port = process.env.PYMECA_SERVER_PORT || '9999';
       containerOptions = {
         name: containerName,
         Image: `${imageName}:latest`,
-        ExposedPorts: { '5000/tcp': {} },
+        ExposedPorts: { [`${port}/tcp`]: {} },
         HostConfig: {
-          PortBindings: { '5000/tcp': [{ HostPort: '5000' }] },
+          PortBindings: { [`${port}/tcp`]: [{ HostPort: port }] },
         },
+        Cmd: ['server.py', port],
       };
       break;
+    }
     default:
       containerOptions = {
         name: containerName,
