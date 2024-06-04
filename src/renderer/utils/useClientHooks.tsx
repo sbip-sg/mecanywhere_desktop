@@ -6,7 +6,7 @@ import {
 import offloadTask from 'renderer/services/OffloadServices';
 import { useSelector } from 'react-redux';
 import { RootState } from 'renderer/redux/store';
-import Channels from '../../common/channels';
+import Channels from 'common/channels';
 
 const useClientHooks = () => {
   const isClient = useSelector(

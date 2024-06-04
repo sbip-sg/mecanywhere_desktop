@@ -3,6 +3,7 @@ import { Box, Typography, Button, Stack } from '@mui/material';
 import { motion, AnimatePresence } from 'framer-motion';
 import ErrorOutlineIcon from '@mui/icons-material/ErrorOutline';
 import Checkbox from '@mui/material/Checkbox';
+import { ImageName, ContainerName } from 'common/dockerNames';
 import CoreSelectorWidget from './CoreSelectorWidget';
 import MemorySelectorSlider from './MemorySelectorSlider';
 import GpuSelectorWidget from './GpuSelectorWidget';
@@ -42,10 +43,11 @@ const PreSharingEnabledComponent: React.FC<PreSharingEnabledComponentProps> = ({
 
   const handleGPUCheckBoxChange = async () => {
     setIsLoading(true);
-    await window.electron.removeExecutorContainer('meca_executor_test');
+    const containerName = ContainerName.MECA_EXECUTOR_1;
+    await window.electron.removeDockerContainer(containerName);
     if (!allocateGPU) {
       try {
-        await window.electron.runExecutorGpuContainer('meca_executor_test');
+        await window.electron.runExecutorGpuContainer(containerName);
         setDeviceHasGpu(true);
       } catch (error) {
         setDeviceHasGpu(false);
@@ -54,7 +56,10 @@ const PreSharingEnabledComponent: React.FC<PreSharingEnabledComponentProps> = ({
       setAllocateGPU(true);
     } else {
       try {
-        await window.electron.runExecutorContainer('meca_executor_test');
+        await window.electron.runDockerContainer(
+          ImageName.MECA_EXECUTOR,
+          containerName
+        );
       } catch (error) {
         console.error('Error starting container:', error);
       }

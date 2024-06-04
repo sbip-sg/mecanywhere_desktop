@@ -16,8 +16,8 @@ import { resolveHtmlPath, getAssetPath } from './util';
 import MenuBuilder from './menu';
 import Channels from '../common/channels';
 import {
-  removeExecutorContainer,
-  runExecutorContainer,
+  removeDockerContainer,
+  runDockerContainer,
   runExecutorGPUContainer,
   checkDockerDaemonRunning,
   checkContainerExists,
@@ -120,8 +120,8 @@ ipcMain.on(Channels.APP_RELOAD_CONFIRMED, () => {
 });
 
 // docker integration
-ipcMain.on(Channels.REMOVE_EXECUTOR_CONTAINER, removeExecutorContainer);
-ipcMain.on(Channels.RUN_EXECUTOR_CONTAINER, runExecutorContainer);
+ipcMain.on(Channels.REMOVE_DOCKER_CONTAINER, removeDockerContainer);
+ipcMain.on(Channels.RUN_DOCKER_CONTAINER, runDockerContainer);
 ipcMain.on(Channels.RUN_EXECUTOR_GPU_CONTAINER, runExecutorGPUContainer);
 ipcMain.on(Channels.CHECK_DOCKER_DAEMON_RUNNING, checkDockerDaemonRunning);
 ipcMain.on(Channels.CHECK_CONTAINER_EXIST, checkContainerExists);

@@ -13,12 +13,13 @@ import {
   pauseExecutor,
 } from 'renderer/services/ExecutorServices';
 import { waitForTasks } from 'renderer/services/HostContractService';
+import { ContainerName } from 'common/dockerNames';
+import reduxStore from 'renderer/redux/store';
 import Transitions from '../../../utils/Transition';
 import PreSharingEnabledComponent from './HostSharingWidgetComponent/PreSharingEnabledComponent';
 import PostSharingEnabledComponent from './HostSharingWidgetComponent/PostSharingEnabledComponent';
 import actions from '../../../redux/actionCreators';
 import ErrorDialog from '../../componentsCommon/ErrorDialogue';
-import reduxStore from 'renderer/redux/store';
 
 const HostSharingWidget = () => {
   const [isLoading, setIsLoading] = useState(false);
@@ -117,7 +118,7 @@ const HostSharingWidget = () => {
 
   const handleEnableResourceSharing = async () => {
     setIsLoading(true);
-    const containerName = 'meca_executor_test';
+    const containerName = ContainerName.MECA_EXECUTOR_1;
     try {
       const containerExist = await window.electron.checkContainerExist(
         containerName

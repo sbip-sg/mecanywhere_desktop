@@ -3,26 +3,28 @@ import log from 'electron-log/main';
 import path from 'path';
 import fs from 'fs';
 import os from 'os';
+import { ImageName } from '../common/dockerNames';
 import Channels from '../common/channels';
 import { getIpfsFilesDir } from './ipfsIntegration';
 
 const docker = new Dockerode();
 
-// interface Event {
-//   reply(_channel: string, _success: boolean, _message?: string): void;
-// }
+const DEFAULT_EXECUTOR_GPU_CONFIG = `
+type: "docker"
+timeout: 1
+cpu: 4
+mem: 4096
+has_gpu: true
+`;
 
-export const removeExecutorContainer = async (
-  event,
-  containerName: string
-) => {
+export const removeDockerContainer = async (event, containerName: string) => {
   docker.listContainers(
     { all: true },
     (err: Error, containers?: ContainerInfo[]) => {
       if (err) {
         console.error(err);
         event.reply(
-          Channels.REMOVE_EXECUTOR_CONTAINER_RESPONSE,
+          Channels.REMOVE_DOCKER_CONTAINER_RESPONSE,
           false,
           err.message
         );
@@ -41,12 +43,12 @@ export const removeExecutorContainer = async (
             if (err) {
               console.error(err);
               event.reply(
-                Channels.REMOVE_EXECUTOR_CONTAINER_RESPONSE,
+                Channels.REMOVE_DOCKER_CONTAINER_RESPONSE,
                 false,
                 err.message
               );
             } else {
-              event.reply(Channels.REMOVE_EXECUTOR_CONTAINER_RESPONSE, true);
+              event.reply(Channels.REMOVE_DOCKER_CONTAINER_RESPONSE, true);
               console.log(`Container ${containerName} removed successfully.`);
             }
           });
@@ -58,7 +60,7 @@ export const removeExecutorContainer = async (
             if (err) {
               console.error(err);
               event.reply(
-                Channels.REMOVE_EXECUTOR_CONTAINER_RESPONSE,
+                Channels.REMOVE_DOCKER_CONTAINER_RESPONSE,
                 false,
                 err.message
               );
@@ -71,15 +73,16 @@ export const removeExecutorContainer = async (
         }
       } else {
         console.log(`Container ${containerName} not found.`);
-        event.reply(Channels.REMOVE_EXECUTOR_CONTAINER_RESPONSE, true);
+        event.reply(Channels.REMOVE_DOCKER_CONTAINER_RESPONSE, true);
       }
     }
   );
 };
 
-export const runExecutorContainer = async (
+export const runDockerContainer = async (
   event,
-  containerName: string
+  imageName: ImageName,
+  containerName: string,
 ) => {
   try {
     docker.listContainers({ all: true }, (err, containers) => {
@@ -102,34 +105,17 @@ export const runExecutorContainer = async (
                 console.error(err);
               } else {
                 log.info('Existing container started');
-                event.reply(Channels.RUN_EXECUTOR_CONTAINER_RESPONSE, true);
+                event.reply(Channels.RUN_DOCKER_CONTAINER_RESPONSE, true);
               }
             });
         } else {
           log.info('Container is already running');
-          event.reply(Channels.RUN_EXECUTOR_CONTAINER_RESPONSE, true);
+          event.reply(Channels.RUN_DOCKER_CONTAINER_RESPONSE, true);
         }
       } else {
         // Container does not exist, create and start it
-        const containerOptions = {
-          name: containerName,
-          Image: 'meca-executor:latest',
-          ExposedPorts: { '2591/tcp': {} },
-          HostConfig: {
-            Binds: ['/var/run/docker.sock:/var/run/docker.sock'],
-            PortBindings: { '2591/tcp': [{ HostPort: '2591' }] },
-            NetworkMode: 'meca',
-          },
-          NetworkingConfig: {
-            EndpointsConfig: {
-              meca: {
-                IPAMConfig: {
-                  IPv4Address: process.env.IPV4_ADDRESS,
-                },
-              },
-            },
-          },
-        };
+        const containerOptions: Dockerode.ContainerCreateOptions =
+          getContainerCreateOptions(imageName, containerName);
 
         docker.createContainer(containerOptions, (err: Error, container) => {
           if (err) {
@@ -142,7 +128,7 @@ export const runExecutorContainer = async (
               console.error(err);
             } else {
               log.info('New container started');
-              event.reply(Channels.RUN_EXECUTOR_CONTAINER_RESPONSE, true);
+              event.reply(Channels.RUN_DOCKER_CONTAINER_RESPONSE, true);
             }
           });
         });
@@ -150,7 +136,7 @@ export const runExecutorContainer = async (
     });
   } catch (error) {
     event.reply(
-      Channels.RUN_EXECUTOR_CONTAINER_RESPONSE,
+      Channels.RUN_DOCKER_CONTAINER_RESPONSE,
       false,
       (error as Error).message
     );
@@ -176,57 +162,23 @@ const checkIfContainerHasGpu = (containerId: string, callback) => {
 
 export const runExecutorGPUContainer = async (event, containerName) => {
   try {
-    // Configuration data
-    const configData = `
-  type: "docker"
-  timeout: 1
-  cpu: 4
-  mem: 4096
-  has_gpu: true
-  `;
-
     // Create a temporary file and write configuration data
     const tempDir = os.tmpdir();
     const configFilePath = path.join(tempDir, 'meca_docker_gpu.yaml');
-    fs.writeFileSync(configFilePath, configData);
+    fs.writeFileSync(configFilePath, DEFAULT_EXECUTOR_GPU_CONFIG);
 
-    const containerOptions = {
-      name: containerName,
-      Image: 'meca-executor:latest',
-      ExposedPorts: { '2591/tcp': {} },
-      HostConfig: {
-        Binds: [
-          '/var/run/docker.sock:/var/run/docker.sock',
-          `${configFilePath}:/app/meca_executor.yaml`,
-        ],
-        PortBindings: { '2591/tcp': [{ HostPort: '2591' }] },
-        NetworkMode: 'meca',
-        DeviceRequests: [
-          {
-            Driver: '',
-            Count: -1, // -1 specifies "all GPUs"
-            DeviceIDs: [],
-            Capabilities: [['gpu']],
-            Options: {},
-          },
-        ],
-      },
-      NetworkingConfig: {
-        EndpointsConfig: {
-          meca: {
-            IPAMConfig: {
-              IPv4Address: process.env.IPV4_ADDRESS,
-            },
-          },
-        },
-      },
-    };
+    const containerOptions: Dockerode.ContainerCreateOptions =
+      getContainerCreateOptions(ImageName.MECA_EXECUTOR, containerName, true);
+    containerOptions.HostConfig?.Binds?.push(
+      `${configFilePath}:/app/meca_executor.yaml`
+    );
+
     docker.createContainer(containerOptions, (err, container) => {
       if (err) {
         console.error(err);
         return;
       }
-      container.start((err, data) => {
+      container?.start((err, data) => {
         if (err) {
           event.reply(
             Channels.RUN_EXECUTOR_GPU_CONTAINER_RESPONSE,
@@ -245,7 +197,7 @@ export const runExecutorGPUContainer = async (event, containerName) => {
     event.reply(
       Channels.RUN_EXECUTOR_GPU_CONTAINER_RESPONSE,
       false,
-      error.message
+      (error as Error).message
     );
   }
 };
@@ -357,3 +309,64 @@ export const buildImage = (event, tag: string, dockerfilePath: string) => {
     }
   );
 };
+
+function getContainerCreateOptions(
+  imageName: ImageName,
+  containerName: string,
+  hasGpu: boolean = false
+): Dockerode.ContainerCreateOptions {
+  let containerOptions: Dockerode.ContainerCreateOptions;
+  switch (imageName) {
+    case ImageName.MECA_EXECUTOR:
+      containerOptions = {
+        name: containerName,
+        Image: `${imageName}:latest`,
+        ExposedPorts: { '2591/tcp': {} },
+        HostConfig: {
+          Binds: ['/var/run/docker.sock:/var/run/docker.sock'],
+          PortBindings: { '2591/tcp': [{ HostPort: '2591' }] },
+          NetworkMode: 'meca',
+        },
+        NetworkingConfig: {
+          EndpointsConfig: {
+            meca: {
+              IPAMConfig: {
+                IPv4Address: process.env.IPV4_ADDRESS,
+              },
+            },
+          },
+        },
+      };
+      break;
+    case ImageName.PYMECA_SERVER:
+      containerOptions = {
+        name: containerName,
+        Image: `${imageName}:latest`,
+        ExposedPorts: { '5000/tcp': {} },
+        HostConfig: {
+          PortBindings: { '5000/tcp': [{ HostPort: '5000' }] },
+        },
+      };
+      break;
+    default:
+      containerOptions = {
+        name: containerName,
+        Image: `${imageName}:latest`,
+      };
+  }
+  if (hasGpu) {
+    containerOptions.HostConfig = {
+      ...containerOptions.HostConfig,
+      DeviceRequests: [
+        {
+          Driver: '',
+          Count: -1, // -1 specifies "all GPUs"
+          DeviceIDs: [],
+          Capabilities: [['gpu']],
+          Options: {},
+        },
+      ],
+    };
+  }
+  return containerOptions;
+}
