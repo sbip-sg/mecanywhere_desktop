@@ -23,40 +23,33 @@ const Login = () => {
     setErrorDialogOpen(false);
   };
 
-  useEffect(() => {
-    async function setup() {
-      try {
-        await setStoreSettings();
-        await startDockerContainer(
-          ImageName.MECA_EXECUTOR,
-          ContainerName.MECA_EXECUTOR_1
-        );
-        await startDockerContainer(
-          ImageName.PYMECA_SERVER,
-          ContainerName.PYMECA_SERVER_1
-        );
-      } catch (error) {
-        console.error('Error starting:', error);
-        setErrorMessage('Error starting');
-        setErrorDialogOpen(true);
-      }
-    }
-    actions.setImportingAccount(false);
-    setIsLoading(true);
+  async function setup() {
     try {
-      setup();
+      actions.setImportingAccount(false);
+      setIsLoading(true);
+      await setStoreSettings();
+      await startDockerContainer(
+        ImageName.MECA_EXECUTOR,
+        ContainerName.MECA_EXECUTOR_1
+      );
+      await startDockerContainer(
+        ImageName.PYMECA_SERVER,
+        ContainerName.PYMECA_SERVER_1
+      );
       setTimeout(async () => {
-        try {
-          await fetchAccount();
-          setIsLoading(false);
-        } catch (error) {
-          console.error('Error fetching data:', error);
-          setIsLoading(false);
-        }
+        await fetchAccount();
+        setIsLoading(false);
       }, 2000);
     } catch (error) {
-      console.error('Error setting up:', error);
+      console.error('Error starting:', error);
+      setErrorMessage(`Error starting: ${error}`);
+      setErrorDialogOpen(true);
+      setIsLoading(false);
     }
+  }
+
+  useEffect(() => {
+    setup();
   }, []);
 
   return (
@@ -115,7 +108,7 @@ const Login = () => {
               >
                 <Button
                   variant="contained"
-                  onClick={() => fetchAccount()}
+                  onClick={() => setup()}
                   sx={{
                     width: '70%',
                     color: 'text.primary',
