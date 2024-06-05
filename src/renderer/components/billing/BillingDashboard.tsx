@@ -6,7 +6,6 @@ import PastBillingCard from './cards/PastBillingCard';
 import PastBillingList from './list/PastBillingList';
 import { DataEntry, GroupedDataEntry } from '../../utils/dataTypes';
 import groupData from '../componentsCommon/groupData';
-import fetchTransactionHistory from '../componentsCommon/fetchTransactionHistory';
 import dummyData from '../transactions/dummyData';
 
 const BillingDashboard: React.FC = () => {
@@ -33,10 +32,9 @@ const BillingDashboard: React.FC = () => {
     setGroupedData(groupedDataTemp);
   }, [data]);
 
-  const fetchAndSetData = async (accessToken: string) => {
+  const fetchAndSetData = async () => {
     try {
       // const transactionHistory = await fetchTransactionHistory(
-      //   accessToken,
       //   did
       // );
       const transactionHistory = dummyData;
@@ -48,8 +46,7 @@ const BillingDashboard: React.FC = () => {
 
   useEffect(() => {
     const retrieveData = async () => {
-      const { accessToken } = reduxStore.getState().userReducer;
-      await fetchAndSetData(accessToken);
+      await fetchAndSetData();
     };
     retrieveData();
   }, []); // eslint-disable-line react-hooks/exhaustive-deps

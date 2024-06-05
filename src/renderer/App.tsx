@@ -43,12 +43,11 @@ const RootRoute = () => {
   const isAuthenticated = useSelector(
     (state: RootState) => state.userReducer.authenticated
   );
-  const did = window.electron.store.get('did');
 
   if (isAuthenticated) {
     return <Navigate to="/txndashboard" />;
   }
-  return did === '' ? <Register /> : <Login />;
+  return <Login />;
 };
 
 const Animated = () => {

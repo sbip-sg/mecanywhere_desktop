@@ -73,12 +73,13 @@ export interface ResourcesLog {
   task_mem: number;
   task_used_cpu: number;
   task_used_mem: number;
+  gpu_model: string;
+  task_gpu: number;
+  task_used_gpu: number;
 }
 
 export interface UserState {
   authenticated: boolean;
-  accessToken: string;
-  refreshToken: string;
 }
 
 export interface ThemeState {

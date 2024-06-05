@@ -1,4 +1,5 @@
 import { getAccount } from 'renderer/services/PymecaService';
+import { ImageName } from 'common/dockerNames';
 import {
   generateMnemonicAndKeyPair,
   utf8ToHex,
@@ -46,24 +47,25 @@ const fetchAccount = async () => {
   window.electron.store.set('did', account);
 };
 
-const startExecutor = async (containerName: string) => {
+const startDockerContainer = async (
+  imageName: ImageName,
+  containerName: string
+) => {
   const dockerDaemonIsRunning =
     await window.electron.checkDockerDaemonRunning();
   if (!dockerDaemonIsRunning) {
     throw new Error('Docker daemon is not running');
   }
-  const containerExist = await window.electron.checkContainerExist(
-    containerName
-  );
+  const containerExist = await window.electron.checkContainerExist(containerName);
   if (containerExist) {
     const hasGpuSupport = await window.electron.checkContainerGpuSupport(
       containerName
     );
     if (hasGpuSupport) {
-      await window.electron.removeExecutorContainer(containerName);
+      await window.electron.removeDockerContainer(containerName);
     }
   }
-  await window.electron.runExecutorContainer(containerName);
+  await window.electron.runDockerContainer(imageName, containerName);
 };
 
-export { setStoreSettings, fetchAccount, startExecutor };
+export { setStoreSettings, fetchAccount, startDockerContainer };

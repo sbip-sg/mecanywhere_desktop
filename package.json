@@ -1,5 +1,5 @@
 {
-  "name": "mecanywhere", 
+  "name": "mecanywhere",
   "description": "A blockchain-based edge computing platform",
   "keywords": [
     "MEC",
@@ -33,7 +33,6 @@
       "name": "Ștefan-Dan Ciocîrlan",
       "email": "stefandan.ciocirlan@gmail.com"
     }
-
   ],
   "main": "./src/main/main.ts",
   "scripts": {
@@ -114,7 +113,6 @@
     "@mui/icons-material": "^5.11.16",
     "@mui/material": "^5.14.1",
     "@reduxjs/toolkit": "^1.9.5",
-    "amqplib": "^0.10.3",
     "bip39": "^3.1.0",
     "buffer": "^6.0.3",
     "crypto-js": "^4.1.1",
@@ -131,10 +129,7 @@
     "js-sha3": "^0.8.0",
     "lottie-web": "^5.12.2",
     "os-browserify": "^0.3.0",
-    "pb-util": "^1.0.3",
     "process": "^0.11.10",
-    "protobufjs": "^7.2.3",
-    "qrcode": "^1.5.3",
     "querystring-es3": "^0.2.1",
     "react": "^18.2.0",
     "react-datepicker": "^4.16.0",
@@ -159,12 +154,10 @@
     "@testing-library/dom": "^9.3.0",
     "@testing-library/jest-dom": "^5.16.5",
     "@testing-library/react": "^13.4.0",
-    "@types/amqplib": "^0.10.1",
     "@types/crypto-js": "^4.1.1",
     "@types/jest": "^29.4.0",
     "@types/node": "18.13.0",
     "@types/papaparse": "^5.3.7",
-    "@types/qrcode": "^1.5.1",
     "@types/react": "^18.0.27",
     "@types/react-datepicker": "^4.15.0",
     "@types/react-dom": "^18.0.10",

@@ -36,11 +36,10 @@ const TxnDashboard: React.FC = () => {
     1
   }px`;
 
-  const fetchAndSetData = async (accessToken: string) => {
+  const fetchAndSetData = async () => {
     setIsLoading(true);
     try {
       const transactionHistory = await fetchTransactionHistory(
-        accessToken,
         did
       );
       if (transactionHistory.length > 0) {
@@ -56,12 +55,7 @@ const TxnDashboard: React.FC = () => {
   };
 
   const handleRefresh = async () => {
-    const { accessToken } = reduxStore.getState().userReducer;
-    if (accessToken) {
-      await fetchAndSetData(accessToken);
-    } else {
-      console.error('Invalid access token or did');
-    }
+    await fetchAndSetData();
   };
 
   const handleAddDummyData = async () => {

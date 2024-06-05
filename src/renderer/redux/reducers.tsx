@@ -13,8 +13,6 @@ import {
 
 const initialUserState: UserState = {
   authenticated: false,
-  accessToken: '',
-  refreshToken: '',
 };
 
 const initialThemeState: ThemeState = {
@@ -86,16 +84,6 @@ export const userReducer = (
       return {
         ...state,
         authenticated: action.payload,
-      };
-    case 'setAccessToken':
-      return {
-        ...state,
-        accessToken: action.payload,
-      };
-    case 'setRefreshToken':
-      return {
-        ...state,
-        refreshToken: action.payload,
       };
     default:
       return state;

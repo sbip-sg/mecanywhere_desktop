@@ -8,7 +8,7 @@
  * When running `npm run build` or `npm run build:main`, this file is compiled to
  * `./src/main.js` using webpack. This gives us some performance wins.
  */
-import { app, BrowserWindow, ipcMain, Tray, Menu, dialog } from 'electron';
+import { app, BrowserWindow, ipcMain, Tray, Menu } from 'electron';
 import log from 'electron-log/main';
 import path from 'path';
 import { performance } from 'perf_hooks';
@@ -16,8 +16,8 @@ import { resolveHtmlPath, getAssetPath } from './util';
 import MenuBuilder from './menu';
 import Channels from '../common/channels';
 import {
-  removeExecutorContainer,
-  runExecutorContainer,
+  removeDockerContainer,
+  runDockerContainer,
   runExecutorGPUContainer,
   checkDockerDaemonRunning,
   checkContainerExists,
@@ -32,8 +32,6 @@ import {
 import {
   jobResultsReceived,
   jobReceived,
-  startConsumer,
-  stopConsumer,
   onClientRegistered,
   onJobResultsReceived,
 } from './jobs';
@@ -56,7 +54,6 @@ import {
 const start = performance.now();
 
 let mainWindow: BrowserWindow | null = null;
-let workerWindow: BrowserWindow | null = null;
 let tray: Tray;
 
 process.env.ELECTRON_DISABLE_SECURITY_WARNINGS = 'true';
@@ -114,14 +111,6 @@ ipcMain.on(Channels.JOB_RECEIVED, (event, id, result) => {
   jobReceived(mainWindow, event, id, result);
 });
 
-ipcMain.on(Channels.START_CONSUMER, (event, queueName) => {
-  startConsumer(workerWindow, event, queueName);
-});
-
-ipcMain.on(Channels.STOP_CONSUMER, (event, queueName) => {
-  stopConsumer(workerWindow, event, queueName);
-});
-
 ipcMain.on(Channels.APP_CLOSE_CONFIRMED, () => {
   if (mainWindow) mainWindow.destroy();
 });
@@ -131,8 +120,8 @@ ipcMain.on(Channels.APP_RELOAD_CONFIRMED, () => {
 });
 
 // docker integration
-ipcMain.on(Channels.REMOVE_EXECUTOR_CONTAINER, removeExecutorContainer);
-ipcMain.on(Channels.RUN_EXECUTOR_CONTAINER, runExecutorContainer);
+ipcMain.on(Channels.REMOVE_DOCKER_CONTAINER, removeDockerContainer);
+ipcMain.on(Channels.RUN_DOCKER_CONTAINER, runDockerContainer);
 ipcMain.on(Channels.RUN_EXECUTOR_GPU_CONTAINER, runExecutorGPUContainer);
 ipcMain.on(Channels.CHECK_DOCKER_DAEMON_RUNNING, checkDockerDaemonRunning);
 ipcMain.on(Channels.CHECK_CONTAINER_EXIST, checkContainerExists);
@@ -152,18 +141,6 @@ ipcMain.handle(Channels.DELETE_FOLDER, deleteFolder);
 ipcMain.handle(Channels.CHECK_FOLDER_EXISTS, checkFolderExists);
 ipcMain.handle(Channels.IPFS_CAT, catFile);
 ipcMain.handle(Channels.IPFS_STAT, statObject);
-
-const createWorkerWindow = async () => {
-  workerWindow = new BrowserWindow({
-    show: false,
-    webPreferences: {
-      sandbox: false,
-      nodeIntegration: true,
-      contextIsolation: false,
-    },
-  });
-  workerWindow.loadFile('src/worker_renderer/worker.html');
-};
 
 const createMainWindow = async () => {
   mainWindow = new BrowserWindow({
@@ -259,7 +236,6 @@ app
   .whenReady()
   .then(() => {
     createMainWindow();
-    createWorkerWindow();
     const appReadyTimeTaken = (performance.now() - start).toFixed(2);
     console.log(`App ready in ${appReadyTimeTaken} ms`);
     app.on('activate', () => {
@@ -267,7 +243,6 @@ app
       // dock icon is clicked and there are no other windows open.
       if (mainWindow === null) {
         createMainWindow();
-        createWorkerWindow();
       }
     });
   })

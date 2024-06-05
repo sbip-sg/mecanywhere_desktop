@@ -1,7 +1,9 @@
 import { ResourcesLog } from 'renderer/utils/dataTypes';
 import actions from '../redux/actionCreators';
 
-const url = process.env.TASK_EXECUTOR_URL;
+const url =
+  `${process.env.TASK_EXECUTOR_HOST}:${process.env.TASK_EXECUTOR_PORT}` ||
+  'http://localhost:2591';
 
 export async function stopExecutor() {
   try {

@@ -20,11 +20,10 @@ function combineHistories(
 }
 
 export default async function fetchTransactionHistory(
-  accessToken: string,
   did: string
 ): Promise<DataEntry[]> {
-  const hostDidHistoryResponse = await findHostHistory(accessToken, did);
-  const clientDidHistoryResponse = await findClientHistory(accessToken, did);
+  const hostDidHistoryResponse = await findHostHistory(did);
+  const clientDidHistoryResponse = await findClientHistory(did);
   const hostDidHistory = await hostDidHistoryResponse?.json();
   const clientDidHistory = await clientDidHistoryResponse?.json();
   return combineHistories(hostDidHistory, clientDidHistory);

@@ -2,8 +2,8 @@
 /* eslint no-unused-vars: off */
 import { contextBridge, ipcRenderer, IpcRendererEvent } from 'electron';
 // import log from 'electron-log/preload';
+import { ImageName } from 'common/dockerNames';
 import Channels from '../common/channels';
-import { statObject } from './ipfsIntegration';
 
 const subscribe = (channel: string, func: (...args: any[]) => void) => {
   const subscription = (_event: IpcRendererEvent, ...args: any[]) =>
@@ -66,11 +66,12 @@ const electronHandler = {
       );
     });
   },
-  removeExecutorContainer: (containerName: string) => {
+
+  removeDockerContainer: (containerName: string) => {
     return new Promise<void>((resolve, reject) => {
-      ipcRenderer.send(Channels.REMOVE_EXECUTOR_CONTAINER, containerName);
+      ipcRenderer.send(Channels.REMOVE_DOCKER_CONTAINER, containerName);
       ipcRenderer.once(
-        Channels.REMOVE_EXECUTOR_CONTAINER_RESPONSE,
+        Channels.REMOVE_DOCKER_CONTAINER_RESPONSE,
         (event, success, error) => {
           if (success) {
             resolve();
@@ -82,12 +83,12 @@ const electronHandler = {
     });
   },
 
-  runExecutorContainer: (containerName: string) => {
+  runDockerContainer: (imageName: ImageName, containerName: string) => {
     return new Promise<void>((resolve, reject) => {
-      ipcRenderer.send(Channels.RUN_EXECUTOR_CONTAINER, containerName);
+      ipcRenderer.send(Channels.RUN_DOCKER_CONTAINER, imageName, containerName);
       // Setup a one-time listener for the response
       ipcRenderer.once(
-        Channels.RUN_EXECUTOR_CONTAINER_RESPONSE,
+        Channels.RUN_DOCKER_CONTAINER_RESPONSE,
         (event, success, error) => {
           if (success) {
             resolve();
@@ -177,12 +178,6 @@ const electronHandler = {
     ipcRenderer.send(Channels.APP_RELOAD_CONFIRMED);
   },
 
-  // from host
-  startConsumer: (queueName: string) =>
-    ipcRenderer.send(Channels.START_CONSUMER, queueName),
-  // to host
-  stopConsumer: (queueName: string) =>
-    ipcRenderer.send(Channels.STOP_CONSUMER, queueName),
   onSubscribeJobs: (callback: (...args: any[]) => void) => {
     subscribe(Channels.JOB_RECEIVED, callback);
   },

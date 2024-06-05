@@ -34,3 +34,7 @@ venv
 __pycache__
 /out
 out
+
+# docs build
+docs/_build
+docs/build
