@@ -10,7 +10,7 @@ on:
 
 env:
   REGISTRY: ghcr.io
-  IMAGE_NAME: meca-executor
+  IMAGE_NAME: sbip-sg/meca-executor
 
 jobs:
   build-and-push-image:
