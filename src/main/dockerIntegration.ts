@@ -321,7 +321,7 @@ function getContainerCreateOptions(
       const port = process.env.MECA_EXECUTOR_PORT || '2591';
       containerOptions = {
         name: containerName,
-        Image: `${imageName}:latest`,
+        Image: imageName,
         ExposedPorts: { [`${port}/tcp`]: {} },
         HostConfig: {
           Binds: ['/var/run/docker.sock:/var/run/docker.sock'],
@@ -344,7 +344,7 @@ function getContainerCreateOptions(
       const port = process.env.PYMECA_SERVER_PORT || '9999';
       containerOptions = {
         name: containerName,
-        Image: `${imageName}:latest`,
+        Image: imageName,
         ExposedPorts: { [`${port}/tcp`]: {} },
         HostConfig: {
           PortBindings: { [`${port}/tcp`]: [{ HostPort: port }] },
@@ -356,7 +356,7 @@ function getContainerCreateOptions(
     default:
       containerOptions = {
         name: containerName,
-        Image: `${imageName}:latest`,
+        Image: imageName,
       };
   }
   if (hasGpu) {
