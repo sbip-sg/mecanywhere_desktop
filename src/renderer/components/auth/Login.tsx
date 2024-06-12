@@ -5,6 +5,7 @@ import Container from '@mui/material/Container';
 import CircularProgress from '@mui/material/CircularProgress';
 import { useState, useEffect } from 'react';
 import { ContainerName, ImageName } from 'common/dockerNames';
+import { initActor } from 'renderer/services/PymecaService';
 import ErrorDialog from '../componentsCommon/ErrorDialogue';
 import actions from '../../redux/actionCreators';
 import { ReactComponent as Logo } from '../../../../assets/LogoColor.svg';
@@ -13,7 +14,8 @@ import {
   fetchAccount,
   setStoreSettings,
   startDockerContainer,
-} from './handleEnterApp';
+  } from './handleEnterApp';
+import { registerHostIfNotRegistered } from '../componentsCommon/handleRegistration';
 
 const Login = () => {
   const [isLoading, setIsLoading] = useState(false);
@@ -36,10 +38,28 @@ const Login = () => {
         ImageName.PYMECA_SERVER,
         ContainerName.PYMECA_SERVER_1
       );
-      setTimeout(async () => {
-        await fetchAccount();
-        setIsLoading(false);
-      }, 2000);
+
+      const maxRetries = 5;
+      const retryDelay = 1000;
+      let retries = 0;
+
+      const retryLoop = async () => {
+        try {
+          await initActor('host');
+          await registerHostIfNotRegistered(100, 0);
+          await fetchAccount();
+          setIsLoading(false);
+        } catch (error) {
+          if (retries < maxRetries) {
+            retries++;
+            setTimeout(retryLoop, retryDelay);
+          } else {
+            throw error;
+          }
+        }
+      };
+
+      setTimeout(retryLoop, retryDelay);
     } catch (error) {
       console.error('Error starting:', error);
       setErrorMessage(`Error starting: ${error}`);

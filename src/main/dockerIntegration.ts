@@ -17,6 +17,11 @@ mem: 4096
 has_gpu: true
 `;
 
+const pymecaEnv = fs
+  .readFileSync(path.resolve(__dirname, '../../.env.pymeca'), 'utf8')
+  .split('\n')
+  .filter((line) => line.trim() !== '');
+
 export const removeDockerContainer = async (event, containerName: string) => {
   docker.listContainers(
     { all: true },
@@ -328,15 +333,6 @@ function getContainerCreateOptions(
           PortBindings: { [`${port}/tcp`]: [{ HostPort: port }] },
           NetworkMode: 'meca',
         },
-        NetworkingConfig: {
-          EndpointsConfig: {
-            meca: {
-              IPAMConfig: {
-                IPv4Address: process.env.IPV4_ADDRESS,
-              },
-            },
-          },
-        },
       };
       break;
     }
@@ -350,6 +346,7 @@ function getContainerCreateOptions(
           PortBindings: { [`${port}/tcp`]: [{ HostPort: port }] },
         },
         Cmd: ['server.py', port],
+        Env: pymecaEnv,
       };
       break;
     }

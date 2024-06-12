@@ -3,8 +3,8 @@ import { useEffect, useState } from 'react';
 import CircularProgress from '@mui/material/CircularProgress';
 import { styled } from '@mui/material/styles';
 import {
-  handleRegisterHost,
-  handleDeregisterHost,
+  handleActivateHost,
+  handleDeactivateHost,
 } from 'renderer/components/componentsCommon/handleRegistration';
 import {
   updateConfig,
@@ -140,19 +140,16 @@ const HostSharingWidget = () => {
             cpu: executorSettings.cpu_cores,
             mem: executorSettings.memory_mb,
           });
-          await handleRegisterHost(100);
-          const towerAddresses = reduxStore.getState().towerListReducer.registered;
-          const hostEncryptionPrivateKey = window.electron.store.get('privateKey');
-          await waitForTasks(
-            towerAddresses,
-            hostEncryptionPrivateKey,
-            10,
-            {
-              cpu: executorSettings.cpu_cores,
-              mem: executorSettings.memory_mb,
-              gpu: executorSettings.gpus,
-            }
-          );
+          await handleActivateHost(100, 0);
+          const towerAddresses =
+            reduxStore.getState().towerListReducer.registered;
+          const hostEncryptionPrivateKey =
+            window.electron.store.get('privateKey');
+          await waitForTasks(towerAddresses, hostEncryptionPrivateKey, 10, {
+            cpu: executorSettings.cpu_cores,
+            mem: executorSettings.memory_mb,
+            gpu: executorSettings.gpus,
+          });
           const initialResources = await getResourceStats();
           setInitialResourcesLog(initialResources);
           setResourceSharingEnabled(true);
@@ -169,7 +166,7 @@ const HostSharingWidget = () => {
 
   const handleDisableResourceSharing = async () => {
     setIsLoading(true);
-    await handleDeregisterHost();
+    await handleDeactivateHost();
     setResourceSharingEnabled(false);
     setIsLoading(false);
   };

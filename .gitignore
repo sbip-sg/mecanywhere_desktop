@@ -38,3 +38,5 @@ out
 # docs build
 docs/_build
 docs/build
+
+.env.pymeca
