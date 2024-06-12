@@ -20,7 +20,8 @@
 
 namespace {
 std::mutex debug_log_mutex;
-int PUBKEY_SIZE = 625;
+// int PUBKEY_SIZE = 625;
+int PUBKEY_SIZE = 215;
 } // anonymous namespace
 
 std::string Worker::GetKeyAndReport(std::string* retKey) {

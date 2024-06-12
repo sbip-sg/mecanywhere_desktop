@@ -55,19 +55,65 @@ inline void printf(const char* msg) {
 
 // TODO
 std::string decrypt_content(const char* input_data, size_t input_data_size, std::string* output_key) {
-    assert(input_data_size >= MAX_SESSION_KEY_IV_LENGTH + ENCRYPTED_SESSION_KEY_LENGTH); 
-    const char* iv = input_data + (input_data_size - MAX_SESSION_KEY_IV_LENGTH);
-    const char* ek = input_data + (input_data_size - MAX_SESSION_KEY_IV_LENGTH - ENCRYPTED_SESSION_KEY_LENGTH);
-    int encrypted_input_len = input_data_size - (MAX_SESSION_KEY_IV_LENGTH + ENCRYPTED_SESSION_KEY_LENGTH);
+    const char* tag = input_data + (input_data_size - 16);
+    const char* iv = input_data + (input_data_size - 12 - 16);
+    const char* peer_pub_key_str = input_data + (input_data_size - 12 - 16 - EC_PUBLIC_KEY_SIZE);
 
-    // perform decryption
-    int decrypted_len;
-    unsigned char* decrypted = rsa_decrypt_data((const unsigned char*) input_data, encrypted_input_len, (const unsigned char*) ek, ENCRYPTED_SESSION_KEY_LENGTH, (const unsigned char*) iv, enclave_private_key, enclave_private_key_size, &decrypted_len);
-    output_key->assign((char*)decrypted + decrypted_len-OUTPUT_KEY_LENGTH,  OUTPUT_KEY_LENGTH);
-    std::string ret{(char*)decrypted, decrypted_len-OUTPUT_KEY_LENGTH};
+    // printf("peer key: %s\n", std::string{peer_pub_key_str, EC_PUBLIC_KEY_SIZE}.c_str());
 
-    if (decrypted) free(decrypted);
+    // load peer key
+    EVP_PKEY* peer_pub_key = EVP_PKEY_new();
+    load_public_key(peer_pub_key_str, EC_PUBLIC_KEY_SIZE, &peer_pub_key);
+
+    // load enclave private key
+    EVP_PKEY* own_key = EVP_PKEY_new();
+    load_private_key((const char*)enclave_private_key, enclave_private_key_size, &own_key);
+
+    // derive shared secret
+    std::string secret = derive_ecdh_secret(own_key, peer_pub_key);
+    std::string session_key = kdf_derive( (const unsigned char*) secret.c_str(), secret.size(), "info", 4, 16);
+
+    EVP_PKEY_free(peer_pub_key);
+    EVP_PKEY_free(own_key);
+
+    // decrypt the content
+    EVP_CIPHER_CTX* ctx;
+    if (!(ctx = EVP_CIPHER_CTX_new())) return "";
+    if (EVP_DecryptInit_ex(ctx, EVP_aes_128_gcm(), NULL, (const unsigned char*) session_key.c_str(), (const unsigned char*) iv) != 1) {
+      EVP_CIPHER_CTX_free(ctx);
+      return "";
+    }
+
+    EVP_CIPHER_CTX_ctrl(ctx, EVP_CTRL_GCM_SET_TAG, 16, (void*)tag);
+
+    int plaintext_len;
+    int len;
+
+    unsigned char decrypted [input_data_size-44];
+    if (EVP_DecryptUpdate(ctx, decrypted, &len, (const unsigned char*)input_data, input_data_size-16-12-EC_PUBLIC_KEY_SIZE) != 1) {
+      EVP_CIPHER_CTX_free(ctx);
+      // printf("EVP_DecryptUpdate failed\n");
+      return "";
+    }
+    // printf("decrypted data updated to (%dB)\n", len);
+    output_key->assign((char*)decrypted + len-OUTPUT_KEY_LENGTH,  OUTPUT_KEY_LENGTH);
+    std::string ret{(char*)decrypted, len-OUTPUT_KEY_LENGTH};
+    EVP_CIPHER_CTX_free(ctx);
     return ret;
+
+    // assert(input_data_size >= MAX_SESSION_KEY_IV_LENGTH + ENCRYPTED_SESSION_KEY_LENGTH); 
+    // const char* iv = input_data + (input_data_size - MAX_SESSION_KEY_IV_LENGTH);
+    // const char* ek = input_data + (input_data_size - MAX_SESSION_KEY_IV_LENGTH - ENCRYPTED_SESSION_KEY_LENGTH);
+    // int encrypted_input_len = input_data_size - (MAX_SESSION_KEY_IV_LENGTH + ENCRYPTED_SESSION_KEY_LENGTH);
+
+    // // perform decryption
+    // int decrypted_len;
+    // unsigned char* decrypted = rsa_decrypt_data((const unsigned char*) input_data, encrypted_input_len, (const unsigned char*) ek, ENCRYPTED_SESSION_KEY_LENGTH, (const unsigned char*) iv, enclave_private_key, enclave_private_key_size, &decrypted_len);
+    // output_key->assign((char*)decrypted + decrypted_len-OUTPUT_KEY_LENGTH,  OUTPUT_KEY_LENGTH);
+    // std::string ret{(char*)decrypted, decrypted_len-OUTPUT_KEY_LENGTH};
+
+    // if (decrypted) free(decrypted);
+    // return ret;
 }
 
 std::string exec(const char* input, size_t input_len) {
@@ -121,7 +167,8 @@ sgx_status_t enc_get_key_and_report(const sgx_target_info_t* qe_target_info,
   size_t public_key_size = 0;
   uint8_t* private_key_buffer = nullptr;
   size_t private_key_size = 0;
-  sgx_status_t status = generate_key_pair(RSA_TYPE, &public_key_buffer, &public_key_size, &private_key_buffer, &private_key_size);
+  // sgx_status_t status = generate_key_pair(RSA_TYPE, &public_key_buffer, &public_key_size, &private_key_buffer, &private_key_size);
+  sgx_status_t status = generate_key_pair(EC_TYPE, &public_key_buffer, &public_key_size, &private_key_buffer, &private_key_size);
   if (status != SGX_SUCCESS) {
     if (private_key_buffer) free(private_key_buffer);
     if (public_key_buffer) free(public_key_buffer);
