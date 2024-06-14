@@ -42,9 +42,19 @@ const setStoreSettings = async () => {
 };
 
 const fetchAccount = async () => {
-  const account = await getAccount();
-  actions.setAuthenticated(true);
-  window.electron.store.set('did', account);
+  try {
+    const account = await getAccount();
+    actions.setAuthenticated(true);
+    window.electron.store.set('did', account);
+  } catch (error) {
+    if (error instanceof Error) {
+      console.error('There was a problem with the fetch account:', error.message);
+      throw new Error(`There was a problem with the fetch account: ${error.message}`);
+    } else {
+      console.error('Unknown Error:', error);
+      throw new Error('An unknown error occurred');
+    }
+  }
 };
 
 const startDockerContainer = async (

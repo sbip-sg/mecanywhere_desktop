@@ -20,6 +20,8 @@ import {
   unexpandedRowPerPage,
 } from './datagrid/datagridUtils/TableParams';
 import dummyData from './dummyData';
+import ErrorDialog from '../componentsCommon/ErrorDialogue';
+
 
 const TxnDashboard: React.FC = () => {
   const did = window.electron.store.get('did');
@@ -27,6 +29,8 @@ const TxnDashboard: React.FC = () => {
   const [hasData, setHasData] = useState(false);
   const [isTableExpanded, setIsTableExpanded] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
+  const [errorDialogOpen, setErrorDialogOpen] = useState(false);
+  const [errorMessage, setErrorMessage] = useState('');
   const maxTableHeight = maxRowHeight * (unexpandedRowPerPage + 1) - 1;
   const chartHeightOffset = `${
     tablePaginationMinHeight +
@@ -47,7 +51,8 @@ const TxnDashboard: React.FC = () => {
       }
       setData(transactionHistory);
     } catch (error) {
-      console.error('Error fetching data:', error);
+      setErrorMessage(`${error}`);
+      setErrorDialogOpen(true);
       setHasData(false);
     } finally {
       setIsLoading(false);
@@ -63,6 +68,10 @@ const TxnDashboard: React.FC = () => {
     setData(dummyData);
     setHasData(true);
     setIsLoading(false);
+  };
+
+  const handleCloseErrorDialog = () => {
+    setErrorDialogOpen(false);
   };
 
   useEffect(() => {
@@ -83,6 +92,11 @@ const TxnDashboard: React.FC = () => {
     />
   ) : (
     <Transitions duration={1}>
+      <ErrorDialog
+        open={errorDialogOpen}
+        onClose={handleCloseErrorDialog}
+        errorMessage={errorMessage}
+      />
       <Stack
         id="dashboard-wrapper-stack"
         height="100%"

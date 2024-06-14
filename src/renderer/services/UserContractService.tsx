@@ -18,6 +18,12 @@ export default async function sendTask(
     console.log('Send task successful.');
     return true;
   } catch (error) {
-    console.error('Send task error', error);
+    if (error instanceof Error) {
+      console.error('Send task error:', error.message);
+      throw new Error(`Send task error: ${error.message}`);
+    } else {
+      console.error('Unknown Error:', error);
+      throw new Error('An unknown error occurred');
+    }
   }
 };

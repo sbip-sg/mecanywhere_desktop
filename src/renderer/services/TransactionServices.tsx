@@ -20,7 +20,13 @@ export async function findClientHistory(
     }
     return response;
   } catch (error) {
-    console.error('There was a problem with the fetch operation:', error);
+    if (error instanceof Error) {
+      console.error('There was a problem with the fetch operation:', error.message);
+      throw new Error(`There was a problem with the fetch operation: ${error.message}`);
+    } else {
+      console.error('Unknown Error:', error);
+      throw new Error('An unknown error occurred');
+    }
   }
 }
 
@@ -44,7 +50,13 @@ export async function findHostHistory(
     }
     return response;
   } catch (error) {
-    console.error('There was a problem with the fetch operation:', error);
+    if (error instanceof Error) {
+      console.error('There was a problem with the fetch operation:', error.message);
+      throw new Error(`There was a problem with the fetch operation: ${error.message}`);
+    } else {
+      console.error('Unknown Error:', error);
+      throw new Error('An unknown error occurred');
+    }
   }
 }
 
@@ -68,6 +80,12 @@ export async function findPoHistory(
     }
     return response;
   } catch (error) {
-    console.error('There was a problem with the fetch operation:', error);
+    if (error instanceof Error) {
+      console.error('There was a problem with the fetch operation:', error.message);
+      throw new Error(`There was a problem with the fetch operation: ${error.message}`);
+    } else {
+      console.error('Unknown Error:', error);
+      throw new Error('An unknown error occurred');
+    }
   }
 }

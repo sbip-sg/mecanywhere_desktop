@@ -17,47 +17,69 @@ export const handleRegisterHost = async (
   stake?: number
 ) => {
   if (!stake) {
-    const stakeRes = await getHostInitialStake();
-    if (!stakeRes || stakeRes === undefined) {
-      throw new Error('Failed to get host initial stake');
+    try {
+      await getHostInitialStake();
+    } catch (error) {
+      if (error instanceof Error) {
+        console.error(error.message);
+        throw new Error(`${error.message}`);
+      } else {
+        console.error('Unknown Error:', error);
+        throw new Error('An unknown error occurred');
+      }
     }
-    stake = stakeRes;
   }
 
   const publicKey = window.electron.store.get('publicKey');
   await initActor("host");
-  const isRegisteredResponse = await isRegistered();
-  let registrationSuccess;
-  if (!isRegisteredResponse) {
-    registrationSuccess = await registerHost(
-      publicKey,
-      blockTimeoutLimit,
-      stake
-    );
-  } else {
-    registrationSuccess =
-      (await updateBlockTimeoutLimit(blockTimeoutLimit)) &&
-      (await updatePublicKey(publicKey));
-  }
-  if (registrationSuccess) {
-    const unpauseResponse = await unpauseExecutor();
-    if (!unpauseResponse) {
-      console.error('Unpause failed.');
+
+  try {
+    const isRegisteredResponse = await isRegistered();
+    let registrationSuccess;
+    if (!isRegisteredResponse) {
+      registrationSuccess = await registerHost(
+        publicKey,
+        blockTimeoutLimit,
+        stake
+      );
+    } else {
+      registrationSuccess =
+        (await updateBlockTimeoutLimit(blockTimeoutLimit)) &&
+        (await updatePublicKey(publicKey));
     }
-  } else {
-    throw new Error('Host registration failed');
+    if (registrationSuccess) {
+      const unpauseResponse = await unpauseExecutor();
+      if (!unpauseResponse) {
+        console.error('Unpause failed.');
+      }
+    } else {
+      throw new Error('Host registration failed');
+    }
+  } catch (error) {
+    if (error instanceof Error) {
+      console.error(error.message);
+      throw new Error(`${error.message}`);
+    } else {
+      console.error('Unknown Error:', error);
+      throw new Error('An unknown error occurred');
+    }
   }
 };
 
 export const handleDeregisterHost = async () => {
-  const pauseResponse = await pauseExecutor();
-  if (!pauseResponse) {
-    console.error('Pause failed.');
-  }
-  if ((await updateBlockTimeoutLimit(0)) && (await closeActor())) {
+  try {
+    await pauseExecutor();
+    await updateBlockTimeoutLimit(0);
+    await closeActor();
     log.info('successfully deregistered');
-  } else {
-    throw new Error('Deregistration failed');
+  } catch (error) {
+    if (error instanceof Error) {
+      console.error(error.message);
+      throw new Error(`${error.message}`);
+    } else {
+      console.error('Unknown Error:', error);
+      throw new Error('An unknown error occurred');
+    }
   }
 };
 

@@ -15,6 +15,7 @@ import { cid_from_sha256 } from 'renderer/services/PymecaService';
 import { retrieveIPFSFolderMetadata } from 'renderer/services/IPFSService';
 import TaskCard from './TaskCard';
 import SortWidget from './SortWidget';
+import ErrorDialog from '../componentsCommon/ErrorDialogue';
 
 const CONTAINER_NAME_LIMIT = 10;
 
@@ -36,6 +37,8 @@ const TasksManagement: React.FC = () => {
   const [sortDirection, setSortDirection] = useState<'asc' | 'desc'>('asc');
   const [searchQuery, setSearchQuery] = useState('');
   const [currentPage, setCurrentPage] = useState(1);
+  const [errorDialogOpen, setErrorDialogOpen] = useState(false);
+  const [errorMessage, setErrorMessage] = useState('');
 
   useEffect(() => {
     handleRefresh();
@@ -80,11 +83,18 @@ const TasksManagement: React.FC = () => {
         setTasks(filteredTasks);
         return true;
       })
-      .catch((error) => console.error(error));
+      .catch((error) => {
+        setErrorMessage(`${error}`);
+        setErrorDialogOpen(true);
+      });
   };
 
   const handleChange = (_event: React.ChangeEvent<unknown>, value: number) => {
     setCurrentPage(value);
+  };
+
+  const handleCloseErrorDialog = () => {
+    setErrorDialogOpen(false);
   };
 
   const handleSortFieldChange = (event: SelectChangeEvent) => {
@@ -117,7 +127,11 @@ const TasksManagement: React.FC = () => {
       <Typography variant="h3" sx={{ padding: '1rem 0 3rem 0' }}>
         Task Management
       </Typography>
-
+      <ErrorDialog
+        open={errorDialogOpen}
+        onClose={handleCloseErrorDialog}
+        errorMessage={errorMessage}
+      />
       <Box
         sx={{
           display: 'flex',

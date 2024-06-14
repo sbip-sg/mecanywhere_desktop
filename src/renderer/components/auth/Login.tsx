@@ -41,7 +41,6 @@ const Login = () => {
         setIsLoading(false);
       }, 2000);
     } catch (error) {
-      console.error('Error starting:', error);
       setErrorMessage(`Error starting: ${error}`);
       setErrorDialogOpen(true);
       setIsLoading(false);
