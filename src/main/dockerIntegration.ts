@@ -3,9 +3,10 @@ import log from 'electron-log/main';
 import path from 'path';
 import fs from 'fs';
 import os from 'os';
-import { ImageName } from '../common/dockerNames';
+import { ContainerPort, ImageName } from '../common/dockerNames';
 import Channels from '../common/channels';
 import { getIpfsFilesDir } from './ipfsIntegration';
+import { setElectronStore } from './electronStore';
 
 const docker = new Dockerode();
 
@@ -87,14 +88,11 @@ export const removeDockerContainer = async (event, containerName: string) => {
 export const runDockerContainer = async (
   event,
   imageName: ImageName,
-  containerName: string,
+  containerName: string
 ) => {
   try {
     docker.listContainers({ all: true }, (err, containers) => {
-      if (err) {
-        console.error(err);
-        return;
-      }
+      if (err) throw err;
 
       const existingContainer = containers?.find((c) =>
         c.Names.includes(`/${containerName}`)
@@ -106,12 +104,9 @@ export const runDockerContainer = async (
           docker
             .getContainer(existingContainer.Id)
             .start((err: Error, _data) => {
-              if (err) {
-                console.error(err);
-              } else {
-                log.info('Existing container started');
-                event.reply(Channels.RUN_DOCKER_CONTAINER_RESPONSE, true);
-              }
+              if (err) throw err;
+              log.info('Existing container started');
+              event.reply(Channels.RUN_DOCKER_CONTAINER_RESPONSE, true);
             });
         } else {
           log.info('Container is already running');
@@ -123,23 +118,23 @@ export const runDockerContainer = async (
           getContainerCreateOptions(imageName, containerName);
 
         docker.createContainer(containerOptions, (err: Error, container) => {
-          if (err) {
-            console.error(err);
-            return;
-          }
+          if (err) throw err;
 
           container?.start((err: Error, _data) => {
-            if (err) {
-              console.error(err);
-            } else {
-              log.info('New container started');
-              event.reply(Channels.RUN_DOCKER_CONTAINER_RESPONSE, true);
-            }
+            if (err) throw err;
+            log.info('New container started');
+            container?.inspect((err, data) => {
+              if (err) throw err;
+              if (data) {
+                event.reply(Channels.RUN_DOCKER_CONTAINER_RESPONSE, true);
+              }
+            });
           });
         });
       }
     });
   } catch (error) {
+    console.log(error);
     event.reply(
       Channels.RUN_DOCKER_CONTAINER_RESPONSE,
       false,
@@ -323,7 +318,7 @@ function getContainerCreateOptions(
   let containerOptions: Dockerode.ContainerCreateOptions;
   switch (imageName) {
     case ImageName.MECA_EXECUTOR: {
-      const port = process.env.MECA_EXECUTOR_PORT || '2591';
+      const port = process.env.MECA_EXECUTOR_PORT || ContainerPort.MECA_EXECUTOR_1_PORT;
       containerOptions = {
         name: containerName,
         Image: imageName,
@@ -337,7 +332,7 @@ function getContainerCreateOptions(
       break;
     }
     case ImageName.PYMECA_SERVER: {
-      const port = process.env.PYMECA_SERVER_PORT || '9999';
+      const port = process.env.PYMECA_SERVER_PORT || ContainerPort.PYMECA_SERVER_1_PORT;
       containerOptions = {
         name: containerName,
         Image: imageName,

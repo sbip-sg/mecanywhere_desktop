@@ -1,6 +1,8 @@
-const url =
-  `${process.env.PYMECA_ACTOR_SERVER_HOST}:${process.env.PYMECA_ACTOR_SERVER_PORT}` ||
-  'http://localhost:9999';
+import { ContainerName, ContainerPort } from "common/dockerNames";
+
+const host = process.env.PYMECA_ACTOR_SERVER_HOST || `http://localhost`;
+const port = process.env.PYMECA_ACTOR_SERVER_PORT || ContainerPort.PYMECA_SERVER_1_PORT;
+const url = `${host}:${port}`;
 
 export async function sendRequest(functionName: string, args: any) {
   const response = await fetch(`${url}/exec/${functionName}`, {
@@ -65,15 +67,12 @@ export async function getAccount() {
 
 export async function cid_from_sha256(sha256: string) {
   try {
-    const response = await fetch(
-      `${url}/cid_from_sha256/${sha256}`,
-      {
-        method: 'GET',
-        headers: {
-          'content-type': 'application/json',
-        },
-      }
-    );
+    const response = await fetch(`${url}/cid_from_sha256/${sha256}`, {
+      method: 'GET',
+      headers: {
+        'content-type': 'application/json',
+      },
+    });
     if (!response.ok) {
       return response.json().then((data: any) => {
         throw new Error(data.detail);
