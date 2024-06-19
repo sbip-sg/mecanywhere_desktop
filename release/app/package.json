@@ -1,5 +1,5 @@
 {
-  "name": "mecanywhere", 
+  "name": "mecanywhere",
   "version": "1.0.0",
   "description": "A blockchain-based edge computing platform",
   "license": "MIT",
@@ -15,7 +15,6 @@
     "link-modules": "node -r ts-node/register ../../.erb/scripts/link-modules.ts"
   },
   "dependencies": {
-    "@metamask/sdk": "^0.14.1",
     "@types/dockerode": "^3.3.23",
     "dockerode": "^4.0.2",
     "secp256k1": "^5.0.0",

@@ -7,7 +7,7 @@ The task execution flow is as such
 
 Therefore, developers only have 2 things to do:
 1. Use the SDK in their application to connect to MECAnywhere desktop app.
-2. Build a containerized task and upload it to a public container repository.
+2. Build a containerized task and upload it to IPFS via our CLI.
 
 ## Python SDK
 

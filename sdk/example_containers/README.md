@@ -60,8 +60,6 @@ CMD ["python", "-m", "flask", "--app", "flask_app.py", "run", "--host=0.0.0.0", 
 
 ### 3. Using the container
 
-> ! UNDER CONSTRUCTION
+Build the image and push it to IPFS via MECA CLI.
 
-Build the image and push it to a image repository that the host has access to (which may be public).
-
-Call the meca api with the image name.
+Submit a task request with the image's hash via MECA CLI.

@@ -15,8 +15,8 @@ const env = dotenv.config().parsed;
 
 // console.log("process.platform", process.platform)
 // Determine TASK_EXECUTOR_URL based on the OS
-// const TASK_EXECUTOR_URL = process.platform === "win32" 
-//     ? "http://localhost:2591" 
+// const TASK_EXECUTOR_URL = process.platform === "win32"
+//     ? "http://localhost:2591"
 //     : "http://172.18.0.255:2591";
 
 const IPV4_ADDRESS = process.platform === "win32" ? "173.18.0.255" : "172.18.0.255"
@@ -79,10 +79,7 @@ const configuration: webpack.Configuration = {
       url: require.resolve('url/'),
     },
     // There is no need to add aliases here, the paths in tsconfig get mirrored
-    plugins: [new TsconfigPathsPlugins()],
-    alias: {
-      react: path.resolve('./src/node_modules/react')
-    }
+    plugins: [new TsconfigPathsPlugins()]
   },
 
   plugins: [
