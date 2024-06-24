@@ -80,6 +80,12 @@ The main process executes the entry point script defined in the package.json (as
     Read more about the rationale behind native modules here:
     https://github.com/electron-react-boilerplate/electron-react-boilerplate/issues/1042
 
+    If you find that `npm install` fails at the postinstall and/or rebuild and the error is related to `node-gyp`, try:
+    ```
+    npm install -g node-gyp
+    npm install -g npm
+    ```
+
 - **Inter-Process Communication**
 
     In general, for security purpose, Inter-process communication (IPC) is required to communicate between the main process and the renderer process. The general idea involves establishing dedicated channels for these processes to monitor. Through the use of a preload script, we can then safely expose privileged APIs to the renderer process.
