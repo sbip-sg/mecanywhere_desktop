@@ -5,7 +5,13 @@ export async function getTaskListFromContract() {
     const rawTasks = await sendRequest('get_tasks', {});
     return rawTasks;
   } catch (error) {
-    console.error('Get tasks error', error);
+    if (error instanceof Error) {
+      console.error('Get tasks error:', error.message);
+      throw new Error(`Get tasks error: ${error.message}`);
+    } else {
+      console.error('Unknown Error:', error);
+      throw new Error('An unknown error occurred');
+    }
   }
 }
 
@@ -14,7 +20,13 @@ export async function getTaskAdditionFee() {
     const response = await sendRequest('get_task_addition_fee', {});
     return response;
   } catch (error) {
-    console.error('Get task addition fee error', error);
+    if (error instanceof Error) {
+      console.error('Get task addition fee error:', error.message);
+      throw new Error(`Get task addition fee error: ${error.message}`);
+    } else {
+      console.error('Unknown Error:', error);
+      throw new Error('An unknown error occurred');
+    }
   }
 }
 
@@ -34,6 +46,12 @@ export async function addTaskByDeveloper(
     console.log('Add task successful.');
     return true;
   } catch (error) {
-    console.error('Add task error', error);
+    if (error instanceof Error) {
+      console.error('Add task error:', error.message);
+      throw new Error(`Add task error: ${error.message}`);
+    } else {
+      console.error('Unknown Error:', error);
+      throw new Error('An unknown error occurred');
+    }
   }
 }

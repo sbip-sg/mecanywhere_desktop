@@ -3,6 +3,7 @@ import { Box, Typography, Button, Grid, Stack } from '@mui/material';
 import { getResourceStats } from 'renderer/services/ExecutorServices';
 import WifiTetheringIcon from '@mui/icons-material/WifiTethering';
 import { ResourcesLog } from '../../../../utils/dataTypes';
+import ErrorDialog from '../../../componentsCommon/ErrorDialogue';
 
 interface InfoItemProps {
   caption: string;
@@ -49,22 +50,33 @@ const PostSharingEnabledComponent: React.FC<
 > = ({ handleDisableResourceSharing, isLoading, initialResourcesLog }) => {
   const [resourcesLog, setResourcesLog] =
     useState<ResourcesLog>(initialResourcesLog);
+  const [errorDialogOpen, setErrorDialogOpen] = useState(false);
+  const [errorMessage, setErrorMessage] = useState('');
 
   useEffect(() => {
     const interval = setInterval(async () => {
       const fetchResource = async () => {
-        const resources = await getResourceStats();
-        if (
-          Object.keys(resources).length ===
-          Object.keys(initialResourcesLog).length
-        ) {
-          setResourcesLog(resources);
+        try {
+          const resources = await getResourceStats();
+          if (
+            Object.keys(resources).length ===
+            Object.keys(initialResourcesLog).length
+          ) {
+            setResourcesLog(resources);
+          }
+        } catch (error) {
+          setErrorMessage(`${error}`);
+          setErrorDialogOpen(true);
         }
       };
       fetchResource();
     }, 1000);
     return () => clearInterval(interval);
   }, []);
+
+  const handleCloseErrorDialog = () => {
+    setErrorDialogOpen(false);
+  };
 
   return (
     <Stack
@@ -75,6 +87,11 @@ const PostSharingEnabledComponent: React.FC<
         alignItems: 'center',
       }}
     >
+      <ErrorDialog
+        open={errorDialogOpen}
+        onClose={handleCloseErrorDialog}
+        errorMessage={errorMessage}
+      />
       <Stack sx={{ width: '100%', padding: '1.5rem 1.5rem 0 1.5rem' }}>
         <Box
           sx={{

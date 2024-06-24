@@ -6,7 +6,13 @@ export async function isRegistered() {
     const response = await sendRequest('is_registered', {});
     return response;
   } catch (error) {
-    console.error('Is registered error', error);
+    if (error instanceof Error) {
+      console.error('Registration error:', error.message);
+      throw new Error(`Registration error: ${error.message}`);
+    } else {
+      console.error('Unknown Error:', error);
+      throw new Error('An unknown error occurred');
+    }
   }
 }
 
@@ -24,7 +30,13 @@ export async function registerHost(
     console.log('Register successful.');
     return true;
   } catch (error) {
-    console.error('Register error', error);
+    if (error instanceof Error) {
+      console.error('Registration error:', error.message);
+      throw new Error(`Registration error: ${error.message}`);
+    } else {
+      console.error('Unknown Error:', error);
+      throw new Error('An unknown error occurred');
+    }
   }
 }
 
@@ -36,7 +48,13 @@ export async function updateBlockTimeoutLimit(blockTimeoutLimit: number) {
     console.log('Update successful.');
     return true;
   } catch (error) {
-    console.error('Update error', error);
+    if (error instanceof Error) {
+      console.error('Update error:', error.message);
+      throw new Error(`Update error: ${error.message}`);
+    } else {
+      console.error('Unknown Error:', error);
+      throw new Error('An unknown error occurred');
+    }
   }
 }
 
@@ -48,7 +66,13 @@ export async function updatePublicKey(publicKey: string) {
     console.log('Update successful.');
     return true;
   } catch (error) {
-    console.error('Update error', error);
+    if (error instanceof Error) {
+      console.error('Update error:', error.message);
+      throw new Error(`Update error: ${error.message}`);
+    } else {
+      console.error('Unknown Error:', error);
+      throw new Error('An unknown error occurred');
+    }
   }
 }
 
@@ -57,7 +81,13 @@ export async function getTaskRegisterFee() {
     const response = await sendRequest('get_task_register_fee', {});
     return response;
   } catch (error) {
-    console.error('Get task register fee error', error);
+    if (error instanceof Error) {
+      console.error('Get task register fee error:', error.message);
+      throw new Error(`Get task register fee error: ${error.message}`);
+    } else {
+      console.error('Unknown Error:', error);
+      throw new Error('An unknown error occurred');
+    }
   }
 }
 
@@ -75,8 +105,13 @@ export async function addTaskToHost(
     console.log('Add task successful.');
     return true;
   } catch (error) {
-    console.error('Add task error', error);
-    return false;
+    if (error instanceof Error) {
+      console.error('Add task error:', error.message);
+      throw new Error(`Add task error: ${error.message}`);
+    } else {
+      console.error('Unknown Error:', error);
+      throw new Error('An unknown error occurred');
+    }
   }
 }
 
@@ -88,8 +123,13 @@ export async function deleteTaskFromHost(ipfs_sha256: string) {
     console.log('Delete task successful.');
     return true;
   } catch (error) {
-    console.error('Delete task error', error);
-    return false;
+    if (error instanceof Error) {
+      console.error('Delete task error:', error.message);
+      throw new Error(`Delete task error: ${error.message}`);
+    } else {
+      console.error('Unknown Error:', error);
+      throw new Error('An unknown error occurred');
+    }
   }
 }
 
@@ -98,9 +138,14 @@ export async function getMyTowers(): Promise<Tower[]> {
     const response = await sendRequest('get_my_towers', {});
     return response;
   } catch (error) {
-    console.error('Get my towers error', error);
+    if (error instanceof Error) {
+      console.error('Get my towers error:', error.message);
+      throw new Error(`Get my towers error: ${error.message}`);
+    } else {
+      console.error('Unknown Error:', error);
+      throw new Error('An unknown error occurred');
+    }
   }
-  return [];
 }
 
 export async function getHostInitialStake() {
@@ -108,9 +153,14 @@ export async function getHostInitialStake() {
     const response = await sendRequest('get_host_initial_stake', {});
     return response;
   } catch (error) {
-    console.error('Get host initial stake error', error);
+    if (error instanceof Error) {
+      console.error('Get host initial stake error:', error.message);
+      throw new Error(`Get host initial stake error: ${error.message}`);
+    } else {
+      console.error('Unknown Error:', error);
+      throw new Error('An unknown error occurred');
+    }
   }
-  return 0;
 }
 
 export async function registerForTower(tower_address: string) {
@@ -121,8 +171,13 @@ export async function registerForTower(tower_address: string) {
     console.log('Register successful.');
     return true;
   } catch (error) {
-    console.error('Register error', error);
-    return false;
+    if (error instanceof Error) {
+      console.error('Register for tower error:', error.message);
+      throw new Error(`Register for tower error: ${error.message}`);
+    } else {
+      console.error('Unknown Error:', error);
+      throw new Error('An unknown error occurred');
+    }
   }
 }
 
@@ -134,20 +189,22 @@ export async function waitForTasks(
 ) {
   try {
     for (let i = 0; i < tower_addresses.length; i++) {
-      const success = await waitForTask(
+      await waitForTask(
         tower_addresses[i],
         host_encryption_private_key,
         container_name_limit,
         resources
       );
-      if (!success) {
-        return false;
-      }
     }
     console.log('Wait for tasks successful.');
     return true;
   } catch (error) {
-    console.error('Wait for tasks error', error);
-    return false;
+    if (error instanceof Error) {
+      console.error('Wait for tasks error:', error.message);
+      throw new Error(`Wait for tasks error: ${error.message}`);
+    } else {
+      console.error('Unknown Error:', error);
+      throw new Error('An unknown error occurred');
+    }
   }
 }
