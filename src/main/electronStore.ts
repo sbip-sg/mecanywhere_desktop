@@ -22,8 +22,12 @@ export const getElectronStore = async (event, key) => {
 };
 
 export const setElectronStore = async (event, key, val) => {
-  const buffer = safeStorage.encryptString(val);
-  store.set(key, buffer.toString('latin1'));
+  try {
+    const buffer = safeStorage.encryptString(val);
+    store.set(key, buffer.toString('latin1'));
+  } catch (error) {
+    console.log('setElectionStore Error: ', error);
+  }
 };
 
 export const equalsElectronStore = async (event, key, value) => {

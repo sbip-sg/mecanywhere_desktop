@@ -22,7 +22,13 @@ export async function stopExecutor() {
     console.log('stopped executor', res);
     return res;
   } catch (error) {
-    console.error('There was a problem with the fetch operation:', error);
+    if (error instanceof Error) {
+      console.error('There was a problem with the fetch operation:', error.message);
+      throw new Error(`There was a problem with the fetch operation: ${error.message}`);
+    } else {
+      console.error('Unknown Error:', error);
+      throw new Error('An unknown error occurred');
+    }
   }
 }
 
@@ -41,7 +47,13 @@ export async function unpauseExecutor() {
     console.log('unpaused executor');
     return true;
   } catch (error) {
-    console.error('There was a problem with the fetch operation:', error);
+    if (error instanceof Error) {
+      console.error('There was a problem with the fetch operation:', error.message);
+      throw new Error(`There was a problem with the fetch operation: ${error.message}`);
+    } else {
+      console.error('Unknown Error:', error);
+      throw new Error('An unknown error occurred');
+    }
   }
 }
 
@@ -60,7 +72,13 @@ export async function pauseExecutor() {
     console.log('paused executor');
     return true;
   } catch (error) {
-    console.error('There was a problem with the fetch operation:', error);
+    if (error instanceof Error) {
+      console.error('There was a problem with the fetch operation:', error.message);
+      throw new Error(`There was a problem with the fetch operation: ${error.message}`);
+    } else {
+      console.error('Unknown Error:', error);
+      throw new Error('An unknown error occurred');
+    }
   }
 }
 
@@ -79,7 +97,13 @@ export async function updateConfig(config: any) {
     const res = await response.json();
     return res;
   } catch (error) {
-    console.error('There was a problem with the fetch operation:', error);
+    if (error instanceof Error) {
+      console.error('There was a problem with the fetch operation:', error.message);
+      throw new Error(`There was a problem with the fetch operation: ${error.message}`);
+    } else {
+      console.error('Unknown Error:', error);
+      throw new Error('An unknown error occurred');
+    }
   }
 }
 

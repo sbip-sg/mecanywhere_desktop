@@ -2,6 +2,7 @@ import { Card, Typography, Grid, Stack, CardContent } from '@mui/material';
 import React, { useState } from 'react';
 import CustomButton from '../tasks/CustomButton';
 import { registerForTower } from 'renderer/services/HostContractService';
+import ErrorDialog from '../componentsCommon/ErrorDialogue';
 
 interface TowerCardProps {
   tower: string;
@@ -10,18 +11,34 @@ interface TowerCardProps {
 
 const TowerCard: React.FC<TowerCardProps> = ({ tower, isInitiallyRegistered }) => {
   const [isRegistered, setRegistered] = useState(isInitiallyRegistered);
+  const [errorDialogOpen, setErrorDialogOpen] = useState(false);
+  const [errorMessage, setErrorMessage] = useState('');
+
+  const handleCloseErrorDialog = () => {
+    setErrorDialogOpen(false);
+  };
 
   const handleRegisterTower = async () => {
-    const success = await registerForTower(tower);
-    if (success) setRegistered(true);
-  }
+    try {
+      await registerForTower(tower);
+      setRegistered(true);
+    } catch (error) {
+      setErrorMessage(`${error}`);
+      setErrorDialogOpen(true);
+    }
+  };
 
   const handleUnregisterTower = async () => {
     setRegistered(false);
-  }
+  };
 
   return (
     <Card sx={{ marginBottom: 2, minWidth: '10rem' }}>
+      <ErrorDialog
+        open={errorDialogOpen}
+        onClose={handleCloseErrorDialog}
+        errorMessage={errorMessage}
+      />
       <Grid container>
         <Grid item xs={12} md={7.5}>
           <CardContent>

@@ -92,7 +92,8 @@ const HostSharingWidget = () => {
         success = true;
         setIsLoading(false);
       } catch (error) {
-        console.error('Error retrieving device stats: ', error);
+        setErrorMessage(`Error retrieving device stats: ${error}`);
+        setErrorDialogOpen(true);
         if (i < maxRetries - 1) {
           console.log(`Retrying in ${retryInterval / 1000} seconds...`);
           await new Promise((resolve) => {
@@ -101,7 +102,6 @@ const HostSharingWidget = () => {
         }
       }
     }
-
     if (!success) {
       console.error('Failed to retrieve device stats after several retries.');
       setIsLoading(false);
@@ -158,7 +158,6 @@ const HostSharingWidget = () => {
     } catch (error) {
       setErrorMessage(`${error}`);
       setErrorDialogOpen(true);
-      console.error('Error:', error);
     } finally {
       setIsLoading(false);
     }
@@ -166,8 +165,13 @@ const HostSharingWidget = () => {
 
   const handleDisableResourceSharing = async () => {
     setIsLoading(true);
-    await handleDeactivateHost();
-    setResourceSharingEnabled(false);
+    try {
+      await handleDeactivateHost();
+      setResourceSharingEnabled(false);
+    } catch (error) {
+      setErrorMessage(`${error}`);
+      setErrorDialogOpen(true);
+    }
     setIsLoading(false);
   };
 

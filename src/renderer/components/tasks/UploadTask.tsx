@@ -10,12 +10,15 @@ import {
 import ClearIcon from '@mui/icons-material/Clear';
 import CheckIcon from '@mui/icons-material/Check';
 import { addTaskByDeveloper } from 'renderer/services/TaskContractService';
+import ErrorDialog from '../componentsCommon/ErrorDialogue';
 
 const UploadTask = () => {
   const [folderPath, setFolderPath] = useState('');
   const [uploaded, setUploaded] = useState(false);
   const [cid, setCid] = useState('');
   const [published, setPublished] = useState(false);
+  const [errorDialogOpen, setErrorDialogOpen] = useState(false);
+  const [errorMessage, setErrorMessage] = useState('');
 
   const handleSelectFolder = () => {
     window.electron.openFolderDialog();
@@ -53,10 +56,14 @@ const UploadTask = () => {
       console.log(`Folder published to MECA Network: ${res}`);
       setPublished(true);
     } catch (error) {
-      console.error('Failed to publish folder to MECA Network:', error);
+      setErrorMessage(`Failed to publish folder to MECA Network: ${error}`);
+      setErrorDialogOpen(true);
     }
   };
 
+  const handleCloseErrorDialog = () => {
+    setErrorDialogOpen(false);
+  };
 
   return (
     <Stack
@@ -68,6 +75,11 @@ const UploadTask = () => {
         marginTop: '2rem',
       }}
     >
+      <ErrorDialog
+        open={errorDialogOpen}
+        onClose={handleCloseErrorDialog}
+        errorMessage={errorMessage}
+      />
       <Typography variant="h3" sx={{ padding: '1rem 0 3rem 0' }}>
         Upload Task To IPFS
       </Typography>

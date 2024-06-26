@@ -16,11 +16,21 @@ export const handleActivateHost = async (
   blockTimeoutLimit: number,
   addStake: number
 ) => {
-  await initActor('host');
-  await registerHostIfNotRegistered(blockTimeoutLimit, addStake);
-  const unpauseResponse = await unpauseExecutor();
-  if (!unpauseResponse) {
-    console.error('Unpause failed.');
+  try {
+    await initActor('host');
+    await registerHostIfNotRegistered(blockTimeoutLimit, addStake);
+    const unpauseResponse = await unpauseExecutor();
+    if (!unpauseResponse) {
+      console.error('Unpause failed.');
+    }
+  } catch (error) {
+    if (error instanceof Error) {
+      console.error(error.message);
+      throw new Error(`${error.message}`);
+    } else {
+      console.error('Unknown Error:', error);
+      throw new Error('An unknown error occurred');
+    }
   }
 };
 
@@ -28,36 +38,51 @@ export const registerHostIfNotRegistered = async (
   blockTimeoutLimit: number,
   addStake: number
 ) => {
-  const stakeRes = await getHostInitialStake();
-  if (!stakeRes || stakeRes === undefined) {
-    throw new Error('Failed to get host initial stake');
-  }
-  const publicKey = window.electron.store.get('publicKey');
-  const isRegisteredResponse = await isRegistered();
-  if (!isRegisteredResponse) {
-    const registrationSuccess = await registerHost(
-      publicKey,
-      blockTimeoutLimit,
-      stakeRes + addStake
-    );
-    if (!registrationSuccess) {
-      throw new Error('Host registration failed');
+  try {
+    const stakeRes = await getHostInitialStake();
+    if (!stakeRes || stakeRes === undefined) {
+      throw new Error('Failed to get host initial stake');
     }
-  } else {
-    await updateBlockTimeoutLimit(blockTimeoutLimit);
-    await updatePublicKey(publicKey);
+    const publicKey = window.electron.store.get('publicKey');
+    const isRegisteredResponse = await isRegistered();
+    if (!isRegisteredResponse) {
+      const registrationSuccess = await registerHost(
+        publicKey,
+        blockTimeoutLimit,
+        stakeRes + addStake
+      );
+      if (!registrationSuccess) {
+        throw new Error('Host registration failed');
+      }
+    } else {
+      await updateBlockTimeoutLimit(blockTimeoutLimit);
+      await updatePublicKey(publicKey);
+    }
+  } catch (error) {
+    if (error instanceof Error) {
+      console.error(error.message);
+      throw new Error(`${error.message}`);
+    } else {
+      console.error('Unknown Error:', error);
+      throw new Error('An unknown error occurred');
+    }
   }
 };
 
 export const handleDeactivateHost = async () => {
-  const pauseResponse = await pauseExecutor();
-  if (!pauseResponse) {
-    console.error('Pause failed.');
-  }
-  if ((await updateBlockTimeoutLimit(0)) && (await closeActor())) {
+  try {
+    await pauseExecutor();
+    await updateBlockTimeoutLimit(0);
+    await closeActor();
     log.info('successfully deregistered');
-  } else {
-    throw new Error('Deregistration failed');
+  } catch (error) {
+    if (error instanceof Error) {
+      console.error(error.message);
+      throw new Error(`${error.message}`);
+    } else {
+      console.error('Unknown Error:', error);
+      throw new Error('An unknown error occurred');
+    }
   }
 };
 

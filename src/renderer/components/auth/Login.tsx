@@ -61,7 +61,6 @@ const Login = () => {
 
       setTimeout(retryLoop, retryDelay);
     } catch (error) {
-      console.error('Error starting:', error);
       setErrorMessage(`Error starting: ${error}`);
       setErrorDialogOpen(true);
       setIsLoading(false);

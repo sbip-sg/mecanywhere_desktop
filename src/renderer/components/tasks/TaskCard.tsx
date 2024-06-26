@@ -20,6 +20,7 @@ import { RootState } from '../../redux/store';
 import CardDetail from './CardDetail';
 import { addTaskToHost, deleteTaskFromHost } from 'renderer/services/HostContractService';
 import { executeTask, getResourceStats, pauseExecutor, unpauseExecutor } from 'renderer/services/ExecutorServices';
+import ErrorDialog from '../componentsCommon/ErrorDialogue';
 
 interface TaskCardProps {
   task: Task;
@@ -31,6 +32,8 @@ const TaskCard: React.FC<TaskCardProps> = ({ task }) => {
   const [isBuilding, setIsBuilding] = useState(false);
   const [isTesting, setIsTesting] = useState(false);
   const [isDeleting, setIsDeleting] = useState(false);
+  const [errorDialogOpen, setErrorDialogOpen] = useState(false);
+  const [errorMessage, setErrorMessage] = useState('');
 
   const isTested = useSelector((state: RootState) =>
     state.taskList.tested.includes(task.taskName)
@@ -61,6 +64,10 @@ const TaskCard: React.FC<TaskCardProps> = ({ task }) => {
     }
   }, [task.taskName, task.cid]);
 
+  const handleCloseErrorDialog = () => {
+    setErrorDialogOpen(false);
+  };
+
   const handleDownload = async () => {
     try {
       setIsDownloading(true);
@@ -87,63 +94,61 @@ const TaskCard: React.FC<TaskCardProps> = ({ task }) => {
 
   const handleRunTest = async () => {
     setIsTesting(true);
-    const exampleInput = await window.electron.getLocalFile(task.cid, 'example_input.bin');
-    const exampleOutput = await window.electron.getLocalFile(task.cid, 'example_output.bin');
-    const decoder = new TextDecoder('utf-8');
-    const decodedExampleInput = decoder.decode(exampleInput);
-    const decodedExampleOutput = decoder.decode(exampleOutput);
-    const isExecutorRunningBefore = isExecutorRunning;
-    await unpauseExecutor();
-    const resources = await getResourceStats();
-    const maxResource = {
-      cpu: resources.task_cpu,
-      mem: resources.task_mem,
-    };
-    const testRes = await executeTask({
-      containerRef: task.tag,
-      input: decodedExampleInput,
-      resource: maxResource,
-      useGpu: task.computingType === ComputingType.GPU,
-      gpuCount: 1,
-      useSgx: task.computingType === ComputingType.SGX
-    });
-    if (!isExecutorRunningBefore) {
-      await pauseExecutor();
-    }
-    if (testRes.trim() === decodedExampleOutput.trim()) {
-      addToTested(task.taskName);
-      actions.addToTested(task.taskName);
-    } else {
-      console.error('Test failed', testRes, decodedExampleOutput);
+    try {
+      const exampleInput = await window.electron.getLocalFile(task.cid, 'example_input.bin');
+      const exampleOutput = await window.electron.getLocalFile(task.cid, 'example_output.bin');
+      const decoder = new TextDecoder('utf-8');
+      const decodedExampleInput = decoder.decode(exampleInput);
+      const decodedExampleOutput = decoder.decode(exampleOutput);
+      const isExecutorRunningBefore = isExecutorRunning;
+      await unpauseExecutor();
+      const resources = await getResourceStats();
+      const maxResource = {
+        cpu: resources.task_cpu,
+        mem: resources.task_mem,
+      };
+      const testRes = await executeTask({
+        containerRef: task.tag,
+        input: decodedExampleInput,
+        resource: maxResource,
+        useGpu: task.computingType === ComputingType.GPU,
+        gpuCount: 1,
+        useSgx: task.computingType === ComputingType.SGX
+      });
+      if (!isExecutorRunningBefore) {
+        await pauseExecutor();
+      }
+      if (testRes.trim() === decodedExampleOutput.trim()) {
+        addToTested(task.taskName);
+        actions.addToTested(task.taskName);
+      } else {
+        console.error('Test failed', testRes, decodedExampleOutput);
+      }
+    } catch (error) {
+      console.log('Error during test: ', error);
     }
     setIsTesting(false);
   };
 
   const handleActivate = async () => {
     try {
-      const success = await addTaskToHost(task.cidBytes, 10, 10);
-      if (!success) {
-        console.error('Error adding task to host');
-        return;
-      }
+      await addTaskToHost(task.cidBytes, 10, 10);
       addToActivated(task.taskName);
       actions.addToActivated(task.taskName);
     } catch (err) {
-      console.error('Error adding task to host:', err);
+      setErrorMessage(`${err}`);
+      setErrorDialogOpen(true);
     }
   };
 
   const handleDeactivate = async () => {
     try {
-      const success = await deleteTaskFromHost(task.cidBytes);
-      if (!success) {
-        console.error('Error deleting task from host');
-        return;
-      }
+      await deleteTaskFromHost(task.cidBytes);
       actions.removeFromActivated(task.taskName);
       removeFromActivated(task.taskName);
     } catch (err) {
-      console.error('Error deleting task from host:', err);
+      setErrorMessage(`${err}`);
+      setErrorDialogOpen(true);
     }
   };
 
@@ -176,6 +181,11 @@ const TaskCard: React.FC<TaskCardProps> = ({ task }) => {
 
   return (
     <Card sx={{ marginBottom: 2, minWidth: '10rem' }}>
+      <ErrorDialog
+        open={errorDialogOpen}
+        onClose={handleCloseErrorDialog}
+        errorMessage={errorMessage}
+      />
       <Grid container>
         <Grid item xs={12} md={7.5}>
           <CardDetail task={task} isTested={isTested} />

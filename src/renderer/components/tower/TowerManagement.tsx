@@ -6,14 +6,21 @@ import { getMyTowers } from 'renderer/services/HostContractService';
 import { Tower } from 'renderer/utils/dataTypes';
 import TowerCard from './TowerCard';
 import actions from '../../redux/actionCreators';
+import ErrorDialog from '../componentsCommon/ErrorDialogue';
 
 const TowerManagement: React.FC = () => {
   const [registeredTowerList, setRegisteredTowers] = useState<string[]>([]);
   const [unregisteredTowerList, setUnregisteredTowers] = useState<string[]>([]);
+  const [errorDialogOpen, setErrorDialogOpen] = useState(false);
+  const [errorMessage, setErrorMessage] = useState('');
 
   useEffect(() => {
     handleRefresh();
   }, []);
+
+  const handleCloseErrorDialog = () => {
+    setErrorDialogOpen(false);
+  };
 
   const handleRefresh = async () => {
     const myTowers = await getMyTowers()
@@ -26,8 +33,9 @@ const TowerManagement: React.FC = () => {
         return towerOwners;
       })
       .catch((error) => {
-        console.error(error);
-        return [];
+        setErrorMessage(`${error}`);
+        setErrorDialogOpen(true);
+        return []; // default
       });
     const allTowers = await getTowers()
       .then((retrievedTowers) => {
@@ -38,8 +46,9 @@ const TowerManagement: React.FC = () => {
         return towerOwners;
       })
       .catch((error) => {
-        console.error(error);
-        return [];
+        setErrorMessage(`${error}`);
+        setErrorDialogOpen(true);
+        return []; // default
       });
     const restTowers = allTowers.filter((tower) => !myTowers.includes(tower));
     setUnregisteredTowers(restTowers);
@@ -63,7 +72,6 @@ const TowerManagement: React.FC = () => {
       <Typography variant="h3" sx={{ padding: '1rem 0 3rem 0' }}>
         Tower Management
       </Typography>
-
       <Typography variant="body1" sx={{ margin: '1rem' }}>
         {registeredTowerList.length + unregisteredTowerList.length} results
         found.
@@ -83,6 +91,11 @@ const TowerManagement: React.FC = () => {
           </Grid>
         ))}
       </Grid>
+      <ErrorDialog
+        open={errorDialogOpen}
+        onClose={handleCloseErrorDialog}
+        errorMessage={errorMessage}
+      />
     </Box>
   );
 };

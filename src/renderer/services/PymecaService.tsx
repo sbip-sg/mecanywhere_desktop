@@ -80,7 +80,13 @@ export async function cid_from_sha256(sha256: string) {
     }
     return response.json();
   } catch (error) {
-    console.error('Get cid from sha256 error', error);
+    if (error instanceof Error) {
+      console.error('Get cid from sha256 error:', error.message);
+      throw new Error(`Get cid from sha256 error: ${error.message}`);
+    } else {
+      console.error('Unknown Error:', error);
+      throw new Error('An unknown error occurred');
+    }
   }
 }
 
@@ -110,7 +116,12 @@ export async function waitForTask(
     }
     return response.json();
   } catch (error) {
-    console.error('Wait for task error', error);
-    return false;
+    if (error instanceof Error) {
+      console.error('Wait for task error:', error.message);
+      throw new Error(`Wait for task error: ${error.message}`);
+    } else {
+      console.error('Unknown Error:', error);
+      throw new Error('An unknown error occurred');
+    }
   }
 }
