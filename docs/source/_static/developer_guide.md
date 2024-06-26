@@ -85,6 +85,10 @@ The main process executes the entry point script defined in the package.json (as
     npm install -g node-gyp
     npm install -g npm
     ```
+    or if it is related to `distutils`
+    ```
+    python -m pip install setuptools
+    ```
 
 - **Inter-Process Communication**
 
