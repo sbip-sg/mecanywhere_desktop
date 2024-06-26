@@ -40,7 +40,7 @@ const Login = () => {
       );
 
       const maxRetries = 5;
-      const retryDelay = 1000;
+      const retryDelay = 1500;
       let retries = 0;
 
       const retryLoop = async () => {

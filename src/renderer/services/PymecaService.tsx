@@ -90,24 +90,14 @@ export async function cid_from_sha256(sha256: string) {
   }
 }
 
-export async function waitForTask(
-  tower_address: string,
-  host_encryption_private_key: string,
-  container_name_limit: number,
-  resources: any
-) {
+export async function waitForTask(tower_address: string) {
   try {
     const response = await fetch(`${url}/wait_for_task`, {
       method: 'POST',
       headers: {
         'content-type': 'application/json',
       },
-      body: JSON.stringify({
-        tower_address,
-        host_encryption_private_key,
-        container_name_limit,
-        resources
-      }),
+      body: JSON.stringify({ tower_address }),
     });
     if (!response.ok) {
       return response.json().then((data: any) => {

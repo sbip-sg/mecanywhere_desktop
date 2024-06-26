@@ -12,6 +12,7 @@ import path from 'path';
 
 // Load .env file
 const env = dotenv.config().parsed;
+const pymecaEnv = dotenv.config({ path: path.resolve(__dirname, '../../.env.pymeca') }).parsed;
 
 // console.log("process.platform", process.platform)
 // Determine TASK_EXECUTOR_URL based on the OS
@@ -24,7 +25,7 @@ const IPV4_ADDRESS = process.platform === "win32" ? "173.18.0.255" : "172.18.0.2
 // Merge custom environment variables
 const environmentVariables = {
   ...env, // Existing .env variables
-  // TASK_EXECUTOR_URL, // Add TASK_EXECUTOR_URL
+  ...pymecaEnv,
   IPV4_ADDRESS,
   NODE_ENV: 'production', // You can keep or remove this line depending on your setup
 };

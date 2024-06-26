@@ -143,13 +143,7 @@ const HostSharingWidget = () => {
           await handleActivateHost(100, 0);
           const towerAddresses =
             reduxStore.getState().towerListReducer.registered;
-          const hostEncryptionPrivateKey =
-            window.electron.store.get('privateKey');
-          await waitForTasks(towerAddresses, hostEncryptionPrivateKey, 10, {
-            cpu: executorSettings.cpu_cores,
-            mem: executorSettings.memory_mb,
-            gpu: executorSettings.gpus,
-          });
+          await waitForTasks(towerAddresses);
           const initialResources = await getResourceStats();
           setInitialResourcesLog(initialResources);
           setResourceSharingEnabled(true);
