@@ -5,14 +5,16 @@ import Channels from '../common/channels';
 const os = require('os');
 const fs = require('fs-extra');
 
+const CONTAINER_FOLDER = 'ipfsFiles';
+
 let ipfsFilesDir: string;
 if (process.platform === 'win32') {
   const baseDir = path.join(process.env.LOCALAPPDATA, '.MECA'); // Use LOCALAPPDATA for Windows
-  ipfsFilesDir = path.join(baseDir, 'ipfsFiles');
+  ipfsFilesDir = path.join(baseDir, CONTAINER_FOLDER);
   fs.ensureDirSync(ipfsFilesDir);
 } else {
   const baseDir = path.join(os.homedir(), '.MECA');
-  ipfsFilesDir = path.join(baseDir, 'ipfsFiles');
+  ipfsFilesDir = path.join(baseDir, CONTAINER_FOLDER);
   fs.ensureDirSync(ipfsFilesDir);
 }
 export const getIpfsFilesDir = ipfsFilesDir;

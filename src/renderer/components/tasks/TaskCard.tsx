@@ -2,6 +2,16 @@ import { Card, Typography, Grid, Stack } from '@mui/material';
 import React, { useState, useEffect } from 'react';
 import { useSelector } from 'react-redux';
 import { ComputingType, Task } from 'renderer/utils/dataTypes';
+import {
+  addTaskToHost,
+  deleteTaskFromHost,
+} from 'renderer/services/HostContractService';
+import {
+  executeTask,
+  getResourceStats,
+  pauseExecutor,
+  unpauseExecutor,
+} from 'renderer/services/ExecutorServices';
 import CustomButton from './CustomButton';
 import {
   hasBeenDownloaded,
@@ -11,15 +21,12 @@ import {
   hasBeenTested,
   addToActivated,
   removeFromActivated,
-  hasBeenActivated,
   removeFromBuilt,
   removeFromTested,
 } from './TaskListOperations';
 import actions from '../../redux/actionCreators';
 import { RootState } from '../../redux/store';
 import CardDetail from './CardDetail';
-import { addTaskToHost, deleteTaskFromHost } from 'renderer/services/HostContractService';
-import { executeTask, getResourceStats, pauseExecutor, unpauseExecutor } from 'renderer/services/ExecutorServices';
 import ErrorDialog from '../componentsCommon/ErrorDialogue';
 
 interface TaskCardProps {
@@ -41,7 +48,9 @@ const TaskCard: React.FC<TaskCardProps> = ({ task }) => {
   const isActivated = useSelector((state: RootState) =>
     state.taskList.activated.includes(task.taskName)
   );
-  const isExecutorRunning = useSelector((state: RootState) => state.executorStatusReducer.running);
+  const isExecutorRunning = useSelector(
+    (state: RootState) => state.executorStatusReducer.running
+  );
 
   useEffect(() => {
     const checkAndSetPhase = async () => {
@@ -59,8 +68,8 @@ const TaskCard: React.FC<TaskCardProps> = ({ task }) => {
     };
 
     checkAndSetPhase();
-    if (hasBeenTested(task.taskName)){
-      actions.addToTested()
+    if (hasBeenTested(task.taskName)) {
+      actions.addToTested();
     }
   }, [task.taskName, task.cid]);
 
@@ -71,7 +80,7 @@ const TaskCard: React.FC<TaskCardProps> = ({ task }) => {
   const handleDownload = async () => {
     try {
       setIsDownloading(true);
-      console.log("handleDownload", task.cid)
+      console.log('handleDownload', task.cid);
       await window.electron.downloadFromIPFS(task.cid);
       setCurrentPhase('toBuild');
       setIsDownloading(false);
@@ -95,25 +104,46 @@ const TaskCard: React.FC<TaskCardProps> = ({ task }) => {
   const handleRunTest = async () => {
     setIsTesting(true);
     try {
-      const exampleInput = await window.electron.getLocalFile(task.cid, 'example_input.bin');
-      const exampleOutput = await window.electron.getLocalFile(task.cid, 'example_output.bin');
+      const exampleInput = await window.electron.getLocalFile(
+        task.cid,
+        'example_input.bin'
+      );
+      const exampleOutput = await window.electron.getLocalFile(
+        task.cid,
+        'example_output.bin'
+      );
       const decoder = new TextDecoder('utf-8');
       const decodedExampleInput = decoder.decode(exampleInput);
       const decodedExampleOutput = decoder.decode(exampleOutput);
       const isExecutorRunningBefore = isExecutorRunning;
       await unpauseExecutor();
-      const resources = await getResourceStats();
-      const maxResource = {
-        cpu: resources.task_cpu,
-        mem: resources.task_mem,
-      };
+      const resourceFile = await window.electron.getLocalFile(
+        task.cid,
+        'config.json'
+      );
+      let resources = { task_cpu: 1, task_mem: 128 };
+      if (!resourceFile) {
+        const resourceStats = await getResourceStats();
+        resources = {
+          task_cpu: resourceStats.task_cpu,
+          task_mem: resourceStats.task_mem,
+        };
+      } else {
+        const resourceFileContent = JSON.parse(decoder.decode(resourceFile));
+        if (resourceFileContent.resource) {
+          resources = {
+            task_cpu: resourceFileContent.resource.cpu,
+            task_mem: resourceFileContent.resource.mem,
+          };
+        }
+      }
       const testRes = await executeTask({
         containerRef: task.tag,
         input: decodedExampleInput,
-        resource: maxResource,
+        resource: resources,
         useGpu: task.computingType === ComputingType.GPU,
         gpuCount: 1,
-        useSgx: task.computingType === ComputingType.SGX
+        useSgx: task.computingType === ComputingType.SGX,
       });
       if (!isExecutorRunningBefore) {
         await pauseExecutor();
@@ -154,17 +184,19 @@ const TaskCard: React.FC<TaskCardProps> = ({ task }) => {
 
   const handleDelete = async () => {
     setIsDeleting(true);
-    await window.electron.deleteFolder(task.cid)
+    await window.electron.deleteFolder(task.cid);
     removeFromTested(task.taskName);
     actions.removeFromTested(task.taskName);
     removeFromBuilt(task.taskName);
     actions.removeFromBuilt(task.taskName);
     removeFromActivated(task.taskName);
     actions.removeFromActivated(task.taskName);
-    await new Promise((resolve) => setTimeout(resolve, 500));
-    setCurrentPhase("toDownload")
+    await new Promise((resolve) => {
+      setTimeout(resolve, 500);
+    });
+    setCurrentPhase('toDownload');
     setIsDeleting(false);
-  }
+  };
 
   const getTestLabel = () => {
     if (isTesting) return 'Testing';
@@ -228,35 +260,35 @@ const TaskCard: React.FC<TaskCardProps> = ({ task }) => {
               </>
             )}
             {currentPhase === 'toTestOrActivate' && (
-              <Grid container spacing={1} alignItems={"center"}>
-              <Grid item xs={6} >
-                <CustomButton
-                  label={getTestLabel()}
-                  onClick={handleRunTest}
-                  color="text.primary"
-                  backgroundColor="primary.main"
-                  isLoading={isTesting}
-                />
-              </Grid>
-              <Grid item xs={6}>
-                <CustomButton
-                  label={isDeleting ? 'Purging' : 'Purge'}
-                  onClick={handleDelete}
-                  color="text.primary"
-                  backgroundColor="secondary.contrastText"
-                  isLoading={isDeleting}
-                />
-              </Grid>
-              <Grid item xs={12}>
-                <CustomButton
-                  label={isActivated ? 'Deactivate' : 'Activate'}
-                  onClick={isActivated ? handleDeactivate : handleActivate}
-                  color={isTested ? 'text.primary' : 'text.secondary'}
-                  backgroundColor={getActivateButtonColor()}
-                  showBlockIcon={!isTested}
-                  fullWidth
-                />
-              </Grid>
+              <Grid container spacing={1} alignItems="center">
+                <Grid item xs={6}>
+                  <CustomButton
+                    label={getTestLabel()}
+                    onClick={handleRunTest}
+                    color="text.primary"
+                    backgroundColor="primary.main"
+                    isLoading={isTesting}
+                  />
+                </Grid>
+                <Grid item xs={6}>
+                  <CustomButton
+                    label={isDeleting ? 'Purging' : 'Purge'}
+                    onClick={handleDelete}
+                    color="text.primary"
+                    backgroundColor="secondary.contrastText"
+                    isLoading={isDeleting}
+                  />
+                </Grid>
+                <Grid item xs={12}>
+                  <CustomButton
+                    label={isActivated ? 'Deactivate' : 'Activate'}
+                    onClick={isActivated ? handleDeactivate : handleActivate}
+                    color={isTested ? 'text.primary' : 'text.secondary'}
+                    backgroundColor={getActivateButtonColor()}
+                    showBlockIcon={!isTested}
+                    fullWidth
+                  />
+                </Grid>
                 {!isTested && (
                   <Typography
                     variant="subtitle2"

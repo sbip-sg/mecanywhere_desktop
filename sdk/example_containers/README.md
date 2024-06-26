@@ -1,6 +1,6 @@
 # Example task containers
 
-This folder contains example task containers showing how to build your own task container. Each folder contains a Dockerfile and an entrypoint file that handles the request, which is all that is needed for building the task container. 
+This folder contains example task containers showing how to build your own task container. Each folder must contain all of the files listed in the structure below.
 
 ## Structure
 
@@ -15,6 +15,7 @@ The structure of the task container is as follows:
   - name.txt
   - example_input.bin
   - example_output.bin
+  - config.json
 
 ```
 
@@ -58,8 +59,32 @@ EXPOSE 8080
 CMD ["python", "-m", "flask", "--app", "flask_app.py", "run", "--host=0.0.0.0", "--port=8080"]
 ```
 
-### 3. Using the container
+### 3. config.json fields
 
-Build the image and push it to IPFS via MECA CLI.
+The `config.json` file contains the configuration of the task with the following default fields:
 
-Submit a task request with the image's hash via MECA CLI.
+DEFAULTS:
+
+```json
+{
+  "resource": {
+    "cpu": 1,
+    "mem": 128,
+    "use_gpu": false, 
+    "gpu_count": 0
+  }
+}
+```
+
+field | description
+--- | ---
+`resource.cpu` | The number of CPUs to allocate to the task. This field will limit the users that can run the task to those with the same or more CPUs available.
+`resource.mem` | The amount of memory to allocate to the task in MB. This field will limit the users that can run the task to those with the same or more memory available.
+`resource.use_gpu` | Whether the task requires a GPU to run.
+`resource.gpu_count` | The number of GPUs to allocate to the task, if `use_gpu` is true.
+
+### 4. Using and testing the container
+
+Build the image and push it to IPFS via the MECA CLI as a task developer. You will be compensated with the task fee that you list for each task executed by a MECA client.
+
+Test your task by running the test in the MECA CLI.
