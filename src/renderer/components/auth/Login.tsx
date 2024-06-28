@@ -16,6 +16,7 @@ import {
   startDockerContainer,
   } from './handleEnterApp';
 import { registerHostIfNotRegistered } from '../componentsCommon/handleRegistration';
+import loadTowers from '../componentsCommon/loadTower';
 
 const Login = () => {
   const [isLoading, setIsLoading] = useState(false);
@@ -46,8 +47,7 @@ const Login = () => {
       const retryLoop = async () => {
         try {
           await initActor('host');
-          await registerHostIfNotRegistered(100, 0);
-          await fetchAccount();
+          await postSetup();
           setIsLoading(false);
         } catch (error) {
           if (retries < maxRetries) {
@@ -70,6 +70,12 @@ const Login = () => {
   useEffect(() => {
     setup();
   }, []);
+
+  async function postSetup() {
+    await registerHostIfNotRegistered(100, 0);
+    await fetchAccount();
+    await loadTowers();
+  }
 
   return (
     <Transitions duration={2}>

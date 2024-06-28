@@ -132,6 +132,11 @@ const addRegisteredTower: ActionCreator<AnyAction> = (payload: any) => ({
   payload,
 });
 
+const setTowerList: ActionCreator<AnyAction> = (payload: any) => ({
+  type: 'setTowerList',
+  payload,
+});
+
 const boundToDoActions = bindActionCreators(
   {
     setAuthenticated,
@@ -160,6 +165,7 @@ const boundToDoActions = bindActionCreators(
     unregisterForTower,
     addUnregisteredTower,
     addRegisteredTower,
+    setTowerList,
   },
   reduxStore.dispatch
 );
