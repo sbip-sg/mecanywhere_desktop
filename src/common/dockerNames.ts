@@ -1,6 +1,6 @@
 export enum ImageName {
   MECA_EXECUTOR = 'ghcr.io/sbip-sg/meca-executor:main',
-  PYMECA_SERVER = 'mock_actor_intern:latest',
+  PYMECA_SERVER = 'ghcr.io/sbip-sg/pymeca-actors:main',
 }
 
 export enum ContainerName {
