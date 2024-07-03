@@ -20,6 +20,7 @@ import PreSharingEnabledComponent from './HostSharingWidgetComponent/PreSharingE
 import PostSharingEnabledComponent from './HostSharingWidgetComponent/PostSharingEnabledComponent';
 import actions from '../../../redux/actionCreators';
 import ErrorDialog from '../../componentsCommon/ErrorDialogue';
+import ActivateDialog from './HostSharingWidgetComponent/ActivateDialog';
 
 const HostSharingWidget = () => {
   const [isLoading, setIsLoading] = useState(false);
@@ -39,6 +40,8 @@ const HostSharingWidget = () => {
     task_gpu: 0,
     task_used_gpu: 0,
   });
+  const [activateDialogOpen, setActivateDialogOpen] = useState(false);
+
   const handleCloseErrorDialog = () => {
     setErrorDialogOpen(false);
   };
@@ -140,21 +143,29 @@ const HostSharingWidget = () => {
             cpu: executorSettings.cpu_cores,
             mem: executorSettings.memory_mb,
           });
-          await handleActivateHost(100, 0);
-          const towerAddresses =
-            reduxStore.getState().towerListReducer.registered;
-          await waitForTasks(towerAddresses);
-          const initialResources = await getResourceStats();
-          setInitialResourcesLog(initialResources);
-          setResourceSharingEnabled(true);
+          // activate host with post register callback
+          setActivateDialogOpen(true);
         }
       }
     } catch (error) {
       setErrorMessage(`${error}`);
       setErrorDialogOpen(true);
-    } finally {
       setIsLoading(false);
     }
+  };
+
+  const postRegisterDialog = async () => {
+    const towerAddresses = reduxStore.getState().towerListReducer.registered;
+    await waitForTasks(towerAddresses);
+    const initialResources = await getResourceStats();
+    setInitialResourcesLog(initialResources);
+    setResourceSharingEnabled(true);
+    setIsLoading(false);
+  };
+
+  const handleCloseActivateDialog = () => {
+    setActivateDialogOpen(false);
+    setIsLoading(false);
   };
 
   const handleDisableResourceSharing = async () => {
@@ -180,68 +191,75 @@ const HostSharingWidget = () => {
   });
 
   return (
-    <Box
-      id="transition-widget-wrapper"
-      sx={{
-        height: '100%',
-        width: '100%',
-        display: 'flex',
-      }}
-    >
-      {isLoading && (
-        <>
-          <BlurredBackground />
-          <Transitions duration={1}>
-            <CircularProgress
-              style={{
-                color: 'secondary.main',
-                position: 'absolute',
-                width: '2.5rem',
-                height: '2.5rem',
-                left: '50%',
-                top: '50%',
-                translate: '-1.25rem -1.25rem',
-              }}
-            />
-          </Transitions>
-        </>
-      )}
+    <>
+      <ActivateDialog
+        open={activateDialogOpen}
+        onActivate={postRegisterDialog}
+        onClose={handleCloseActivateDialog}
+      />
       <Box
-        id="widget-wrapper"
+        id="transition-widget-wrapper"
         sx={{
-          width: '100%',
           height: '100%',
-          opacity: isLoading ? 0.2 : 1,
-          transition: 'opacity 0.5s ease',
+          width: '100%',
           display: 'flex',
-          justifyContent: 'center',
         }}
       >
-        {!resourceSharingEnabled ? (
-          <PreSharingEnabledComponent
-            handleEnableResourceSharing={handleEnableResourceSharing}
-            isLoading={isLoading}
-            setIsLoading={setIsLoading}
-            isExecutorSettingsSaved={isExecutorSettingsSaved}
-            setIsExecutorSettingsSaved={setIsExecutorSettingsSaved}
-            executorSettings={executorSettings}
-            setExecutorSettings={setExecutorSettings}
-            setDeviceHasGpu={setDeviceHasGpu}
-          />
-        ) : (
-          <PostSharingEnabledComponent
-            handleDisableResourceSharing={handleDisableResourceSharing}
-            isLoading={isLoading}
-            initialResourcesLog={initialResourcesLog}
-          />
+        {isLoading && (
+          <>
+            <BlurredBackground />
+            <Transitions duration={1}>
+              <CircularProgress
+                style={{
+                  color: 'secondary.main',
+                  position: 'absolute',
+                  width: '2.5rem',
+                  height: '2.5rem',
+                  left: '50%',
+                  top: '50%',
+                  translate: '-1.25rem -1.25rem',
+                }}
+              />
+            </Transitions>
+          </>
         )}
+        <Box
+          id="widget-wrapper"
+          sx={{
+            width: '100%',
+            height: '100%',
+            opacity: isLoading ? 0.2 : 1,
+            transition: 'opacity 0.5s ease',
+            display: 'flex',
+            justifyContent: 'center',
+          }}
+        >
+          {!resourceSharingEnabled ? (
+            <PreSharingEnabledComponent
+              handleEnableResourceSharing={handleEnableResourceSharing}
+              isLoading={isLoading}
+              setIsLoading={setIsLoading}
+              isExecutorSettingsSaved={isExecutorSettingsSaved}
+              setIsExecutorSettingsSaved={setIsExecutorSettingsSaved}
+              executorSettings={executorSettings}
+              setExecutorSettings={setExecutorSettings}
+              setDeviceHasGpu={setDeviceHasGpu}
+            />
+          ) : (
+            <PostSharingEnabledComponent
+              handleDisableResourceSharing={handleDisableResourceSharing}
+              isLoading={isLoading}
+              initialResourcesLog={initialResourcesLog}
+            />
+          )}
+        </Box>
+        <ErrorDialog
+          open={errorDialogOpen}
+          onClose={handleCloseErrorDialog}
+          errorMessage={errorMessage}
+        />
       </Box>
-      <ErrorDialog
-        open={errorDialogOpen}
-        onClose={handleCloseErrorDialog}
-        errorMessage={errorMessage}
-      />
-    </Box>
+    </>
   );
 };
 

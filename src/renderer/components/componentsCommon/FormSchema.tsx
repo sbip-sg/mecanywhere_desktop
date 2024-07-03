@@ -1,41 +1,15 @@
 import * as Yup from 'yup';
 
-export const LoginFormSchema = Yup.object({
-  password: Yup.string()
-    .required('Password required!')
-    .min(6, 'Password too short!')
-    .max(20, 'Password too long!'),
-});
-
-export const RegisterFormSchema = Yup.object({
-  password: Yup.string()
-    .required('Password required!')
-    .min(6, 'Password too short!')
-    .max(20, 'Password too long!'),
-});
-
-export const PaymentFormSchema = (balance: number) =>
+const ActivateFormSchema = (minStake: number) =>
   Yup.object({
-    amount: Yup.number()
-      .required('Amount is required!')
-      .positive('Amount must be a positive number!')
-      .typeError('Please enter a valid amount.')
-      .test(
-        'is-within-balance',
-        'Amount exceeds available balance',
-        (value) => value <= balance
-      ),
+    stake: Yup.number()
+      .required('Stake required!')
+      .min(minStake, `Stake must be more than the minimum of ${minStake}!`)
+      .max(1000000, 'Stake too high!'),
+    blockTimeoutLimit: Yup.number()
+      .required('Block timeout limit required!')
+      .min(1, 'Block timeout limit too low!')
+      .max(1000000, 'Block timeout limit too high!'),
   });
 
-export const WithdrawalFormSchema = (balance: number) =>
-  Yup.object({
-    amount: Yup.number()
-      .required('Amount is required!')
-      .positive('Amount must be a positive number!')
-      .typeError('Please enter a valid amount.')
-      .test(
-        'is-within-balance',
-        'Amount exceeds available balance',
-        (value) => value <= balance
-      ),
-  });
+export default ActivateFormSchema;
