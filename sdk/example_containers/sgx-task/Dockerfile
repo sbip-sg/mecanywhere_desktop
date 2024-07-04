@@ -124,15 +124,8 @@ ENV PATH $NODE_PATH:$PATH
 
 RUN node --version && npm --version
 
-COPY ./deps /sgx-task/deps
-COPY ./Makefile /sgx-task/
-RUN cd /sgx-task/ && make mrproper && make deps
-
-COPY ./common/ /sgx-task/common
-COPY ./server/ /sgx-task/server
-COPY ./worker/ /sgx-task/worker
-
-RUN cd /sgx-task/ \
+COPY ./src /sgx-task
+RUN cd /sgx-task/ && make mrproper && make deps \
   && cd worker && make mrproper && make all && make install && cd ..\
   && cd server && make mrproper && make all && make install && cd ..
 

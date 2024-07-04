@@ -12,7 +12,7 @@ The sgx-task server shall be able to prepare an attestation report during RA.
 
 ## build
 
-To build the sample app, under `sgx_sample/` run
+To build the sample app, under `sgx-task/` run
 
 ```sh
 docker build -t sgx-task .
@@ -21,7 +21,7 @@ docker build -t sgx-task .
 To test the server
 
 ```sh
-docker run -it --net=meca --ip=172.18.0.255 --device /dev/sgx_enclave:/dev/sgx/enclave -v /var/run/aesmd:/var/run/aesmd sgx-task:latest
+docker run -it -p 2333:8080  --device /dev/sgx_enclave:/dev/sgx/enclave -v /var/run/aesmd:/var/run/aesmd sgx-task
 ```
 
 issue a request (now requires the client to perform encryption decryption)
@@ -31,11 +31,7 @@ curl -X POST 172.18.0.255:8080/run -H 'Content-Type:application/json' -d @sample
 ``` -->
 
 ```sh
-cd client/cpp
+cd src/client_test
 make clean && make all
-./client_test
+./client_ec_test
 ```
-
-## Mock server
-
-Without SGX support, one can test the workflow with the mock server provided under [`client/python/mock_server`](./client/python/mock_server/).
