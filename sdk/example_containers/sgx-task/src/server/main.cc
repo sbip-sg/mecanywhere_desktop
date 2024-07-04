@@ -2,23 +2,17 @@
 #include <cstdio>
 #include <cstdlib>
 #include <cstring>
-
 #include <string>
 #include <thread>
 
-#include "uv.h"
-#include "service.h"
-
-#include "worker_service.h"
-
-#include "messager.h"
-
 #include "llhttp.h"
+#include "messager.h"
+#include "service.h"
+#include "uv.h"
+#include "worker_service.h"
 typedef llhttp_t parser_t;
 typedef llhttp_settings_t parser_settings_t;
 #define PARSER_SETTINGS_INIT(m) llhttp_settings_init(m)
-
-
 
 namespace {
 
@@ -41,13 +35,13 @@ struct client_t {
   uv_tcp_t handle;
   parser_t parser;
   uv_write_t write_req;
-  std::string response_scratch; // buffer for the resbuf
+  std::string response_scratch;  // buffer for the resbuf
   uv_buf_t resbuf{nullptr, 0};
   bool is_http_req = false;
   bool next_header_value_is_content_len = false;
   HttpRequest req;
   runtime_task_t task_type;
-  uv_work_t work; // at a time there is only one work scheduled.
+  uv_work_t work;  // at a time there is only one work scheduled.
 };
 
 parser_settings_t settings;
@@ -60,7 +54,7 @@ bool check_error(int ret) {
 
 void on_close(uv_handle_t* handle) {
   printf("on close\n");
-  client_t* client = (client_t*) handle->data;
+  client_t* client = (client_t*)handle->data;
   client->resbuf.base = nullptr;
   client->resbuf.len = 0;
   delete client;
@@ -69,18 +63,17 @@ void on_close(uv_handle_t* handle) {
 
 void after_write(uv_write_t* req, int status) {
   check_error(status);
-  uv_close((uv_handle_t*) req->handle, on_close);
+  uv_close((uv_handle_t*)req->handle, on_close);
 }
 
 // concurrent runtime functions
 std::string build_response(response_code_t code, const std::string& msg) {
-  auto build = [](const std::string&& code_msg, const std::string&& msg)
-    -> std::string {
-    return "HTTP/1.1 " + code_msg + "\r\n"
-    + "Content-Type: application/json\r\n"
-    + "Content-Length: "+ std::to_string(msg.size())+"\r\n"
-    + "\r\n"
-    + std::move(msg);
+  auto build = [](const std::string&& code_msg,
+                  const std::string&& msg) -> std::string {
+    return "HTTP/1.1 " + code_msg + "\r\n" +
+           "Content-Type: application/json\r\n" +
+           "Content-Length: " + std::to_string(msg.size()) + "\r\n" + "\r\n" +
+           std::move(msg);
   };
 
   // auto json_msg = "{\"msg\": \"" + std::move(msg) + "\"}";
@@ -93,10 +86,9 @@ std::string build_response(response_code_t code, const std::string& msg) {
       return build("404 Not Found", msgr.PackageResponse(true, msg));
     default:
       return build("500 Internal Server Error",
-        msgr.PackageResponse(true, msg));
+                   msgr.PackageResponse(true, msg));
   }
 }
-
 
 inline void flush_meca_ready() {
   printf("%s\n", meca_ready);
@@ -108,27 +100,28 @@ void on_work(uv_work_t* req) {
   response_code_t code;
   std::string msg;
 #ifndef NDEBUG
-  // printf("\nRequest body before processing:\n%s\n", client->req.body.c_str());
-#endif // NDEBUG
+  // printf("\nRequest body before processing:\n%s\n",
+  // client->req.body.c_str());
+#endif  // NDEBUG
   switch (client->task_type) {
-  case RA:
-    code = svc->Ra(&msg);
-    break;
-  case RUN:
-    code = svc->Run(msgr.ExtractUserJson(client->req.body), &msg);
-    break;
-  case INIT:
-    code = svc->Init(client->req.body, &msg);
-    break;
-  default:
-    code = NOT_FOUND;
-    msg = "unsupported path: " + client->req.url + "\n";
-    break;
+    case RA:
+      code = svc->Ra(&msg);
+      break;
+    case RUN:
+      code = svc->Run(msgr.ExtractUserJson(client->req.body), &msg);
+      break;
+    case INIT:
+      code = svc->Init(client->req.body, &msg);
+      break;
+    default:
+      code = NOT_FOUND;
+      msg = "unsupported path: " + client->req.url + "\n";
+      break;
   }
   client->response_scratch = build_response(code, std::move(msg));
-  client->resbuf = uv_buf_init(
-    const_cast<char*>(client->response_scratch.c_str()),
-    client->response_scratch.size());
+  client->resbuf =
+      uv_buf_init(const_cast<char*>(client->response_scratch.c_str()),
+                  client->response_scratch.size());
   // printf("response to sent %.*s\n", (int) client->response_scratch.size(),
   //   client->response_scratch.c_str());
 }
@@ -136,8 +129,8 @@ void on_work(uv_work_t* req) {
 void after_work(uv_work_t* req, int status) {
   if (check_error(status)) return;
   client_t* client = (client_t*)req->data;
-  uv_write(&client->write_req, (uv_stream_t*) &client->handle,
-    &client->resbuf, 1, after_write);
+  uv_write(&client->write_req, (uv_stream_t*)&client->handle, &client->resbuf,
+           1, after_write);
 }
 // concurrent runtime functions
 
@@ -145,7 +138,7 @@ int on_message_begin(parser_t* _) {
   (void)_;
 #ifndef NDEBUG
   printf("\n***MESSAGE BEGIN***\n\n");
-#endif // NDEBUG
+#endif  // NDEBUG
   return 0;
 }
 
@@ -153,15 +146,15 @@ int on_headers_complete(parser_t* _) {
   (void)_;
 #ifndef NDEBUG
   printf("\n***HEADERS COMPLETE***\n\n");
-#endif // NDEBUG
+#endif  // NDEBUG
   return 0;
 }
 
 int on_message_complete(parser_t* parser) {
 #ifndef NDEBUG
   printf("\n***MESSAGE COMPLETE***\n\n");
-#endif // NDEBUG
-  client_t* client = (client_t*) parser->data;
+#endif  // NDEBUG
+  client_t* client = (client_t*)parser->data;
   if (client->req.url == "/run") {
     client->task_type = RUN;
   } else if (client->req.url == "/ra") {
@@ -171,16 +164,15 @@ int on_message_complete(parser_t* parser) {
   } else {
     client->task_type = UNDEFINED;
   }
-  uv_queue_work(client->handle.loop, &client->work, on_work,
-    after_work);
+  uv_queue_work(client->handle.loop, &client->work, on_work, after_work);
   return 0;
 }
 
 int on_url(parser_t* parser, const char* at, size_t length) {
 #ifndef NDEBUG
   // printf("Url (%d): %.*s\n", (int)length, (int)length, at);
-#endif // NDEBUG
-  client_t* client = (client_t*) parser->data;
+#endif  // NDEBUG
+  client_t* client = (client_t*)parser->data;
   client->req.url = std::string(at, length);
   return 0;
 }
@@ -188,9 +180,9 @@ int on_url(parser_t* parser, const char* at, size_t length) {
 int on_header_field(parser_t* parser, const char* at, size_t length) {
 #ifndef NDEBUG
   // printf("Header field: %.*s\n", (int)length, at);
-#endif // NDEBUG
-  if(strncmp(at, "Content-Type", std::max(length, strlen("Content-Type")))) {
-    client_t* client = (client_t*) parser->data;
+#endif  // NDEBUG
+  if (strncmp(at, "Content-Type", std::max(length, strlen("Content-Type")))) {
+    client_t* client = (client_t*)parser->data;
     client->next_header_value_is_content_len = true;
   }
   return 0;
@@ -199,9 +191,9 @@ int on_header_field(parser_t* parser, const char* at, size_t length) {
 int on_header_value(parser_t* parser, const char* at, size_t /*length*/) {
 #ifndef NDEBUG
   // printf("Header value: %.*s\n", (int)length, at);
-#endif // NDEBUG
-  client_t* client = (client_t*) parser->data;
-  if(client->next_header_value_is_content_len) {
+#endif  // NDEBUG
+  client_t* client = (client_t*)parser->data;
+  if (client->next_header_value_is_content_len) {
     client->req.content_len = strtoull(at, NULL, 10);
     client->req.body.reserve(client->req.content_len);
     client->next_header_value_is_content_len = false;
@@ -211,11 +203,11 @@ int on_header_value(parser_t* parser, const char* at, size_t /*length*/) {
 
 int on_body(parser_t* parser, const char* at, size_t length) {
   // (void)_;
-  client_t* client = (client_t*) parser->data;
+  client_t* client = (client_t*)parser->data;
   client->req.body.append(at, length);
 #ifndef NDEBUG
   // printf("Body: %.*s\n", (int)length, at);
-#endif // NDEBUG
+#endif  // NDEBUG
   return 0;
 }
 
@@ -236,29 +228,28 @@ void setup_http_parser_settings() {
 void on_alloc(uv_handle_t* /*handle*/, size_t suggested_size, uv_buf_t* buf) {
 #ifndef NDEBUG
   // printf("on alloc\n");
-#endif // NDEBUG
-  *buf = uv_buf_init((char*) malloc(suggested_size), suggested_size);
+#endif  // NDEBUG
+  *buf = uv_buf_init((char*)malloc(suggested_size), suggested_size);
 }
 
 void on_read(uv_stream_t* stream, ssize_t nread, const uv_buf_t* buf) {
 #ifndef NDEBUG
   // printf("on read\n");
-#endif // NDEBUG
+#endif  // NDEBUG
   /*do something*/
   if (nread >= 0) {
 #ifndef NDEBUG
     // printf("Read:\n%.*s\n", (int) nread, buf->base);
-#endif // NDEBUG
+#endif  // NDEBUG
     /*parse http*/
-    client_t* client = (client_t*) uv_handle_get_data((uv_handle_t*) stream);
+    client_t* client = (client_t*)uv_handle_get_data((uv_handle_t*)stream);
     parser_t* parser = &client->parser;
-
 
     if (!client->is_http_req) {
       auto ret = llhttp_execute(parser, buf->base, nread);
       if (ret != HPE_OK) {
         fprintf(stderr, "Parse error: %s %s\n", llhttp_errno_name(ret),
-          parser->reason);
+                parser->reason);
         printf("Not a http request, no response sent\n");
       }
     } else {
@@ -271,7 +262,7 @@ void on_read(uv_stream_t* stream, ssize_t nread, const uv_buf_t* buf) {
     if (nread != UV_EOF) {
       printf("Read error: %ld\n", nread);
     }
-    uv_close((uv_handle_t*) stream, on_close);
+    uv_close((uv_handle_t*)stream, on_close);
     uv_stop(loop);
     printf("server schedules to shutdown\n");
   }
@@ -280,7 +271,7 @@ void on_read(uv_stream_t* stream, ssize_t nread, const uv_buf_t* buf) {
 }
 
 void on_connection(uv_stream_t* server_handle, int status) {
-  assert(server_handle == (uv_stream_t*) &server);
+  assert(server_handle == (uv_stream_t*)&server);
   printf("\non_connection\n");
 
   if (check_error(status)) return;
@@ -294,25 +285,25 @@ void on_connection(uv_stream_t* server_handle, int status) {
   auto ret = uv_tcp_init(server_handle->loop, &client->handle);
   // let the data pointer of handle to point to the client struct,
   //  so we can access http parser.
-  uv_handle_set_data((uv_handle_t*) &client->handle, client);
+  uv_handle_set_data((uv_handle_t*)&client->handle, client);
   // let the data pointer of parser to point to the client struct,
   //  so we can access handle.
   client->parser.data = client;
-  uv_req_set_data((uv_req_t*) &client->work, client);
+  uv_req_set_data((uv_req_t*)&client->work, client);
 
   check_error(ret);
-  ret = uv_accept(server_handle, (uv_stream_t*) &client->handle);
+  ret = uv_accept(server_handle, (uv_stream_t*)&client->handle);
   if (check_error(ret)) {
-    uv_close((uv_handle_t*) &client->handle, on_close);
+    uv_close((uv_handle_t*)&client->handle, on_close);
   } else {
-    ret = uv_read_start((uv_stream_t*) &client->handle, on_alloc, on_read);
+    ret = uv_read_start((uv_stream_t*)&client->handle, on_alloc, on_read);
     check_error(ret);
   }
 }
-} // anonymous namespace
+}  // anonymous namespace
 
 int main(int argc, char* argv[]) {
-// pick service selection
+  // pick service selection
 
   if (argc != 2) {
     fprintf(stderr, "Usage: worker_enclave\n");
@@ -337,12 +328,12 @@ int main(int argc, char* argv[]) {
   uv_ip4_addr("0.0.0.0", 8080, &address);
   // uv_ip4_addr("0.0.0.0", 2531, &address);
 
-  int ret = uv_tcp_bind(&server, (const struct sockaddr*) &address, 0);
+  int ret = uv_tcp_bind(&server, (const struct sockaddr*)&address, 0);
   check_error(ret);
 
   printf("sample server launched\n");
 
-  ret = uv_listen((uv_stream_t*) &server, 128, on_connection);
+  ret = uv_listen((uv_stream_t*)&server, 128, on_connection);
   check_error(ret);
 
   flush_meca_ready();

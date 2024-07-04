@@ -365,7 +365,7 @@ std::string derive_ecdh_secret(EVP_PKEY* own_key, EVP_PKEY* peer_key) {
   if (1 != EVP_PKEY_derive(ctx, NULL, &secret_len)) {
     return "";
   }
-  
+
   unsigned char* secret = (unsigned char*)malloc(secret_len);
   if (!secret) {
     return "";
