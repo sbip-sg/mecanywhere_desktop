@@ -1,9 +1,10 @@
+import { ContainerName, ContainerPort } from 'common/dockerNames';
 import { ResourcesLog } from 'renderer/utils/dataTypes';
 import actions from '../redux/actionCreators';
 
-const url =
-  `${process.env.TASK_EXECUTOR_HOST}:${process.env.TASK_EXECUTOR_PORT}` ||
-  'http://localhost:2591';
+const host = process.env.TASK_EXECUTOR_HOST || `http://localhost`;
+const port = process.env.TASK_EXECUTOR_PORT || ContainerPort.MECA_EXECUTOR_1_PORT;
+const url = `${host}:${port}`;
 
 export async function stopExecutor() {
   try {

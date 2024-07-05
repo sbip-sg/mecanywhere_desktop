@@ -268,6 +268,8 @@ export const towerListReducer = (
         ...state,
         registered: [...state.registered, action.payload],
       };
+    case 'setTowerList':
+      return action.payload;
     default:
       return state;
   }

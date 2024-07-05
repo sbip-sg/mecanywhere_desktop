@@ -12,48 +12,16 @@ import {
 import log from 'electron-log/renderer';
 import { closeActor, initActor } from 'renderer/services/PymecaService';
 
-export const handleRegisterHost = async (
+export const handleActivateHost = async (
   blockTimeoutLimit: number,
-  stake?: number
+  addStake: number
 ) => {
-  if (!stake) {
-    try {
-      await getHostInitialStake();
-    } catch (error) {
-      if (error instanceof Error) {
-        console.error(error.message);
-        throw new Error(`${error.message}`);
-      } else {
-        console.error('Unknown Error:', error);
-        throw new Error('An unknown error occurred');
-      }
-    }
-  }
-
-  const publicKey = window.electron.store.get('publicKey');
-  await initActor("host");
-
   try {
-    const isRegisteredResponse = await isRegistered();
-    let registrationSuccess;
-    if (!isRegisteredResponse) {
-      registrationSuccess = await registerHost(
-        publicKey,
-        blockTimeoutLimit,
-        stake
-      );
-    } else {
-      registrationSuccess =
-        (await updateBlockTimeoutLimit(blockTimeoutLimit)) &&
-        (await updatePublicKey(publicKey));
-    }
-    if (registrationSuccess) {
-      const unpauseResponse = await unpauseExecutor();
-      if (!unpauseResponse) {
-        console.error('Unpause failed.');
-      }
-    } else {
-      throw new Error('Host registration failed');
+    await initActor('host');
+    await registerHostIfNotRegistered(blockTimeoutLimit, addStake);
+    const unpauseResponse = await unpauseExecutor();
+    if (!unpauseResponse) {
+      console.error('Unpause failed.');
     }
   } catch (error) {
     if (error instanceof Error) {
@@ -66,7 +34,42 @@ export const handleRegisterHost = async (
   }
 };
 
-export const handleDeregisterHost = async () => {
+export const registerHostIfNotRegistered = async (
+  blockTimeoutLimit: number,
+  addStake: number
+) => {
+  try {
+    const stakeRes = await getHostInitialStake();
+    if (!stakeRes || stakeRes === undefined) {
+      throw new Error('Failed to get host initial stake');
+    }
+    const publicKey = window.electron.store.get('publicKey');
+    const isRegisteredResponse = await isRegistered();
+    if (!isRegisteredResponse) {
+      const registrationSuccess = await registerHost(
+        publicKey,
+        blockTimeoutLimit,
+        stakeRes + addStake
+      );
+      if (!registrationSuccess) {
+        throw new Error('Host registration failed');
+      }
+    } else {
+      await updateBlockTimeoutLimit(blockTimeoutLimit);
+      await updatePublicKey(publicKey);
+    }
+  } catch (error) {
+    if (error instanceof Error) {
+      console.error(error.message);
+      throw new Error(`${error.message}`);
+    } else {
+      console.error('Unknown Error:', error);
+      throw new Error('An unknown error occurred');
+    }
+  }
+};
+
+export const handleDeactivateHost = async () => {
   try {
     await pauseExecutor();
     await updateBlockTimeoutLimit(0);

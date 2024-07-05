@@ -13,6 +13,8 @@ Download the latest version of the application from the [MEC Anywhere Desktop Gi
 
 You will also need to have Docker installed on your machine. You can download Docker from the [official Docker website](https://www.docker.com/get-started).
 
+Set the environment variables by creating a `.env.pymeca` file by filling in `.env.pymeca.example` with the necessary information. `.env` can be edited to change the default values of the environment variables.
+
 ## Usage
 To start the application, simply run the executable file that you downloaded. 
 

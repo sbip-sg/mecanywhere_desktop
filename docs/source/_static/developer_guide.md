@@ -85,6 +85,10 @@ The main process executes the entry point script defined in the package.json (as
     npm install -g node-gyp
     npm install -g npm
     ```
+    or if it is related to `distutils`
+    ```
+    python -m pip install setuptools
+    ```
 
 - **Inter-Process Communication**
 
@@ -203,4 +207,3 @@ This directory simple handles the external api calls.
 
 ## Other notes
 - Use electron-store for persistent storage, redux for global state management, and React's useState() hook for component-level state.
-- Under `webpack.config.base.ts`, there is an alias of react pointing to `./src/node_modules/react'`. This is because the *@metamask/sdk* introduces another instance of React, causing conflicts. The alias ensures the project uses only one instance of React. 

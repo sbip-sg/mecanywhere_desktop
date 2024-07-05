@@ -1,11 +1,11 @@
 // import log from 'electron-log/renderer';
 import { useEffect } from 'react';
 import { stopExecutor } from 'renderer/services/ExecutorServices';
-import { handleDeregisterHost } from '../components/componentsCommon/handleRegistration';
+import { handleDeactivateHost } from '../components/componentsCommon/handleRegistration';
 
 const handleAppExit = async () => {
   await stopExecutor();
-  await handleDeregisterHost();
+  await handleDeactivateHost();
 };
 
 const useHandleAppExitHook = () => {

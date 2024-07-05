@@ -181,20 +181,11 @@ export async function registerForTower(tower_address: string) {
   }
 }
 
-export async function waitForTasks(
-  tower_addresses: string[],
-  host_encryption_private_key: string,
-  container_name_limit: number,
-  resources: any
-) {
+export async function waitForTasks(tower_addresses: string[]) {
   try {
     for (let i = 0; i < tower_addresses.length; i++) {
-      await waitForTask(
-        tower_addresses[i],
-        host_encryption_private_key,
-        container_name_limit,
-        resources
-      );
+      await waitForTask(tower_addresses[i]);
+      console.log('Waiting for task from tower:', tower_addresses[i]);
     }
     console.log('Wait for tasks successful.');
     return true;

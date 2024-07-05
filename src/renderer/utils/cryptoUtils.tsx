@@ -1,16 +1,22 @@
-import { generateMnemonic, mnemonicToSeedSync } from 'bip39';
-import { AES, enc, SHA256 } from 'crypto-js';
+import { AES, enc } from 'crypto-js';
 import sha3 from 'js-sha3';
 // @ts-ignore
 import secp256k1 from '../../node_modules/secp256k1';
 
-export const generateKeyPair = async (mnemonic: string) => {
-  const seed = mnemonicToSeedSync(mnemonic).toString('hex');
-  const privateKey = SHA256(seed).toString();
-  const privateKeyBuffer = Buffer.from(privateKey, 'hex');
+export const getPublicKey = (privateKey: string) => {
+  let cleanPrivateKey = privateKey;
+  if (privateKey.startsWith('0x')) {
+    cleanPrivateKey = privateKey.slice(2);
+  }
+  if (!isHexString(cleanPrivateKey)) {
+    throw new Error('privateKey provided is not a valid hex string');
+  }
+  if (cleanPrivateKey.length !== 64) {
+    throw new Error('privateKey provided is not 64 characters long');
+  }
+  const privateKeyBuffer = Buffer.from(cleanPrivateKey, 'hex');
   if (!secp256k1.privateKeyVerify(privateKeyBuffer)) {
-    console.error('Invalid private key');
-    return undefined;
+    throw new Error('Invalid private key');
   }
   const compressedPublicKey = secp256k1.publicKeyCreate(privateKeyBuffer);
   const uncompressedPublicKey = secp256k1.publicKeyConvert(
@@ -18,20 +24,7 @@ export const generateKeyPair = async (mnemonic: string) => {
     false
   );
   const publicKey = uncompressedPublicKey.slice(1);
-  return {
-    mnemonic,
-    publicKey,
-    privateKey: privateKeyBuffer,
-    publicKeyCompressed: compressedPublicKey,
-  };
-};
-
-export const generateMnemonicAndKeyPair = async () => {
-  const mnemonic = generateMnemonic();
-  // console.log('mnemonic', mnemonic);
-  const MnemonicAndKeyPair = await generateKeyPair(mnemonic);
-  // console.log('MnemonicAndKeyPair', MnemonicAndKeyPair);
-  return MnemonicAndKeyPair;
+  return utf8ToHex(publicKey);
 };
 
 function isUint8Array(value: any): value is Uint8Array {

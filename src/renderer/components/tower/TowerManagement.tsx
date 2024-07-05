@@ -1,12 +1,9 @@
 import React, { useState, useEffect } from 'react';
 import { Grid, Box, Typography, IconButton } from '@mui/material';
 import RefreshIcon from '@mui/icons-material/Refresh';
-import { getTowers } from 'renderer/services/TowerContractService';
-import { getMyTowers } from 'renderer/services/HostContractService';
-import { Tower } from 'renderer/utils/dataTypes';
 import TowerCard from './TowerCard';
-import actions from '../../redux/actionCreators';
 import ErrorDialog from '../componentsCommon/ErrorDialogue';
+import loadTowers from '../componentsCommon/loadTower';
 
 const TowerManagement: React.FC = () => {
   const [registeredTowerList, setRegisteredTowers] = useState<string[]>([]);
@@ -23,48 +20,14 @@ const TowerManagement: React.FC = () => {
   };
 
   const handleRefresh = async () => {
-    const myTowers = await getMyTowers()
-      .then((retrievedTowers) => {
-        const filteredTowers = retrievedTowers.filter(
-          (tower: Tower) => tower !== null
-        );
-        const towerOwners = filteredTowers.map((tower: Tower) => tower.owner);
-        setRegisteredTowers(towerOwners);
-        return towerOwners;
-      })
-      .catch((error) => {
-        setErrorMessage(`${error}`);
-        setErrorDialogOpen(true);
-        return []; // default
-      });
-    const allTowers = await getTowers()
-      .then((retrievedTowers) => {
-        const filteredTowers = retrievedTowers.filter(
-          (tower: Tower) => tower !== null
-        );
-        const towerOwners = filteredTowers.map((tower: Tower) => tower.owner);
-        return towerOwners;
-      })
-      .catch((error) => {
-        setErrorMessage(`${error}`);
-        setErrorDialogOpen(true);
-        return []; // default
-      });
-    const restTowers = allTowers.filter((tower) => !myTowers.includes(tower));
-    setUnregisteredTowers(restTowers);
-    addTowers(myTowers, restTowers);
-  };
-
-  const addTowers = (
-    registeredTowers: string[],
-    unregisteredTowers: string[]
-  ) => {
-    registeredTowers.forEach((tower) => {
-      actions.addRegisteredTower(tower);
-    });
-    unregisteredTowers.forEach((tower) => {
-      actions.addUnregisteredTower(tower);
-    });
+    try {
+      const { myTowers, restTowers } = await loadTowers();
+      setRegisteredTowers(myTowers);
+      setUnregisteredTowers(restTowers);
+    } catch (error) {
+      setErrorMessage(`Failed to load towers: ${error}`);
+      setErrorDialogOpen(true);
+    }
   };
 
   return (
