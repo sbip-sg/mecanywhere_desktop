@@ -5,7 +5,7 @@ on:
     branches:
       - main
     paths:
-      - task_executor
+      - task_executor/**
   workflow_dispatch:
 
 env:
