@@ -35,3 +35,27 @@ cd src/client_test
 make clean && make all
 ./client_ec_test
 ```
+
+## example input and output
+
+These are the input packaged and response received with the `client_test`.
+
+The example input:
+
+```json
+{
+ "value" : "e2668b74921293303890963bc088b4478d827ea42d2d2d2d2d424547494e205055424c4943204b45592d2d2d2d2d0a4d485977454159484b6f5a497a6a3043415159464b344545414349445967414535314376636e4a496f6f455866563834614941676a6d75596a3647334252464d0a5a577770434f65514c324349745a4751713075435a794e4e747972414563767970615a47674f4f7156772f534e533166737062474d5a4e6f2b656b37584536450a433644537a503043617332494e4769312f6757577351616773414835504566360a2d2d2d2d2d454e44205055424c4943204b45592d2d2d2d2d0a000000000000000000000000bd7c85ff9a050361b53372a4bdb1bd7e"
+}
+```
+
+The hex value are encrypted with the users key value of `sbip` with the output encryption key encrypted by the shared session key established after remote attestation.
+
+The example output:
+
+```json
+{
+ "msg" : "c4631eafeb6044a9fa0300000000000000000000000072988629eb5cad55f89ad8315553727e"
+}
+```
+
+The hex value is `hello-sbip` encrypted with the output encryption key.
