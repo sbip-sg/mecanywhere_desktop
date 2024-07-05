@@ -3,10 +3,10 @@ import log from 'electron-log/main';
 import path from 'path';
 import fs from 'fs';
 import os from 'os';
+import { IpcMainEvent } from 'electron';
 import { ContainerPort, ImageName } from '../common/dockerNames';
 import Channels from '../common/channels';
 import { getIpfsFilesDir } from './ipfsIntegration';
-import { setElectronStore } from './electronStore';
 
 const docker = new Dockerode();
 
@@ -23,7 +23,10 @@ const pymecaEnv = fs
   .split('\n')
   .filter((line) => line.trim() !== '');
 
-export const removeDockerContainer = async (event, containerName: string) => {
+export const removeDockerContainer = async (
+  event: IpcMainEvent,
+  containerName: string
+) => {
   docker.listContainers(
     { all: true },
     (err: Error, containers?: ContainerInfo[]) => {
@@ -38,7 +41,7 @@ export const removeDockerContainer = async (event, containerName: string) => {
       }
 
       const containerInfo = containers?.find((c) =>
-        c.Names.some((n) => n === `/${containerName}`)
+        c.Names.some((name) => name.includes(containerName))
       );
 
       if (containerInfo) {
@@ -86,7 +89,7 @@ export const removeDockerContainer = async (event, containerName: string) => {
 };
 
 export const runDockerContainer = async (
-  event,
+  event: IpcMainEvent,
   imageName: ImageName,
   containerName: string
 ) => {
@@ -95,7 +98,7 @@ export const runDockerContainer = async (
       if (err) throw err;
 
       const existingContainer = containers?.find((c) =>
-        c.Names.includes(`/${containerName}`)
+        c.Names.some((name) => name.includes(containerName))
       );
 
       if (existingContainer) {
@@ -113,21 +116,23 @@ export const runDockerContainer = async (
           event.reply(Channels.RUN_DOCKER_CONTAINER_RESPONSE, true);
         }
       } else {
-        // Container does not exist, create and start it
-        const containerOptions: Dockerode.ContainerCreateOptions =
-          getContainerCreateOptions(imageName, containerName);
+        installImageIfNotExists(imageName, () => {
+          // Container does not exist, create and start it
+          const containerOptions: Dockerode.ContainerCreateOptions =
+            getContainerCreateOptions(imageName, containerName);
 
-        docker.createContainer(containerOptions, (err: Error, container) => {
-          if (err) throw err;
-
-          container?.start((err: Error, _data) => {
+          docker.createContainer(containerOptions, (err: Error, container) => {
             if (err) throw err;
-            log.info('New container started');
-            container?.inspect((err, data) => {
+
+            container?.start((err: Error, _data) => {
               if (err) throw err;
-              if (data) {
-                event.reply(Channels.RUN_DOCKER_CONTAINER_RESPONSE, true);
-              }
+              log.info('New container started');
+              container?.inspect((err, data) => {
+                if (err) throw err;
+                if (data) {
+                  event.reply(Channels.RUN_DOCKER_CONTAINER_RESPONSE, true);
+                }
+              });
             });
           });
         });
@@ -143,6 +148,39 @@ export const runDockerContainer = async (
   }
 };
 
+const installImageIfNotExists = (
+  imageName: ImageName,
+  callback: () => void
+) => {
+  docker.listImages({ all: true }, (err, images) => {
+    if (err) throw err;
+
+    const imageExists = images?.some((image) =>
+      image.RepoTags?.includes(imageName)
+    );
+
+    if (!imageExists) {
+      docker.pull(imageName, (err2: Error, stream) => {
+        if (err2) throw err2;
+
+        docker.modem.followProgress(stream, onFinished, onProgress);
+
+        function onFinished(err3: Error | null, output) {
+          if (err3) throw err3;
+          console.log('Pull complete:', output);
+          callback();
+        }
+
+        function onProgress(event) {
+          console.log('Pull progress:', event);
+        }
+      });
+    } else {
+      callback();
+    }
+  });
+};
+
 const checkIfContainerHasGpu = (containerId: string, callback) => {
   const container = docker.getContainer(containerId);
   container.inspect((err, data) => {
@@ -156,11 +194,15 @@ const checkIfContainerHasGpu = (containerId: string, callback) => {
           capability.includes('gpu')
         )
       ) || false;
+    console.log('Container has GPU:', hasGpu);
     callback(null, hasGpu);
   });
 };
 
-export const runExecutorGPUContainer = async (event, containerName) => {
+export const runExecutorGPUContainer = async (
+  event: IpcMainEvent,
+  containerName: string
+) => {
   try {
     // Create a temporary file and write configuration data
     const tempDir = os.tmpdir();
@@ -202,7 +244,7 @@ export const runExecutorGPUContainer = async (event, containerName) => {
   }
 };
 
-export const checkDockerDaemonRunning = (event) => {
+export const checkDockerDaemonRunning = (event: IpcMainEvent) => {
   docker.ping((err, data) => {
     if (err) {
       console.error('Docker daemon is not running', err);
@@ -218,7 +260,10 @@ export const checkDockerDaemonRunning = (event) => {
   });
 };
 
-export const checkContainerExists = (event, containerName: string) => {
+export const checkContainerExists = (
+  event: IpcMainEvent,
+  containerName: string
+) => {
   docker.listContainers({ all: true }, (err, containers) => {
     if (err) {
       console.error('Error listing containers:', err);
@@ -227,14 +272,17 @@ export const checkContainerExists = (event, containerName: string) => {
     }
 
     const containerExists = containers?.some((container) =>
-      container.Names.some((name) => name === `/${containerName}`)
+      container.Names.some((name) => name.includes(containerName))
     );
-
+    console.log(`Container ${containerName} exists: ${containerExists}`);
     event.reply(Channels.CHECK_CONTAINER_EXIST_RESPONSE, true, containerExists);
   });
 };
 
-export const checkContainerGPUSupport = (event, containerName: string) => {
+export const checkContainerGPUSupport = (
+  event: IpcMainEvent,
+  containerName: string
+) => {
   docker.listContainers({ all: true }, (err, containers) => {
     if (err) {
       console.error('Error listing containers:', err);
@@ -247,7 +295,7 @@ export const checkContainerGPUSupport = (event, containerName: string) => {
     }
 
     const containerInfo = containers?.find((c) =>
-      c.Names.includes('/' + containerName)
+      c.Names.some((name) => name.includes(containerName))
     );
 
     if (containerInfo) {
@@ -274,7 +322,11 @@ export const checkContainerGPUSupport = (event, containerName: string) => {
   });
 };
 
-export const buildImage = (event, tag: string, dockerfilePath: string) => {
+export const buildImage = (
+  event: IpcMainEvent,
+  tag: string,
+  dockerfilePath: string
+) => {
   docker.buildImage(
     {
       context: `${getIpfsFilesDir}/${dockerfilePath}`,
@@ -318,7 +370,8 @@ function getContainerCreateOptions(
   let containerOptions: Dockerode.ContainerCreateOptions;
   switch (imageName) {
     case ImageName.MECA_EXECUTOR: {
-      const port = process.env.MECA_EXECUTOR_PORT || ContainerPort.MECA_EXECUTOR_1_PORT;
+      const port =
+        process.env.MECA_EXECUTOR_PORT || ContainerPort.MECA_EXECUTOR_1_PORT;
       containerOptions = {
         name: containerName,
         Image: imageName,
@@ -332,7 +385,8 @@ function getContainerCreateOptions(
       break;
     }
     case ImageName.PYMECA_SERVER: {
-      const port = process.env.PYMECA_SERVER_PORT || ContainerPort.PYMECA_SERVER_1_PORT;
+      const port =
+        process.env.PYMECA_SERVER_PORT || ContainerPort.PYMECA_SERVER_1_PORT;
       containerOptions = {
         name: containerName,
         Image: imageName,
