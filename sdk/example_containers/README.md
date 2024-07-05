@@ -10,7 +10,6 @@ The structure of the task container is as follows:
 - template
   - Dockerfile
   - src
-    - app.py
   - description.txt
   - name.txt
   - example_input.bin
