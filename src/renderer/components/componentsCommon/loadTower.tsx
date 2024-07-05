@@ -22,7 +22,7 @@ export default async function loadTowers() {
         });
     }
     const restTowers = owners.filter((tower) => !myOwners.includes(tower));
-    actions.setTowerList({ myTowers: myOwners, restTowers });
+    actions.setTowerList({ registered: myOwners, unregistered: restTowers });
     return { myTowers: myOwners, restTowers };
   } catch (error) {
     console.error(error);
