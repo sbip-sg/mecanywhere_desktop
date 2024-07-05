@@ -1,13 +1,13 @@
 #include "worker_service.h"
 
 #include <cassert>
-#include <climits> // for INT_MAX
-#include <cstring> // for strlen
 #include <chrono>
+#include <climits>  // for INT_MAX
+#include <cstring>  // for strlen
 #include <thread>
 
-#include "common/json.h"
 #include "common/hexutil.h"
+#include "common/json.h"
 
 // // implementation of ocalls
 // void ocall_debug_print(const void* s, size_t len) {
@@ -37,41 +37,40 @@
 void initialize_once(Worker* worker, response_code_t* code) {
   // execute logic on the value for initialization
   // decode json request
-    // return 404 for decode failure
+  // return 404 for decode failure
   printf("init execution\n");
   // execute logic on the value for initialization
   *code = worker->Initialize() ? OK : SERVER_ERROR;
 }
 
 response_code_t WorkerService::Init(const std::string& /*request*/,
-  std::string* response) {
+                                    std::string* response) {
   assert(response);
   response_code_t code = FORBIDDEN;
 
   std::call_once(initalized_, initialize_once, &worker_, &code);
-  switch (code)
-  {
-  case FORBIDDEN:
-    // send response of error 403
-    printf("init phase: reinitalize forbidden by default\n");
-    *response = "reinit forbidden";
-    break;
-  case OK:
-    *response = "init finished";
-    code = OK;
-    break;
-  default:
-    *response = "unkown server code from init";
-    code = SERVER_ERROR;
-    break;
+  switch (code) {
+    case FORBIDDEN:
+      // send response of error 403
+      printf("init phase: reinitalize forbidden by default\n");
+      *response = "reinit forbidden";
+      break;
+    case OK:
+      *response = "init finished";
+      code = OK;
+      break;
+    default:
+      *response = "unkown server code from init";
+      code = SERVER_ERROR;
+      break;
   }
-  
+
   return code;
 }
 
 response_code_t WorkerService::Ra(std::string* response) {
   assert(response);
-  
+
   response_code_t code = OK;
   std::call_once(initalized_, initialize_once, &worker_, &code);
   if (code != OK) {
@@ -80,7 +79,7 @@ response_code_t WorkerService::Ra(std::string* response) {
     return SERVER_ERROR;
   }
   printf("ra execution");
-  
+
   std::this_thread::sleep_for(std::chrono::milliseconds(10));
   // upon error return 502 (500 can be used for framework internal error)
 
@@ -104,9 +103,9 @@ response_code_t WorkerService::Ra(std::string* response) {
 }
 
 response_code_t WorkerService::Run(const std::string& request,
-  std::string* response) {
+                                   std::string* response) {
   assert(response);
-  
+
   response_code_t code = OK;
   std::call_once(initalized_, initialize_once, &worker_, &code);
   if (code != OK) {
@@ -117,7 +116,7 @@ response_code_t WorkerService::Run(const std::string& request,
   printf("run execution");
 
   printf("Request (len=%ld): %s", request.size(), request.c_str());
-  
+
   std::this_thread::sleep_for(std::chrono::milliseconds(10));
   // upon error return 502 (500 can be used for framework internal error)
 

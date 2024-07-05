@@ -1,15 +1,17 @@
 #ifndef MECA_SGX_WORKER_U_WORKER_H_
 #define MECA_SGX_WORKER_U_WORKER_H_
 
-#include "sgx_urts.h"
-
 #include <string>
 
+#include "sgx_urts.h"
+
 class Worker {
- public: 
+ public:
   Worker(const std::string& enclave_file_name)
-    : initialize_(false), closed_(false), enclave_file_name_(std::move(enclave_file_name)),
-    eid_(0) {}
+      : initialize_(false),
+        closed_(false),
+        enclave_file_name_(std::move(enclave_file_name)),
+        eid_(0) {}
 
   ~Worker() { Close(); }
 
@@ -21,19 +23,18 @@ class Worker {
 
   bool Initialize();
 
-  std::string GetKeyAndReport(std::string* key); 
-  
+  std::string GetKeyAndReport(std::string* key);
+
   bool Handle(uint64_t handle_id, const std::string& sample_request,
-    std::string* output);
+              std::string* output);
 
   /**
    * @brief execute the inference request in the worker managed enclave.
-   * 
+   *
    * @param request : user request
    * @return int : 0 for success; -1 for failure
    */
   int Execute(const std::string& request, std::string* output);
-
 
   void Close();
 
@@ -44,4 +45,4 @@ class Worker {
   sgx_enclave_id_t eid_;
 };
 
-#endif // MECA_SGX_WORKER_U_WORKER_H_
+#endif  // MECA_SGX_WORKER_U_WORKER_H_
