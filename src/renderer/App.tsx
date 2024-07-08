@@ -29,7 +29,6 @@ import UploadTask from './components/tasks/UploadTask';
 import Settings from './components/settings/Settings';
 import { getDesignTokens } from './utils/theme';
 import useHandleAppExitHook from './utils/useHandleAppExitHook';
-import useClientHooks from './utils/useClientHooks';
 import TowerManagement from './components/tower/TowerManagement';
 
 const PrivateRoutes = () => {
@@ -156,7 +155,6 @@ const App = () => {
   ) as PaletteMode;
   const theme = useMemo(() => createTheme(getDesignTokens(mode)), [mode]);
   useHandleAppExitHook();
-  useClientHooks();
   return (
     <StyledEngineProvider injectFirst>
       <ThemeProvider theme={theme}>

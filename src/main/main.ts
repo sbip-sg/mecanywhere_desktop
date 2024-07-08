@@ -29,12 +29,7 @@ import {
   getElectronStore,
   setElectronStore,
 } from './electronStore';
-import {
-  jobResultsReceived,
-  jobReceived,
-  onClientRegistered,
-  onJobResultsReceived,
-} from './jobs';
+import { jobResultsReceived, jobReceived } from './jobs';
 
 import {
   openFileDialog,
@@ -69,33 +64,6 @@ const isDebug =
 if (isDebug) {
   require('electron-debug')({ showDevTools: false });
 }
-
-const SDK_SOCKET_PORT = process.env.SDK_SOCKET_PORT || 3001;
-const io = require('socket.io')();
-
-const appDevServer = io.listen(SDK_SOCKET_PORT);
-
-appDevServer.on('connection', (socket) => {
-  console.log('A user connected');
-  ipcMain.on(Channels.CLIENT_REGISTERED, onClientRegistered(socket));
-  ipcMain.on(Channels.JOB_RESULTS_RECEIVED, onJobResultsReceived(socket));
-  socket.on('offload', async (jobJson: string) => {
-    console.log('Received job...', jobJson);
-    try {
-      mainWindow?.webContents.send(Channels.OFFLOAD_JOB, jobJson);
-      socket.emit('offloaded', null, 'success');
-    } catch (error) {
-      socket.emit('offloaded', error, null);
-    }
-  });
-  socket.on('disconnect', () => {
-    console.log('A user disconnected');
-    mainWindow?.webContents.send(Channels.DEREGISTER_CLIENT);
-    ipcMain.removeAllListeners(Channels.CLIENT_REGISTERED);
-    ipcMain.removeListener(Channels.JOB_RESULTS_RECEIVED, onJobResultsReceived);
-  });
-  mainWindow?.webContents.send(Channels.REGISTER_CLIENT);
-});
 
 ipcMain.on(Channels.STORE_GET, getElectronStore);
 

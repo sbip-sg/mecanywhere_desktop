@@ -4,7 +4,6 @@ import React, { useEffect, useState } from 'react';
 import { Typography, Stack, IconButton } from '@mui/material';
 import { motion } from 'framer-motion';
 import CircularProgress from '@mui/material/CircularProgress';
-import reduxStore from 'renderer/redux/store';
 import RefreshIcon from '@mui/icons-material/Refresh';
 import { scrollbarHeight } from 'renderer/utils/constants';
 import CustomLineChart from './linechart/CustomLineChart';
@@ -12,7 +11,6 @@ import { DataEntry } from '../../utils/dataTypes';
 import { PropConfigList } from './propConfig';
 import Datagrid from './datagrid/Datagrid';
 import Transitions from '../../utils/Transition';
-import fetchTransactionHistory from '../componentsCommon/fetchTransactionHistory';
 import {
   tablePaginationMinHeight,
   maxRowHeight,
@@ -22,9 +20,7 @@ import {
 import dummyData from './dummyData';
 import ErrorDialog from '../componentsCommon/ErrorDialogue';
 
-
 const TxnDashboard: React.FC = () => {
-  const did = window.electron.store.get('did');
   const [data, setData] = useState<DataEntry[]>([]);
   const [hasData, setHasData] = useState(false);
   const [isTableExpanded, setIsTableExpanded] = useState(false);
@@ -43,9 +39,7 @@ const TxnDashboard: React.FC = () => {
   const fetchAndSetData = async () => {
     setIsLoading(true);
     try {
-      const transactionHistory = await fetchTransactionHistory(
-        did
-      );
+      const transactionHistory = dummyData;
       if (transactionHistory.length > 0) {
         setHasData(true);
       }
