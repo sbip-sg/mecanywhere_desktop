@@ -23,6 +23,7 @@ import {
   checkContainerExists,
   checkContainerGPUSupport,
   buildImage,
+  stopDockerContainer,
 } from './dockerIntegration';
 import {
   equalsElectronStore,
@@ -95,6 +96,7 @@ ipcMain.on(Channels.CHECK_DOCKER_DAEMON_RUNNING, checkDockerDaemonRunning);
 ipcMain.on(Channels.CHECK_CONTAINER_EXIST, checkContainerExists);
 ipcMain.on(Channels.CHECK_CONTAINER_GPU_SUPPORT, checkContainerGPUSupport);
 ipcMain.on(Channels.BUILD_IMAGE, buildImage);
+ipcMain.on(Channels.STOP_DOCKER_CONTAINER, stopDockerContainer);
 
 // ipfs integration
 ipcMain.on(Channels.OPEN_FILE_DIALOG, openFileDialog);

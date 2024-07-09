@@ -149,6 +149,22 @@ const electronHandler = {
     });
   },
 
+  stopDockerContainer: (containerName: string) => {
+    return new Promise<void>((resolve, reject) => {
+      ipcRenderer.send(Channels.STOP_DOCKER_CONTAINER, containerName);
+      ipcRenderer.once(
+        Channels.STOP_DOCKER_CONTAINER_RESPONSE,
+        (event, success, error) => {
+          if (success) {
+            resolve();
+          } else {
+            reject(new Error(error));
+          }
+        }
+      );
+    });
+  },
+
   buildImage: (tag: string, dockerfilePath: string) => {
     return new Promise<boolean>((resolve, reject) => {
       ipcRenderer.send(Channels.BUILD_IMAGE, tag, dockerfilePath);

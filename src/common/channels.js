@@ -14,6 +14,8 @@ const Channels = {
   CHECK_CONTAINER_GPU_SUPPORT_RESPONSE: 'check-container-gpu-support-response',
   CHECK_CONTAINER_EXIST: 'check-container-exist',
   CHECK_CONTAINER_EXIST_RESPONSE: 'check-container-exist-response',
+  STOP_DOCKER_CONTAINER: 'stop-docker-container',
+  STOP_DOCKER_CONTAINER_RESPONSE: 'stop-docker-container-response',
   BUILD_IMAGE: 'build-image',
   BUILD_IMAGE_RESPONSE: 'build-image-response',
   APP_CLOSE_INITIATED: 'app-close-initiated',
