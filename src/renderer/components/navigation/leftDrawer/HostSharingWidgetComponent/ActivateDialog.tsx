@@ -7,7 +7,7 @@ import DialogContentText from '@mui/material/DialogContentText';
 import DialogActions from '@mui/material/DialogActions';
 import { handleActivateHost } from 'renderer/components/componentsCommon/handleRegistration';
 import { getHostInitialStake } from 'renderer/services/HostContractService';
-import ActivateFormSchema from 'renderer/components/componentsCommon/FormSchema';
+import { ActivateFormSchema } from 'renderer/components/componentsCommon/FormSchema';
 import { Form, Formik, FormikHelpers } from 'formik';
 import TextFieldWrapper from 'renderer/components/componentsCommon/TextField';
 
