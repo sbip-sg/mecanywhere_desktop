@@ -54,7 +54,6 @@ Note:
 The main process executes the entry point script defined in the package.json (as 'main'). It manages the application's lifecycle, and has native access to desktop functionality, such as menus, dialogs, and tray icons. More specifically, the main process for this app is responsible for the following:
 - Manage lifecycle events (e.g. 'ready', 'closed'. Refer to the official docs for a complete list: *https://www.electronjs.org/docs/latest/api/app*)
 - Create BrowserWindows (see *Renderer* below), Menu, Tray.
-- Communicating with the MECA SDK to handle task processing via sockets (see ```sdk\README.md```).
 - Communicating with the Docker Daemon with Dockerode to orchestrate the execution of Task Executor containers during Node.js runtime (see ```task_executor\README.md```).
 - Communicating with IPFS to upload and download tasks.
   - In Linux, the default download directory is `/home/$USER/.MECA/ipfsFiles`
