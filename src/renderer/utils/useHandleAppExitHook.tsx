@@ -1,11 +1,13 @@
 // import log from 'electron-log/renderer';
 import { useEffect } from 'react';
 import { stopExecutor } from 'renderer/services/ExecutorServices';
+import { ContainerName } from 'common/dockerNames';
 import { handleDeactivateHost } from '../components/componentsCommon/handleRegistration';
 
 const handleAppExit = async () => {
-  await stopExecutor();
   await handleDeactivateHost();
+  await window.electron.stopDockerContainer(ContainerName.PYMECA_SERVER_1);
+  await stopExecutor();
 };
 
 const useHandleAppExitHook = () => {

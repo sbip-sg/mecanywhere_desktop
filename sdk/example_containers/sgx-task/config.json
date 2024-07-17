@@ -1,9 +1,0 @@
-{
-  "resource": {
-    "cpu": 1,
-    "memory": 128,
-    "use_gpu": false,
-    "gpu_count": 0,
-    "use_sgx": true
-  }
-}

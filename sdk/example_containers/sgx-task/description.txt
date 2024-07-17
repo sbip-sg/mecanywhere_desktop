@@ -1,1 +1,0 @@
-This app serves HTTP requests to echo back input. The encrypted input is decrypted inside SGX enclave and reencrypted as output.

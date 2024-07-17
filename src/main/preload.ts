@@ -149,6 +149,22 @@ const electronHandler = {
     });
   },
 
+  stopDockerContainer: (containerName: string) => {
+    return new Promise<void>((resolve, reject) => {
+      ipcRenderer.send(Channels.STOP_DOCKER_CONTAINER, containerName);
+      ipcRenderer.once(
+        Channels.STOP_DOCKER_CONTAINER_RESPONSE,
+        (event, success, error) => {
+          if (success) {
+            resolve();
+          } else {
+            reject(new Error(error));
+          }
+        }
+      );
+    });
+  },
+
   buildImage: (tag: string, dockerfilePath: string) => {
     return new Promise<boolean>((resolve, reject) => {
       ipcRenderer.send(Channels.BUILD_IMAGE, tag, dockerfilePath);
@@ -199,19 +215,6 @@ const electronHandler = {
   onSubscribeJobResults: (callback: (...args: any[]) => void) => {
     subscribe(Channels.JOB_RESULTS_RECEIVED, callback);
   },
-  // to client
-  onRegisterClient: (callback: (...args: any[]) => void) => {
-    subscribe(Channels.REGISTER_CLIENT, callback);
-  },
-  onOffloadJob: (callback: (...args: any[]) => void) => {
-    subscribe(Channels.OFFLOAD_JOB, callback);
-  },
-  onDeregisterClient: (callback: (...args: any[]) => void) => {
-    subscribe(Channels.DEREGISTER_CLIENT, callback);
-  },
-  // from client
-  clientRegistered: (status: boolean) =>
-    ipcRenderer.send(Channels.CLIENT_REGISTERED, status),
 
   removeListener: (channel: string, func: (...args: any[]) => void) => {
     ipcRenderer.removeListener(channel, func);

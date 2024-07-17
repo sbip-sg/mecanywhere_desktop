@@ -421,3 +421,36 @@ function getContainerCreateOptions(
   }
   return containerOptions;
 }
+
+export const stopDockerContainer = (
+  event: IpcMainEvent,
+  containerName: string
+) => {
+  docker.listContainers({ all: true }, (err, containers) => {
+    if (err) {
+      console.error('Error listing containers:', err);
+      event.reply(Channels.STOP_DOCKER_CONTAINER_RESPONSE, false, err.message);
+      return;
+    }
+
+    const containerInfo = containers?.find((c) =>
+      c.Names.some((name) => name.includes(containerName))
+    );
+    if (containerInfo) {
+      const container = docker.getContainer(containerInfo.Id);
+      container.stop((err) => {
+        if (err) {
+          console.error(err);
+          event.reply(
+            Channels.STOP_DOCKER_CONTAINER_RESPONSE,
+            false,
+            err.message
+          );
+        } else {
+          console.log(`Container ${containerName} stopped.`);
+          event.reply(Channels.STOP_DOCKER_CONTAINER_RESPONSE, true);
+        }
+      });
+    }
+  });
+};

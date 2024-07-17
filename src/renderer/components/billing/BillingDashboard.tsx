@@ -69,18 +69,6 @@ const BillingDashboard: React.FC = () => {
       </Typography>
 
       <Grid container justifyContent="center" alignItems="center" height="40%">
-        {/* Left card */}
-        <Grid
-          item
-          xs={5}
-          sx={{
-            padding: '0.5rem 0.5rem 0.5rem 2rem',
-            height: '100%',
-          }}
-        >
-          <CurrentBillingCard />
-        </Grid>
-        {/* Right card */}
         <Grid
           item
           xs={7}
@@ -93,16 +81,6 @@ const BillingDashboard: React.FC = () => {
         </Grid>
       </Grid>
 
-      <Box>
-        <Typography
-          variant="h3"
-          style={{
-            padding: '1rem 1rem 0.5rem 2rem',
-          }}
-        >
-          Billing History
-        </Typography>
-      </Box>
       <Box sx={{ padding: '1rem 1rem 0.5rem 2rem' }}>
         <PastBillingList groupedData={groupedData} />
       </Box>

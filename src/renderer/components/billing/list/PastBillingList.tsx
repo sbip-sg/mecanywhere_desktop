@@ -24,7 +24,7 @@ const PastBillingList: React.FC<{ groupedData: GroupedDataEntry[] }> = ({
   };
   const editedData: EditedDataEntry[] = groupedData.map(
     (item: GroupedDataEntry) => {
-      const status = Math.random() > 0.5 ? 'Completed' : 'Pending';
+      const status = 'Completed';
       const [month, year] = item.date.split(' ');
       const startDate = new Date(`${month} 1, ${year}`);
       const dueDate = new Date(
