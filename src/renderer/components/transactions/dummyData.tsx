@@ -14,7 +14,6 @@ function generateRandomDataEntry(): DataEntry {
 
   const dataEntry: DataEntry = {
     duration: Math.random() * 1000,
-    network_reliability: Math.random(),
     price: Math.random() * 100,
     resource_cpu: Math.random() * 10,
     resource_memory: Math.random() * 1000,

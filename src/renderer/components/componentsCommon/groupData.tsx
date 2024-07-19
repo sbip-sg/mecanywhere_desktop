@@ -45,13 +45,11 @@ function initializeAccumulator(groupKey: string) {
     client_resource_cpu: 0,
     client_resource_memory: 0,
     client_duration: 0,
-    client_network_reliability: 0,
     client_price: 0,
     client_count: 0,
     host_resource_cpu: 0,
     host_resource_memory: 0,
     host_duration: 0,
-    host_network_reliability: 0,
     host_price: 0,
     host_count: 0,
   };
@@ -69,18 +67,12 @@ function updateAccumulator(
       entry.resource_memory
     );
     accumulator[groupKey].client_duration += Number(entry.duration);
-    accumulator[groupKey].client_network_reliability += Number(
-      entry.network_reliability
-    );
     accumulator[groupKey].client_price += Number(entry.price);
   } else if (entry.role === 'host') {
     accumulator[groupKey].host_count += 1;
     accumulator[groupKey].host_resource_cpu += Number(entry.resource_cpu);
     accumulator[groupKey].host_resource_memory += Number(entry.resource_memory);
     accumulator[groupKey].host_duration += Number(entry.duration);
-    accumulator[groupKey].host_network_reliability += Number(
-      entry.network_reliability
-    );
     accumulator[groupKey].host_price += Number(entry.price);
   }
   return accumulator;
@@ -121,10 +113,6 @@ function groupData(
           ? group.client_resource_memory / group.client_count
           : 0,
       client_total_duration: group.client_duration,
-      client_avg_network_reliability:
-        group.client_count > 0
-          ? group.client_network_reliability / group.client_count
-          : 0,
       client_total_price: group.client_price,
 
       // Averages and totals for host data
@@ -135,10 +123,6 @@ function groupData(
           ? group.host_resource_memory / group.host_count
           : 0,
       host_total_duration: group.host_duration,
-      host_avg_network_reliability:
-        group.host_count > 0
-          ? group.host_network_reliability / group.host_count
-          : 0,
       host_total_price: group.host_price,
 
       // Combined averages for both client and host
@@ -149,9 +133,6 @@ function groupData(
         (group.client_resource_memory + group.host_resource_memory) /
         (group.client_count + group.host_count),
       total_duration: group.client_duration + group.host_duration,
-      avg_network_reliability:
-        (group.client_network_reliability + group.host_network_reliability) /
-        (group.client_count + group.host_count),
       total_price: group.client_price + group.host_price,
       half_total_price: (group.client_price + group.host_price) / 2,
       date: group.date,

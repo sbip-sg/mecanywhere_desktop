@@ -199,3 +199,18 @@ export async function waitForTasks(tower_addresses: string[]) {
     }
   }
 }
+
+export async function getReceivedTasks() {
+  try {
+    const response = await sendRequest('get_received_tasks', {});
+    return response;
+  } catch (error) {
+    if (error instanceof Error) {
+      console.error('Get received tasks error:', error.message);
+      throw new Error(`Get received tasks error: ${error.message}`);
+    } else {
+      console.error('Unknown Error:', error);
+      throw new Error('An unknown error occurred');
+    }
+  }
+}

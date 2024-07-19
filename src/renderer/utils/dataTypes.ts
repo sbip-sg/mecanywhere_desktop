@@ -1,30 +1,35 @@
-export interface DataEntry {
-  duration: number;
-  network_reliability: number;
-  price: number;
-  resource_cpu: number;
-  resource_memory: number;
-  role: string;
-  task_name: string;
-  transaction_end_datetime: number;
-  transaction_start_datetime: number;
-  transaction_id: string;
+export interface Event {
+  address: string;
+  args: any;
+  blockHash: string;
+  blockNumber: number;
+  event: string;
+  logIndex: number;
+  transactionHash: string;
+  transactionIndex: number;
 }
 
-export interface DataEntryWithoutRole extends Omit<DataEntry, 'role'> {}
+export interface DataEntry {
+  duration: number; // TaskSent block number - TaskFinished
+  price: number; // TaskFinished fee
+  resource_cpu: number; // from ipfs
+  resource_memory: number; // from ipfs
+  role: 'host' | 'client';
+  task_name: string; // from ipfs
+  transaction_end_datetime: number; // TaskFinished block number
+  transaction_start_datetime: number; // TaskSent block number
+  transaction_id: string; // TaskFinished transactionHash
+}
 
 export interface GroupedDataEntry {
-  avg_network_reliability: number;
   avg_resource_cpu: number;
   avg_resource_memory: number;
-  client_avg_network_reliability: number;
   client_avg_resource_cpu: number;
   client_avg_resource_memory: number;
   client_total_duration: number;
   client_total_price: number;
   date: string;
   half_total_price: number;
-  host_avg_network_reliability: number;
   host_avg_resource_cpu: number;
   host_avg_resource_memory: number;
   host_total_duration: number;
@@ -45,13 +50,11 @@ export type AccumulatorType = {
     client_resource_cpu: number;
     client_resource_memory: number;
     client_duration: number;
-    client_network_reliability: number;
     client_price: number;
     client_count: number;
     host_resource_cpu: number;
     host_resource_memory: number;
     host_duration: number;
-    host_network_reliability: number;
     host_price: number;
     host_count: number;
   };

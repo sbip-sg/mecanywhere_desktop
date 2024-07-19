@@ -115,3 +115,18 @@ export async function waitForTask(tower_address: string) {
     }
   }
 }
+
+export async function getFinishedTasks() {
+  try {
+    const response = await sendRequest('get_finished_tasks', {});
+    return response;
+  } catch (error) {
+    if (error instanceof Error) {
+      console.error('Get finished tasks error:', error.message);
+      throw new Error(`Get finished tasks error: ${error.message}`);
+    } else {
+      console.error('Unknown Error:', error);
+      throw new Error('An unknown error occurred');
+    }
+  }
+}
