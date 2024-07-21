@@ -11,10 +11,12 @@
 import { app, BrowserWindow, ipcMain, Tray, Menu } from 'electron';
 import log from 'electron-log/main';
 import path from 'path';
+import dotenv from 'dotenv';
 import { performance } from 'perf_hooks';
 import { resolveHtmlPath, getAssetPath } from './util';
 import MenuBuilder from './menu';
 import Channels from '../common/channels';
+import fs from 'fs';
 import {
   removeDockerContainer,
   runDockerContainer,
@@ -111,6 +113,36 @@ ipcMain.handle(Channels.DELETE_FOLDER, deleteFolder);
 ipcMain.handle(Channels.CHECK_FOLDER_EXISTS, checkFolderExists);
 ipcMain.handle(Channels.IPFS_CAT, catFile);
 ipcMain.handle(Channels.IPFS_STAT, statObject);
+
+// edit env file
+const updateEnvFile = (key: string, value: string) => {
+  console.log("updateEnvFile is called")
+  const envPath = path.join(__dirname, '../../.env')
+  const envPymecaPath = path.join(__dirname, "../../.env.pymeca")
+  const envConfig = dotenv.parse(fs.readFileSync(envPath));
+  const envPymecaConfig = dotenv.parse(fs.readFileSync(envPymecaPath));
+
+  console.log("current env config: ", envConfig)
+
+  envConfig[key] = value;
+
+  const updatedEnv = Object.keys(envConfig)
+    .map(k => `${k}=${envConfig[k]}`)
+    .join('\n');
+
+  fs.writeFileSync(envPath, updatedEnv);
+}
+
+// IPC handler for updating .env files
+ipcMain.handle('update-env', (event, key, value) => {
+  try {
+    updateEnvFile(key, value)
+    return {success: true}
+  } catch(error : any) {
+    log.error('Failed to update .env file', error)
+    return { success: false, error: error.message };
+  }
+})
 
 const createMainWindow = async () => {
   mainWindow = new BrowserWindow({

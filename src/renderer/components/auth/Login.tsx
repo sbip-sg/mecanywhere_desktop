@@ -6,7 +6,7 @@ import CircularProgress from '@mui/material/CircularProgress';
 import { useState, useEffect } from 'react';
 import { ContainerName, ImageName } from 'common/dockerNames';
 import { initActor } from 'renderer/services/PymecaService';
-import { Formik, Form, FormikHelpers } from 'formik';
+import { Formik, Form, FormikHelpers, Field, ErrorMessage, FormikProps } from 'formik';
 import ErrorDialog from '../componentsCommon/ErrorDialogue';
 import actions from '../../redux/actionCreators';
 import { ReactComponent as Logo } from '../../../../assets/LogoColor.svg';
@@ -25,6 +25,30 @@ import {
 } from '../componentsCommon/FormSchema';
 
 const Login = () => {
+
+  const checkEnvVariables = () => {
+    return {
+      TASK_EXECUTOR_HOST: process.env.TASK_EXECUTOR_HOST || '',
+      TASK_EXECUTOR_PORT: process.env.TASK_EXECUTOR_PORT || '',
+      PYMECA_ACTOR_SERVER_HOST: process.env.PYMECA_ACTOR_SERVER_HOST || '',
+      PYMECA_ACTOR_SERVER_PORT: process.env.PYMECA_ACTOR_SERVER_PORT || '',
+      IPFS_NODE_URL: process.env.IPFS_NODE_URL || '',
+      MECA_BLOCKCHAIN_RPC_URL: process.env.MECA_BLOCKCHAIN_RPC_URL || '',
+      MECA_TASK_EXECUTOR_URL: process.env.MECA_TASK_EXECUTOR_URL || '',
+      MECA_IPFS_HOST: process.env.MECA_IPFS_HOST || '',
+      MECA_IPFS_PORT: process.env.MECA_IPFS_PORT || '',
+      MECA_HOST_PRIVATE_KEY: process.env.MECA_HOST_PRIVATE_KEY || '',
+      MECA_HOST_ENCRYPTION_PRIVATE_KEY: process.env.MECA_HOST_ENCRYPTION_PRIVATE_KEY || '',
+      MECA_IPFS_API_HOST: process.env.MECA_IPFS_API_HOST || '',
+      MECA_IPFS_API_PORT: process.env.MECA_IPFS_API_PORT || '',
+      MECA_DEV_PRIVATE_KEY: process.env.MECA_DEV_PRIVATE_KEY || '',
+      MECA_USER_PRIVATE_KEY: process.env.MECA_USER_PRIVATE_KEY || '',
+      MECA_TOWER_PRIVATE_KEY: process.env.MECA_TOWER_PRIVATE_KEY || '',
+    };
+  };
+
+  const initialValues: LoginFormValues = checkEnvVariables();
+
   const [isLoading, setIsLoading] = useState(false);
   const [errorDialogOpen, setErrorDialogOpen] = useState(false);
   const [errorMessage, setErrorMessage] = useState('');
@@ -73,20 +97,19 @@ const Login = () => {
     }
   }
 
-  // useEffect(() => {
-  //   setup();
-  // }, []);
-
   async function postSetup() {
     await registerHostIfNotRegistered(100, 0);
     await fetchAccount();
     await loadTowers();
   }
 
-  const handleSubmit = async (
-    values: LoginFormValues,
-    formActions: FormikHelpers<LoginFormValues>
-  ) => {
+  const handleSubmit = async (values: LoginFormValues, formActions: FormikHelpers<LoginFormValues>) => {
+    console.log(values);
+
+    Object.entries(values).forEach(([key, value]) => {
+      window.electron.store.set(key, value);
+    });
+
     formActions.resetForm();
     actions.setAuthenticated(true);
     setup();
@@ -105,53 +128,36 @@ const Login = () => {
           }}
         />
       ) : (
-        <Formik
-          initialValues={
-            {}
-          }
-          validationSchema={LoginFormSchema}
-          onSubmit={(values, formActions) => {
-            handleSubmit(values, formActions);
-          }}
-        >
-          {() => (
-            <Form>
-              <Container
-                component="main"
-                sx={{
-                  height: '100vh',
-                  display: 'flex',
-                  alignItems: 'center',
-                  justifyContent: 'center',
-                }}
-              >
-                <Box
+        <div>
+
+          <Formik
+            initialValues={initialValues}
+            validationSchema={LoginFormSchema}
+            onSubmit={handleSubmit}
+          >
+            {({ isSubmitting }) => (
+              <Form>
+                <Container
+                  component="main"
                   sx={{
-                    pb: '6rem',
                     display: 'flex',
-                    flexDirection: 'row',
                     alignItems: 'center',
                     justifyContent: 'center',
+                    flexDirection: 'column',
+                    marginTop: '3rem',
+                    marginBottom: '3rem',
                   }}
                 >
-                  <Box
-                    sx={{
-                      paddingLeft: '0.5rem',
-                      height: '20%',
-                      width: '100%',
-                      justifyContent: 'center',
-                      display: 'flex',
-                    }}
-                  >
-                    <Logo width="300px" height="100%" />
-                  </Box>
+                  <Logo width="400px" height="50%"/>
+                  <h1>Please enter details to login</h1>
                   <Box
                     sx={{
                       display: 'grid',
                       gridTemplateColumns: '1fr 1fr',
                       gap: '1rem',
-                      width: '100%',
                       padding: '3rem',
+                      width: '100%',
+                      justifyItems: 'center',
                     }}
                   >
                     {Object.keys(LoginFormSchema.fields).map((field) => (
@@ -162,33 +168,30 @@ const Login = () => {
                         label={field}
                         type={field}
                         size="small"
-                        // defaultValue={LoginFormValues[field]}
-                        sx={{ width: '20rem' }}
+                        sx={{
+                          width: '20rem',
+                        }}
                       />
                     ))}
-                    <Button
-                      variant="contained"
-                      type="submit"
-                      sx={{
-                        width: '35%',
-                        color: 'text.primary',
-                        backgroundColor: 'primary.main',
-                        fontWeight: '600',
-                      }}
-                    >
-                      Log In
-                    </Button>
                   </Box>
-                  <ErrorDialog
-                    open={errorDialogOpen}
-                    onClose={handleCloseErrorDialog}
-                    errorMessage={errorMessage}
-                  />
-                </Box>
-              </Container>
-            </Form>
-          )}
-        </Formik>
+                  <Button
+                    disabled={isSubmitting}
+                    variant="contained"
+                    type="submit"
+                    sx={{
+                      width: '35%',
+                      color: 'text.primary',
+                      backgroundColor: 'primary.main',
+                      fontWeight: '600',
+                    }}
+                  >
+                    Log In
+                  </Button>
+                </Container>
+              </Form>
+            )}
+          </Formik>
+        </div>
       )}
     </Transitions>
   );
