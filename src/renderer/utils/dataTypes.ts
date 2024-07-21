@@ -10,14 +10,14 @@ export interface Event {
 }
 
 export interface DataEntry {
-  duration: number; // TaskSent block number - TaskFinished
+  duration: number; // TaskSent - TaskFinished
   price: number; // TaskFinished fee
   resource_cpu: number; // from ipfs
   resource_memory: number; // from ipfs
   role: 'host' | 'client';
   task_name: string; // from ipfs
-  transaction_end_datetime: number; // TaskFinished block number
-  transaction_start_datetime: number; // TaskSent block number
+  transaction_end_datetime: number; // TaskFinished
+  transaction_start_datetime: number; // TaskSent
   transaction_id: string; // TaskFinished transactionHash
 }
 
