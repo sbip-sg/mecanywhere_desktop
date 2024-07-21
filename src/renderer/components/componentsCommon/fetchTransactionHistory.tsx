@@ -16,11 +16,18 @@ async function combineEvents(
     clientEvents.map((item) => [item.args.taskId, item])
   );
   const combinedHistory = finishedTasks
-    .map(async (finishedTask) => {
-      const event =
-        hostEventMap.get(finishedTask.args.taskId) ||
-        clientEventMap.get(finishedTask.args.taskId);
-      if (event) {
+    .flatMap(async (finishedTask) => {
+      const events: Event[] = [];
+      const hostEvent = hostEventMap.get(finishedTask.args.taskId);
+      if (hostEvent) {
+        events.push(hostEvent);
+      }
+      const clientEvent = clientEventMap.get(finishedTask.args.taskId);
+      if (clientEvent) {
+        events.push(clientEvent);
+      }
+      const dataEntries: DataEntry[] = [];
+      events.forEach(async (event) => {
         const fees: Record<string, number> = finishedTask.args.fee;
         if (fees === undefined) {
           throw new Error('Fee is undefined');
@@ -44,10 +51,11 @@ async function combineEvents(
           transaction_start_datetime: event.blockNumber,
           transaction_id: finishedTask.transactionHash,
         };
-        return dataEntry;
-      }
+        dataEntries.push(dataEntry);
+      });
+      return dataEntries;
     })
-    .filter((item) => item !== undefined) as Promise<DataEntry>[];
+    .filter((item) => item !== undefined);
   return Promise.all(combinedHistory)
     .then((data) => {
       return data;
