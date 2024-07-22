@@ -31,7 +31,7 @@ const PastBillingCard: React.FC<PastBillingCardProps> = ({ groupedData }) => {
     >
       <CardContent sx={{ width: '100%', height: '100%' }}>
         <Grid container sx={{ width: '100%', height: '100%' }}>
-          <Grid>
+          <Grid xs={12}>
             <Typography
               sx={{ fontSize: 14, padding: '0 0 1rem 0' }}
               color="text.primary"
@@ -40,7 +40,7 @@ const PastBillingCard: React.FC<PastBillingCardProps> = ({ groupedData }) => {
               Past 6 Month Billing History
             </Typography>
           </Grid>
-          <Grid>
+          <Grid xs={12}>
             <ResponsiveContainer width="100%" height="100%">
               <ComposedChart data={groupedData} margin={{ top: 0 }}>
                 <CartesianGrid strokeDasharray="3 3" />

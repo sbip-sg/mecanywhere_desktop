@@ -1,15 +1,12 @@
 import React, { useState, useEffect } from 'react';
 import { Grid, Typography, Box } from '@mui/material';
-import reduxStore from 'renderer/redux/store';
-import CurrentBillingCard from './cards/CurrentBillingCard';
 import PastBillingCard from './cards/PastBillingCard';
 import PastBillingList from './list/PastBillingList';
 import { DataEntry, GroupedDataEntry } from '../../utils/dataTypes';
 import groupData from '../componentsCommon/groupData';
-import dummyData from '../transactions/dummyData';
+import fetchTransactionHistory from '../componentsCommon/fetchTransactionHistory';
 
 const BillingDashboard: React.FC = () => {
-  const did = window.electron.store.get('did');
   const [data, setData] = useState<DataEntry[]>([]);
   const [groupedData, setGroupedData] = useState<GroupedDataEntry[]>([]);
 
@@ -34,10 +31,7 @@ const BillingDashboard: React.FC = () => {
 
   const fetchAndSetData = async () => {
     try {
-      // const transactionHistory = await fetchTransactionHistory(
-      //   did
-      // );
-      const transactionHistory = dummyData;
+      const transactionHistory = await fetchTransactionHistory();
       setData(transactionHistory);
     } catch (error) {
       console.error('Error fetching data:', error);

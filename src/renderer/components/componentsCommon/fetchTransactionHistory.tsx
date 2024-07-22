@@ -15,7 +15,7 @@ async function joinSentFinishedEvents(
   }
   let price;
   if (role === 'host') {
-    price = fees['host'];
+    price = fees.host;
   } else {
     price = Object.values(fees).reduce((acc: number, fee) => acc + fee, 0);
   }
@@ -31,7 +31,7 @@ async function joinSentFinishedEvents(
     price,
     resource_cpu: resourceFileContent.resource?.cpu,
     resource_memory: resourceFileContent.resource?.mem,
-    role: role,
+    role,
     task_name: name.trim(),
     transaction_end_datetime,
     transaction_start_datetime,
@@ -51,18 +51,17 @@ async function combineEvents(
     clientEvents.map((item) => [item.args.taskId, item])
   );
   const dataEntries: Promise<DataEntry>[] = [];
-  finishedTasks
-    .forEach(async (finishedTask) => {
-      const hostEvent = hostEventMap.get(finishedTask.args.taskId);
-      if (hostEvent) {
-        dataEntries.push(joinSentFinishedEvents(hostEvent, finishedTask, 'host'));
-      }
-      const clientEvent = clientEventMap.get(finishedTask.args.taskId);
-      if (clientEvent) {
-        dataEntries.push(joinSentFinishedEvents(clientEvent, finishedTask, 'client'));
-      }
-      return dataEntries;
-    })
+  finishedTasks.forEach(async (finishedTask) => {
+    const hostEvent = hostEventMap.get(finishedTask.args.taskId);
+    if (hostEvent) {
+      dataEntries.push(joinSentFinishedEvents(hostEvent, finishedTask, 'host'));
+    }
+    const clientEvent = clientEventMap.get(finishedTask.args.taskId);
+    if (clientEvent) {
+      dataEntries.push(joinSentFinishedEvents(clientEvent, finishedTask, 'client'));
+    }
+    return dataEntries;
+  })
   return Promise.all(dataEntries)
     .then((data) => {
       return data;

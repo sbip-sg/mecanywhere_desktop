@@ -41,7 +41,7 @@ export interface GroupedDataEntry {
 export interface EditedDataEntry extends GroupedDataEntry {
   status: 'Completed' | 'Pending';
   startDate: string;
-  dueDate: string;
+  endDate: string;
 }
 
 export type AccumulatorType = {

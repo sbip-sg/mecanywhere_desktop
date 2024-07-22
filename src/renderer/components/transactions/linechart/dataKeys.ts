@@ -2,7 +2,7 @@ export const datakeyOptions = [
   { label: 'Avg. Memory Utilized (MB)', value: 'avg_resource_memory' },
   { label: 'Avg. CPU Utilized (cores)', value: 'avg_resource_cpu' },
   { label: 'Total Duration', value: 'total_duration' },
-  { label: 'Total Price (SGD)', value: 'total_price' },
+  { label: 'Total Price (WEI)', value: 'total_price' },
   { label: 'Avg. Network Reliability', value: 'avg_network_reliability' },
 ];
 
@@ -25,9 +25,9 @@ export const datakeyLookUps = [
   { label: 'Total Duration', value: 'total_duration' },
   { label: 'Client Total Duration', value: 'client_total_duration' },
   { label: 'Host Total Duration', value: 'host_total_duration' },
-  { label: 'Total Price (SGD)', value: 'total_price' },
-  { label: 'Client Total Price (SGD)', value: 'client_total_price' },
-  { label: 'Host Total Price (SGD)', value: 'host_total_price' },
+  { label: 'Total Price (WEI)', value: 'total_price' },
+  { label: 'Client Total Price (WEI)', value: 'client_total_price' },
+  { label: 'Host Total Price (WEI)', value: 'host_total_price' },
   { label: 'Avg. Network Reliability', value: 'avg_network_reliability' },
   {
     label: 'Client Avg. Network Reliability',

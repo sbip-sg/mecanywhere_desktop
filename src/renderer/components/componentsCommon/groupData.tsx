@@ -133,7 +133,7 @@ function groupData(
         (group.client_resource_memory + group.host_resource_memory) /
         (group.client_count + group.host_count),
       total_duration: group.client_duration + group.host_duration,
-      total_price: group.client_price + group.host_price,
+      total_price: Math.abs(group.client_price - group.host_price),
       half_total_price: (group.client_price + group.host_price) / 2,
       date: group.date,
     };

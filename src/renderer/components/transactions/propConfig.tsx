@@ -59,4 +59,9 @@ export const PropConfigList: PropConfig<DataEntry>[] = [
     renderer: (data: DataEntry) => data.duration,
     label: 'Duration (s)',
   },
+  {
+    property: 'role',
+    renderer: (data: DataEntry) => data.role,
+    label: 'Role',
+  },
 ];

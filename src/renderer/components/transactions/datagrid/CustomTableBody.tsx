@@ -27,7 +27,7 @@ const CustomTableBody: React.FC<CustomTableBodyProps<DataEntry>> = ({
         return (
           <StyledTableRow
             onClick={() => handleTableRowClick(data.transaction_id)}
-            key={data.transaction_id}
+            key={data.transaction_id + data.role}
             maxRowHeight={maxRowHeight}
             isheader={0}
           >
