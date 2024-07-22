@@ -79,6 +79,7 @@ const Login = () => {
           await initActor('host');
           await postSetup();
           setIsLoading(false);
+          actions.setAuthenticated(true);
         } catch (error) {
           if (retries < maxRetries) {
             retries++;
@@ -104,14 +105,11 @@ const Login = () => {
   }
 
   const handleSubmit = async (values: LoginFormValues, formActions: FormikHelpers<LoginFormValues>) => {
-    console.log(values);
-
     Object.entries(values).forEach(([key, value]) => {
       window.electron.store.set(key, value);
     });
 
     formActions.resetForm();
-    actions.setAuthenticated(true);
     setup();
   };
 
