@@ -27,6 +27,7 @@ import {
 const Login = () => {
 
   const checkEnvVariables = () => {
+    console.log(process.env.TASK_EXECUTOR_HOST)
     return {
       TASK_EXECUTOR_HOST: process.env.TASK_EXECUTOR_HOST || '',
       TASK_EXECUTOR_PORT: process.env.TASK_EXECUTOR_PORT || '',

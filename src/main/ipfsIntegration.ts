@@ -9,7 +9,7 @@ const CONTAINER_FOLDER = 'ipfsFiles';
 
 let ipfsFilesDir: string;
 if (process.platform === 'win32') {
-  const baseDir = path.join(process.env.LOCALAPPDATA, '.MECA'); // Use LOCALAPPDATA for Windows
+  const baseDir = path.join(window.electron.store.get('LOCALAPPDATA'), '.MECA'); // Use LOCALAPPDATA for Windows
   ipfsFilesDir = path.join(baseDir, CONTAINER_FOLDER);
   fs.ensureDirSync(ipfsFilesDir);
 } else {
@@ -19,7 +19,7 @@ if (process.platform === 'win32') {
 }
 export const getIpfsFilesDir = ipfsFilesDir;
 
-const IPFS_NODE_URL = process.env.IPFS_NODE_URL || 'http://localhost:5001';
+const IPFS_NODE_URL = window.electron.store.get('IPFS_NODE_URL') || 'http://localhost:5001';
 const client = create({ IPFS_NODE_URL });
 
 export const openFileDialog = async (event) => {
