@@ -9,7 +9,7 @@ const CONTAINER_FOLDER = 'ipfsFiles';
 
 let ipfsFilesDir: string;
 if (process.platform === 'win32') {
-  const baseDir = path.join(window.electron.store.get('LOCALAPPDATA'), '.MECA'); // Use LOCALAPPDATA for Windows
+  const baseDir = path.join(process.env.LOCALAPPDATA, '.MECA'); // Use LOCALAPPDATA for Windows
   ipfsFilesDir = path.join(baseDir, CONTAINER_FOLDER);
   fs.ensureDirSync(ipfsFilesDir);
 } else {
