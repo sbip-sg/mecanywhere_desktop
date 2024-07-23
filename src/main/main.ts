@@ -116,13 +116,10 @@ ipcMain.handle(Channels.IPFS_STAT, statObject);
 
 // edit env file
 const updateEnvFile = (key: string, value: string) => {
-  console.log("updateEnvFile is called")
   const envPath = path.join(__dirname, '../../.env')
   const envPymecaPath = path.join(__dirname, "../../.env.pymeca")
   const envConfig = dotenv.parse(fs.readFileSync(envPath));
   const envPymecaConfig = dotenv.parse(fs.readFileSync(envPymecaPath));
-
-  console.log("current env config: ", envConfig)
 
   envConfig[key] = value;
 
