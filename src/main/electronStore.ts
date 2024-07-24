@@ -6,18 +6,27 @@ const store = new Store();
 
 export const getElectronStore = async (event, key) => {
   try {
+    const keyValue = getElectronStoreFromKey(key);
+    event.returnValue = keyValue;
+  } catch (error) {
+    console.error('Error while getting value:', error);
+    event.returnValue = null;
+  }
+};
+
+export const getElectronStoreFromKey = (key): string => {
+  try {
     const encryptedKey = store.get(key);
     if (encryptedKey !== undefined) {
       const decryptedKey = safeStorage.decryptString(
         Buffer.from(encryptedKey, 'latin1')
       );
-      event.returnValue = decryptedKey;
+      return decryptedKey;
     } else {
-      event.returnValue = null;
+      return "";
     }
   } catch (error) {
     console.error('Error while getting value:', error);
-    event.returnValue = null;
   }
 };
 

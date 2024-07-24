@@ -7,6 +7,7 @@ import { IpcMainEvent } from 'electron';
 import { ContainerPort, ImageName } from '../common/dockerNames';
 import Channels from '../common/channels';
 import { getIpfsFilesDir } from './ipfsIntegration';
+import { getElectronStore, getElectronStoreFromKey } from './electronStore';
 
 const docker = new Dockerode();
 
@@ -18,10 +19,35 @@ mem: 4096
 has_gpu: true
 `;
 
-const pymecaEnv = fs
-  .readFileSync(path.resolve(__dirname, '../../.env.pymeca'), 'utf8')
-  .split('\n')
-  .filter((line) => line.trim() !== '');
+const rawPymecaEnvKeys: string[] = [
+  'MECA_BLOCKCHAIN_RPC_URL',
+  'MECA_TASK_EXECUTOR_URL',
+  'MECA_IPFS_HOST',
+  'MECA_IPFS_PORT',
+  'MECA_HOST_PRIVATE_KEY',
+  'MECA_HOST_ENCRYPTION_PRIVATE_KEY',
+  'MECA_IPFS_API_HOST',
+  'MECA_IPFS_API_PORT',
+  'MECA_DEV_PRIVATE_KEY',
+  'MECA_USER_PRIVATE_KEY',
+  'MECA_TOWER_PRIVATE_KEY',
+];
+
+// get the env details
+export const getPymecaEnv = (): string[] => {
+  const pymecaEnv: string[] = [];
+
+  for (const key of rawPymecaEnvKeys) {
+    const value = getElectronStoreFromKey(key);
+    if (value !== null && value !== undefined) {
+      pymecaEnv.push(`${key}=${value}`)
+    } else {
+      pymecaEnv.push(`${key}=`)
+    }
+  }
+
+  return pymecaEnv;
+}
 
 export const removeDockerContainer = async (
   event: IpcMainEvent,
@@ -371,7 +397,7 @@ function getContainerCreateOptions(
   switch (imageName) {
     case ImageName.MECA_EXECUTOR: {
       const port =
-        window.electron.store.get("MECA_EXECUTOR_PORT") || ContainerPort.MECA_EXECUTOR_1_PORT;
+        getElectronStore("MECA_EXECUTOR_PORT") || ContainerPort.MECA_EXECUTOR_1_PORT;
       containerOptions = {
         name: containerName,
         Image: imageName,
@@ -386,7 +412,7 @@ function getContainerCreateOptions(
     }
     case ImageName.PYMECA_SERVER: {
       const port =
-        window.electron.store.get("PYMECA_SERVER_PORT") || ContainerPort.PYMECA_SERVER_1_PORT;
+        getElectronStore("PYMECA_SERVER_PORT") || ContainerPort.PYMECA_SERVER_1_PORT;
       containerOptions = {
         name: containerName,
         Image: imageName,
@@ -395,7 +421,7 @@ function getContainerCreateOptions(
           PortBindings: { [`${port}/tcp`]: [{ HostPort: port }] },
         },
         Cmd: ['server.py', port],
-        Env: pymecaEnv,
+        Env: getPymecaEnv(),
       };
       break;
     }
