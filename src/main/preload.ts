@@ -25,6 +25,7 @@ const electronHandler = {
     },
   },
 
+  updateEnv: (key: string, value: string) => ipcRenderer.invoke('update-env', key, value),
   openFileDialog: () => ipcRenderer.send(Channels.OPEN_FILE_DIALOG),
   openFolderDialog: () => ipcRenderer.send(Channels.OPEN_FOLDER_DIALOG),
   onFileSelected: (callback: (...args: any[]) => void) => ipcRenderer.on(Channels.SELECTED_FILE, callback),

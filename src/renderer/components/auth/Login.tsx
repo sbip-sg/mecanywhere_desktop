@@ -1,12 +1,11 @@
 import Box from '@mui/material/Box';
-import Typography from '@mui/material/Typography';
 import Button from '@mui/material/Button';
 import Container from '@mui/material/Container';
 import CircularProgress from '@mui/material/CircularProgress';
-import { useState, useEffect } from 'react';
+import { useState } from 'react';
 import { ContainerName, ImageName } from 'common/dockerNames';
 import { initActor } from 'renderer/services/PymecaService';
-import ErrorDialog from '../componentsCommon/ErrorDialogue';
+import { Formik, Form, FormikHelpers, } from 'formik';
 import actions from '../../redux/actionCreators';
 import { ReactComponent as Logo } from '../../../../assets/LogoColor.svg';
 import Transitions from '../../utils/Transition';
@@ -14,17 +13,18 @@ import {
   fetchAccount,
   setStoreSettings,
   startDockerContainer,
-  } from './handleEnterApp';
+} from './handleEnterApp';
 import { registerHostIfNotRegistered } from '../componentsCommon/handleRegistration';
 import loadTowers from '../componentsCommon/loadTower';
+import TextFieldWrapper from '../componentsCommon/TextField';
+import {
+  InitialLoginFormValues,
+  LoginFormSchema,
+  LoginFormValues,
+} from '../componentsCommon/FormSchema';
 
 const Login = () => {
   const [isLoading, setIsLoading] = useState(false);
-  const [errorDialogOpen, setErrorDialogOpen] = useState(false);
-  const [errorMessage, setErrorMessage] = useState('');
-  const handleCloseErrorDialog = () => {
-    setErrorDialogOpen(false);
-  };
 
   async function setup() {
     try {
@@ -49,6 +49,7 @@ const Login = () => {
           await initActor('host');
           await postSetup();
           setIsLoading(false);
+          actions.setAuthenticated(true);
         } catch (error) {
           if (retries < maxRetries) {
             retries++;
@@ -67,15 +68,20 @@ const Login = () => {
     }
   }
 
-  useEffect(() => {
-    setup();
-  }, []);
-
   async function postSetup() {
     await registerHostIfNotRegistered(100, 0);
     await fetchAccount();
     await loadTowers();
   }
+
+  const handleSubmit = async (values: LoginFormValues, formActions: FormikHelpers<LoginFormValues>) => {
+    Object.entries(values).forEach(([key, value]) => {
+      window.electron.store.set(key, value);
+    });
+
+    formActions.resetForm();
+    setup();
+  };
 
   return (
     <Transitions duration={2}>
@@ -90,68 +96,69 @@ const Login = () => {
           }}
         />
       ) : (
-        <Container
-          component="main"
-          maxWidth="xs"
-          sx={{ height: '100vh', display: 'flex' }}
-        >
-          <Box
-            sx={{
-              pb: '6rem',
-              display: 'flex',
-              flexDirection: 'column',
-              alignItems: 'center',
-              justifyContent: 'center',
-            }}
+        <div>
+          <Formik
+            initialValues={InitialLoginFormValues}
+            validationSchema={LoginFormSchema}
+            onSubmit={handleSubmit}
           >
-            <Box
-              sx={{
-                paddingLeft: '0.5rem',
-                height: '20%',
-                width: '100%',
-                justifyContent: 'center',
-                display: 'flex',
-              }}
-            >
-              <Logo width="300px" height="100%" />
-            </Box>
-            <Typography
-              fontSize="12px"
-              maxWidth="22rem"
-              textAlign="center"
-              marginTop="2rem"
-            >
-              Cannot find your account
-            </Typography>
-            <Box sx={{ maxWidth: '22rem', width: '100%' }}>
-              <Box
-                sx={{
-                  pt: '2rem',
-                  display: 'flex',
-                  justifyContent: 'space-evenly',
-                }}
-              >
-                <Button
-                  variant="contained"
-                  onClick={() => setup()}
+            {({ isSubmitting }) => (
+              <Form>
+                <Container
+                  component="main"
                   sx={{
-                    width: '70%',
-                    color: 'text.primary',
-                    backgroundColor: 'primary.main',
-                    fontWeight: '600',
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    flexDirection: 'column',
+                    marginTop: '3rem',
+                    marginBottom: '3rem',
                   }}
                 >
-                  Reload
-                </Button>
-              </Box>
-            </Box>
-            <ErrorDialog
-              open={errorDialogOpen}
-              onClose={handleCloseErrorDialog}
-              errorMessage={errorMessage}
-            />
-          </Box>
-        </Container>
+                  <Logo width="400px" height="50%"/>
+                  <h1>Please enter details to login</h1>
+                  <Box
+                    sx={{
+                      display: 'grid',
+                      gridTemplateColumns: '1fr 1fr',
+                      gap: '1rem',
+                      padding: '3rem',
+                      width: '100%',
+                      justifyItems: 'center',
+                    }}
+                  >
+                    {Object.keys(LoginFormSchema.fields).map((field) => (
+                      <TextFieldWrapper
+                        key={field}
+                        name={field}
+                        id={field}
+                        label={field}
+                        type={field}
+                        size="small"
+                        sx={{
+                          width: '20rem',
+                        }}
+                      />
+                    ))}
+                  </Box>
+                  <Button
+                    disabled={isSubmitting}
+                    variant="contained"
+                    type="submit"
+                    sx={{
+                      width: '35%',
+                      color: 'text.primary',
+                      backgroundColor: 'primary.main',
+                      fontWeight: '600',
+                    }}
+                  >
+                    Log In
+                  </Button>
+                </Container>
+              </Form>
+            )}
+          </Formik>
+        </div>
       )}
     </Transitions>
   );

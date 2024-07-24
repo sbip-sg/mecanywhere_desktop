@@ -2,6 +2,7 @@ import path from 'path';
 import { CID, create, globSource } from 'ipfs-http-client';
 import { BrowserWindow, dialog } from 'electron';
 import Channels from '../common/channels';
+import { getElectronStoreFromKey } from './electronStore';
 const os = require('os');
 const fs = require('fs-extra');
 
@@ -19,8 +20,15 @@ if (process.platform === 'win32') {
 }
 export const getIpfsFilesDir = ipfsFilesDir;
 
-const IPFS_NODE_URL = process.env.IPFS_NODE_URL || 'http://localhost:5001';
-const client = create({ IPFS_NODE_URL });
+let client = null;
+
+const getClient = () => {
+  if (client == null) {
+    const IPFS_NODE_URL = getElectronStoreFromKey('IPFS_NODE_URL') || 'http://localhost:5001';
+    client = create({ IPFS_NODE_URL });
+  }
+  return client;
+}
 
 export const openFileDialog = async (event) => {
   let win = BrowserWindow.fromWebContents(event.sender);
@@ -83,7 +91,7 @@ export const uploadFileToIPFS = async (event, filePath: string) => {
       timeout: 10000,
     };
     let cid;
-    for await (const file of client.addAll(files, addOptions)) {
+    for await (const file of getClient().addAll(files, addOptions)) {
       console.log(file);
       cid = file.cid.toString(); // This will update with each file, ending with the CID of the directory
     }
@@ -103,7 +111,7 @@ export const uploadFolderToIPFS = async (event, folderPath: string) => {
   };
   try {
     let cid;
-    for await (const file of client.addAll(
+    for await (const file of getClient().addAll(
       globSource(folderPath, globSourceOptions),
       addOptions
     )) {
@@ -120,7 +128,7 @@ export const uploadFolderToIPFS = async (event, folderPath: string) => {
 export const downloadFromIPFS = async (event, cid: string) => {
   console.log('cid', cid);
   try {
-    for await (const file of client.get(cid)) {
+    for await (const file of getClient().get(cid)) {
       console.log('file', file);
       const outputPath = path.join(ipfsFilesDir, file.path);
       console.log('outputPath', outputPath);
@@ -148,7 +156,7 @@ export const downloadFromIPFS = async (event, cid: string) => {
 export const readFirstLineOfFileInFolder = async (event, cid: string) => {
   try {
     const files = [];
-    for await (const file of client.ls(cid)) {
+    for await (const file of getClient().ls(cid)) {
       files.push(file);
     }
 
@@ -158,7 +166,7 @@ export const readFirstLineOfFileInFolder = async (event, cid: string) => {
       const fileCid = files[0].cid.toString();
 
       const chunks = [];
-      for await (const chunk of client.cat(fileCid)) {
+      for await (const chunk of getClient().cat(fileCid)) {
         chunks.push(chunk);
       }
       const content = Buffer.concat(chunks).toString('utf8');
@@ -266,9 +274,9 @@ export const catFile = async (event, cid: string, extension: string) => {
   const chunks = [];
 
   // find extension in folder
-  for await (const file of client.ls(cid)) {
+  for await (const file of getClient().ls(cid)) {
     if (file.name.endsWith(extension)) {
-      for await (const chunk of client.cat(file.cid)) {
+      for await (const chunk of getClient().cat(file.cid)) {
         chunks.push(chunk);
       }
       return Buffer.concat(chunks).toString();
@@ -279,7 +287,7 @@ export const catFile = async (event, cid: string, extension: string) => {
 };
 
 export const statObject = async (event, cid: string) => {
-  return client.object.stat(new CID(cid));
+  return getClient().object.stat(new CID(cid));
 };
 
 // unused

@@ -1,7 +1,7 @@
 import { ContainerName, ContainerPort } from "common/dockerNames";
 
-const host = process.env.PYMECA_ACTOR_SERVER_HOST || `http://localhost`;
-const port = process.env.PYMECA_ACTOR_SERVER_PORT || ContainerPort.PYMECA_SERVER_1_PORT;
+const host = window.electron.store.get('PYMECA_ACTOR_SERVER_HOST') || `http://localhost`;
+const port = window.electron.store.get('PYMECA_ACTOR_SERVER_PORT') || ContainerPort.PYMECA_SERVER_1_PORT;
 const url = `${host}:${port}`;
 
 export async function sendRequest(functionName: string, args: any) {
