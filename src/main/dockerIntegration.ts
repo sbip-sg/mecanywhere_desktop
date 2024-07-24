@@ -397,7 +397,7 @@ function getContainerCreateOptions(
   switch (imageName) {
     case ImageName.MECA_EXECUTOR: {
       const port =
-        getElectronStore("MECA_EXECUTOR_PORT") || ContainerPort.MECA_EXECUTOR_1_PORT;
+        getElectronStoreFromKey("MECA_EXECUTOR_PORT") || ContainerPort.MECA_EXECUTOR_1_PORT;
       containerOptions = {
         name: containerName,
         Image: imageName,
@@ -412,7 +412,7 @@ function getContainerCreateOptions(
     }
     case ImageName.PYMECA_SERVER: {
       const port =
-        getElectronStore("PYMECA_SERVER_PORT") || ContainerPort.PYMECA_SERVER_1_PORT;
+        getElectronStoreFromKey("PYMECA_SERVER_PORT") || ContainerPort.PYMECA_SERVER_1_PORT;
       containerOptions = {
         name: containerName,
         Image: imageName,
