@@ -2,7 +2,7 @@ import { sendRequest } from './PymecaService';
 
 export default async function getSentTasks() {
   try {
-    const response = await sendRequest('get_sent_tasks', {});
+    const response = await sendRequest('get_user_sent_tasks', {});
     return response;
   } catch (error) {
     if (error instanceof Error) {
