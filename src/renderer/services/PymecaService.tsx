@@ -115,3 +115,43 @@ export async function waitForTask(tower_address: string) {
     }
   }
 }
+
+export async function getFinishedTasks() {
+  try {
+    const response = await sendRequest('get_finished_tasks', {});
+    return response;
+  } catch (error) {
+    if (error instanceof Error) {
+      console.error('Get finished tasks error:', error.message);
+      throw new Error(`Get finished tasks error: ${error.message}`);
+    } else {
+      console.error('Unknown Error:', error);
+      throw new Error('An unknown error occurred');
+    }
+  }
+}
+
+export async function getBlockTimestamp(blockNumber: number) {
+  try {
+    const response = await fetch(`${url}/get_block_timestamp/${blockNumber}`, {
+      method: 'GET',
+      headers: {
+        'content-type': 'application/json',
+      },
+    });
+    if (!response.ok) {
+      return response.json().then((data: any) => {
+        throw new Error(data.detail);
+      });
+    }
+    return response.json();
+  } catch (error) {
+    if (error instanceof Error) {
+      console.error('Get block timestamp error:', error.message);
+      throw new Error(`Get block timestamp error: ${error.message}`);
+    } else {
+      console.error('Unknown Error:', error);
+      throw new Error('An unknown error occurred');
+    }
+  }
+}

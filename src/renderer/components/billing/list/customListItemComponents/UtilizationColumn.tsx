@@ -7,6 +7,19 @@ interface ColumnProps {
   columnWidth: any;
 }
 
+const secondsToString = (seconds: number) => {
+  const hours = Math.floor(seconds / 3600);
+  const minutes = Math.floor((seconds % 3600) / 60);
+  const remainingSeconds = seconds % 60;
+  if (hours > 0) {
+    return `${hours}h ${minutes}m ${remainingSeconds}s`;
+  }
+  if (minutes > 0) {
+    return `${minutes}m ${remainingSeconds}s`;
+  }
+  return `${remainingSeconds}s`;
+};
+
 const UtilizationColumn: React.FC<ColumnProps> = ({ item, columnWidth }) => {
   return (
     <Grid
@@ -29,9 +42,9 @@ const UtilizationColumn: React.FC<ColumnProps> = ({ item, columnWidth }) => {
         <DetailTypography>
           {item.client_avg_resource_cpu.toFixed(2)}
         </DetailTypography>
-        <CaptionTypography>Total Hours</CaptionTypography>
+        <CaptionTypography>Total Time</CaptionTypography>
         <DetailTypography>
-          {item.client_total_duration.toFixed(2)}
+          {secondsToString(item.client_total_duration)}
         </DetailTypography>
       </Grid>
       <Grid item container xs={6} sx={{ flexDirection: 'column' }}>
@@ -46,9 +59,9 @@ const UtilizationColumn: React.FC<ColumnProps> = ({ item, columnWidth }) => {
         <DetailTypography>
           {item.host_avg_resource_cpu.toFixed(2)}
         </DetailTypography>
-        <CaptionTypography>Total Hours</CaptionTypography>
+        <CaptionTypography>Total Time</CaptionTypography>
         <DetailTypography>
-          {item.host_total_duration.toFixed(2)}
+          {secondsToString(item.host_total_duration)}
         </DetailTypography>
       </Grid>
     </Grid>

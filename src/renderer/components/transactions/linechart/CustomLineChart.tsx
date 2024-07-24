@@ -94,9 +94,11 @@ const CustomLineChart: React.FC<CustomLineChartProps> = ({
         }}
       >
         <Box id="widget-wrapper" sx={{ ml: 'auto', padding: '1.2rem 0 0 0' }}>
+          {/**
           <IconButton size="small" onClick={() => handleAddDummyData()}>
             <AddIcon fontSize="small" sx={{ color: 'text.primary' }} />
           </IconButton>
+          */}
           <IconButton size="small" onClick={handleRefresh}>
             <RefreshIcon fontSize="small" sx={{ color: 'text.primary' }} />
           </IconButton>

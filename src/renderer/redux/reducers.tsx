@@ -37,11 +37,10 @@ const initialDeviceStats: DeviceStats = {
 
 const initialDataEntry: DataEntry = {
   duration: 0,
-  network_reliability: 0,
   price: 0,
   resource_cpu: 0,
   resource_memory: 0,
-  role: '',
+  role: 'host',
   task_name: '',
   transaction_end_datetime: 0,
   transaction_start_datetime: 0,

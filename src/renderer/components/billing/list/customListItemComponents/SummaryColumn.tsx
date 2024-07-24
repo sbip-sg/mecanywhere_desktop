@@ -85,7 +85,7 @@ const SummaryColumn: React.FC<ColumnProps> = ({ item, columnWidth }) => {
         >
           {`${-(item.host_total_price - item.client_total_price).toFixed(
             2
-          )} SGD`}
+          )} WEI`}
         </Typography>
         <Typography
           sx={{
