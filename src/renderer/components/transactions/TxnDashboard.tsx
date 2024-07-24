@@ -19,6 +19,7 @@ import {
 } from './datagrid/datagridUtils/TableParams';
 import dummyData from './dummyData';
 import ErrorDialog from '../componentsCommon/ErrorDialogue';
+import fetchTransactionEvents from '../componentsCommon/fetchTransactionHistory';
 
 const TxnDashboard: React.FC = () => {
   const [data, setData] = useState<DataEntry[]>([]);
@@ -39,7 +40,7 @@ const TxnDashboard: React.FC = () => {
   const fetchAndSetData = async () => {
     setIsLoading(true);
     try {
-      const transactionHistory = dummyData;
+      const transactionHistory = await fetchTransactionEvents();
       if (transactionHistory.length > 0) {
         setHasData(true);
       }

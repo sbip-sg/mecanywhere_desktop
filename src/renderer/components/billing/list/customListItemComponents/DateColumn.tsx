@@ -21,10 +21,8 @@ const DateColumn: React.FC<ColumnProps> = ({ item, columnWidth }) => {
       <Stack>
         <CaptionTypography>Start Date</CaptionTypography>
         <DetailTypography> {item.startDate}</DetailTypography>
-        <CaptionTypography>Due Date</CaptionTypography>
-        <DetailTypography>{item.dueDate}</DetailTypography>
-        <CaptionTypography>Date paid</CaptionTypography>
-        <DetailTypography>N/A</DetailTypography>
+        <CaptionTypography>End Date</CaptionTypography>
+        <DetailTypography>{item.endDate}</DetailTypography>
       </Stack>
     </Grid>
   );

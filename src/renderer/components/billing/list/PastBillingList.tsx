@@ -22,12 +22,13 @@ const PastBillingList: React.FC<{ groupedData: GroupedDataEntry[] }> = ({
   const handleAccordionChange = (isExpanded: boolean) => {
     setIsAnyAccordionExpanded(isExpanded);
   };
+
   const editedData: EditedDataEntry[] = groupedData.map(
     (item: GroupedDataEntry) => {
       const status = 'Completed';
       const [month, year] = item.date.split(' ');
       const startDate = new Date(`${month} 1, ${year}`);
-      const dueDate = new Date(
+      const endDate = new Date(
         Number(year),
         new Date(`${month} 1, ${year}`).getMonth() + 1,
         0
@@ -37,7 +38,7 @@ const PastBillingList: React.FC<{ groupedData: GroupedDataEntry[] }> = ({
         month: 'long',
         day: 'numeric',
       });
-      const dueDateFormat = dueDate.toLocaleDateString('default', {
+      const endDateFormat = endDate.toLocaleDateString('default', {
         year: 'numeric',
         month: 'long',
         day: 'numeric',
@@ -47,7 +48,7 @@ const PastBillingList: React.FC<{ groupedData: GroupedDataEntry[] }> = ({
         ...item,
         status,
         startDate: startDateFormat,
-        dueDate: dueDateFormat,
+        endDate: endDateFormat,
       };
     }
   );

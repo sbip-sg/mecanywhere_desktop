@@ -23,7 +23,7 @@ const CurrentBillingCard = () => {
               textAlign="end"
               style={{ color: 'text.primary'}}
             >
-              103.12 SGD
+              103 WEI
             </Typography>
           </Grid>
           <Grid xs={12}>
