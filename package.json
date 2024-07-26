@@ -1,5 +1,5 @@
 {
-  "name": "mecanywhere",
+  "name": "meca",
   "description": "A blockchain-based edge computing platform",
   "keywords": [
     "MEC",
@@ -226,7 +226,7 @@
     "crypto": false
   },
   "build": {
-    "productName": "MECAnywhere",
+    "productName": "MECA",
     "appId": "org.erb.MECAnywhere",
     "asar": true,
     "asarUnpack": "**\\*.{node,dll}",

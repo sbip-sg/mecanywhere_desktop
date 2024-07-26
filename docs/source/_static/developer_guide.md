@@ -1,4 +1,4 @@
-# MECAnywhere Developer Guide
+# MECA Developer Guide
 
 The desktop app for interacting with MECA ecosystem. Uses Electron-React Boilerplate (Electron, React, React Router, Webpack) under the hood.
 
@@ -7,7 +7,7 @@ The desktop app for interacting with MECA ecosystem. Uses Electron-React Boilerp
 1. Clone the repo and install dependencies:
 
     ```bash
-    git clone https://github.com/sbip-sg/mec_anywhere_desktop.git
+    git clone https://github.com/sbip-sg/meca_desktop.git
     npm install
     ```
 
