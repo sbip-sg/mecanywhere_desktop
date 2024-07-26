@@ -18,7 +18,7 @@ A task is maintained as a running server on the host machine. It is periodically
 
 ## Configuration
 
-When launching the meca executor container, one can mount a config file to determine the resources limit managed by meca. A sample config file is [here](https://github.com/sbip-sg/mec_anywhere_desktop/tree/main/task_executor/conf/meca_docker.yaml).
+When launching the meca executor container, one can mount a config file to determine the resources limit managed by meca. A sample config file is [here](https://github.com/sbip-sg/meca_desktop/tree/main/task_executor/conf/meca_docker.yaml).
 
 Mount the config file at `/app/meca_executor.yaml`
 

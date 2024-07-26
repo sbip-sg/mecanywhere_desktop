@@ -214,7 +214,7 @@ const createMainWindow = async () => {
     }
   });
 
-  tray.setToolTip('MECAnywhere');
+  tray.setToolTip('MECA');
   tray.setContextMenu(trayMenu);
 };
 

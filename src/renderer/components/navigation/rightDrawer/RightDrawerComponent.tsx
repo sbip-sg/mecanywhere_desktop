@@ -144,7 +144,7 @@ const RightDrawerComponent: React.FC<RightDrawerComponentProps> = ({
                 }}
               >
                 <Typography variant="h5" fontSize="16px" textAlign="start">
-                  Welcome to MECAnywhere!
+                  Welcome to MECA!
                 </Typography>
               </Box>
             </Box>
