@@ -6,10 +6,10 @@
 3. [Usage](#Usage)
 
 ## Introduction
-MEC Anywhere Desktop is an interactive application that allows you to join the MEC Anywhere ecosystem and start hosting your compute resources straight away. The application makes it easy and intuitive to manage your resources and monitor your transactions. It is designed to be user-friendly and accessible to most operating systems, including Windows, MacOS, and Linux.
+MECA Desktop is an interactive application that allows you to join the MECA ecosystem and start hosting your compute resources straight away. The application makes it easy and intuitive to manage your resources and monitor your transactions. It is designed to be user-friendly and accessible to most operating systems, including Windows, MacOS, and Linux.
 
 ## Installation
-Download the latest version of the application from the [MEC Anywhere Desktop GitHub repository](https://github.com/sbip-sg/meca_desktop/releases).
+Download the latest version of the application from the [MECA Desktop GitHub repository](https://github.com/sbip-sg/meca_desktop/releases).
 
 You will also need to have Docker installed on your machine. You can download Docker from the [official Docker website](https://www.docker.com/get-started).
 
@@ -22,7 +22,7 @@ To start the application, simply run the executable file that you downloaded.
 ![Dashboard](/_static/images/dashboard.png)
 Here you can see an overview of your resources and transactions. 
 
-On the top left, you can customize the resources to share and enable it to be connected to the MEC Anywhere ecosystem. This allows you to receive tasks from the MEC Anywhere network and earn rewards. Tasks will automatically execute on your machine. You will have to activate chosen tasks in the Tasks Management section and also register for a tower in the Tower Management section before you can receive any task.
+On the top left, you can customize the resources to share and enable it to be connected to the MECA ecosystem. This allows you to receive tasks from the MECA network and earn rewards. Tasks will automatically execute on your machine. You will have to activate chosen tasks in the Tasks Management section and also register for a tower in the Tower Management section before you can receive any task.
 
 ### Tasks Management
 ![Tasks](/_static/images/tasks.png)
