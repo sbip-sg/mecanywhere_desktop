@@ -7,7 +7,7 @@ import { IpcMainEvent } from 'electron';
 import { ContainerPort, ImageName } from '../common/dockerNames';
 import Channels from '../common/channels';
 import { getIpfsFilesDir } from './ipfsIntegration';
-import { getElectronStore, getElectronStoreFromKey } from './electronStore';
+import { getElectronStoreFromKey } from './electronStore';
 
 const docker = new Dockerode();
 
@@ -31,22 +31,18 @@ const rawPymecaEnvKeys: string[] = [
   'MECA_DEV_PRIVATE_KEY',
   'MECA_USER_PRIVATE_KEY',
   'MECA_TOWER_PRIVATE_KEY',
+  'MECA_DAO_CONTRACT_ADDRESS',
 ];
 
 // get the env details
 export const getPymecaEnv = (): string[] => {
-  const pymecaEnv: string[] = [];
-
-  for (const key of rawPymecaEnvKeys) {
+  return Object(rawPymecaEnvKeys).map((key: string) => {
     const value = getElectronStoreFromKey(key);
-    if (value !== null && value !== undefined) {
-      pymecaEnv.push(`${key}=${value}`)
-    } else {
-      pymecaEnv.push(`${key}=`)
+    if (value === null || value === undefined) {
+      return `${key}=`;
     }
-  }
-
-  return pymecaEnv;
+    return `${key}=${value}`;
+  });
 }
 
 export const removeDockerContainer = async (

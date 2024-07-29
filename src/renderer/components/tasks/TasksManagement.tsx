@@ -11,7 +11,7 @@ import {
 import RefreshIcon from '@mui/icons-material/Refresh';
 import { ComputingType, Task } from 'renderer/utils/dataTypes';
 import { getTaskListFromContract } from 'renderer/services/TaskContractService';
-import { cid_from_sha256 } from 'renderer/services/PymecaService';
+import { cid_from_sha256, initActor } from 'renderer/services/PymecaService';
 import { retrieveIPFSFolderMetadata } from 'renderer/services/IPFSService';
 import TaskCard from './TaskCard';
 import SortWidget from './SortWidget';
@@ -49,6 +49,7 @@ const TasksManagement: React.FC = () => {
   const indexOfFirstTask = indexOfLastTask - tasksPerPage;
 
   const handleRefresh = () => {
+    initActor('host');
     getTaskListFromContract()
       .then(async (rawTasks) => {
         if (!rawTasks || rawTasks.length === 0) {

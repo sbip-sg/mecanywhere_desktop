@@ -47,7 +47,7 @@ const initialDataEntry: DataEntry = {
   transaction_id: '',
 };
 
-const initialTaskList: TaskList = {
+export const initialTaskList: TaskList = {
   built: [],
   tested: [],
   activated: [],
