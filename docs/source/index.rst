@@ -26,10 +26,10 @@ The guides here help you use MECA Desktop. You can also contribute to the projec
    :caption: Links
 
    Pymeca github <https://github.com/sbip-sg/pymeca>
-   Meca github <https://github.com/sbip-sg/meca>
-   Meca Desktop github <https://github.com/sbip-sg/meca_desktop>
    Pymeca documentation <https://sbip-sg.github.io/pymeca/>
+   Meca github <https://github.com/sbip-sg/meca>
    Meca documentation <https://sbip-sg.github.io/meca/index.html>
+   Meca Desktop github <https://github.com/sbip-sg/meca_desktop>
    Meca Desktop documentation <https://sbip-sg.github.io/meca_desktop/index.html>
    Youtube <https://www.youtube.com/watch?v=MDzbEvTyIgQ>
    Technical guide video <https://drive.google.com/file/d/1mgZ0EfhlHWNPjgXgG-MpgPV32_b0Qx_g/view?usp=sharing>

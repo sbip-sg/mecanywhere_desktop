@@ -6,7 +6,7 @@ import actions from '../../redux/actionCreators';
 
 const setStoreSettings = async () => {
   try {
-    const privateKey = process.env.MECA_HOST_ENCRYPTION_PRIVATE_KEY || '';
+    const privateKey = window.electron.store.get('MECA_HOST_ENCRYPTION_PRIVATE_KEY') || '';
     const publicKey = getPublicKey(privateKey);
     window.electron.store.set('publicKey', `0x${publicKey}`);
     window.electron.store.set('isExecutorSettingsSaved', 'true');

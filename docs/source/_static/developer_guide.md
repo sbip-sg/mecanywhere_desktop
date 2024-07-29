@@ -27,7 +27,9 @@ The desktop app for interacting with MECA ecosystem. Uses Electron-React Boilerp
 
 2. Ensure that IPFS is installed and IPFS Daemon is started.
 
-3. Start the app in the `dev` environment:
+3. Set the environment variables by creating an `.env.pymeca` file and an `.env` file. Create `.env.pymeca` by filling in `.env.pymeca.example` with the necessary information. `.env` can be edited to change the default values of the environment variables.
+
+4. Start the app in the `dev` environment:
 
     ```bash
     npm start
