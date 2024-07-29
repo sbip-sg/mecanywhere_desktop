@@ -20,3 +20,14 @@ The guides here help you use MECA Desktop. You can also contribute to the projec
 
    pages/developers/developer_guide
    pages/developers/task_executor
+
+.. toctree::
+   :maxdepth: 1
+   :caption: Links
+
+   Pymeca github <https://github.com/sbip-sg/pymeca>
+   Meca github <https://github.com/sbip-sg/meca>
+   Meca Desktop github <https://github.com/sbip-sg/meca_desktop>
+   Pymeca documentation <https://sbip-sg.github.io/pymeca/>
+   Meca documentation <https://sbip-sg.github.io/meca/index.html>
+   Meca Desktop documentation <https://sbip-sg.github.io/meca_desktop/index.html>
