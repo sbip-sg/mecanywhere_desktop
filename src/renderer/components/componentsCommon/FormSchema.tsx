@@ -13,23 +13,74 @@ export const ActivateFormSchema = (minStake: number) =>
   });
 
 export const InitialLoginFormValues: LoginFormValues = {
-  TASK_EXECUTOR_HOST: process.env.TASK_EXECUTOR_HOST || '',
-  TASK_EXECUTOR_PORT: Number(process.env.TASK_EXECUTOR_PORT) || 0,
-  PYMECA_ACTOR_SERVER_HOST: process.env.PYMECA_ACTOR_SERVER_HOST || '',
-  PYMECA_ACTOR_SERVER_PORT: Number(process.env.PYMECA_ACTOR_SERVER_PORT) || 0,
-  IPFS_NODE_URL: process.env.IPFS_NODE_URL || '',
-  MECA_BLOCKCHAIN_RPC_URL: process.env.MECA_BLOCKCHAIN_RPC_URL || '',
-  MECA_TASK_EXECUTOR_URL: process.env.MECA_TASK_EXECUTOR_URL || '',
-  MECA_IPFS_HOST: process.env.MECA_IPFS_HOST || '',
-  MECA_IPFS_PORT: Number(process.env.MECA_IPFS_PORT) || 0,
-  MECA_HOST_PRIVATE_KEY: process.env.MECA_HOST_PRIVATE_KEY || '',
-  MECA_HOST_ENCRYPTION_PRIVATE_KEY: process.env.MECA_HOST_ENCRYPTION_PRIVATE_KEY || '',
-  MECA_IPFS_API_HOST: process.env.MECA_IPFS_API_HOST || '',
-  MECA_IPFS_API_PORT: Number(process.env.MECA_IPFS_API_PORT) || 0,
-  MECA_DEV_PRIVATE_KEY: process.env.MECA_DEV_PRIVATE_KEY || '',
-  MECA_USER_PRIVATE_KEY: process.env.MECA_USER_PRIVATE_KEY || '',
-  MECA_TOWER_PRIVATE_KEY: process.env.MECA_TOWER_PRIVATE_KEY || '',
-  MECA_DAO_CONTRACT_ADDRESS: process.env.MECA_DAO_CONTRACT_ADDRESS || '',
+  TASK_EXECUTOR_HOST:
+    process.env.TASK_EXECUTOR_HOST ||
+    window.electron.store.get('TASK_EXECUTOR_HOST') ||
+    '',
+  TASK_EXECUTOR_PORT:
+    Number(process.env.TASK_EXECUTOR_PORT) ||
+    window.electron.store.get('TASK_EXECUTOR_PORT') ||
+    0,
+  PYMECA_ACTOR_SERVER_HOST:
+    process.env.PYMECA_ACTOR_SERVER_HOST ||
+    window.electron.store.get('PYMECA_ACTOR_SERVER_HOST') ||
+    '',
+  PYMECA_ACTOR_SERVER_PORT:
+    Number(process.env.PYMECA_ACTOR_SERVER_PORT) ||
+    window.electron.store.get('PYMECA_ACTOR_SERVER_PORT') ||
+    0,
+  IPFS_NODE_URL:
+    process.env.IPFS_NODE_URL ||
+    window.electron.store.get('IPFS_NODE_URL') ||
+    '',
+  MECA_BLOCKCHAIN_RPC_URL:
+    process.env.MECA_BLOCKCHAIN_RPC_URL ||
+    window.electron.store.get('MECA_BLOCKCHAIN_RPC_URL') ||
+    '',
+  MECA_TASK_EXECUTOR_URL:
+    process.env.MECA_TASK_EXECUTOR_URL ||
+    window.electron.store.get('MECA_TASK_EXECUTOR_URL') ||
+    '',
+  MECA_IPFS_HOST:
+    process.env.MECA_IPFS_HOST ||
+    window.electron.store.get('MECA_IPFS_HOST') ||
+    '',
+  MECA_IPFS_PORT:
+    Number(process.env.MECA_IPFS_PORT) ||
+    window.electron.store.get('MECA_IPFS_PORT') ||
+    0,
+  MECA_HOST_PRIVATE_KEY:
+    process.env.MECA_HOST_PRIVATE_KEY ||
+    window.electron.store.get('MECA_HOST_PRIVATE_KEY') ||
+    '',
+  MECA_HOST_ENCRYPTION_PRIVATE_KEY:
+    process.env.MECA_HOST_ENCRYPTION_PRIVATE_KEY ||
+    window.electron.store.get('MECA_HOST_ENCRYPTION_PRIVATE_KEY') ||
+    '',
+  MECA_IPFS_API_HOST:
+    process.env.MECA_IPFS_API_HOST ||
+    window.electron.store.get('MECA_IPFS_API_HOST') ||
+    '',
+  MECA_IPFS_API_PORT:
+    Number(process.env.MECA_IPFS_API_PORT) ||
+    window.electron.store.get('MECA_IPFS_API_PORT') ||
+    0,
+  MECA_DEV_PRIVATE_KEY:
+    process.env.MECA_DEV_PRIVATE_KEY ||
+    window.electron.store.get('MECA_DEV_PRIVATE_KEY') ||
+    '',
+  MECA_USER_PRIVATE_KEY:
+    process.env.MECA_USER_PRIVATE_KEY ||
+    window.electron.store.get('MECA_USER_PRIVATE_KEY') ||
+    '',
+  MECA_TOWER_PRIVATE_KEY:
+    process.env.MECA_TOWER_PRIVATE_KEY ||
+    window.electron.store.get('MECA_TOWER_PRIVATE_KEY') ||
+    '',
+  MECA_DAO_CONTRACT_ADDRESS:
+    process.env.MECA_DAO_CONTRACT_ADDRESS ||
+    window.electron.store.get('MECA_DAO_CONTRACT_ADDRESS') ||
+    '',
 };
 
 export interface LoginFormValues {
