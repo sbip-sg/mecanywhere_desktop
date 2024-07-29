@@ -1,5 +1,6 @@
 import { getAccount } from 'renderer/services/PymecaService';
 import { ImageName } from 'common/dockerNames';
+import { initialTaskList } from 'renderer/redux/reducers';
 import { getPublicKey } from '../../utils/cryptoUtils';
 import actions from '../../redux/actionCreators';
 
@@ -18,6 +19,7 @@ const setStoreSettings = async () => {
         gpus: 0,
       })
     );
+    window.electron.store.set('taskList', JSON.stringify(initialTaskList));
   } catch (keyPairGenerationError) {
     throw keyPairGenerationError;
   }

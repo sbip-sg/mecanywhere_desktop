@@ -22,9 +22,16 @@ import {
   LoginFormSchema,
   LoginFormValues,
 } from '../componentsCommon/FormSchema';
+import ErrorDialog from '../componentsCommon/ErrorDialogue';
 
 const Login = () => {
   const [isLoading, setIsLoading] = useState(false);
+  const [errorMessage, setErrorMessage] = useState('');
+  const [errorDialogOpen, setErrorDialogOpen] = useState(false);
+
+  const handleCloseErrorDialog = () => {
+    setErrorDialogOpen(false);
+  };
 
   async function setup() {
     try {
@@ -85,6 +92,11 @@ const Login = () => {
 
   return (
     <Transitions duration={2}>
+      <ErrorDialog
+        open={errorDialogOpen}
+        onClose={handleCloseErrorDialog}
+        errorMessage={errorMessage}
+      />
       {isLoading ? (
         <CircularProgress
           size={36}

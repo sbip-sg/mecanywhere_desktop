@@ -29,6 +29,7 @@ export const InitialLoginFormValues: LoginFormValues = {
   MECA_DEV_PRIVATE_KEY: process.env.MECA_DEV_PRIVATE_KEY || '',
   MECA_USER_PRIVATE_KEY: process.env.MECA_USER_PRIVATE_KEY || '',
   MECA_TOWER_PRIVATE_KEY: process.env.MECA_TOWER_PRIVATE_KEY || '',
+  MECA_DAO_CONTRACT_ADDRESS: process.env.MECA_DAO_CONTRACT_ADDRESS || '',
 };
 
 export interface LoginFormValues {
@@ -39,6 +40,7 @@ export interface LoginFormValues {
   IPFS_NODE_URL: string;
   MECA_BLOCKCHAIN_RPC_URL: string;
   MECA_TASK_EXECUTOR_URL: string;
+  MECA_DAO_CONTRACT_ADDRESS: string;
   // host
   MECA_IPFS_HOST: string;
   MECA_IPFS_PORT: number;
@@ -76,6 +78,7 @@ export const LoginFormSchema = Yup.object({
   MECA_TASK_EXECUTOR_URL: Yup.string()
     .required('Task executor URL required!')
     .default('http://meca-executor-1:2591'),
+  MECA_DAO_CONTRACT_ADDRESS: Yup.string(),
   // host
   MECA_IPFS_HOST: Yup.string()
     .required('IPFS host required!')
