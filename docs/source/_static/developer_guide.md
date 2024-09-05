@@ -1,6 +1,6 @@
-# MECA Developer Guide
+# MECAnywhere Developer Guide
 
-The desktop app for interacting with MECA ecosystem. Uses Electron-React Boilerplate (Electron, React, React Router, Webpack) under the hood.
+The desktop app for interacting with MECAnywhere ecosystem. Uses Electron-React Boilerplate (Electron, React, React Router, Webpack) under the hood.
 
 ### Install
 
