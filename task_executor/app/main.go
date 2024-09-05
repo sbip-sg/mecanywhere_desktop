@@ -10,7 +10,7 @@ import (
 	"syscall"
 
 	"github.com/gin-gonic/gin"
-	executor "github.com/sbip-sg/meca"
+	executor "github.com/sbip-sg/mecanywhere_desktop/task_executor"
 )
 
 var (

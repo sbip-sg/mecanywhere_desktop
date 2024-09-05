@@ -1,4 +1,4 @@
-module github.com/sbip-sg/meca
+module github.com/sbip-sg/mecanywhere_desktop/task_executor
 
 go 1.19
 

@@ -13,7 +13,7 @@ import (
 )
 
 var (
-	errMECANotEnoughResource = errors.New("MECA not enough resources")
+	errMECANotEnoughResource = errors.New("MECAnywhere host not enough resources")
 )
 
 // monitor the availble resource on the host
@@ -246,7 +246,7 @@ type resourceManager struct {
 	taskTotalMEM uint64
 	taskAvailCPU atomic.Uint64 // keep one decimal after core count
 	taskAvailMEM atomic.Uint64
-	hasGPU       bool // controlled by meca-executor config, if false, gpu related functions are turned on.
+	hasGPU       bool // controlled by mecanywhere-executor config, if false, gpu related functions are turned on.
 	gpuReserveMu sync.Mutex
 	gpuAvail     map[int]struct{}
 }
@@ -291,7 +291,7 @@ func (m *resourceManager) Start() bool {
 			m.gpuAvail[i] = struct{}{}
 		}
 	}
-	log.Printf("meca task executor resource manager started with cpu %f core, mem %d MB", float64(m.taskTotalCPU)/10, m.taskTotalMEM)
+	log.Printf("mecanywhere task executor resource manager started with cpu %f core, mem %d MB", float64(m.taskTotalCPU)/10, m.taskTotalMEM)
 	return true
 }
 

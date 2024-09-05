@@ -29,12 +29,12 @@ A task is maintained as a running server on the host machine. It is periodically
 
 ## Configuration
 
-When launching the meca executor container, one can mount a config file to determine the resources limit managed by meca. A sample config file is [here](https://github.com/sbip-sg/meca_desktop/tree/main/task_executor/conf/meca_docker.yaml).
+When launching the meca executor container, one can mount a config file to determine the resources limit managed by meca. A sample config file is [here](https://github.com/sbip-sg/mecanywhere_desktop/tree/main/task_executor/conf/meca_docker.yaml).
 
 Mount the config file at `/app/meca_executor.yaml`
 
 ```sh
-docker run -it --name meca_executor_test -v /var/run/docker.sock:/var/run/docker.sock -v <your-config-file>:/app/meca_executor.yaml --net=meca --ip=172.18.0.255 meca-executor:latest
+docker run -it --name meca_executor_test -v /var/run/docker.sock:/var/run/docker.sock -v <your-config-file>:/app/meca_executor.yaml --net=meca --ip=172.18.0.255 mecanywhere-executor:latest
 ```
 
 Reconfiguration is supported by pausing the executor and passing a new executor configuration file. Currently we the executor type field is ignored, since only docker is supported.

@@ -1,6 +1,6 @@
 # Task executor
 
-The MECA agent module on a host to execute offloaded computations.
+The MECAnywhere agent module on a host to execute offloaded computations.
 
 ## Integration
 
@@ -16,20 +16,20 @@ It receives the task definition including the image id, resource limit and the i
 
 ## build
 
-Build the docker image with: `docker build -t meca-executor -f docker/Dockerfile .`
+Build the docker image with: `docker build -t mecanywhere-executor -f docker/Dockerfile .`
 
 ## launch
 
-create the virtual network on which meca will be launched and allocate a subnet for use
+create the virtual network on which mecanywhere will be launched and allocate a subnet for use
 
 ```sh
-docker network create --subnet 172.18.0.0/16 meca
+docker network create --subnet 172.18.0.0/16 mecanywhere
 ```
 
 launch the executor
 
 ```sh
-docker run --name meca_executor_test -v /var/run/docker.sock:/var/run/docker.sock --net=meca --ip=172.18.0.255 meca-executor:latest
+docker run --name mecanywhere_executor_test -v /var/run/docker.sock:/var/run/docker.sock --net=mecanywhere --ip=172.18.0.255 mecanywhere-executor:latest
 ```
 
 ## test
@@ -46,15 +46,15 @@ for non-linux machines
 change the subnet mask to any other available one
 
 ```sh
-docker network create --subnet 173.18.0.0/16 meca
-docker run --name meca_executor_test -v /var/run/docker.sock:/var/run/docker.sock --net=meca --ip=173.18.0.255 -p 2591:2591 meca-executor:latest
+docker network create --subnet 173.18.0.0/16 mecanywhere
+docker run --name mecaanywhere_executor_test -v /var/run/docker.sock:/var/run/docker.sock --net=mecanywhere --ip=173.18.0.255 -p 2591:2591 mecanywhere-executor:latest
 curl http://localhost:2591 -X POST -H "Content-Type: application/json" -d '{"id": "yourDockerAccount/sampleserver:latest", "input": "{\"name\": \"sbip\"}"}'
 ```
 
-for host with GPU, shall pass `--gpus=all` to the meca-executor. (or pass selected gpus for meca to use, for example, `--gpus='"device=1,2,3"'`)
+for host with GPU, shall pass `--gpus=all` to the mecanywhere-executor. (or pass selected gpus for mecanywhere to use, for example, `--gpus='"device=1,2,3"'`)
 
 ```sh
-docker run --name meca_executor_test --gpus=all  -v /var/run/docker.sock:/var/run/docker.sock  -v <gpu-enabled-config-file>:/app/meca_executor.yaml  --net=meca --ip=172.18.0.255 -p 2591:2591 meca-executor:latest
+docker run --name mecaanywhere_executor_test --gpus=all  -v /var/run/docker.sock:/var/run/docker.sock  -v <gpu-enabled-config-file>:/app/mecanywhere_executor.yaml  --net=mecanywhere --ip=172.18.0.255 -p 2591:2591 mecanywhere-executor:latest
 ```
 
 Retrieve stats
@@ -78,7 +78,7 @@ curl http://172.18.0.255:2591 -X POST -H "Content-Type: application/json" -d '{"
 Specify GPU
 
 ```sh
-curl http://172.18.0.255:2591 -X POST -H "Content-Type: application/json" -d '{"id": "meca-python-task:1227", "resource": {"cpu":1, "mem":256, "use_gpu": true, "gpu_count": 3}, "input": "{\"name\": \"sbip\"}"}'
+curl http://172.18.0.255:2591 -X POST -H "Content-Type: application/json" -d '{"id": "mecanywhere-python-task:1227", "resource": {"cpu":1, "mem":256, "use_gpu": true, "gpu_count": 3}, "input": "{\"name\": \"sbip\"}"}'
 ```
 
 use sgx
@@ -94,4 +94,4 @@ curl http://172.18.0.255:2591 -X POST -H "Content-Type: application/json" -d '{"
 curl http://172.18.0.255:2591 -X POST -H "Content-Type: application/json" -d '{"id": "mock-sgx-task:latest", "resource": {"cpu":2, "mem":256}, "input": "{\"value\": \"<the-encrypted-task-input>\"}", "use_sgx": true}'
 ```
 
-Can use the meca sample repo sgx task direct client to interact with a running mock server task to get a valid encryted input sample for testing.
+Can use the mecanywhere sample repo sgx task direct client to interact with a running mock server task to get a valid encryted input sample for testing.

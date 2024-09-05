@@ -20,10 +20,10 @@ import (
 )
 
 const (
-	dockerTaskPrefix = "meca"
+	dockerTaskPrefix = "mecanywhere"
 	dockerInitMark   = "meca-init-done"
 	dockerReadyRetry = 5
-	mecaVnet         = "meca"
+	mecaVnet         = "mecanywhere"
 	SGXRAREQUEST     = "SGXRAREQUEST"
 )
 

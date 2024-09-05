@@ -17,9 +17,9 @@ const (
 )
 
 var (
-	errInvalidMecaExecutor    = errors.New("meca executor in invalid state")
-	errMecaExecutorNotStarted = errors.New("meca executor not started")
-	errMecaExecutorRunning    = errors.New("meca executor is running")
+	errInvalidMecaExecutor    = errors.New("mecanywhere executor in invalid state")
+	errMecaExecutorNotStarted = errors.New("mecanywhere executor not started")
+	errMecaExecutorRunning    = errors.New("mecanywhere executor is running")
 )
 
 func port_alloc() int {
@@ -172,7 +172,7 @@ type MecaExecutor struct {
 	rm       ResourceManager
 	repo     TaskRepo
 	fac      TaskFactory
-	runtimes map[string]string // map the meca runtime tag to the corresponding runtime name specified by host
+	runtimes map[string]string // map the mecanywhere runtime tag to the corresponding runtime name specified by host
 
 	started           bool
 	stopped           atomic.Bool
@@ -431,7 +431,7 @@ func (meca *MecaExecutor) UpdateConfig(cfg MecaExecutorConfigReq) (string, error
 	if len(cfg.MicroVMRuntime) > 0 {
 		meca.runtimes[TaskTypeMicroVM] = cfg.MicroVMRuntime
 	}
-	return fmt.Sprintf("meca executor config update: %v; microVM runtime: %v", msg, cfg.MicroVMRuntime), nil
+	return fmt.Sprintf("mecanywhere executor config update: %v; microVM runtime: %v", msg, cfg.MicroVMRuntime), nil
 }
 
 func (meca *MecaExecutor) Stats() ResourceStats {

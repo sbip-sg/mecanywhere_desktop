@@ -24,4 +24,4 @@ EXPOSE 8080
 RUN apt install tini
 
 # Run the Go application when the container starts
-CMD ["./app/app", "-config", "./meca_executor.yaml"]
+CMD ["./app/app", "-config", "./mecanywhere_executor.yaml"]
