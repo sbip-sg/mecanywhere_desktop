@@ -151,7 +151,7 @@ const TxnDashboard: React.FC = () => {
                   textAlign: 'center',
                 }}
               >
-                You have not done any MECA transactions for the past 6 months.
+                You have not done any MECAnywhere transactions for the past 6 months.
               </Typography>
             </Box>
             <Button

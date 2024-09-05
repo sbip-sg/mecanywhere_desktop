@@ -169,7 +169,7 @@ const UploadTask = () => {
             onClick={publishToMECA}
             disabled={!cid || !paymentProviderConnected}
           >
-            Publish to MECA Network
+            Publish to MECAnywhere Network
           </Button>
         </Box>
       </Stack>

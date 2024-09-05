@@ -401,7 +401,7 @@ function getContainerCreateOptions(
         HostConfig: {
           Binds: ['/var/run/docker.sock:/var/run/docker.sock'],
           PortBindings: { [`${port}/tcp`]: [{ HostPort: port }] },
-          NetworkMode: 'meca',
+          NetworkMode: 'mecanywhere',
         },
       };
       break;
