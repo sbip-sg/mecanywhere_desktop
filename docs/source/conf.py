@@ -6,7 +6,7 @@
 # -- Project information -----------------------------------------------------
 # https://www.sphinx-doc.org/en/master/usage/configuration.html#project-information
 
-project = 'MECA DApp'
+project = 'MECAnywhere DApp'
 copyright = '2024, Junxue'
 author = 'Junxue'
 

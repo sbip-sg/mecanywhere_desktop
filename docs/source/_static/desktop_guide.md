@@ -9,7 +9,7 @@
 MECA Desktop is an interactive application that allows you to join the MECA ecosystem and start hosting your compute resources straight away. The application makes it easy and intuitive to manage your resources and monitor your transactions. It is designed to be user-friendly and accessible to most operating systems, including Windows, MacOS, and Linux.
 
 ## Installation
-Download the latest version of the application from the [MECA Desktop GitHub repository](https://github.com/sbip-sg/meca_desktop/releases).
+Download the latest version of the application from the [MECA Desktop GitHub repository](https://github.com/sbip-sg/mecanywhere_desktop/releases).
 
 You will also need to have Docker installed on your machine. You can download Docker from the [official Docker website](https://www.docker.com/get-started).
 You will also need to have IPFS installed on your machine. You can download an IPFS container from the [official IPFS website](https://docs.ipfs.tech/install/run-ipfs-inside-docker/).
@@ -28,7 +28,7 @@ Other information that you can provide:
 - IPFS API HOST AND PORT: the url to the node for uploading tasks to IPFS. This should be a node you have write access to.
 - BLOCKCHAIN RPC URL: the url to the blockchain node where the contracts are deployed.
 - DAO CONTRACT ADDRESS: the address of the DAO contract on the blockchain, which is the entrypoint to all other functions of the MECA network.
-- TASK EXECUTOR URL: the url to the task executor server, which is used to execute tasks on your machine. By default `http://meca-executor-1:2591`, and there is no need to change this unless you are running a custom task executor server.
+- TASK EXECUTOR URL: the url to the task executor server, which is used to execute tasks on your machine. By default `http://mecanywhere-executor-1:2591`, and there is no need to change this unless you are running a custom task executor server.
 
 We have launched our smart contracts on the Ethereum Sepolia Testnet (address: 0x56873484BFB38789624ADeff6aF642A41246976f). You can get free testnet ETH from the [Sepolia Testnet Faucet](https://faucet.sepolia.io/) and use those accounts to interact with the MECA network.
 To configure for Sepolia:

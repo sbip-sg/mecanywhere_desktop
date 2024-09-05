@@ -7,7 +7,7 @@ The desktop app for interacting with MECA ecosystem. Uses Electron-React Boilerp
 1. Clone the repo and install dependencies:
 
     ```bash
-    git clone https://github.com/sbip-sg/meca_desktop.git
+    git clone https://github.com/sbip-sg/mecanywhere_desktop.git
     npm install
     ```
 
@@ -16,7 +16,7 @@ The desktop app for interacting with MECA ecosystem. Uses Electron-React Boilerp
 3. Build the Task Executor's docker image with: 
 
     ```bash
-    docker build -t meca-executor -f docker/Dockerfile .
+    docker build -t mecanywhere-executor -f docker/Dockerfile .
     ```
 
 4. Install IPFS Kubo from https://github.com/ipfs/kubo.git

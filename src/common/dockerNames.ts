@@ -1,5 +1,5 @@
 export enum ImageName {
-  MECA_EXECUTOR = 'ghcr.io/sbip-sg/meca-executor:main',
+  MECA_EXECUTOR = 'ghcr.io/sbip-sg/mecanywhere-executor:main',
   PYMECA_SERVER = 'ghcr.io/sbip-sg/pymeca-actors:main',
 }
 

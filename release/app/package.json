@@ -1,6 +1,6 @@
 {
-  "name": "meca",
-  "version": "1.0.0",
+  "name": "mecanywhere",
+  "version": "1.0.1",
   "description": "A blockchain-based edge computing platform",
   "license": "MIT",
   "author": {
@@ -17,6 +17,7 @@
   "dependencies": {
     "@types/dockerode": "^3.3.23",
     "dockerode": "^4.0.2",
+    "mecanywhere": "file:",
     "secp256k1": "^5.0.0",
     "web3": "^4.4.0"
   }

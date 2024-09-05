@@ -66,7 +66,7 @@ const MenuComponent: React.FC<MenuComponentProps> = ({ toggleRightDrawer }) => {
               marginLeft: '1.7rem',
             }}
           >
-            MECA
+            MECAnywhere
           </Typography>
         </Box>
         <Box

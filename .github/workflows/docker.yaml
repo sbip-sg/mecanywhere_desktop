@@ -10,7 +10,7 @@ on:
 
 env:
   REGISTRY: ghcr.io
-  IMAGE_NAME: sbip-sg/meca-executor
+  IMAGE_NAME: sbip-sg/mecanywhere-executor
 
 jobs:
   build-and-push-image:
@@ -48,4 +48,4 @@ jobs:
           push: true
           tags: ${{ steps.meta.outputs.tags }}
           labels: ${{ steps.meta.outputs.labels }}
-      
+

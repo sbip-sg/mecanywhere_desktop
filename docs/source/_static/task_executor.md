@@ -2,13 +2,13 @@
 
 ## Resource control
 
-Task executor is configured with the user-specified resource usage for MECA dispatched task. It contains a resource monitor that monitors the available resources on the host.
+Task executor is configured with the user-specified resource usage for MECAnywhere dispatched task. It contains a resource monitor that monitors the available resources on the host.
 
 ## Task
 
-A task request sent over from MECA contains the id that defines the computation (In docker context, the image id), the resources it intends to use, the input of the request.
+A task request sent over from MECAnywhere contains the id that defines the computation (In docker context, the image id), the resources it intends to use, the input of the request.
 
-The task executor can manage multiple tasks with different resource usage intents at a given time. Therefore, internally the task executor manages the tasks with an id constructed from both the id and resource in a MECA request.
+The task executor can manage multiple tasks with different resource usage intents at a given time. Therefore, internally the task executor manages the tasks with an id constructed from both the id and resource in a MECAnywhere request.
 
 By default, if the request does not specify the resource usage intent, it is assumed to work with the default resource usage: 1 CPU core and 128MB RAM. The specified CPU should be a float with one decimal and the RAM is an integer in the unit of MB.
 
@@ -29,12 +29,12 @@ A task is maintained as a running server on the host machine. It is periodically
 
 ## Configuration
 
-When launching the meca executor container, one can mount a config file to determine the resources limit managed by meca. A sample config file is [here](https://github.com/sbip-sg/mecanywhere_desktop/tree/main/task_executor/conf/meca_docker.yaml).
+When launching the mecanywhere executor container, one can mount a config file to determine the resources limit managed by mecanywhere. A sample config file is [here](https://github.com/sbip-sg/mecanywhere_desktop/tree/main/task_executor/conf/mecanywhere_docker.yaml).
 
-Mount the config file at `/app/meca_executor.yaml`
+Mount the config file at `/app/mecanywhere_executor.yaml`
 
 ```sh
-docker run -it --name meca_executor_test -v /var/run/docker.sock:/var/run/docker.sock -v <your-config-file>:/app/meca_executor.yaml --net=meca --ip=172.18.0.255 mecanywhere-executor:latest
+docker run -it --name mecanywhere_executor_test -v /var/run/docker.sock:/var/run/docker.sock -v <your-config-file>:/app/mecanywhere_executor.yaml --net=mecanywhere --ip=172.18.0.255 mecanywhere-executor:latest
 ```
 
 Reconfiguration is supported by pausing the executor and passing a new executor configuration file. Currently we the executor type field is ignored, since only docker is supported.

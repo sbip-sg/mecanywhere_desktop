@@ -234,7 +234,7 @@ export const runExecutorGPUContainer = async (
     const containerOptions: Dockerode.ContainerCreateOptions =
       getContainerCreateOptions(ImageName.MECA_EXECUTOR, containerName, true);
     containerOptions.HostConfig?.Binds?.push(
-      `${configFilePath}:/app/meca_executor.yaml`
+      `${configFilePath}:/app/mecanywhere_executor.yaml`
     );
 
     docker.createContainer(containerOptions, (err, container) => {
